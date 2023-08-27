@@ -145,7 +145,7 @@ def get_red_eye_artwork_urls(release_id):
 
 
 # scrape redeyerecords.co.uk
-def scrape_red_eye(get_urls=True, test_single=False):
+def scrape_red_eye(page_count, get_urls=True, test_single=False, verbose=False):
     print("scraping: redeye", flush=True)
 
     urls = [
@@ -154,7 +154,7 @@ def scrape_red_eye(get_urls=True, test_single=False):
         ("https://www.redeyerecords.co.uk/techno-electro/new-releases/", "new_releases")
     ]
 
-    for page in range(2, 6):
+    for page in range(2, page_count):
         urls.append((f"https://www.redeyerecords.co.uk/techno-electro/new-releases/page-{page}", "new_releases"))
 
     # store release entries in dict
@@ -193,8 +193,11 @@ def scrape_red_eye(get_urls=True, test_single=False):
             merge_dicts(release_dict, parse_red_eye_artist(artist_elem))
             id = release_dict["id"]
 
+            # extra print for debugging long jobs
+            if verbose:
+                print(f"scraping release urls: {id}", flush=True)
+
             # this takes a little while so its useful to skip during dev
-            print(f"scraping release urls: {release_dict['id']}", flush=True)
             if get_urls:
                 # check if we already have urls and skip them
                 has_artworks = False
@@ -237,4 +240,5 @@ def scrape_red_eye(get_urls=True, test_single=False):
 if __name__ == '__main__':
     get_urls = "-urls" in sys.argv
     test_single = "-test_single" in sys.argv
-    scrape_red_eye(get_urls, test_single)
+    verbose = "-verbose" in sys.argv
+    scrape_red_eye(32, get_urls, test_single, verbose)

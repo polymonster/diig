@@ -15,5 +15,5 @@ jobs:
         git config user.email github-actions@github.com
         git add .
         git commit -m "- update releases registry"
-        git push origin HEAD:master
-        git push origin HEAD:master
+        git push origin HEAD:main
+        git push origin HEAD:main

@@ -155,7 +155,7 @@ def scrape_red_eye(get_urls=True, test_single=False):
         ("https://www.redeyerecords.co.uk/techno-electro/new-releases/", "new_releases")
     ]
 
-    for page in range(2, 100):
+    for page in range(2, 5):
         urls.append((f"https://www.redeyerecords.co.uk/techno-electro/new-releases/page-{page}", "new_releases"))
 
     releases_dict = dict()

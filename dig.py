@@ -201,10 +201,10 @@ def scrape_red_eye(get_urls=True, test_single=False):
                 has_tracks = False
                 if id in releases_dict:
                     if "track_urls" in releases_dict[id]:
-                        if len(releases_dict[id]["track_urls"] > 0):
+                        if len(releases_dict[id]["track_urls"]) > 0:
                             has_tracks = True
                     if "artworks" in releases_dict[id]:
-                        if len(releases_dict[id]["artworks"] > 0):
+                        if len(releases_dict[id]["artworks"]) > 0:
                             has_artworks = True
 
                 if not has_tracks:

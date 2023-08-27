@@ -2,9 +2,8 @@ import urllib.request
 import cgu
 import json
 import sys
+import os
 
-# https://redeye-391831.c.cdn77.org/171209.mp3
-# https://www.redeyerecords.co.uk/imagery/171209-1.jpg
 
 # member wise merge 2 dicts, second will overwrite dest
 def merge_dicts(dest, second):
@@ -155,10 +154,17 @@ def scrape_red_eye(get_urls=True, test_single=False):
         ("https://www.redeyerecords.co.uk/techno-electro/new-releases/", "new_releases")
     ]
 
-    for page in range(2, 5):
+    for page in range(2, 6):
         urls.append((f"https://www.redeyerecords.co.uk/techno-electro/new-releases/page-{page}", "new_releases"))
 
+    # store release entries in dict
     releases_dict = dict()
+
+    # load existing registry to speed things up
+    reg_filepath = "registry/releases.json"
+    if os.path.exists(reg_filepath):
+        releases_dict = json.loads(open(reg_filepath, "r").read())
+
     new_releases = 0
     for (url, category) in urls:
         print(f"scraping page: {url}", flush=True)
@@ -183,15 +189,29 @@ def scrape_red_eye(get_urls=True, test_single=False):
             release_dict["id"] = parse_red_eye_release_id(id_elem)
             release_dict["track_names"] = parse_red_eye_track_names(tracks_elem)
             release_dict["link"] = parse_red_eye_release_link(link_elem)
+            merge_dicts(release_dict, parse_red_eye_label(label_elem))
+            merge_dicts(release_dict, parse_red_eye_artist(artist_elem))
+            id = release_dict["id"]
 
             # this takes a little while so its useful to skip during dev
             print(f"scraping release urls: {release_dict['id']}", flush=True)
-            if get_urls and release_dict["id"] not in releases_dict:
-                release_dict["track_urls"] = get_red_eye_snippit_urls(release_dict["id"])
-                release_dict["artworks"] = get_red_eye_artwork_urls(release_dict["id"])
+            if get_urls:
+                # check if we already have urls and skip them
+                has_artworks = False
+                has_tracks = False
+                if id in releases_dict:
+                    if "track_urls" in releases_dict[id]:
+                        if len(releases_dict[id]["track_urls"] > 0):
+                            has_tracks = True
+                    if "artworks" in releases_dict[id]:
+                        if len(releases_dict[id]["artworks"] > 0):
+                            has_artworks = True
 
-            merge_dicts(release_dict, parse_red_eye_label(label_elem))
-            merge_dicts(release_dict, parse_red_eye_artist(artist_elem))
+                if not has_tracks:
+                    release_dict["track_urls"] = get_red_eye_snippit_urls(id)
+
+                if not has_artworks:
+                    release_dict["artworks"] = get_red_eye_artwork_urls(id)
 
             # assign indices
             if category in ["weekly_chart", "monthly_chart"]:

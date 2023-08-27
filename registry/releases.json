@@ -48,7 +48,8 @@
         "artist": "Rod Modell",
         "title": "Ghost Lights - 2x 12\u201d 180g Black Vinyl/gatefold",
         "weekly_chart": 1,
-        "monthly_chart": 0
+        "monthly_chart": 0,
+        "new_releases": 233
     },
     "171209": {
         "id": "171209",
@@ -268,7 +269,8 @@
         "artist": "DMX Kre",
         "title": "DMX Krew",
         "weekly_chart": 9,
-        "monthly_chart": 24
+        "monthly_chart": 24,
+        "new_releases": 273
     },
     "170942": {
         "id": "170942",
@@ -292,7 +294,8 @@
         "artist": "Reptant",
         "title": "Duality Of The Gecko",
         "weekly_chart": 10,
-        "monthly_chart": 2
+        "monthly_chart": 2,
+        "new_releases": 266
     },
     "171025": {
         "id": "171025",
@@ -319,7 +322,8 @@
         "label_link": "https://www.redeyerecords.co.uk/record-label-releases/19035-bassiani-records",
         "artist": "Rene Wise",
         "title": "Lucky Number 7",
-        "weekly_chart": 11
+        "weekly_chart": 11,
+        "new_releases": 214
     },
     "171179": {
         "id": "171179",
@@ -598,7 +602,8 @@
         "artist": "Ebi",
         "title": "Space Teddy Collection (2XLP)",
         "weekly_chart": 21,
-        "monthly_chart": 10
+        "monthly_chart": 10,
+        "new_releases": 300
     },
     "161609": {
         "id": "161609",
@@ -979,7 +984,8 @@
         "label_link": "https://www.redeyerecords.co.uk/record-label-releases/1108-hessle-audio",
         "artist": "Pangaea",
         "title": "Changing Channels: Part 2",
-        "monthly_chart": 14
+        "monthly_chart": 14,
+        "new_releases": 263
     },
     "170009": {
         "id": "170009",
@@ -1083,7 +1089,8 @@
         "label_link": "https://www.redeyerecords.co.uk/record-label-releases/21601-mole-audio",
         "artist": "Andy Martin Ft. Gavsborg\u2019s Plato & Cave",
         "title": "Andy Martin Ft. Gavsborg\u2019s Plato & Caves",
-        "monthly_chart": 18
+        "monthly_chart": 18,
+        "new_releases": 316
     },
     "168905": {
         "id": "168905",
@@ -1187,7 +1194,8 @@
         "label_link": "https://www.redeyerecords.co.uk/record-label-releases/23784-spclnch",
         "artist": "Federsen",
         "title": "Zen Effects EP",
-        "monthly_chart": 23
+        "monthly_chart": 23,
+        "new_releases": 304
     },
     "170950": {
         "id": "170950",
@@ -1216,7 +1224,8 @@
         "label_link": "https://www.redeyerecords.co.uk/record-label-releases/27260-mutual-rytm",
         "artist": "Alarico",
         "title": "Drops Of You [cut-Out Label Sleeve / Printed Inner Sleeve]",
-        "monthly_chart": 25
+        "monthly_chart": 25,
+        "new_releases": 255
     },
     "171097": {
         "id": "171097",
@@ -1310,7 +1319,8 @@
         "label_link": "https://www.redeyerecords.co.uk/record-label-releases/1108-hessle-audio",
         "artist": "Pangaea",
         "title": "Changing Channels: Part 1",
-        "monthly_chart": 30
+        "monthly_chart": 30,
+        "new_releases": 262
     },
     "142292": {
         "id": "142292",
@@ -6109,5 +6119,4168 @@
             "https://www.redeyerecords.co.uk/imagery/171064-2.jpg"
         ],
         "new_releases": 181
+    },
+    "171052": {
+        "id": "171052",
+        "track_names": [
+            "Monochromatic",
+            "Unseen"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165995-mdzn002-no-name-unseen-10",
+        "cat": "MDZN002",
+        "label": "Mind Medizin",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/28950-mind-medizin",
+        "artist": "NO.NAME",
+        "title": "Unseen - 10\"",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/171052.mp3",
+            "https://redeye-391831.c.cdn77.org/171052b.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/171052-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/171052-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/171052-2.jpg"
+        ],
+        "new_releases": 182
+    },
+    "171061": {
+        "id": "171061",
+        "track_names": [
+            "And Suddenly, I Was Reborn",
+            "La Rive",
+            "Les Lucioles Jaunes",
+            "Souviens Toi D'oublier",
+            "Gargantua",
+            "He Didn't Say A Word",
+            "I Saw His Wings In The Sky",
+            "Ellipsis"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/166005-mord097-quelza-les-somnolentes-ep-2x12",
+        "cat": "MORD097",
+        "label": "Mord",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/7334-mord",
+        "artist": "Quelza",
+        "title": "Les Somnolentes EP - 2x12\"",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/171061.mp3",
+            "https://redeye-391831.c.cdn77.org/171061b.mp3",
+            "https://redeye-391831.c.cdn77.org/171061c.mp3",
+            "https://redeye-391831.c.cdn77.org/171061d.mp3",
+            "https://redeye-391831.c.cdn77.org/171061e.mp3",
+            "https://redeye-391831.c.cdn77.org/171061f.mp3",
+            "https://redeye-391831.c.cdn77.org/171061g.mp3",
+            "https://redeye-391831.c.cdn77.org/171061h.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/171061-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/171061-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/171061-2.jpg"
+        ],
+        "new_releases": 183
+    },
+    "171076": {
+        "id": "171076",
+        "track_names": [
+            "1 The Darkness Is Coming",
+            "2 Make Electro Dark Again",
+            "3 Make Electro Dark Again (Human Rebellion Remix)",
+            "4 Dark Attack",
+            "5 Dark Laugh",
+            "6 Dark Laugh (Code Rising Remix)"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/166031-wmr003-robodroid-make-electro-dark-again-12inch-picture-disc",
+        "cat": "WMR003",
+        "label": "Warehouse Manifesto",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/29207-warehouse-manifesto",
+        "artist": "Robodroid",
+        "title": "Make Electro Dark Again - 12inch Picture Disc",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/171076.mp3",
+            "https://redeye-391831.c.cdn77.org/171076b.mp3",
+            "https://redeye-391831.c.cdn77.org/171076c.mp3",
+            "https://redeye-391831.c.cdn77.org/171076d.mp3",
+            "https://redeye-391831.c.cdn77.org/171076e.mp3",
+            "https://redeye-391831.c.cdn77.org/171076f.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/171076-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/171076-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/171076-2.jpg"
+        ],
+        "new_releases": 184
+    },
+    "171053": {
+        "id": "171053",
+        "track_names": [
+            "01 Nrevenge",
+            "02 Era",
+            "03 Drave",
+            "04 Sub 0",
+            "05 Refletch A",
+            "06 Folder : Weme Records,"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165996-weme081-rtr-circle",
+        "cat": "WEME081",
+        "label": "Weme Records",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/1037-weme-records",
+        "artist": "RTR",
+        "title": "Circle",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/171053.mp3",
+            "https://redeye-391831.c.cdn77.org/171053b.mp3",
+            "https://redeye-391831.c.cdn77.org/171053c.mp3",
+            "https://redeye-391831.c.cdn77.org/171053d.mp3",
+            "https://redeye-391831.c.cdn77.org/171053e.mp3",
+            "https://redeye-391831.c.cdn77.org/171053f.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/171053-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/171053-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/171053-2.jpg"
+        ],
+        "new_releases": 185
+    },
+    "171037": {
+        "id": "171037",
+        "track_names": [
+            "Cobra Groove",
+            "Drakkar In The Air",
+            "Wilderness",
+            "Rogue Chapter"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165975-developer015-developer-archive-015",
+        "cat": "DEVELOPER015",
+        "label": "Developer Archive",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/12406-developer-archive",
+        "artist": "Developer",
+        "title": "Archive 015",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/171037.mp3",
+            "https://redeye-391831.c.cdn77.org/171037b.mp3",
+            "https://redeye-391831.c.cdn77.org/171037c.mp3",
+            "https://redeye-391831.c.cdn77.org/171037d.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/171037-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/171037-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/171037-2.jpg"
+        ],
+        "new_releases": 186
+    },
+    "171029": {
+        "id": "171029",
+        "track_names": [
+            "Tina",
+            "We Say So",
+            "I Like It : Void+1 Recordings,"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165963-vp1004v-furfriend-curious-yellow-ep",
+        "cat": "VP1004V",
+        "label": "Void! Recordings",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/29776-void!-recordings",
+        "artist": "Furfriend",
+        "title": "Curious Yellow EP",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/171029.mp3",
+            "https://redeye-391831.c.cdn77.org/171029b.mp3",
+            "https://redeye-391831.c.cdn77.org/171029c.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/171029-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/171029-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/171029-2.jpg"
+        ],
+        "new_releases": 187
+    },
+    "159309": {
+        "id": "159309",
+        "track_names": [
+            "Ride",
+            "Ride (Dagga Remix)",
+            "Drop Your Pants",
+            "Boy U Nasty"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/144489-dancetrax036-jensen-interceptor-and-dj-fuck-off-club-angels-ep",
+        "cat": "DANCETRAX036",
+        "label": "Dance Trax",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/18149-dance-trax",
+        "artist": "Jensen Interceptor & DJ Fuck Off",
+        "title": "Club Angels EP",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/159309.mp3",
+            "https://redeye-391831.c.cdn77.org/159309b.mp3",
+            "https://redeye-391831.c.cdn77.org/159309c.mp3",
+            "https://redeye-391831.c.cdn77.org/159309d.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/159309-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/159309-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/159309-2.jpg"
+        ],
+        "new_releases": 188
+    },
+    "151418": {
+        "id": "151418",
+        "track_names": [
+            "Sweat Ft DJ Deeon",
+            "Mcp (Swallowed My Tab Mix)",
+            "Ridin'"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/131075-dancetrax031-jensen-interceptor-ft-dj-deeon-master-control-program-ep",
+        "cat": "DANCETRAX031",
+        "label": "Dance Trax",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/18149-dance-trax",
+        "artist": "Jensen Interceptor Ft DJ Deeon",
+        "title": "Master Control Program EP",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/151418.mp3",
+            "https://redeye-391831.c.cdn77.org/151418b.mp3",
+            "https://redeye-391831.c.cdn77.org/151418c.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/151418-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/151418-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/151418-2.jpg"
+        ],
+        "new_releases": 189
+    },
+    "171043": {
+        "id": "171043",
+        "track_names": [
+            "Fight The Power (Elements.archive Aggression Mix)",
+            "Elements.archive 003-B The Detroit Church"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165982-e-a-003-k-o-e-elements-archive-elements-archive-003-[180-grams-transparent-green-vinyl-incl-inserts]",
+        "cat": "E-A-003",
+        "label": "Elements.archive",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/20974-elements-archive",
+        "artist": "K.O.E. / Elements.Archive",
+        "title": "Elements.Archive 003 [180 Grams / Transparent Green Vinyl / Incl. Inserts]",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/171043.mp3",
+            "https://redeye-391831.c.cdn77.org/171043b.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/171043-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/171043-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/171043-2.jpg"
+        ],
+        "new_releases": 190
+    },
+    "171044": {
+        "id": "171044",
+        "track_names": [
+            "S.m.o.n.",
+            "S.m.o.n. (Arnaud Le Texier Remix)",
+            "Border",
+            "Drive"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165983-eclltd024-kenny-dahl-plasma-[colored-vinyl]",
+        "cat": "ECLLTD024",
+        "label": "Eclectic Limited",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/25162-eclectic-limited",
+        "artist": "Kenny Dahl",
+        "title": "Plasma [colored Vinyl]",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/171044.mp3",
+            "https://redeye-391831.c.cdn77.org/171044b.mp3",
+            "https://redeye-391831.c.cdn77.org/171044c.mp3",
+            "https://redeye-391831.c.cdn77.org/171044d.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/171044-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/171044-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/171044-2.jpg"
+        ],
+        "new_releases": 191
+    },
+    "171042": {
+        "id": "171042",
+        "track_names": [
+            "Whirlwinds",
+            "Dna",
+            "Basic Solutions",
+            "In An Atom",
+            "The Achievers",
+            "Science",
+            "Natural Selection",
+            "Absolute Contagious"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165981-faut055-lewis-fautzi-manner-of-death-[printed-sleeve]",
+        "cat": "FAUT055",
+        "label": "Faut Section",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/23788-faut-section",
+        "artist": "Lewis Fautzi",
+        "title": "Manner Of Death [printed Sleeve]",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/171042.mp3",
+            "https://redeye-391831.c.cdn77.org/171042b.mp3",
+            "https://redeye-391831.c.cdn77.org/171042c.mp3",
+            "https://redeye-391831.c.cdn77.org/171042d.mp3",
+            "https://redeye-391831.c.cdn77.org/171042e.mp3",
+            "https://redeye-391831.c.cdn77.org/171042f.mp3",
+            "https://redeye-391831.c.cdn77.org/171042g.mp3",
+            "https://redeye-391831.c.cdn77.org/171042h.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/171042-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/171042-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/171042-2.jpg"
+        ],
+        "new_releases": 192
+    },
+    "171031": {
+        "id": "171031",
+        "track_names": [
+            "01 (Dissemble)",
+            "02 (Lived I)",
+            "03 (In A Hard Coat)",
+            "04 (Peace Family)",
+            "05 (Registered Feeling)",
+            "06 (Tongue Holds Back)",
+            "07 (The Mascot Of Insurmountable Breath)",
+            "08 (Fugitive Dust)",
+            "09 (Rent Forgivenes..."
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165969-go-005-middex-in-second-floor-and-third-floor-story",
+        "cat": "GO-005",
+        "label": "Goods Outward",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/30430-goods-outward",
+        "artist": "MIDDEX",
+        "title": "In Second Floor And Third Floor Story",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/171031.mp3",
+            "https://redeye-391831.c.cdn77.org/171031b.mp3",
+            "https://redeye-391831.c.cdn77.org/171031c.mp3",
+            "https://redeye-391831.c.cdn77.org/171031d.mp3",
+            "https://redeye-391831.c.cdn77.org/171031e.mp3",
+            "https://redeye-391831.c.cdn77.org/171031f.mp3",
+            "https://redeye-391831.c.cdn77.org/171031g.mp3",
+            "https://redeye-391831.c.cdn77.org/171031h.mp3",
+            "https://redeye-391831.c.cdn77.org/171031i.mp3",
+            "https://redeye-391831.c.cdn77.org/171031j.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/171031-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/171031-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/171031-2.jpg"
+        ],
+        "new_releases": 193
+    },
+    "170254": {
+        "id": "170254",
+        "track_names": [
+            "Hide And Seek",
+            "Dreaming With You",
+            "Double Sided",
+            "Running Home",
+            "Demon",
+            "Let It Go",
+            "After The Night",
+            "Get Ready",
+            "Gone Snow"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/164624-yykplplp-people-people-out-of-our-hands",
+        "cat": "YYKPLPLP",
+        "label": "Yyk No Label",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/19168-yyk-no-label",
+        "artist": "People People",
+        "title": "Out Of Our Hands",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/170254.mp3",
+            "https://redeye-391831.c.cdn77.org/170254b.mp3",
+            "https://redeye-391831.c.cdn77.org/170254c.mp3",
+            "https://redeye-391831.c.cdn77.org/170254d.mp3",
+            "https://redeye-391831.c.cdn77.org/170254e.mp3",
+            "https://redeye-391831.c.cdn77.org/170254f.mp3",
+            "https://redeye-391831.c.cdn77.org/170254g.mp3",
+            "https://redeye-391831.c.cdn77.org/170254h.mp3",
+            "https://redeye-391831.c.cdn77.org/170254i.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/170254-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170254-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170254-2.jpg"
+        ],
+        "new_releases": 194
+    },
+    "171035": {
+        "id": "171035",
+        "track_names": [
+            "A1 - Force-Lines",
+            "a2 - Spherology",
+            "a3 - Lansky\u2019s Vision",
+            "a4 - Psychic Tsunami",
+            "a5 - Look Out Through My Eyes",
+            "",
+            "b1 - Luxuria & Invidia",
+            "b2 - Liquid Breath",
+            "b3 - Machinic Unconscious",
+            "b4 - All Fortune..."
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165973-be012-rings-around-saturn-all-things-shining",
+        "cat": "BE012",
+        "label": "Best Effort",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/19204-best-effort",
+        "artist": "Rings Around Saturn",
+        "title": "All Things Shining",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/171035.mp3",
+            "https://redeye-391831.c.cdn77.org/171035b.mp3",
+            "https://redeye-391831.c.cdn77.org/171035c.mp3",
+            "https://redeye-391831.c.cdn77.org/171035d.mp3",
+            "https://redeye-391831.c.cdn77.org/171035e.mp3",
+            "https://redeye-391831.c.cdn77.org/171035f.mp3",
+            "https://redeye-391831.c.cdn77.org/171035g.mp3",
+            "https://redeye-391831.c.cdn77.org/171035h.mp3",
+            "https://redeye-391831.c.cdn77.org/171035i.mp3",
+            "https://redeye-391831.c.cdn77.org/171035j.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/171035-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/171035-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/171035-2.jpg"
+        ],
+        "new_releases": 195
+    },
+    "171027": {
+        "id": "171027",
+        "track_names": [
+            "Vortex",
+            "Roven",
+            "Infatuation",
+            "Glow"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165959-subl011-sciahri-pareidolia-i",
+        "cat": "SUBL011",
+        "label": "Sublunar",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/16450-sublunar",
+        "artist": "Sciahri",
+        "title": "Pareidolia I",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/171027.mp3",
+            "https://redeye-391831.c.cdn77.org/171027b.mp3",
+            "https://redeye-391831.c.cdn77.org/171027c.mp3",
+            "https://redeye-391831.c.cdn77.org/171027d.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/171027-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/171027-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/171027-2.jpg"
+        ],
+        "new_releases": 196
+    },
+    "77505": {
+        "id": "77505",
+        "track_names": [
+            "Let The Music Play",
+            "Let The Music Play (Dub Version) : Emergency,"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165795-emds6540-shannon-let-the-music-play",
+        "cat": "EMDS6540",
+        "label": "Emergency",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/16125-emergency",
+        "artist": "Shannon",
+        "title": "Let The Music Play",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/77505.mp3",
+            "https://redeye-391831.c.cdn77.org/77505b.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/77505-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/77505-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/77505-2.jpg"
+        ],
+        "new_releases": 197
+    },
+    "171034": {
+        "id": "171034",
+        "track_names": [
+            "A1 - Indo UK ranine",
+            "a2 - Z Yakoj Planety",
+            "b1 - Prosymo Do Haty",
+            "b2 - Kryvirvnya : Day By Day,"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165972-dbd011-sider-kryvorivnya-ep",
+        "cat": "DBD011",
+        "label": "Day By Day",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/19172-day-by-day",
+        "artist": "Sider",
+        "title": "Kryvorivnya EP",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/171034.mp3",
+            "https://redeye-391831.c.cdn77.org/171034b.mp3",
+            "https://redeye-391831.c.cdn77.org/171034c.mp3",
+            "https://redeye-391831.c.cdn77.org/171034d.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/171034-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/171034-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/171034-2.jpg"
+        ],
+        "new_releases": 198
+    },
+    "171032": {
+        "id": "171032",
+        "track_names": [
+            "1 Why (Rave Mix)",
+            "2 Hysteria",
+            "2 Why (Fjaak Remix)"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165970-crowd002-sol-ortega-hysteria",
+        "cat": "CROWD002",
+        "label": "Crowd",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/21877-crowd",
+        "artist": "Sol Ortega",
+        "title": "Hysteria",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/171032.mp3",
+            "https://redeye-391831.c.cdn77.org/171032b.mp3",
+            "https://redeye-391831.c.cdn77.org/171032c.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/171032-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/171032-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/171032-2.jpg"
+        ],
+        "new_releases": 199
+    },
+    "171041": {
+        "id": "171041",
+        "track_names": [
+            ""
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165979-lies-196-tmo-x-painkov-tmo-x-painkov",
+        "cat": "LIES-196",
+        "label": "L.i.e.s.",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/25186-l-i-e-s-",
+        "artist": "TMO X PAINKOV",
+        "title": "TMO X PAINKOV",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/171041.mp3",
+            "https://redeye-391831.c.cdn77.org/171041b.mp3",
+            "https://redeye-391831.c.cdn77.org/171041c.mp3",
+            "https://redeye-391831.c.cdn77.org/171041d.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/171041-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/171041-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/171041-2.jpg"
+        ],
+        "new_releases": 200
+    },
+    "171039": {
+        "id": "171039",
+        "track_names": [
+            "Algorithm",
+            "Cytoplasm",
+            "Delve",
+            "Industrial Sub",
+            "Mission Control",
+            "Reprise",
+            "Voltage",
+            "Dissolution",
+            "Xxx Scene",
+            "Textures",
+            "Visions",
+            "Launch Code",
+            "Resonator",
+            "The Future",
+            "House Authority",
+            "Tonight",
+            "..."
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165977-lies-197-tom-carruthers-future-wave-3x12",
+        "cat": "LIES-197",
+        "label": "L.i.e.s.",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/25186-l-i-e-s-",
+        "artist": "TOM CARRUTHERS",
+        "title": "FUTURE WAVE - 3x12\"",
+        "track_urls": [],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/171039-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/171039-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/171039-2.jpg"
+        ],
+        "new_releases": 201
+    },
+    "171017": {
+        "id": "171017",
+        "track_names": [
+            "A1. Neue Wellen",
+            "a2. Hard Timez (Lexus Or Justice)",
+            "b1. Ntndo Pitch",
+            "b2. Hard Timez (Just Ice)",
+            "b3. Wa\u00a8rmewellen : C\u00f3meme,"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165943-comeme059-bufiman-switch-beats-ep",
+        "cat": "COMEME059",
+        "label": "C\u00f3meme",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/16333-c\u00f3meme",
+        "artist": "Bufiman",
+        "title": "Switch Beats EP",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/171017.mp3",
+            "https://redeye-391831.c.cdn77.org/171017b.mp3",
+            "https://redeye-391831.c.cdn77.org/171017c.mp3",
+            "https://redeye-391831.c.cdn77.org/171017d.mp3",
+            "https://redeye-391831.c.cdn77.org/171017e.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/171017-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/171017-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/171017-2.jpg"
+        ],
+        "new_releases": 202
+    },
+    "171007": {
+        "id": "171007",
+        "track_names": [
+            "A1. Primitive Man",
+            "a2. K35",
+            "b1. Lunch Break",
+            "b2. Saz"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165929-yykordapm-chris-korda-primitive-man",
+        "cat": "YYKORDAPM",
+        "label": "Yyk No Label",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/19168-yyk-no-label",
+        "artist": "Chris Korda",
+        "title": "Primitive Man",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/171007.mp3",
+            "https://redeye-391831.c.cdn77.org/171007b.mp3",
+            "https://redeye-391831.c.cdn77.org/171007c.mp3",
+            "https://redeye-391831.c.cdn77.org/171007d.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/171007-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/171007-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/171007-2.jpg"
+        ],
+        "new_releases": 203
+    },
+    "171015": {
+        "id": "171015",
+        "track_names": [
+            "A1. Habitable",
+            "a2. Faster Depth",
+            "a3. Reflections",
+            "a4. Circuit Hum",
+            "a5. Eloquent",
+            "b1. Invisible Friend I",
+            "b2. Angels Of Combat",
+            "b3. Invisible Friend Ii",
+            "b4. Recurrent & EP hemera *",
+            "b5. Nereides"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165940-dais222lpc2-coh-radiant-faults",
+        "cat": "DAIS222LPC2",
+        "label": "Dais",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/24364-dais",
+        "artist": "CoH",
+        "title": "Radiant Faults",
+        "track_urls": [],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/171015-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/171015-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/171015-2.jpg"
+        ],
+        "new_releases": 204
+    },
+    "171023": {
+        "id": "171023",
+        "track_names": [
+            "A1 D. Carbone & Dstm - Never Stop Raveolution",
+            "a2 D. Carbone & D_b - The Bad Dance",
+            "a3 D. Carbone & Hypnoskull - We Are Stronger",
+            "b1 D. Carbone & Lucas Campagna - Social Pressure",
+            "b2 D. Carbone & Sdbx..."
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165954-rd05-d-carbone-raving-disorder-vol-5-[blue-marbled-vinyl]",
+        "cat": "RD05",
+        "label": "Carbone Records",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/18348-carbone-records",
+        "artist": "D. Carbone",
+        "title": "Raving Disorder Vol. 5 [blue Marbled Vinyl]",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/171023.mp3",
+            "https://redeye-391831.c.cdn77.org/171023b.mp3",
+            "https://redeye-391831.c.cdn77.org/171023c.mp3",
+            "https://redeye-391831.c.cdn77.org/171023d.mp3",
+            "https://redeye-391831.c.cdn77.org/171023e.mp3",
+            "https://redeye-391831.c.cdn77.org/171023f.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/171023-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/171023-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/171023-2.jpg"
+        ],
+        "new_releases": 205
+    },
+    "160799": {
+        "id": "160799",
+        "track_names": [
+            "DJ Esp \u2013 4 Days In The Laboratory",
+            "DJ Esp \u2013 New Body",
+            "Hoschi \u2013 The Mad Scientist"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/148023-communique008-dj-esp-hoshi-the-mad-scientists",
+        "cat": "COMMUNIQUE008",
+        "label": "Communique Records",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/27683-communique-records",
+        "artist": "DJ ESP/ HOSHI",
+        "title": "The Mad Scientists",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/160799.mp3",
+            "https://redeye-391831.c.cdn77.org/160799b.mp3",
+            "https://redeye-391831.c.cdn77.org/160799c.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/160799-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/160799-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/160799-2.jpg"
+        ],
+        "new_releases": 206
+    },
+    "169893": {
+        "id": "169893",
+        "track_names": [
+            "Bizz Od - One Two",
+            "Fit Siegel - No Feedback",
+            "Jared Wilson - Mind Travel"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/163917-fit-024-fit-siegel-jared-wilson-bizz-od-collection-v1",
+        "cat": "FIT-024",
+        "label": "Fit Sound",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/5252-fit-sound",
+        "artist": "FIT SIEGEL / JARED WILSON / BIZZ OD",
+        "title": "COLLECTION V1",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/169893.mp3",
+            "https://redeye-391831.c.cdn77.org/169893b.mp3",
+            "https://redeye-391831.c.cdn77.org/169893c.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/169893-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/169893-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/169893-2.jpg"
+        ],
+        "new_releases": 207
+    },
+    "171024": {
+        "id": "171024",
+        "track_names": [
+            "Explain",
+            "Flightmode",
+            "Level Up",
+            "Peach"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165955-oo001-flits-and-beau-didier-distance-ep",
+        "cat": "OO001",
+        "label": "Orbital Oscillation",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/30428-orbital-oscillation",
+        "artist": "Flits & Beau Didier",
+        "title": "Distance EP",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/171024.mp3",
+            "https://redeye-391831.c.cdn77.org/171024b.mp3",
+            "https://redeye-391831.c.cdn77.org/171024c.mp3",
+            "https://redeye-391831.c.cdn77.org/171024d.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/171024-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/171024-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/171024-2.jpg"
+        ],
+        "new_releases": 208
+    },
+    "171011": {
+        "id": "171011",
+        "track_names": [
+            "A1 - Energy Flash (Original Mix)",
+            "a2 - Energy Flash (Voiski Remix)",
+            "b1 - Gonno - Final Hate (Original Mix)",
+            "b2 - Arabica (Original Mix)"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165933-jin08-gonno-jin08",
+        "cat": "JIN08",
+        "label": "Jin Records",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/30425-jin-records",
+        "artist": "Gonno",
+        "title": "JIN08",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/171011.mp3",
+            "https://redeye-391831.c.cdn77.org/171011b.mp3",
+            "https://redeye-391831.c.cdn77.org/171011c.mp3",
+            "https://redeye-391831.c.cdn77.org/171011d.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/171011-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/171011-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/171011-2.jpg"
+        ],
+        "new_releases": 209
+    },
+    "171008": {
+        "id": "171008",
+        "track_names": [
+            "Wittow",
+            "Xyloflux Feat. Perm",
+            "Uj\u00eb Shiu",
+            "Omu",
+            "Tenure Track I Feat. Perm"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165930-masa006-hal-masa-006-[turquoise-vinyl-printed-sleeve]",
+        "cat": "MASA006",
+        "label": "Masa Series",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/24448-masa-series",
+        "artist": "HAL",
+        "title": "MASA 006 [turquoise Vinyl / Printed Sleeve]",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/171008.mp3",
+            "https://redeye-391831.c.cdn77.org/171008b.mp3",
+            "https://redeye-391831.c.cdn77.org/171008c.mp3",
+            "https://redeye-391831.c.cdn77.org/171008d.mp3",
+            "https://redeye-391831.c.cdn77.org/171008e.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/171008-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/171008-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/171008-2.jpg"
+        ],
+        "new_releases": 210
+    },
+    "171006": {
+        "id": "171006",
+        "track_names": [
+            "A1. Are We Ever Leaving Here?",
+            "a2. Are We Ever Leaving Here? (Ocb Remix)",
+            "a3. Parallaxing",
+            "b1.space Nugz",
+            "b2. Space Nugz (Boulderhead Remix)"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165928-oath012-loz-goddard-are-we-leaving-here?",
+        "cat": "OATH012",
+        "label": "Oath",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/24223-oath",
+        "artist": "Loz Goddard",
+        "title": "Are We Leaving Here?",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/171006.mp3",
+            "https://redeye-391831.c.cdn77.org/171006b.mp3",
+            "https://redeye-391831.c.cdn77.org/171006c.mp3",
+            "https://redeye-391831.c.cdn77.org/171006d.mp3",
+            "https://redeye-391831.c.cdn77.org/171006e.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/171006-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/171006-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/171006-2.jpg"
+        ],
+        "new_releases": 211
+    },
+    "171010": {
+        "id": "171010",
+        "track_names": [
+            "Nervous Breakdown",
+            "Celestial Sphere",
+            "Hypophysis",
+            "Frequent Flyer"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165932-editselect160v-milo-raad-celestial-sphere-[180-grams]",
+        "cat": "EDITSELECT160V",
+        "label": "Edit Select Records",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/15630-edit-select-records",
+        "artist": "Milo Raad",
+        "title": "Celestial Sphere [180 Grams]",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/171010.mp3",
+            "https://redeye-391831.c.cdn77.org/171010b.mp3",
+            "https://redeye-391831.c.cdn77.org/171010c.mp3",
+            "https://redeye-391831.c.cdn77.org/171010d.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/171010-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/171010-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/171010-2.jpg"
+        ],
+        "new_releases": 212
+    },
+    "171018": {
+        "id": "171018",
+        "track_names": [
+            "A1. Price We Pay (Orbital Remix)",
+            "a2. Price We Pay (Giorgia Angiuli Remix)",
+            "b1. Lifelike",
+            "b2. Soon After",
+            "b3. Mona"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165944-4w765-octave-one-never-on-sunday-vol-2-incl-orbital-giorgia-angiuli-remix",
+        "cat": "4W765",
+        "label": "430 West",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/3657-430-west",
+        "artist": "Octave One",
+        "title": "Never On Sunday Vol. 2 (Incl. Orbital / Giorgia Angiuli Remix)",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/171018.mp3",
+            "https://redeye-391831.c.cdn77.org/171018b.mp3",
+            "https://redeye-391831.c.cdn77.org/171018c.mp3",
+            "https://redeye-391831.c.cdn77.org/171018d.mp3",
+            "https://redeye-391831.c.cdn77.org/171018e.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/171018-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/171018-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/171018-2.jpg"
+        ],
+        "new_releases": 213
+    },
+    "171021": {
+        "id": "171021",
+        "track_names": [
+            "Membrana",
+            "Baixo Rolante",
+            "S7",
+            "Rasgada",
+            "Deleite Matinal"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165952-mdwxlp008-saag-membrana",
+        "cat": "MDWXLP008",
+        "label": "Modwerks",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/25287-modwerks",
+        "artist": "Saag",
+        "title": "Membrana",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/171021.mp3",
+            "https://redeye-391831.c.cdn77.org/171021b.mp3",
+            "https://redeye-391831.c.cdn77.org/171021c.mp3",
+            "https://redeye-391831.c.cdn77.org/171021d.mp3",
+            "https://redeye-391831.c.cdn77.org/171021e.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/171021-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/171021-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/171021-2.jpg"
+        ],
+        "new_releases": 215
+    },
+    "171019": {
+        "id": "171019",
+        "track_names": [
+            "A. U Move",
+            "b1. Follow Me",
+            "b2. I See You : Lone Romantic,"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165945-lr026-third-culture-u-move-ep",
+        "cat": "LR026",
+        "label": "Lone Romantic",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/17212-lone-romantic",
+        "artist": "Third Culture",
+        "title": "U Move EP",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/171019.mp3",
+            "https://redeye-391831.c.cdn77.org/171019b.mp3",
+            "https://redeye-391831.c.cdn77.org/171019c.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/171019-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/171019-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/171019-2.jpg"
+        ],
+        "new_releases": 216
+    },
+    "171012": {
+        "id": "171012",
+        "track_names": [
+            "A1. Daino \u2013 First Takes",
+            "a2. Larry Quest \u2013 Frenchie Knuckles",
+            "a3. Poko - Desolate",
+            "a4. Ka\u00a7par \u2013 Head Down",
+            "b1. H\u00e9lder Russo - Morabeza",
+            "b2. Terra Ch\u00e3 \u2013 Inquieto Moreno (Moreno \u00c1cido Remix)",
+            "b3. Cyclon..."
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165935-prcbslp026-various-artists-conversor",
+        "cat": "PRCBSLP026",
+        "label": "Percebes M\u00fasica",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/25328-percebes-m\u00fasica",
+        "artist": "Various Artists",
+        "title": "Conversor",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/171012.mp3",
+            "https://redeye-391831.c.cdn77.org/171012b.mp3",
+            "https://redeye-391831.c.cdn77.org/171012c.mp3",
+            "https://redeye-391831.c.cdn77.org/171012d.mp3",
+            "https://redeye-391831.c.cdn77.org/171012e.mp3",
+            "https://redeye-391831.c.cdn77.org/171012f.mp3",
+            "https://redeye-391831.c.cdn77.org/171012g.mp3",
+            "https://redeye-391831.c.cdn77.org/171012h.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/171012-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/171012-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/171012-2.jpg"
+        ],
+        "new_releases": 217
+    },
+    "171020": {
+        "id": "171020",
+        "track_names": [
+            "01 Heat",
+            "02 The Deep",
+            "03 Stream",
+            "04 Glub",
+            "05 Motherboard",
+            "06 You",
+            "07 Replace Image",
+            "08 Echo Drop",
+            "09 Elektri",
+            "10 Ufonic"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165950-157dsr-vc-118a-waves-of-change",
+        "cat": "157DSR",
+        "label": "Delsin",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/24817-delsin",
+        "artist": "VC",
+        "title": "118A - Waves Of Change",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/171020.mp3",
+            "https://redeye-391831.c.cdn77.org/171020b.mp3",
+            "https://redeye-391831.c.cdn77.org/171020c.mp3",
+            "https://redeye-391831.c.cdn77.org/171020d.mp3",
+            "https://redeye-391831.c.cdn77.org/171020e.mp3",
+            "https://redeye-391831.c.cdn77.org/171020f.mp3",
+            "https://redeye-391831.c.cdn77.org/171020g.mp3",
+            "https://redeye-391831.c.cdn77.org/171020h.mp3",
+            "https://redeye-391831.c.cdn77.org/171020i.mp3",
+            "https://redeye-391831.c.cdn77.org/171020j.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/171020-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/171020-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/171020-2.jpg"
+        ],
+        "new_releases": 218
+    },
+    "147002": {
+        "id": "147002",
+        "track_names": [
+            "Somewhere Else",
+            "Nu-Tronik"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/123514-acolour024-3-elements-tevatron-",
+        "cat": "ACOLOUR024",
+        "label": "A Colourful Storm",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/13755-a-colourful-storm",
+        "artist": "3 Elements / Tevatron",
+        "title": "3 Elements / Tevatron",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/147002.mp3",
+            "https://redeye-391831.c.cdn77.org/147002b.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/147002-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/147002-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/147002-2.jpg"
+        ],
+        "new_releases": 219
+    },
+    "171003": {
+        "id": "171003",
+        "track_names": [
+            "Sunshine 303",
+            "Diesel",
+            "45light",
+            "Trick Your Mind",
+            "Extrazma"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165920-flatltd004-acidulant-sunshine-303-ep-[yellow-vinyl-vinyl-only-200-copies-limited]",
+        "cat": "FLATLTD004",
+        "label": "Flatlife Limited",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/30422-flatlife-limited",
+        "artist": "Acidulant",
+        "title": "Sunshine 303 EP [yellow Vinyl / Vinyl Only / 200 Copies Limited]",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/171003.mp3",
+            "https://redeye-391831.c.cdn77.org/171003b.mp3",
+            "https://redeye-391831.c.cdn77.org/171003c.mp3",
+            "https://redeye-391831.c.cdn77.org/171003d.mp3",
+            "https://redeye-391831.c.cdn77.org/171003e.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/171003-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/171003-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/171003-2.jpg"
+        ],
+        "new_releases": 220
+    },
+    "170990": {
+        "id": "170990",
+        "track_names": [
+            "A. Claudio Prc - Unda Part I",
+            "b. Claudio Prc - Unda Part Ii",
+            ""
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165896-01207-claudio-prc-unda",
+        "cat": "01207",
+        "label": "012",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/23550-012",
+        "artist": "Claudio PRC",
+        "title": "Unda",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/170990.mp3",
+            "https://redeye-391831.c.cdn77.org/170990b.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/170990-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170990-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170990-2.jpg"
+        ],
+        "new_releases": 221
+    },
+    "171004": {
+        "id": "171004",
+        "track_names": [
+            "Tribe Substance",
+            "Cabinet Of Furiosity",
+            "Interdimensional",
+            "Slippery"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165923-prrukblk090-ecilo-tribe-substance-ep-[black-marbled-vinyl-label-sleeve]",
+        "cat": "PRRUKBLK090",
+        "label": "Planet Rhythm",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/6684-planet-rhythm",
+        "artist": "Ecilo",
+        "title": "Tribe Substance EP [black Marbled Vinyl / Label Sleeve]",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/171004.mp3",
+            "https://redeye-391831.c.cdn77.org/171004b.mp3",
+            "https://redeye-391831.c.cdn77.org/171004c.mp3",
+            "https://redeye-391831.c.cdn77.org/171004d.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/171004-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/171004-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/171004-2.jpg"
+        ],
+        "new_releases": 222
+    },
+    "171001": {
+        "id": "171001",
+        "track_names": [
+            "A1) Zuud 04:33 Min",
+            "a2) Taivshral 03:07 Min",
+            "a3) Duulnaa 03:02 Min",
+            "a4) Temeen Deerees Naran Oirhon 03:42 Min",
+            "a5) Vogl 04:20 Min",
+            "b1) Ulaan 03:30 Min",
+            "b2) Libelle 02:38 Min",
+            "b3) Picture / Three Shado..."
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165912-sqm017-enji-ulaan-lp-180g",
+        "cat": "SQM017",
+        "label": "Squama",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/21181-squama",
+        "artist": "Enji",
+        "title": "Ulaan (LP,180G)",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/171001.mp3",
+            "https://redeye-391831.c.cdn77.org/171001b.mp3",
+            "https://redeye-391831.c.cdn77.org/171001c.mp3",
+            "https://redeye-391831.c.cdn77.org/171001d.mp3",
+            "https://redeye-391831.c.cdn77.org/171001e.mp3",
+            "https://redeye-391831.c.cdn77.org/171001f.mp3",
+            "https://redeye-391831.c.cdn77.org/171001g.mp3",
+            "https://redeye-391831.c.cdn77.org/171001h.mp3",
+            "https://redeye-391831.c.cdn77.org/171001i.mp3",
+            "https://redeye-391831.c.cdn77.org/171001j.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/171001-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/171001-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/171001-2.jpg"
+        ],
+        "new_releases": 223
+    },
+    "77530": {
+        "id": "77530",
+        "track_names": [
+            "E 1 01 Something About This Landscape For Ensemble 22'55 Side 2 02 Dirty And Light 9'34 03 Dark Under Stars",
+            "9'51",
+            ""
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165916-srv536-fred-frith-and-ensemble-musiques-nouvelles-something-about-this-landscape-",
+        "cat": "SRV536",
+        "label": "Sub Rosa",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/23441-sub-rosa",
+        "artist": "Fred Frith & Ensemble Musiques Nouvelles",
+        "title": "Something About This Landscape..",
+        "track_urls": [],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/77530-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/77530-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/77530-2.jpg"
+        ],
+        "new_releases": 224
+    },
+    "171000": {
+        "id": "171000",
+        "track_names": [
+            "Tracklisting:",
+            "disc 1: Veneer Remastered:",
+            "1. Slow Moves",
+            "2. Remain",
+            "3. Lovestain",
+            "4. Heartbeats",
+            "5. Crosses",
+            "6. Deadweight On Velveteen",
+            "7. All You Deliver",
+            "8. Stay In The Shade",
+            "9. Hints",
+            "10. Save Y..."
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165911-pfgxx066-jos\u00e9-gonz\u00e1lez-veneer-20th-anniversary-deluxe-edition-2lp",
+        "cat": "PFGXX066",
+        "label": "Peacefrog Records",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/4522-peacefrog-records",
+        "artist": "Jos\u00e9 Gonz\u00e1lez",
+        "title": "Veneer (20th Anniversary Deluxe Edition) 2LP",
+        "track_urls": [],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/171000-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/171000-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/171000-2.jpg"
+        ],
+        "new_releases": 225
+    },
+    "169215": {
+        "id": "169215",
+        "track_names": [
+            "1. Mid Sentence",
+            "2. Favor",
+            "3. Slither",
+            "4. Timber",
+            "5. Xenil_",
+            "6. Synthetic Lifeforms",
+            "7. Pimps Up",
+            "8. Hold That Thought"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/162738-hmr-001-mgun-from-time-to-time-2x12",
+        "cat": "HMR-001",
+        "label": "Hold Me Recordings",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/29987-hold-me-recordings",
+        "artist": "MGUN",
+        "title": "From Time To Time - 2x12\"",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/169215.mp3",
+            "https://redeye-391831.c.cdn77.org/169215b.mp3",
+            "https://redeye-391831.c.cdn77.org/169215c.mp3",
+            "https://redeye-391831.c.cdn77.org/169215d.mp3",
+            "https://redeye-391831.c.cdn77.org/169215e.mp3",
+            "https://redeye-391831.c.cdn77.org/169215f.mp3",
+            "https://redeye-391831.c.cdn77.org/169215g.mp3",
+            "https://redeye-391831.c.cdn77.org/169215h.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/169215-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/169215-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/169215-2.jpg"
+        ],
+        "new_releases": 226
+    },
+    "170999": {
+        "id": "170999",
+        "track_names": [
+            "Five Finger Discount",
+            "Five Finger Discount (Camea Remix)",
+            "Deadline Disco",
+            "Deadline Disco (Hardt Antoine)"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165910-kioskid021-mila-stern-five-finger-ep-camea-remix-hardt-antoine-remix",
+        "cat": "KIOSKID021",
+        "label": "Kiosk I.d",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/22248-kiosk-i-d",
+        "artist": "Mila Stern",
+        "title": "Five Finger EP - Camea Remix/Hardt Antoine Remix",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/170999.mp3",
+            "https://redeye-391831.c.cdn77.org/170999b.mp3",
+            "https://redeye-391831.c.cdn77.org/170999c.mp3",
+            "https://redeye-391831.c.cdn77.org/170999d.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/170999-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170999-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170999-2.jpg"
+        ],
+        "new_releases": 227
+    },
+    "170987": {
+        "id": "170987",
+        "track_names": [
+            "01. Structure 1",
+            "02. Structure 2",
+            "03. Structure 3",
+            "04. Structure 4",
+            ""
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165887-hjrlp054-moritz-von-oswald-trio-horizontal-structures-2x12",
+        "cat": "HJRLP054",
+        "label": "Honest Jon's Records",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/26675-honest-jons-records",
+        "artist": "Moritz Von Oswald Trio",
+        "title": "Horizontal Structures - 2x12\"",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/170987.mp3",
+            "https://redeye-391831.c.cdn77.org/170987b.mp3",
+            "https://redeye-391831.c.cdn77.org/170987c.mp3",
+            "https://redeye-391831.c.cdn77.org/170987d.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/170987-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170987-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170987-2.jpg"
+        ],
+        "new_releases": 228
+    },
+    "77532": {
+        "id": "77532",
+        "track_names": [
+            "1",
+            "afloat In Fog And Feathers, 2 Good Birds, Goodnight, 3 The Lighthouse Trembles, 4 Black Sea, 1967, 5 Mermaids, 6 A Visit To",
+            "yasmin."
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165918-tsr27lp-natalia-beylis-\u2013-mermaids",
+        "cat": "TSR27LP",
+        "label": "Touch Sensitive",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/25233-touch-sensitive",
+        "artist": "Natalia Beylis \u2013 Mermaid",
+        "title": "Natalia Beylis \u2013 Mermaids",
+        "track_urls": [],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/77532-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/77532-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/77532-2.jpg"
+        ],
+        "new_releases": 229
+    },
+    "170993": {
+        "id": "170993",
+        "track_names": [
+            "A. End Is Important",
+            "b. Here To Know"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165899-wtn702-odd-nosdam-end-is-important",
+        "cat": "WTN702",
+        "label": "Where To Now",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/12922-where-to-now",
+        "artist": "Odd Nosdam",
+        "title": "End Is Important",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/170993.mp3",
+            "https://redeye-391831.c.cdn77.org/170993b.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/170993-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170993-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170993-2.jpg"
+        ],
+        "new_releases": 230
+    },
+    "77531": {
+        "id": "77531",
+        "track_names": [
+            "A 01. Patience 14'43 I. Au Ruiseau Des Departs Ii. La M\u00e9moire Des Orages 02. Patience 7'43 Iii. La Lenteur De",
+            "la Foudre Iv. C\u00e9l\u00e9rit\u00e9 Sauvage Side B 03. Mighty Pumpkin 8'59 04. Black Furrows 10'17 Sid..."
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165917-srv544-ogives-la-m\u00e9moire-des-orages",
+        "cat": "SRV544",
+        "label": "Sub Rosa",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/23441-sub-rosa",
+        "artist": "Ogives",
+        "title": "La M\u00e9moire Des Orages",
+        "track_urls": [],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/77531-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/77531-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/77531-2.jpg"
+        ],
+        "new_releases": 231
+    },
+    "170988": {
+        "id": "170988",
+        "track_names": [
+            "A1. Gravitation",
+            "a2. Mono 90",
+            "b1. Chug",
+            "b2. Don\u2019t Fm"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165894-dontltd004-rob-stow-homecoming-ep",
+        "cat": "DONTLTD004",
+        "label": "Don\u2019t",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/27461-don\u2019t",
+        "artist": "Rob Stow",
+        "title": "Homecoming EP",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/170988.mp3",
+            "https://redeye-391831.c.cdn77.org/170988b.mp3",
+            "https://redeye-391831.c.cdn77.org/170988c.mp3",
+            "https://redeye-391831.c.cdn77.org/170988d.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/170988-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170988-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170988-2.jpg"
+        ],
+        "new_releases": 232
+    },
+    "170986": {
+        "id": "170986",
+        "track_names": [
+            "B01v",
+            "A57v",
+            "A56 (Take 2)",
+            "A58v (Take 3)"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165885-chxiv03b01v-sato-aka-satoshi-tomiie-b01v-",
+        "cat": "CHXIV03B01V",
+        "label": "Chapelle Xiv Music",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/27770-chapelle-xiv-music",
+        "artist": "Sato Aka Satoshi Tomiie",
+        "title": "B01V",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/170986.mp3",
+            "https://redeye-391831.c.cdn77.org/170986b.mp3",
+            "https://redeye-391831.c.cdn77.org/170986c.mp3",
+            "https://redeye-391831.c.cdn77.org/170986d.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/170986-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170986-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170986-2.jpg"
+        ],
+        "new_releases": 234
+    },
+    "159827": {
+        "id": "159827",
+        "track_names": [
+            "Moan (Trentemoller Remix)",
+            "Moan (Radioslave Remix)"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/145340-pfr81-trentemoller-moan",
+        "cat": "PFR81",
+        "label": "Poker Flat Recordings",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/18635-poker-flat-recordings",
+        "artist": "Trentemoller",
+        "title": "Moan",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/159827.mp3",
+            "https://redeye-391831.c.cdn77.org/159827b.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/159827-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/159827-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/159827-2.jpg"
+        ],
+        "new_releases": 235
+    },
+    "3200702": {
+        "id": "3200702",
+        "track_names": [
+            "A1. Todi",
+            "a2. Koi",
+            "a3. Galiyon",
+            "a4. Mainhan",
+            "a5. Kanchi",
+            "b1. Arushi",
+            "b2. Ahir",
+            "b3. Seekhlo",
+            "b4. Utano Trio",
+            "b5. Bayanaka"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165900-skrr005-up-high-collective-koinonia",
+        "cat": "SKRR005",
+        "label": "San-Kofa Rhythms Records",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/30418-san-kofa-rhythms-records",
+        "artist": "UP HIGH COLLECTIVE",
+        "title": "KOINONIA",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/3200702.mp3",
+            "https://redeye-391831.c.cdn77.org/3200702b.mp3",
+            "https://redeye-391831.c.cdn77.org/3200702c.mp3",
+            "https://redeye-391831.c.cdn77.org/3200702d.mp3",
+            "https://redeye-391831.c.cdn77.org/3200702e.mp3",
+            "https://redeye-391831.c.cdn77.org/3200702f.mp3",
+            "https://redeye-391831.c.cdn77.org/3200702g.mp3",
+            "https://redeye-391831.c.cdn77.org/3200702h.mp3",
+            "https://redeye-391831.c.cdn77.org/3200702i.mp3",
+            "https://redeye-391831.c.cdn77.org/3200702j.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/3200702-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/3200702-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/3200702-2.jpg"
+        ],
+        "new_releases": 236
+    },
+    "171005": {
+        "id": "171005",
+        "track_names": [
+            "That\u2019s What It\u2019s All About (Tik Tok Taylor Remix)",
+            "Troublemaker",
+            "Acid Rock",
+            "Illegal Rave Parties"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165924-sufod006-various-artists-suf-overdose-006-benji303-and-lee-s-adhd-andrey-sitrus-acid-steve",
+        "cat": "SUFOD006",
+        "label": "Suf Overdose",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/13432-suf-overdose",
+        "artist": "Various Artists",
+        "title": "Suf Overdose 006 - Benji303 & Lee S. - ADHD - Andrey Sitrus - Acid Steve",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/171005.mp3",
+            "https://redeye-391831.c.cdn77.org/171005b.mp3",
+            "https://redeye-391831.c.cdn77.org/171005c.mp3",
+            "https://redeye-391831.c.cdn77.org/171005d.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/171005-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/171005-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/171005-2.jpg"
+        ],
+        "new_releases": 237
+    },
+    "77527": {
+        "id": "77527",
+        "track_names": [
+            "A1. Kohde (2023 Remaster)",
+            "a2. Untitled (2023 Remaster)",
+            "a3. Poiko (2023 Remaster)",
+            "b1. Notke (2023 Remaster)",
+            "b2. Ele (2023 Remaster)",
+            "b3. Untitled (2023 Remaster)"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165905-keplarrev16lp-vladislav-delay-entain",
+        "cat": "KEPLARREV16LP",
+        "label": "Keplar",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/23544-keplar",
+        "artist": "Vladislav Delay",
+        "title": "Entain",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/77527.mp3",
+            "https://redeye-391831.c.cdn77.org/77527b.mp3",
+            "https://redeye-391831.c.cdn77.org/77527c.mp3",
+            "https://redeye-391831.c.cdn77.org/77527d.mp3",
+            "https://redeye-391831.c.cdn77.org/77527e.mp3",
+            "https://redeye-391831.c.cdn77.org/77527f.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/77527-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/77527-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/77527-2.jpg"
+        ],
+        "new_releases": 238
+    },
+    "170983": {
+        "id": "170983",
+        "track_names": [
+            "Sweat",
+            "Reason",
+            "Distorted Memories",
+            "Crab : Cooked,"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165882-cooked10-yan-cook-distorted-memories-ep",
+        "cat": "COOKED10",
+        "label": "Cooked",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/16648-cooked",
+        "artist": "Yan Cook",
+        "title": "Distorted Memories EP",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/170983.mp3",
+            "https://redeye-391831.c.cdn77.org/170983b.mp3",
+            "https://redeye-391831.c.cdn77.org/170983c.mp3",
+            "https://redeye-391831.c.cdn77.org/170983d.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/170983-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170983-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170983-2.jpg"
+        ],
+        "new_releases": 239
+    },
+    "77529": {
+        "id": "77529",
+        "track_names": [
+            "Side A. 1 Eyeroll (W Elvin Brandhi) 2 Malikan (W Abdullah",
+            "miniawy) 3 Move On (W Iceboy Violet) 4 99 Favor Taste (W Juliana Huxtable) 5 Nontrivial Differential (W Elvin Brandhi) 6 Partygoodtime",
+            "(W Le..."
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165915-hk053lp-z\u00edur-\u2013-eyerol",
+        "cat": "HK053LP",
+        "label": "Hakuna Kulala/nyege Nyege Tapes",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/26376-hakuna-kulala-nyege-nyege-tapes",
+        "artist": "Z\u00edur \u2013 Eyero",
+        "title": "Z\u00edur \u2013 Eyerol",
+        "track_urls": [],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/77529-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/77529-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/77529-2.jpg"
+        ],
+        "new_releases": 240
+    },
+    "170968": {
+        "id": "170968",
+        "track_names": [
+            "T\u00e4nzer (Wassermann Tubass Mix)",
+            "Unsichtbare T\u00e4nzer (Wassermann Sog Mix)",
+            "Unsichtbare T\u00e4nzer",
+            "Unsichtbare T\u00e4nzer (Wassermann Rausch Mix)"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165840-kompakt469-andreas-dorau-3-remixe-f\u00fcr-andreas-dorau-unsichtbare-t\u00e4nzer",
+        "cat": "KOMPAKT469",
+        "label": "Kompakt",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/4036-kompakt",
+        "artist": "Andreas Dorau",
+        "title": "3 Remixe F\u00fcr Andreas Dorau - Unsichtbare T\u00e4nzer",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/170968.mp3",
+            "https://redeye-391831.c.cdn77.org/170968b.mp3",
+            "https://redeye-391831.c.cdn77.org/170968c.mp3",
+            "https://redeye-391831.c.cdn77.org/170968d.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/170968-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170968-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170968-2.jpg"
+        ],
+        "new_releases": 241
+    },
+    "170977": {
+        "id": "170977",
+        "track_names": [
+            "01: Ni Upanja, Ni Strahu / No Hope, No Fear",
+            "02: Am I?",
+            "03: Blato / Mud",
+            "04: Tuxido",
+            "05: Ogolelo Mesto / Rugged City",
+            "06: Goli, Uniformirani, Mrtvi / Naked, Uniformed, Dead",
+            "07: U Crnom / In Black",
+            "08..."
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165859-mma02-borghesia-ogolelo-mesto",
+        "cat": "MMA02",
+        "label": "Matrix Music",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/30413-matrix-music",
+        "artist": "Borghesia",
+        "title": "Ogolelo Mesto",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/170977.mp3",
+            "https://redeye-391831.c.cdn77.org/170977b.mp3",
+            "https://redeye-391831.c.cdn77.org/170977c.mp3",
+            "https://redeye-391831.c.cdn77.org/170977d.mp3",
+            "https://redeye-391831.c.cdn77.org/170977e.mp3",
+            "https://redeye-391831.c.cdn77.org/170977f.mp3",
+            "https://redeye-391831.c.cdn77.org/170977g.mp3",
+            "https://redeye-391831.c.cdn77.org/170977h.mp3",
+            "https://redeye-391831.c.cdn77.org/170977i.mp3",
+            "https://redeye-391831.c.cdn77.org/170977j.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/170977-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170977-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170977-2.jpg"
+        ],
+        "new_releases": 242
+    },
+    "170970": {
+        "id": "170970",
+        "track_names": [
+            "Joy",
+            "Light And Dust",
+            "Morphingeist",
+            "Hans Rivers",
+            "Dubby Doo",
+            "Summer Photons",
+            "Lovex",
+            "Autumn Rivers",
+            "Trumpets Of Andromeda"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165845-rm2102-dasha-rush-contemplating",
+        "cat": "RM2102",
+        "label": "Raster",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/20917-raster",
+        "artist": "Dasha Rush",
+        "title": "Contemplating",
+        "track_urls": [],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/170970-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170970-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170970-2.jpg"
+        ],
+        "new_releases": 243
+    },
+    "170981": {
+        "id": "170981",
+        "track_names": [
+            ": Ces Records",
+            ""
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165876-ces045-natalie-beridze-spines",
+        "cat": "CES045",
+        "label": "Ces Records",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/23536-ces-records",
+        "artist": "Natalie Beridze",
+        "title": "Spines",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/170981.mp3",
+            "https://redeye-391831.c.cdn77.org/170981b.mp3",
+            "https://redeye-391831.c.cdn77.org/170981c.mp3",
+            "https://redeye-391831.c.cdn77.org/170981d.mp3",
+            "https://redeye-391831.c.cdn77.org/170981e.mp3",
+            "https://redeye-391831.c.cdn77.org/170981f.mp3",
+            "https://redeye-391831.c.cdn77.org/170981g.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/170981-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170981-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170981-2.jpg"
+        ],
+        "new_releases": 244
+    },
+    "118225": {
+        "id": "118225",
+        "track_names": [
+            "Thousand Knives Of",
+            "Plastic Bamboo"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/84247-wwslp24-ryuichi-sakamoto-",
+        "cat": "WWSLP24",
+        "label": "Wewantsounds",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/18707-wewantsounds-",
+        "artist": "RYUICHI SAKAMOTO",
+        "title": "RYUICHI SAKAMOTO",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/118225.mp3",
+            "https://redeye-391831.c.cdn77.org/118225b.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/118225-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/118225-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/118225-2.jpg"
+        ],
+        "new_releases": 245
+    },
+    "156980": {
+        "id": "156980",
+        "track_names": [
+            "A Wongga Dance Song",
+            "The Dreaming",
+            "A Rain Song",
+            "Dolphins",
+            "A Human Tube",
+            "Adelic Penguins",
+            "A Carved Stone",
+            "Ulu Watu"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/140196-wwslp43-ryuichi-sakamoto-esperanto",
+        "cat": "WWSLP43",
+        "label": "Wewantsounds",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/18707-wewantsounds-",
+        "artist": "RYUICHI SAKAMOTO",
+        "title": "ESPERANTO",
+        "track_urls": [],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/156980-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/156980-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/156980-2.jpg"
+        ],
+        "new_releases": 246
+    },
+    "170973": {
+        "id": "170973",
+        "track_names": [
+            "A1 Eine Wolke Im Wald, A2 Cosmic Fick, A3 Hydraulicmeistershalbtagstanz,",
+            "a4 Winterschlafs\u00fc\u00dfb\u00e4rentraum, B1 Ich Wei\u00df Was, B2 Gezischel Im",
+            "fremdorient, B3 Your Love Stinks, B4 Wobblerblobstock, B5 Mang..."
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165848-imara5-schlammpeitziger-freundlichbaracudamelodieliedgut",
+        "cat": "IMARA5",
+        "label": "Imara",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/25872-imara",
+        "artist": "Schlammpeitziger",
+        "title": "Freundlichbaracudamelodieliedgut",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/170973.mp3",
+            "https://redeye-391831.c.cdn77.org/170973b.mp3",
+            "https://redeye-391831.c.cdn77.org/170973c.mp3",
+            "https://redeye-391831.c.cdn77.org/170973d.mp3",
+            "https://redeye-391831.c.cdn77.org/170973e.mp3",
+            "https://redeye-391831.c.cdn77.org/170973f.mp3",
+            "https://redeye-391831.c.cdn77.org/170973g.mp3",
+            "https://redeye-391831.c.cdn77.org/170973h.mp3",
+            "https://redeye-391831.c.cdn77.org/170973i.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/170973-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170973-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170973-2.jpg"
+        ],
+        "new_releases": 247
+    },
+    "170972": {
+        "id": "170972",
+        "track_names": [
+            "For The Golden Star",
+            "Tasogare",
+            "Yumeya",
+            "Puenosu Honoo",
+            "Winter Space",
+            "Yubae",
+            "Byakuya",
+            "Asa"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165847-studiomule48-shinsuke-honda-silence",
+        "cat": "STUDIOMULE48",
+        "label": "Studio Mule",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/19557-studio-mule",
+        "artist": "Shinsuke Honda",
+        "title": "Silence",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/170972.mp3",
+            "https://redeye-391831.c.cdn77.org/170972b.mp3",
+            "https://redeye-391831.c.cdn77.org/170972c.mp3",
+            "https://redeye-391831.c.cdn77.org/170972d.mp3",
+            "https://redeye-391831.c.cdn77.org/170972e.mp3",
+            "https://redeye-391831.c.cdn77.org/170972f.mp3",
+            "https://redeye-391831.c.cdn77.org/170972g.mp3",
+            "https://redeye-391831.c.cdn77.org/170972h.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/170972-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170972-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170972-2.jpg"
+        ],
+        "new_releases": 248
+    },
+    "170971": {
+        "id": "170971",
+        "track_names": [
+            "Chula (Dance Mix)",
+            "Mundo Cute",
+            "Disc Jam (Dream Mix)",
+            "Cool Sbu",
+            "Plants Biz",
+            "? (Reprise)"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165846-mulemusiq287-soos-mondo-cute-",
+        "cat": "MULEMUSIQ287",
+        "label": "Mule Musiq",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/4354-mule-musiq",
+        "artist": "Soos",
+        "title": "Mondo Cute",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/170971.mp3",
+            "https://redeye-391831.c.cdn77.org/170971b.mp3",
+            "https://redeye-391831.c.cdn77.org/170971c.mp3",
+            "https://redeye-391831.c.cdn77.org/170971d.mp3",
+            "https://redeye-391831.c.cdn77.org/170971e.mp3",
+            "https://redeye-391831.c.cdn77.org/170971f.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/170971-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170971-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170971-2.jpg"
+        ],
+        "new_releases": 249
+    },
+    "77507": {
+        "id": "77507",
+        "track_names": [
+            "Side A: 1. Dungtitled (In A Major) 2. Articulate Silences Part 1 3. Articulate",
+            "silences Part 2 4. The Evil That Never Arrived Side B: 1. Apreludes (In C",
+            "sharp Major) 2. Don't Bother They're Here 3. ..."
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165850-krank100lp-stars-of-the-lid-stars-of-the-lid-and-their-refinement-of-the-decline",
+        "cat": "KRANK100LP",
+        "label": "Kranky",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/9736-kranky",
+        "artist": "Stars Of The Lid",
+        "title": "Stars Of The Lid And Their Refinement Of The Decline",
+        "track_urls": [],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/77507-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/77507-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/77507-2.jpg"
+        ],
+        "new_releases": 250
+    },
+    "77506": {
+        "id": "77506",
+        "track_names": [
+            "Side A: 1. Requiem For Dying Mothers, Pt. 1 2. Requiem For Dying Mothers,",
+            "pt. 2 3. Down 3 Side B: 1. Austin, Tx Mental Hospital, Pt. 1 2. Austin, Tx",
+            "mental Hospital, Pt. 2 3. Austin, Tx Mental Hospi..."
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165849-krank050lp-stars-of-the-lid-the-tired-sounds-of-stars-of-the-lid-3x12",
+        "cat": "KRANK050LP",
+        "label": "Kranky",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/9736-kranky",
+        "artist": "Stars Of The Lid",
+        "title": "The Tired Sounds Of Stars Of The Lid 3x12\"",
+        "track_urls": [],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/77506-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/77506-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/77506-2.jpg"
+        ],
+        "new_releases": 251
+    },
+    "77508": {
+        "id": "77508",
+        "track_names": [
+            "A1 - Folia",
+            "a2 - Alio Tempore",
+            "a3 - Atmosphaera",
+            "b1 - Flammae",
+            "b2 - Oculum Mundi",
+            "c1 - Meditationum",
+            "d1 - Interiora Terrae",
+            "d2 - Ad Infinitum"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165851-113thcycle-troum-and-raison-d\u00eatre-de-aeris-in-sublunaria-influxu-2x12",
+        "cat": "113THCYCLE",
+        "label": "Cyclic Law",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/17331-cyclic-law",
+        "artist": "TROUM & RAISON D'\u00caTRE",
+        "title": "De Aeris In Sublunaria Influxu 2x12\"",
+        "track_urls": [],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/77508-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/77508-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/77508-2.jpg"
+        ],
+        "new_releases": 252
+    },
+    "170978": {
+        "id": "170978",
+        "track_names": [
+            "01: Sivi Dan",
+            "02: Stakleno Nebo",
+            "03: Pejd&apos; Ga Pogledat Anja",
+            "04: Lacrimae Christi",
+            "05: Mjesec",
+            "06: Tko Je Zgazio Gospo\u00f0u Mjesec",
+            "07: Jesen",
+            "08: Klavir (I Pra\u0161ina)",
+            "09: Swing 2002 Gtl"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165860-mma03-videosex-lacrimae-christi",
+        "cat": "MMA03",
+        "label": "Matrix Music",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/30413-matrix-music",
+        "artist": "Videosex",
+        "title": "Lacrimae Christi",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/170978.mp3",
+            "https://redeye-391831.c.cdn77.org/170978b.mp3",
+            "https://redeye-391831.c.cdn77.org/170978c.mp3",
+            "https://redeye-391831.c.cdn77.org/170978d.mp3",
+            "https://redeye-391831.c.cdn77.org/170978e.mp3",
+            "https://redeye-391831.c.cdn77.org/170978f.mp3",
+            "https://redeye-391831.c.cdn77.org/170978g.mp3",
+            "https://redeye-391831.c.cdn77.org/170978h.mp3",
+            "https://redeye-391831.c.cdn77.org/170978i.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/170978-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170978-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170978-2.jpg"
+        ],
+        "new_releases": 253
+    },
+    "170969": {
+        "id": "170969",
+        "track_names": [
+            "Common Centre",
+            "An Activity Cycle",
+            "Protostellar Cloud"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165841-eudemonia015-zeta-reticula-common-centre-ep",
+        "cat": "EUDEMONIA015",
+        "label": "Eudemonia",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/20319-eudemonia",
+        "artist": "Zeta Reticula",
+        "title": "Common Centre EP",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/170969.mp3",
+            "https://redeye-391831.c.cdn77.org/170969b.mp3",
+            "https://redeye-391831.c.cdn77.org/170969c.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/170969-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170969-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170969-2.jpg"
+        ],
+        "new_releases": 254
+    },
+    "170951": {
+        "id": "170951",
+        "track_names": [
+            "1 Waiting For A Sign",
+            "2 Queen Of Hearts",
+            "3  In Another Place",
+            "4 Moving On",
+            "5 Sweet With Sin",
+            "6 Phantom Figure",
+            "7 Common Ground",
+            "8 Lightning In A Bottle"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165817-av!086-deluxxe-if-you-were-me-lp",
+        "cat": "AV!086",
+        "label": "Avant! Records",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/21061-avant!-records",
+        "artist": "Deluxxe",
+        "title": "If You Were Me LP",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/170951.mp3",
+            "https://redeye-391831.c.cdn77.org/170951b.mp3",
+            "https://redeye-391831.c.cdn77.org/170951c.mp3",
+            "https://redeye-391831.c.cdn77.org/170951d.mp3",
+            "https://redeye-391831.c.cdn77.org/170951e.mp3",
+            "https://redeye-391831.c.cdn77.org/170951f.mp3",
+            "https://redeye-391831.c.cdn77.org/170951g.mp3",
+            "https://redeye-391831.c.cdn77.org/170951h.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/170951-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170951-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170951-2.jpg"
+        ],
+        "new_releases": 256
+    },
+    "170966": {
+        "id": "170966",
+        "track_names": [
+            "A. DJ S\u00b2* - Post Emancipation Psychosis (Lithium Mix)",
+            "b. Von Floyd - Geiger Counter"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165834-ur-067-dj-s\u00b2-and-von-floyd-isf2-post-emancipation-psychosis-7",
+        "cat": "UR-067",
+        "label": "Underground Resistance",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/3538-underground-resistance",
+        "artist": "DJ S\u00b2 & Von Floyd",
+        "title": "ISF2 Post Emancipation Psychosis - 7\"",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/170966.mp3",
+            "https://redeye-391831.c.cdn77.org/170966b.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/170966-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170966-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170966-2.jpg"
+        ],
+        "new_releases": 257
+    },
+    "170949": {
+        "id": "170949",
+        "track_names": [
+            "Cold Modern",
+            "Rapids",
+            "Punk Funk",
+            "Act 31"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165815-prrukblk093-fresko-punk-funk-ep",
+        "cat": "PRRUKBLK093",
+        "label": "Planet Rhythm",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/6684-planet-rhythm",
+        "artist": "Fresko",
+        "title": "Punk Funk EP",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/170949.mp3",
+            "https://redeye-391831.c.cdn77.org/170949b.mp3",
+            "https://redeye-391831.c.cdn77.org/170949c.mp3",
+            "https://redeye-391831.c.cdn77.org/170949d.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/170949-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170949-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170949-2.jpg"
+        ],
+        "new_releases": 258
+    },
+    "154997": {
+        "id": "154997",
+        "track_names": [
+            "Cranes And Ladders",
+            "Efflorescence",
+            "Phrygian Pan",
+            "Cocoa And Plums",
+            "Mycelium Networks",
+            "Yoake",
+            "All Over The Shop",
+            "Archaic Landscapes",
+            "Basic Lurgy",
+            "Searching For The Elusive Fungi",
+            "Fruity Textur..."
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/136960-balmat01-luke-sanger-languid-gongue",
+        "cat": "BALMAT01",
+        "label": "Balmat",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/26150-balmat",
+        "artist": "Luke Sanger",
+        "title": "Languid Gongue",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/154997.mp3",
+            "https://redeye-391831.c.cdn77.org/154997b.mp3",
+            "https://redeye-391831.c.cdn77.org/154997c.mp3",
+            "https://redeye-391831.c.cdn77.org/154997d.mp3",
+            "https://redeye-391831.c.cdn77.org/154997e.mp3",
+            "https://redeye-391831.c.cdn77.org/154997f.mp3",
+            "https://redeye-391831.c.cdn77.org/154997g.mp3",
+            "https://redeye-391831.c.cdn77.org/154997h.mp3",
+            "https://redeye-391831.c.cdn77.org/154997i.mp3",
+            "https://redeye-391831.c.cdn77.org/154997j.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/154997-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/154997-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/154997-2.jpg"
+        ],
+        "new_releases": 259
+    },
+    "166978": {
+        "id": "166978",
+        "track_names": [
+            "Nick Le\u00f3n - Nerves",
+            "Nick Le\u00f3n - Love Potion",
+            "DJ Python - I\u2019m Tired",
+            "DJ Python - Uwu"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/158889-wwu002-nick-le\u00f3n-x-dj-python-split",
+        "cat": "WWU002",
+        "label": "Worldwide Unlimited",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/24939-worldwide-unlimited",
+        "artist": "Nick Le\u00f3n X DJ Python",
+        "title": "Split",
+        "track_urls": [],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/166978-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/166978-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/166978-2.jpg"
+        ],
+        "new_releases": 260
+    },
+    "170967": {
+        "id": "170967",
+        "track_names": [
+            "Never",
+            "Song Of The Hmong"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165835-ur-066-orlando-voorn-and-040-perception-7",
+        "cat": "UR-066",
+        "label": "Underground Resistance",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/3538-underground-resistance",
+        "artist": "Orlando Voorn & 040 / Perception",
+        "title": "7\"",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/170967.mp3",
+            "https://redeye-391831.c.cdn77.org/170967b.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/170967-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170967-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170967-2.jpg"
+        ],
+        "new_releases": 261
+    },
+    "170957": {
+        "id": "170957",
+        "track_names": [
+            "A1 - Lynx Console",
+            "a2 - Diamond Skies",
+            "b1 - Cryptic Visions",
+            "b2 - Suspect Behaviour"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165823-lfr002-phase-omatic-lfr002",
+        "cat": "LFR002",
+        "label": "Lifewater Records",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/27377-lifewater-records",
+        "artist": "Phase O'Matic",
+        "title": "LFR002",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/170957.mp3",
+            "https://redeye-391831.c.cdn77.org/170957b.mp3",
+            "https://redeye-391831.c.cdn77.org/170957c.mp3",
+            "https://redeye-391831.c.cdn77.org/170957d.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/170957-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170957-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170957-2.jpg"
+        ],
+        "new_releases": 264
+    },
+    "170965": {
+        "id": "170965",
+        "track_names": [
+            "A1. Mathematics",
+            "a2. Pulse Work",
+            "b1. Low Pressure",
+            "b2. Trans - Ition",
+            "b3. Absolute Space"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165833-oya001-public-request-ionic-pearl",
+        "cat": "OYA001",
+        "label": "Oyster Ass",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/30411-oyster-ass",
+        "artist": "Public Request",
+        "title": "Ionic Pearl",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/170965.mp3",
+            "https://redeye-391831.c.cdn77.org/170965b.mp3",
+            "https://redeye-391831.c.cdn77.org/170965c.mp3",
+            "https://redeye-391831.c.cdn77.org/170965d.mp3",
+            "https://redeye-391831.c.cdn77.org/170965e.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/170965-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170965-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170965-2.jpg"
+        ],
+        "new_releases": 265
+    },
+    "170956": {
+        "id": "170956",
+        "track_names": [
+            "01c",
+            "02c",
+            "04c",
+            "05a",
+            "06",
+            "10d",
+            "11a",
+            "11d",
+            "14b",
+            "15e",
+            "16a",
+            "17a",
+            "17j",
+            "18e",
+            "19c",
+            "20a : Trip,"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165822-trp045-soren-jahan-137-[printed-sleeve-locked-grooves]",
+        "cat": "TRP045",
+        "label": "Trip",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/10474-trip",
+        "artist": "Soren Jahan",
+        "title": "137 [printed Sleeve / Locked Grooves]",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/170956.mp3",
+            "https://redeye-391831.c.cdn77.org/170956b.mp3",
+            "https://redeye-391831.c.cdn77.org/170956c.mp3",
+            "https://redeye-391831.c.cdn77.org/170956d.mp3",
+            "https://redeye-391831.c.cdn77.org/170956e.mp3",
+            "https://redeye-391831.c.cdn77.org/170956f.mp3",
+            "https://redeye-391831.c.cdn77.org/170956g.mp3",
+            "https://redeye-391831.c.cdn77.org/170956h.mp3",
+            "https://redeye-391831.c.cdn77.org/170956i.mp3",
+            "https://redeye-391831.c.cdn77.org/170956j.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/170956-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170956-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170956-2.jpg"
+        ],
+        "new_releases": 267
+    },
+    "305293": {
+        "id": "305293",
+        "track_names": [
+            "A1. Open The Night",
+            "a2. Dark Space",
+            "a3. Antiga",
+            "a4. Aslan",
+            "b1. So Alone",
+            "b2. Adeya",
+            "b3. Artifical Intelligence",
+            "b4. Ascend",
+            "c1. Your Journey",
+            "c2. Distance",
+            "c3. Innerpeace",
+            "c4. Lo..."
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165807-ardi4456-trance-wax-open-up-the-night-2-x-12",
+        "cat": "ARDI4456",
+        "label": "Armada Music",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/30409-armada-music",
+        "artist": "Trance Wax",
+        "title": "Open Up The Night - 2 X 12\"",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/305293.mp3",
+            "https://redeye-391831.c.cdn77.org/305293b.mp3",
+            "https://redeye-391831.c.cdn77.org/305293c.mp3",
+            "https://redeye-391831.c.cdn77.org/305293d.mp3",
+            "https://redeye-391831.c.cdn77.org/305293e.mp3",
+            "https://redeye-391831.c.cdn77.org/305293f.mp3",
+            "https://redeye-391831.c.cdn77.org/305293g.mp3",
+            "https://redeye-391831.c.cdn77.org/305293h.mp3",
+            "https://redeye-391831.c.cdn77.org/305293i.mp3",
+            "https://redeye-391831.c.cdn77.org/305293j.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/305293-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/305293-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/305293-2.jpg"
+        ],
+        "new_releases": 268
+    },
+    "170952": {
+        "id": "170952",
+        "track_names": [
+            "Never Forget Noire",
+            "Gravitational Field",
+            "Unfair Advantage",
+            "Bit Shift",
+            "Theseus Paradox",
+            "Disorder"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165818-mm-002-various-artists-002-pear-[marbled-yellow-vinyl-printed-sleeve]-audiokast-falling-echoes-ricardo-garduno-johannes-astrup-joton-feat-aicrag-the-blackmailer",
+        "cat": "MM-002",
+        "label": "Much More Recordings",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/29426-much-more-recordings",
+        "artist": "Various Artists",
+        "title": "002 - Pear [marbled Yellow Vinyl / Printed Sleeve] - Audiokast - Falling Echoes - Ricardo Garduno - Johannes Astrup - Joton Feat. Aicrag - The Blackmailer",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/170952.mp3",
+            "https://redeye-391831.c.cdn77.org/170952b.mp3",
+            "https://redeye-391831.c.cdn77.org/170952c.mp3",
+            "https://redeye-391831.c.cdn77.org/170952d.mp3",
+            "https://redeye-391831.c.cdn77.org/170952e.mp3",
+            "https://redeye-391831.c.cdn77.org/170952f.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/170952-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170952-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170952-2.jpg"
+        ],
+        "new_releases": 269
+    },
+    "170927": {
+        "id": "170927",
+        "track_names": [
+            "High Voltage",
+            "313",
+            "Acid Matters",
+            "Lunar Tides"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165788-database002-audri-and-tommie-database-002",
+        "cat": "DATABASE002",
+        "label": "Database",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/29091-database",
+        "artist": "Audri & Tommie",
+        "title": "DATABASE 002",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/170927.mp3",
+            "https://redeye-391831.c.cdn77.org/170927b.mp3",
+            "https://redeye-391831.c.cdn77.org/170927c.mp3",
+            "https://redeye-391831.c.cdn77.org/170927d.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/170927-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170927-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170927-2.jpg"
+        ],
+        "new_releases": 270
+    },
+    "170940": {
+        "id": "170940",
+        "track_names": [
+            "1. Empathy",
+            "2. Obedience To Authority Figures",
+            "3. Ewba",
+            "4. Joy",
+            "5. You're Never Useless",
+            "6. The Town Of Machine",
+            "7. Empathy Interlude",
+            "8. Now Go Out",
+            "9. Chop",
+            "10. Becoming A Beach Angel"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165804-phntm37lp-cameron-graham-becoming-a-beach-angel-",
+        "cat": "PHNTM37LP",
+        "label": "Phantom Limb",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/20476-phantom-limb",
+        "artist": "Cameron Graham",
+        "title": "Becoming A Beach Angel",
+        "track_urls": [],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/170940-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170940-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170940-2.jpg"
+        ],
+        "new_releases": 271
+    },
+    "170939": {
+        "id": "170939",
+        "track_names": [
+            "01. Fractionality",
+            "02. Anomaly",
+            "03. Dust To Dust",
+            "04. Visceral",
+            "05. Shapeless Silhouette",
+            "06. Fervent"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165803-ely113-carl-finlow-fervent",
+        "cat": "ELY113",
+        "label": "Elypsia",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/28754-elypsia",
+        "artist": "Carl Finlow",
+        "title": "Fervent",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/170939.mp3",
+            "https://redeye-391831.c.cdn77.org/170939b.mp3",
+            "https://redeye-391831.c.cdn77.org/170939c.mp3",
+            "https://redeye-391831.c.cdn77.org/170939d.mp3",
+            "https://redeye-391831.c.cdn77.org/170939e.mp3",
+            "https://redeye-391831.c.cdn77.org/170939f.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/170939-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170939-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170939-2.jpg"
+        ],
+        "new_releases": 272
+    },
+    "90263": {
+        "id": "90263",
+        "track_names": [
+            "Luctu",
+            "Tuga",
+            "Pith"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/38380-fr024-erp-pith",
+        "cat": "FR024",
+        "label": "Frustrated Funk",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/5177-frustrated-funk",
+        "artist": "ERP",
+        "title": "Pith",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/90263.mp3",
+            "https://redeye-391831.c.cdn77.org/90263b.mp3",
+            "https://redeye-391831.c.cdn77.org/90263c.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/90263-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/90263-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/90263-2.jpg"
+        ],
+        "new_releases": 274
+    },
+    "170938": {
+        "id": "170938",
+        "track_names": [
+            "01 Ciclos Por Segundo",
+            "02 Reactor",
+            "03 Ceers",
+            "04 Operador",
+            "05 G Sonic",
+            "06 Ultima Emision",
+            "07 Resonator",
+            "08 Radiation Room",
+            "09 White Sands",
+            "10 Advent City",
+            "11 Metaobjeto"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165802-30dexolp-002-geistform-resonancia-lp",
+        "cat": "30DEXOLP-002",
+        "label": "30d Exoplanets",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/27147-30d-exoplanets",
+        "artist": "Geistform",
+        "title": "Resonancia LP",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/170938.mp3",
+            "https://redeye-391831.c.cdn77.org/170938b.mp3",
+            "https://redeye-391831.c.cdn77.org/170938c.mp3",
+            "https://redeye-391831.c.cdn77.org/170938d.mp3",
+            "https://redeye-391831.c.cdn77.org/170938e.mp3",
+            "https://redeye-391831.c.cdn77.org/170938f.mp3",
+            "https://redeye-391831.c.cdn77.org/170938g.mp3",
+            "https://redeye-391831.c.cdn77.org/170938h.mp3",
+            "https://redeye-391831.c.cdn77.org/170938i.mp3",
+            "https://redeye-391831.c.cdn77.org/170938j.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/170938-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170938-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170938-2.jpg"
+        ],
+        "new_releases": 275
+    },
+    "170923": {
+        "id": "170923",
+        "track_names": [
+            "A Different Beat For Different Feet",
+            "Simbolos Figurativos De Coisas Vindouras",
+            "The Tape Spool Within The Horses Mouth",
+            "O Antidoto Na Saliva Do Anjo",
+            "Espectros No Cctv",
+            "Vanishing Point",
+            "Living Wi..."
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165781-zam035-hidden-horse-incorporeal",
+        "cat": "ZAM035",
+        "label": "Holuzam",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/19403-holuzam",
+        "artist": "HIDDEN HORSE",
+        "title": "INCORPOREAL",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/170923.mp3",
+            "https://redeye-391831.c.cdn77.org/170923b.mp3",
+            "https://redeye-391831.c.cdn77.org/170923c.mp3",
+            "https://redeye-391831.c.cdn77.org/170923d.mp3",
+            "https://redeye-391831.c.cdn77.org/170923e.mp3",
+            "https://redeye-391831.c.cdn77.org/170923f.mp3",
+            "https://redeye-391831.c.cdn77.org/170923g.mp3",
+            "https://redeye-391831.c.cdn77.org/170923h.mp3",
+            "https://redeye-391831.c.cdn77.org/170923i.mp3",
+            "https://redeye-391831.c.cdn77.org/170923j.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/170923-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170923-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170923-2.jpg"
+        ],
+        "new_releases": 276
+    },
+    "170935": {
+        "id": "170935",
+        "track_names": [
+            "1 Kostik",
+            "2 Freakinme",
+            "3 Mino",
+            "4 Workout"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165799-tech-um006-mike-dehnert-testet-ep",
+        "cat": "TECH-UM006",
+        "label": "Tech-Um",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/26699-tech-um",
+        "artist": "Mike Dehnert",
+        "title": "Testet EP",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/170935.mp3",
+            "https://redeye-391831.c.cdn77.org/170935b.mp3",
+            "https://redeye-391831.c.cdn77.org/170935c.mp3",
+            "https://redeye-391831.c.cdn77.org/170935d.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/170935-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170935-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170935-2.jpg"
+        ],
+        "new_releases": 277
+    },
+    "170922": {
+        "id": "170922",
+        "track_names": [
+            "A1 - Cv Swizzly",
+            "a2 - Vectron",
+            "b1 - Skitter",
+            "b2 - Cv Swizzly (Plant43 Remix)"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165780-btr006-miles-otto-skitter-inc-plant43-remix",
+        "cat": "BTR006",
+        "label": "Batrachian Recordings",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/29737-batrachian-recordings",
+        "artist": "Miles Otto",
+        "title": "Skitter (Inc. Plant43 Remix)",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/170922.mp3",
+            "https://redeye-391831.c.cdn77.org/170922b.mp3",
+            "https://redeye-391831.c.cdn77.org/170922c.mp3",
+            "https://redeye-391831.c.cdn77.org/170922d.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/170922-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170922-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170922-2.jpg"
+        ],
+        "new_releases": 278
+    },
+    "170937": {
+        "id": "170937",
+        "track_names": [
+            "1 Compromat",
+            "2 Unidentified",
+            "3 Aldea Malvada",
+            "4 Augmentation (Feat Phase Fatale)",
+            "5 Kill Born"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165801-bite029-omon-breaker-compromat",
+        "cat": "BITE029",
+        "label": "Bite",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/18985-bite",
+        "artist": "Omon Breaker",
+        "title": "Compromat",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/170937.mp3",
+            "https://redeye-391831.c.cdn77.org/170937b.mp3",
+            "https://redeye-391831.c.cdn77.org/170937c.mp3",
+            "https://redeye-391831.c.cdn77.org/170937d.mp3",
+            "https://redeye-391831.c.cdn77.org/170937e.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/170937-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170937-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170937-2.jpg"
+        ],
+        "new_releases": 279
+    },
+    "165372": {
+        "id": "165372",
+        "track_names": [
+            "2 Late 4 Love (Part One)",
+            "Cwejman Acid (Part Two)",
+            "Melchester Acid (Part One)",
+            "Emotinium",
+            "Bonus Track"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/156084-aciwax90-roy-of-the-ravers-2-late-4-love-[2023-edition]",
+        "cat": "ACIWAX90",
+        "label": "Acid Waxa",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/16446-acid-waxa",
+        "artist": "Roy Of The Ravers",
+        "title": "2 Late 4 Love [2023 Edition]",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/165372.mp3",
+            "https://redeye-391831.c.cdn77.org/165372b.mp3",
+            "https://redeye-391831.c.cdn77.org/165372c.mp3",
+            "https://redeye-391831.c.cdn77.org/165372d.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/165372-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/165372-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/165372-2.jpg"
+        ],
+        "new_releases": 280
+    },
+    "170924": {
+        "id": "170924",
+        "track_names": [
+            "A1. There's Not A Lot To Say",
+            "a2. Benefit The Masses",
+            "b1. Fragments Of Distrust",
+            "b2. Gentle Reminder"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165783-mxmn003-sama-mxmn003",
+        "cat": "MXMN003",
+        "label": "Maximalist_minimalist",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/28004-maximalist_minimalist",
+        "artist": "SAMA",
+        "title": "MXMN003",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/170924.mp3",
+            "https://redeye-391831.c.cdn77.org/170924b.mp3",
+            "https://redeye-391831.c.cdn77.org/170924c.mp3",
+            "https://redeye-391831.c.cdn77.org/170924d.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/170924-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170924-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170924-2.jpg"
+        ],
+        "new_releases": 281
+    },
+    "170884": {
+        "id": "170884",
+        "track_names": [
+            "Replica",
+            "Suburban Electro",
+            "Roswell",
+            "From A To B",
+            "You'll Be Back",
+            "The Future Is Not Yours"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165717-emcv013-sinitsin-false-transmitter-ep",
+        "cat": "EMCV013",
+        "label": "Electro Music Coalition",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/17647-electro-music-coalition",
+        "artist": "Sinitsin",
+        "title": "False Transmitter EP",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/170884.mp3",
+            "https://redeye-391831.c.cdn77.org/170884b.mp3",
+            "https://redeye-391831.c.cdn77.org/170884c.mp3",
+            "https://redeye-391831.c.cdn77.org/170884d.mp3",
+            "https://redeye-391831.c.cdn77.org/170884e.mp3",
+            "https://redeye-391831.c.cdn77.org/170884f.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/170884-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170884-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170884-2.jpg"
+        ],
+        "new_releases": 282
+    },
+    "170936": {
+        "id": "170936",
+        "track_names": [
+            "1 Floris Vanhoof",
+            "2 Red Brut",
+            "3 Cathy Van Eck",
+            "4 Nan Wang And Matthias Hurtl",
+            "5 Peter Fengler"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165800-resae005-various-artists-longform-visions-for-earminded-people",
+        "cat": "RESAE005",
+        "label": "Futura Resistenza",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/22993-futura-resistenza",
+        "artist": "Various Artists",
+        "title": "Longform Visions For Earminded People",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/170936.mp3",
+            "https://redeye-391831.c.cdn77.org/170936b.mp3",
+            "https://redeye-391831.c.cdn77.org/170936c.mp3",
+            "https://redeye-391831.c.cdn77.org/170936d.mp3",
+            "https://redeye-391831.c.cdn77.org/170936e.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/170936-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170936-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170936-2.jpg"
+        ],
+        "new_releases": 283
+    },
+    "170914": {
+        "id": "170914",
+        "track_names": [
+            "A1. Metal Tech Liquid",
+            "a2. Hover Over",
+            "b1. Play The Darkside",
+            "b2. Uncertainty (Not Fear)"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165765-vostra002-alich-play-the-darkside",
+        "cat": "VOSTRA002",
+        "label": "Cosa Vostra",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/29954-cosa-vostra",
+        "artist": "Alich",
+        "title": "Play The Darkside",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/170914.mp3",
+            "https://redeye-391831.c.cdn77.org/170914b.mp3",
+            "https://redeye-391831.c.cdn77.org/170914c.mp3",
+            "https://redeye-391831.c.cdn77.org/170914d.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/170914-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170914-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170914-2.jpg"
+        ],
+        "new_releases": 284
+    },
+    "170908": {
+        "id": "170908",
+        "track_names": [
+            "Confidential - Jam The Frequency",
+            "Primea Facey - Jet Black At Birth"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165755-smi-005-confidential-and-primea-facey",
+        "cat": "SMI-005",
+        "label": "Sound Migration",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/29589-sound-migration",
+        "artist": "Confidential  &  Primea Face",
+        "title": "Confidential  &  Primea Facey",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/170908.mp3",
+            "https://redeye-391831.c.cdn77.org/170908b.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/170908-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170908-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170908-2.jpg"
+        ],
+        "new_releases": 285
+    },
+    "170901": {
+        "id": "170901",
+        "track_names": [
+            "Origins",
+            "Ancient Legacy",
+            "Generation Anthems",
+            "Dance. Move. Repeat."
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165740-dv-003-david-meisner-structures-of-rhythm",
+        "cat": "DV-003",
+        "label": "Dark Vortex",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/17912-dark-vortex",
+        "artist": "David Meisner",
+        "title": "Structures Of Rhythm",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/170901.mp3",
+            "https://redeye-391831.c.cdn77.org/170901b.mp3",
+            "https://redeye-391831.c.cdn77.org/170901c.mp3",
+            "https://redeye-391831.c.cdn77.org/170901d.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/170901-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170901-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170901-2.jpg"
+        ],
+        "new_releases": 286
+    },
+    "170893": {
+        "id": "170893",
+        "track_names": [
+            "Eso Es G (Club Mix)",
+            "Eso Es G (Spotify Mix)",
+            "Eso Es G (Instrumental Mix)",
+            "Eso Es G (Acapella)"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165729-kaos-esoesg-hector-oaks-x-ill-peke\u00f1o-and-ergo-pro-eso-es-g",
+        "cat": "KAOS-ESOESG",
+        "label": "Kaos",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/89-kaos",
+        "artist": "Hector Oaks X ILL PEKE\u00d1O & ERGO PRO",
+        "title": "ESO ES G",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/170893.mp3",
+            "https://redeye-391831.c.cdn77.org/170893b.mp3",
+            "https://redeye-391831.c.cdn77.org/170893c.mp3",
+            "https://redeye-391831.c.cdn77.org/170893d.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/170893-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170893-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170893-2.jpg"
+        ],
+        "new_releases": 287
+    },
+    "93425": {
+        "id": "93425",
+        "track_names": [
+            "01. Struck With Deer Lungs 02. Plucked From The Ground",
+            "Towards The Sun 03. Quivira04. Anagramme Of My Love 05. 'iinzhiid 06. Ragtime U.s.a. (Warning) 07. Monks Mound (Arcology) 08. Prinzif 09. Hopewe..."
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/46416-sft037-huerco-s-colonial-patterns-lp-2-x-12",
+        "cat": "SFT037",
+        "label": "Software",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/4888-software",
+        "artist": "HUERCO S.",
+        "title": "Colonial Patterns LP (2 X 12\")",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/93425.mp3",
+            "https://redeye-391831.c.cdn77.org/93425b.mp3",
+            "https://redeye-391831.c.cdn77.org/93425c.mp3",
+            "https://redeye-391831.c.cdn77.org/93425d.mp3",
+            "https://redeye-391831.c.cdn77.org/93425e.mp3",
+            "https://redeye-391831.c.cdn77.org/93425f.mp3",
+            "https://redeye-391831.c.cdn77.org/93425g.mp3",
+            "https://redeye-391831.c.cdn77.org/93425h.mp3",
+            "https://redeye-391831.c.cdn77.org/93425i.mp3",
+            "https://redeye-391831.c.cdn77.org/93425j.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/93425-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/93425-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/93425-2.jpg"
+        ],
+        "new_releases": 288
+    },
+    "305290": {
+        "id": "305290",
+        "track_names": [
+            "1. Fix Everything",
+            "2. I'd Risk It All To Be With You",
+            "3. I Don\u2019t Want To Hurt You",
+            "4. Return To Love",
+            "5. I'd Risk It All To Be With You (Masc Remix)"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165762-2mr79lp-lauren-flax-liz-and-lauren-ep",
+        "cat": "2MR79LP",
+        "label": "2mr",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/13046-2mr",
+        "artist": "Lauren Flax",
+        "title": "Liz & Lauren EP",
+        "track_urls": [],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/305290-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/305290-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/305290-2.jpg"
+        ],
+        "new_releases": 289
+    },
+    "77496": {
+        "id": "77496",
+        "track_names": [
+            "01. And Then He Wrapped His Wings Around Me (Feat. Meg Baird And Walt Mcclements)",
+            "02. Arrivederci (Feat. Lol Tolhurst)",
+            "03. Blender In A Blender (Feat. Roy Montgomery)",
+            "04. Music For Applying Shimmer..."
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165760-lpc2-mary-lattimore-goodbye-hotel-arkada-green-velvet-vinyl",
+        "cat": "LPC2",
+        "label": "Ghostly International",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/4063-ghostly-international",
+        "artist": "Mary Lattimore",
+        "title": "Goodbye, Hotel Arkada - Green Velvet Vinyl",
+        "track_urls": [],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/77496-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/77496-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/77496-2.jpg"
+        ],
+        "new_releases": 290
+    },
+    "170913": {
+        "id": "170913",
+        "track_names": [
+            "1. Kudistro",
+            "2. Exhaust/outsourced",
+            "3. Olutobazzi",
+            "4. Asidi",
+            "5. Interrogation/welcome",
+            "6. Source Of Denial",
+            "7. Preloya",
+            "8. Postloya",
+            "9. Trip Chug",
+            "10. Baganga",
+            "11. Tuuka/bulungi"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165761-cram314lp-nihiloxica-source-of-denial",
+        "cat": "CRAM314LP",
+        "label": "Crammed Discs",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/17379-crammed-discs",
+        "artist": "NIHILOXICA 'SOURCE OF DENIAL",
+        "title": "NIHILOXICA 'SOURCE OF DENIAL'",
+        "track_urls": [],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/170913-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170913-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170913-2.jpg"
+        ],
+        "new_releases": 291
+    },
+    "170915": {
+        "id": "170915",
+        "track_names": [
+            "A1. Monophonic Conspiracy",
+            "a2. Hex #0db5ba",
+            "a3. Solfege For Abstract Painters",
+            "a4. Alkaline River",
+            "b1. Butterflies",
+            "b2. Psychadelicat",
+            "b3. Rush",
+            "b4. Replica"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165766-uw58lp-ori-barel-alkaline-river-",
+        "cat": "UW58LP",
+        "label": "Unseen Worlds",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/19569-unseen-worlds",
+        "artist": "Ori Barel",
+        "title": "Alkaline River",
+        "track_urls": [],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/170915-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170915-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170915-2.jpg"
+        ],
+        "new_releases": 292
+    },
+    "170894": {
+        "id": "170894",
+        "track_names": [
+            "Gently Comes",
+            "Chicago",
+            "Root 2",
+            "Bien Buena",
+            "Need You",
+            "Swinguerra"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165730-kaos-ds02-ruiz-osc1-grooveroots-ep",
+        "cat": "KAOS-DS02",
+        "label": "Kaos",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/89-kaos",
+        "artist": "RUIZ OSC1",
+        "title": "GROOVEROOTS EP",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/170894.mp3",
+            "https://redeye-391831.c.cdn77.org/170894b.mp3",
+            "https://redeye-391831.c.cdn77.org/170894c.mp3",
+            "https://redeye-391831.c.cdn77.org/170894d.mp3",
+            "https://redeye-391831.c.cdn77.org/170894e.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/170894-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170894-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170894-2.jpg"
+        ],
+        "new_releases": 293
+    },
+    "77487": {
+        "id": "77487",
+        "track_names": [
+            "1 - Heat",
+            "2 - Must Reach The Control Panel",
+            "3 - Messing With Planets",
+            "4 - Frequence",
+            "5 - Ko Ok",
+            "6 - Full Metal Rubic",
+            "7 - Kapt Kurbain",
+            "8 - Where Is This Island Of Yours"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165738-slprs018-scattered-order-artefacts-from-the-fuzz-mines-lp",
+        "cat": "SLPRS018",
+        "label": "Sleepers",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/13321-sleepers",
+        "artist": "Scattered Order",
+        "title": "Artefacts From The Fuzz Mines - LP",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/77487.mp3",
+            "https://redeye-391831.c.cdn77.org/77487b.mp3",
+            "https://redeye-391831.c.cdn77.org/77487c.mp3",
+            "https://redeye-391831.c.cdn77.org/77487d.mp3",
+            "https://redeye-391831.c.cdn77.org/77487e.mp3",
+            "https://redeye-391831.c.cdn77.org/77487f.mp3",
+            "https://redeye-391831.c.cdn77.org/77487g.mp3",
+            "https://redeye-391831.c.cdn77.org/77487h.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/77487-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/77487-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/77487-2.jpg"
+        ],
+        "new_releases": 294
+    },
+    "170912": {
+        "id": "170912",
+        "track_names": [
+            "A1. We Center 13:27",
+            "a2. Zoetropics 7:46",
+            "b1. A Sun Harp 10:16",
+            "b2. Fog Glossaries 8:46"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165759-pob072lp-setting-shone-a-rainbow-light-on",
+        "cat": "POB072LP",
+        "label": "Paradise Of Bachelors",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/30406-paradise-of-bachelors",
+        "artist": "Setting",
+        "title": "Shone A Rainbow Light On",
+        "track_urls": [],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/170912-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170912-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170912-2.jpg"
+        ],
+        "new_releases": 295
+    },
+    "170895": {
+        "id": "170895",
+        "track_names": [
+            "A1. Opening",
+            "a2. Act I: Stars And Moon",
+            "a3. Act Ii: Sea And Sky",
+            "b1. Act Iii: Land And Growth",
+            "b2. Act Iv: Death And The Dawn",
+            "b3. Closing  : Rvng Intl,"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165731-rvngnl105lp-tristan-allen-tin-iso-and-the-dawn",
+        "cat": "RVNGNL105LP",
+        "label": "Rvng Intl",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/6058-rvng-intl",
+        "artist": "Tristan Allen",
+        "title": "Tin Iso And The Dawn",
+        "track_urls": [],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/170895-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170895-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170895-2.jpg"
+        ],
+        "new_releases": 296
+    },
+    "170867": {
+        "id": "170867",
+        "track_names": [
+            "Dilate",
+            "Power Source",
+            "Slip Something",
+            "Well For Some"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165700-2by2-1morning-ce\u00b4ili\u00b4-2by2-[stickered-sleeve-hand-stamped-label]",
+        "cat": "2BY2",
+        "label": "M\u00e1la \u00c1dh",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/26055-m\u00e1la-\u00e1dh",
+        "artist": "1morning / Ce\u00b4ili\u00b4",
+        "title": "2BY2 [stickered Sleeve / Hand-Stamped Label]",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/170867.mp3",
+            "https://redeye-391831.c.cdn77.org/170867b.mp3",
+            "https://redeye-391831.c.cdn77.org/170867c.mp3",
+            "https://redeye-391831.c.cdn77.org/170867d.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/170867-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170867-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170867-2.jpg"
+        ],
+        "new_releases": 297
+    },
+    "170871": {
+        "id": "170871",
+        "track_names": [
+            "A1. Maisange",
+            "a2. Pegazote",
+            "b1. Herbulle",
+            "b2. Vagabondule"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165704-ajasphere001-aja-ajasph\u00e8re-volume-1",
+        "cat": "AJASPHERE001",
+        "label": "Ajasph\u00e8re",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/30400-ajasph\u00e8re-",
+        "artist": "Aja",
+        "title": "Ajasph\u00e8re Volume 1",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/170871.mp3",
+            "https://redeye-391831.c.cdn77.org/170871b.mp3",
+            "https://redeye-391831.c.cdn77.org/170871c.mp3",
+            "https://redeye-391831.c.cdn77.org/170871d.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/170871-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170871-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170871-2.jpg"
+        ],
+        "new_releases": 298
+    },
+    "170860": {
+        "id": "170860",
+        "track_names": [
+            "A1. At68",
+            "a2. At68 (Not Even Noticed Remix)",
+            "b1. At69",
+            "b2. At70",
+            ""
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165689-ufc05-\u00e1tico-corp-simulaci\u00f3n-ep-incl-not-even-noticed-remix",
+        "cat": "UFC05",
+        "label": "Ufc",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/25238-ufc",
+        "artist": "\u00c1tico Corp",
+        "title": "Simulaci\u00f3n EP (Incl. Not Even Noticed Remix)",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/170860.mp3",
+            "https://redeye-391831.c.cdn77.org/170860b.mp3",
+            "https://redeye-391831.c.cdn77.org/170860c.mp3",
+            "https://redeye-391831.c.cdn77.org/170860d.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/170860-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170860-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170860-2.jpg"
+        ],
+        "new_releases": 299
+    },
+    "170890": {
+        "id": "170890",
+        "track_names": [
+            ""
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165725-flrbox01-elad-magdasi-bluebox-[blue-vinyl-stickered-sleeve-incl-dl-code]",
+        "cat": "FLRBOX01",
+        "label": "Front Left Records",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/15090-front-left-records",
+        "artist": "Elad Magdasi",
+        "title": "BlueBox [blue Vinyl / Stickered Sleeve / Incl. Dl Code]",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/170890.mp3",
+            "https://redeye-391831.c.cdn77.org/170890b.mp3",
+            "https://redeye-391831.c.cdn77.org/170890c.mp3",
+            "https://redeye-391831.c.cdn77.org/170890d.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/170890-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170890-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170890-2.jpg"
+        ],
+        "new_releases": 301
+    },
+    "170872": {
+        "id": "170872",
+        "track_names": [
+            "1. Fused Warp Drive",
+            "2. Make A Beat",
+            "3. Electric Horse",
+            "4. Media (For The Entire World)",
+            "5. Above The Sky",
+            "6. Wic O Wac"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165705-et027-erik-travis-fused-warp",
+        "cat": "ET027",
+        "label": "Othof.a.c.t.",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/30401-othof-a-c-t-",
+        "artist": "Erik Travis",
+        "title": "Fused Warp",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/170872.mp3",
+            "https://redeye-391831.c.cdn77.org/170872b.mp3",
+            "https://redeye-391831.c.cdn77.org/170872c.mp3",
+            "https://redeye-391831.c.cdn77.org/170872d.mp3",
+            "https://redeye-391831.c.cdn77.org/170872e.mp3",
+            "https://redeye-391831.c.cdn77.org/170872f.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/170872-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170872-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170872-2.jpg"
+        ],
+        "new_releases": 302
+    },
+    "170862": {
+        "id": "170862",
+        "track_names": [
+            "Penumbra",
+            "Viridis",
+            "Penumbra (Deadbeat's Dancehall Dub)",
+            "Viridis (Grad_u Reconstruction) : Greyscale,"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165694-greyscale11-federsen-penumbra-viridis-incl-deadbeat-and-grad_u-remix-[white-vinyl-180-grams-incl-dl-code]",
+        "cat": "GREYSCALE11",
+        "label": "Greyscale",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/13942-greyscale",
+        "artist": "Federsen",
+        "title": "Penumbra / Viridis (Incl. Deadbeat & Grad_u Remix) [white Vinyl / 180 Grams / Incl. DL Code]",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/170862.mp3",
+            "https://redeye-391831.c.cdn77.org/170862b.mp3",
+            "https://redeye-391831.c.cdn77.org/170862c.mp3",
+            "https://redeye-391831.c.cdn77.org/170862d.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/170862-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170862-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170862-2.jpg"
+        ],
+        "new_releases": 303
+    },
+    "170878": {
+        "id": "170878",
+        "track_names": [
+            "Infinity Hours Remaining",
+            "Kopievankopie",
+            "Die Trommel Der Trum",
+            "Ongecontroleerde Dagrestanten",
+            "Oostwestkruisbest"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165711-sonlp-012-kim-david-bots-oostwestkruisbest",
+        "cat": "SONLP-012",
+        "label": "South Of North",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/24217-south-of-north",
+        "artist": "KIM DAVID BOTS",
+        "title": "OOSTWESTKRUISBEST",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/170878.mp3",
+            "https://redeye-391831.c.cdn77.org/170878b.mp3",
+            "https://redeye-391831.c.cdn77.org/170878c.mp3",
+            "https://redeye-391831.c.cdn77.org/170878d.mp3",
+            "https://redeye-391831.c.cdn77.org/170878e.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/170878-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170878-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170878-2.jpg"
+        ],
+        "new_releases": 305
+    },
+    "170891": {
+        "id": "170891",
+        "track_names": [
+            "One More Step (Robert Hood Re-Plant)",
+            "Scenery (Ken Ishii Remix)",
+            "One More Step (Planetary Assault Systems Remix)",
+            "Videogame (Marcel Dettmann Remix) : Pushmaster Discs,"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165726-pmd029-mattia-trani-scenery-the-remixes-part-1-va",
+        "cat": "PMD029",
+        "label": "Pushmaster Discs",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/9192-pushmaster-discs",
+        "artist": "Mattia Trani",
+        "title": "Scenery - The Remixes Part 1 - VA",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/170891.mp3",
+            "https://redeye-391831.c.cdn77.org/170891b.mp3",
+            "https://redeye-391831.c.cdn77.org/170891c.mp3",
+            "https://redeye-391831.c.cdn77.org/170891d.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/170891-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170891-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170891-2.jpg"
+        ],
+        "new_releases": 306
+    },
+    "170888": {
+        "id": "170888",
+        "track_names": [
+            "A1. Immortal Funk",
+            "a2. Karma",
+            "b1. Network Not Found"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165722-ln008-max-watts-immortal-funk",
+        "cat": "LN008",
+        "label": "Limited Network",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/28427-limited-network",
+        "artist": "Max Watts",
+        "title": "Immortal Funk",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/170888.mp3",
+            "https://redeye-391831.c.cdn77.org/170888b.mp3",
+            "https://redeye-391831.c.cdn77.org/170888c.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/170888-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170888-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170888-2.jpg"
+        ],
+        "new_releases": 307
+    },
+    "170866": {
+        "id": "170866",
+        "track_names": [
+            "Passos Do Mar",
+            "Unde O D'hara",
+            "Accappella"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165699-lbdn-012-riccardo-schir\u00f2-passos-do-mar-ft-marina-morena-[stickered-sleeve]",
+        "cat": "LBDN-012",
+        "label": "La Bella Di Notte",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/19425-la-bella-di-notte",
+        "artist": "Riccardo Schir\u00f2",
+        "title": "Passos Do Mar Ft. Marina Morena [stickered Sleeve]",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/170866.mp3",
+            "https://redeye-391831.c.cdn77.org/170866b.mp3",
+            "https://redeye-391831.c.cdn77.org/170866c.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/170866-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170866-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170866-2.jpg"
+        ],
+        "new_releases": 308
+    },
+    "170883": {
+        "id": "170883",
+        "track_names": [
+            "01 Computer Controlled Future",
+            "02 Church Of Algorithm",
+            "03 Post Human",
+            "04 Chaos Computer Club",
+            "05 Neuronet",
+            "06 Deep Space",
+            "07 You Can Only Go Forward",
+            "08 Cheerleaders Are Eating Flesh",
+            "09 Other Places",
+            "..."
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165716-ldi010-t-error-control-paradox",
+        "cat": "LDI010",
+        "label": "Ldi Records",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/25160-ldi-records",
+        "artist": "T/Error",
+        "title": "Control Paradox",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/170883.mp3",
+            "https://redeye-391831.c.cdn77.org/170883b.mp3",
+            "https://redeye-391831.c.cdn77.org/170883c.mp3",
+            "https://redeye-391831.c.cdn77.org/170883d.mp3",
+            "https://redeye-391831.c.cdn77.org/170883e.mp3",
+            "https://redeye-391831.c.cdn77.org/170883f.mp3",
+            "https://redeye-391831.c.cdn77.org/170883g.mp3",
+            "https://redeye-391831.c.cdn77.org/170883h.mp3",
+            "https://redeye-391831.c.cdn77.org/170883i.mp3",
+            "https://redeye-391831.c.cdn77.org/170883j.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/170883-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170883-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170883-2.jpg"
+        ],
+        "new_releases": 309
+    },
+    "170881": {
+        "id": "170881",
+        "track_names": [
+            "Off World",
+            "Hustle (Ft Mark Porter)"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165714-ebm035-thomas-schumacher-off-world",
+        "cat": "EBM035",
+        "label": "Electric Ballroom",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/14421-electric-ballroom",
+        "artist": "Thomas Schumacher",
+        "title": "Off World",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/170881.mp3",
+            "https://redeye-391831.c.cdn77.org/170881b.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/170881-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170881-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170881-2.jpg"
+        ],
+        "new_releases": 310
+    },
+    "170885": {
+        "id": "170885",
+        "track_names": [
+            "Riding Dirty",
+            "In Essence",
+            "Cassarole",
+            "So Different"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165719-most007-various-artists-loud-moving-fast-p-e-a-r-l-not-a-headliner-ryan-james-ford-dj-tool",
+        "cat": "MOST007",
+        "label": "Moral Standards",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/24290-moral-standards",
+        "artist": "Various Artists",
+        "title": "Loud Moving Fast - P.E.A.R.L. - Not A Headliner - Ryan James Ford - DJ TOOL",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/170885.mp3",
+            "https://redeye-391831.c.cdn77.org/170885b.mp3",
+            "https://redeye-391831.c.cdn77.org/170885c.mp3",
+            "https://redeye-391831.c.cdn77.org/170885d.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/170885-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170885-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170885-2.jpg"
+        ],
+        "new_releases": 311
+    },
+    "170887": {
+        "id": "170887",
+        "track_names": [
+            "Walking Barcodes",
+            "Don't Follow The Leader",
+            "Mutation",
+            "Got To Get Mad"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165721-fw006-various-artists-walking-barcodes-e-p-200-copies-only-limited-edition-and-nesbit-bubbless-secret-hero-and-owen-acid-draft-punk-and-nesbit",
+        "cat": "FW006",
+        "label": "Furious Wax",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/28399-furious-wax",
+        "artist": "Various Artists",
+        "title": "WALKING BARCODES E.P. (200 Copies Only / Limited Edition) - & Nesbit - Bubbless - Secret Hero & Owen Acid - Draft Punk & Nesbit",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/170887.mp3",
+            "https://redeye-391831.c.cdn77.org/170887b.mp3",
+            "https://redeye-391831.c.cdn77.org/170887c.mp3",
+            "https://redeye-391831.c.cdn77.org/170887d.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/170887-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170887-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170887-2.jpg"
+        ],
+        "new_releases": 312
+    },
+    "170877": {
+        "id": "170877",
+        "track_names": [
+            "Hhbyl",
+            "Slush 77",
+            "U Projected 2",
+            "Daydream",
+            "Let U Go",
+            "Camden",
+            "What It\u2019s Worth",
+            "Stand Tall",
+            "Freefall",
+            "False Glistening",
+            "Minefields",
+            "Exposed",
+            "Closer",
+            "Myself 2 Myself",
+            "Shoulder Length",
+            "Pelli..."
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165710-strlp-070-voice-actor-fake-sleep",
+        "cat": "STRLP-070",
+        "label": "Stroom",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/24553-stroom",
+        "artist": "VOICE ACTOR",
+        "title": "FAKE SLEEP",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/170877.mp3",
+            "https://redeye-391831.c.cdn77.org/170877b.mp3",
+            "https://redeye-391831.c.cdn77.org/170877c.mp3",
+            "https://redeye-391831.c.cdn77.org/170877d.mp3",
+            "https://redeye-391831.c.cdn77.org/170877e.mp3",
+            "https://redeye-391831.c.cdn77.org/170877f.mp3",
+            "https://redeye-391831.c.cdn77.org/170877g.mp3",
+            "https://redeye-391831.c.cdn77.org/170877h.mp3",
+            "https://redeye-391831.c.cdn77.org/170877i.mp3",
+            "https://redeye-391831.c.cdn77.org/170877j.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/170877-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170877-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170877-2.jpg"
+        ],
+        "new_releases": 313
+    },
+    "170865": {
+        "id": "170865",
+        "track_names": [
+            "A1. Toy Story",
+            "a2. Colombo Acid",
+            "b1. Low Moisture Acid",
+            "b2. Lost Memory Fm",
+            "c1. Optimistic Acid",
+            "c2. Sunday Circles",
+            "d1. Dos Park Memories",
+            "d2. City Gate Funk"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165698-usr027-wedding-acid-group-metro-303",
+        "cat": "USR027",
+        "label": "Undersound Recordings",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/17805-undersound-recordings",
+        "artist": "Wedding Acid Group",
+        "title": "Metro-303",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/170865.mp3",
+            "https://redeye-391831.c.cdn77.org/170865b.mp3",
+            "https://redeye-391831.c.cdn77.org/170865c.mp3",
+            "https://redeye-391831.c.cdn77.org/170865d.mp3",
+            "https://redeye-391831.c.cdn77.org/170865e.mp3",
+            "https://redeye-391831.c.cdn77.org/170865f.mp3",
+            "https://redeye-391831.c.cdn77.org/170865g.mp3",
+            "https://redeye-391831.c.cdn77.org/170865h.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/170865-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170865-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170865-2.jpg"
+        ],
+        "new_releases": 314
+    },
+    "170846": {
+        "id": "170846",
+        "track_names": [
+            "Laanda",
+            "Briks",
+            "Frak",
+            "Raqqa"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165666-smv008-plattform-smv008",
+        "cat": "SMV008",
+        "label": "Somov Records",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/24144-somov-records",
+        "artist": "+plattform",
+        "title": "SMV008",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/170846.mp3",
+            "https://redeye-391831.c.cdn77.org/170846b.mp3",
+            "https://redeye-391831.c.cdn77.org/170846c.mp3",
+            "https://redeye-391831.c.cdn77.org/170846d.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/170846-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170846-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170846-2.jpg"
+        ],
+        "new_releases": 315
+    },
+    "77480": {
+        "id": "77480",
+        "track_names": [
+            "1. Hey",
+            "2. Mire",
+            "3. Algae & Others",
+            "4. Look Trail Of Goo",
+            "5. Leaf Comb",
+            "6. Snail Loves Moth",
+            "7. Isle Of What",
+            "8. Populus Alba (I'm Fine)"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165682-soda013lp-atte-elias-kantonen-a-path-with-a-name",
+        "cat": "SODA013LP",
+        "label": "Soda Gong",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/23892-soda-gong",
+        "artist": "Atte Elias Kantonen",
+        "title": "A Path With A Name",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/77480.mp3",
+            "https://redeye-391831.c.cdn77.org/77480b.mp3",
+            "https://redeye-391831.c.cdn77.org/77480c.mp3",
+            "https://redeye-391831.c.cdn77.org/77480d.mp3",
+            "https://redeye-391831.c.cdn77.org/77480e.mp3",
+            "https://redeye-391831.c.cdn77.org/77480f.mp3",
+            "https://redeye-391831.c.cdn77.org/77480g.mp3",
+            "https://redeye-391831.c.cdn77.org/77480h.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/77480-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/77480-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/77480-2.jpg"
+        ],
+        "new_releases": 317
+    },
+    "77479": {
+        "id": "77479",
+        "track_names": [
+            "1. Rhyolite",
+            "2. Soft Fascination",
+            "3. Ferric Oxide",
+            "4. Silica",
+            "5. Xeskouriasma",
+            "6. Particle Float"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165681-fait-32lp-blackbody_radiation-ultra-materials",
+        "cat": "FAIT-32LP",
+        "label": "Faitiche",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/28575-faitiche",
+        "artist": "Blackbody_radiation",
+        "title": "Ultra-Materials",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/77479.mp3",
+            "https://redeye-391831.c.cdn77.org/77479b.mp3",
+            "https://redeye-391831.c.cdn77.org/77479c.mp3",
+            "https://redeye-391831.c.cdn77.org/77479d.mp3",
+            "https://redeye-391831.c.cdn77.org/77479e.mp3",
+            "https://redeye-391831.c.cdn77.org/77479f.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/77479-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/77479-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/77479-2.jpg"
+        ],
+        "new_releases": 318
+    },
+    "170844": {
+        "id": "170844",
+        "track_names": [
+            "Irregular",
+            "Zeitreisender",
+            "Levee Breaker",
+            "Post Mag Clarity",
+            "Ultra Violence"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165663-ebr001-doppelb\u00e4nger-2020-vision",
+        "cat": "EBR001",
+        "label": "Electro Banger",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/30391-electro-banger",
+        "artist": "DOPPELB\u00c4NGER",
+        "title": "2020 Vision",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/170844.mp3",
+            "https://redeye-391831.c.cdn77.org/170844b.mp3",
+            "https://redeye-391831.c.cdn77.org/170844c.mp3",
+            "https://redeye-391831.c.cdn77.org/170844d.mp3",
+            "https://redeye-391831.c.cdn77.org/170844e.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/170844-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170844-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170844-2.jpg"
+        ],
+        "new_releases": 319
+    },
+    "170847": {
+        "id": "170847",
+        "track_names": [
+            "A1: Leghermes",
+            "a2: Metamorfosa",
+            "b1: Elfa",
+            "b2: Trist\u00ebza",
+            "c1: I Te Porti La L\u00f6m",
+            "c2: Nos Sun Le Cosmos",
+            "d1: Azeleraziun",
+            "d2: Cub De Dlacia",
+            ""
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165671-hype0006-marc-romboy-marlene-schuen-dimitri-andreas-metamorfosa-2lp",
+        "cat": "HYPE0006",
+        "label": "Hyperharmonic",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/20016-hyperharmonic",
+        "artist": "Marc Romboy, Marlene Schuen, Dimitri Andreas",
+        "title": "Metamorfosa (2LP)",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/170847.mp3",
+            "https://redeye-391831.c.cdn77.org/170847b.mp3",
+            "https://redeye-391831.c.cdn77.org/170847c.mp3",
+            "https://redeye-391831.c.cdn77.org/170847d.mp3",
+            "https://redeye-391831.c.cdn77.org/170847e.mp3",
+            "https://redeye-391831.c.cdn77.org/170847f.mp3",
+            "https://redeye-391831.c.cdn77.org/170847g.mp3",
+            "https://redeye-391831.c.cdn77.org/170847h.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/170847-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170847-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170847-2.jpg"
+        ],
+        "new_releases": 320
+    },
+    "170840": {
+        "id": "170840",
+        "track_names": [
+            "01. Srebrenica",
+            "02. Rawalpindi",
+            "03. Kabul",
+            "04. Cairo",
+            "05. Tabriz",
+            "06. Dar Es Salaam",
+            "07. Tuzla",
+            "08. Esfahan",
+            "09. Riyadh",
+            "10. Tashkent",
+            "11. Lahore",
+            "12. Assyut",
+            "13. Oran",
+            "14. Pristina",
+            "15. Faizabad",
+            "16...."
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165654-via06-muslimgauze-and-the-rootsman-return-to-the-city-of-djinn-2x12",
+        "cat": "VIA06",
+        "label": "Via Parigi",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/25554-via-parigi",
+        "artist": "Muslimgauze & The Rootsman",
+        "title": "Return To The City Of Djinn - 2x12\"",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/170840.mp3",
+            "https://redeye-391831.c.cdn77.org/170840b.mp3",
+            "https://redeye-391831.c.cdn77.org/170840c.mp3",
+            "https://redeye-391831.c.cdn77.org/170840d.mp3",
+            "https://redeye-391831.c.cdn77.org/170840e.mp3",
+            "https://redeye-391831.c.cdn77.org/170840f.mp3",
+            "https://redeye-391831.c.cdn77.org/170840g.mp3",
+            "https://redeye-391831.c.cdn77.org/170840h.mp3",
+            "https://redeye-391831.c.cdn77.org/170840i.mp3",
+            "https://redeye-391831.c.cdn77.org/170840j.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/170840-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170840-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170840-2.jpg"
+        ],
+        "new_releases": 321
+    },
+    "170845": {
+        "id": "170845",
+        "track_names": [
+            "I.c.u.",
+            "Missing Man",
+            "I.c.u. Mike Parker Remix",
+            "Missing Man Kannabi Remix"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165664-ktars004-sabatoj-i-c-u-ep",
+        "cat": "KTARS004",
+        "label": "Katharsis Recordings",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/29992-katharsis-recordings",
+        "artist": "Sabatoj",
+        "title": "I.C.U EP",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/170845.mp3",
+            "https://redeye-391831.c.cdn77.org/170845b.mp3",
+            "https://redeye-391831.c.cdn77.org/170845c.mp3",
+            "https://redeye-391831.c.cdn77.org/170845d.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/170845-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170845-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170845-2.jpg"
+        ],
+        "new_releases": 322
+    },
+    "3200697": {
+        "id": "3200697",
+        "track_names": [
+            "A: 1/d.t.a.w.o. (Deprogramming The Atonist World Order) 2/techno-Vernacular Phreak B: 1/futurhythmic Bop 2/holosonic",
+            "rebellion 3/dr. Rock's Powernomics Vision C: 1/jes' Grew 2/our Starship To Ociya S..."
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165683-ziq457-speaker-music-techxodus-2lp",
+        "cat": "ZIQ457",
+        "label": "Planet Mu",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/19215-planet-mu",
+        "artist": "Speaker Music",
+        "title": "Techxodus - 2LP",
+        "track_urls": [],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/3200697-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/3200697-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/3200697-2.jpg"
+        ],
+        "new_releases": 323
+    },
+    "170842": {
+        "id": "170842",
+        "track_names": [
+            "1. Labyrinth",
+            "2. Short Life Feat. Garden Krist",
+            "3. No Excitement",
+            "4. Brechreiz",
+            "5. Unzivilisiert",
+            "6. Nasenbluten",
+            "7. Rush",
+            "8. Mala Vida"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165660-bite028-unhuman-and-petra-flurr-mala-vida",
+        "cat": "BITE028",
+        "label": "Bite",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/18985-bite",
+        "artist": "Unhuman & Petra Flurr",
+        "title": "Mala Vida",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/170842.mp3",
+            "https://redeye-391831.c.cdn77.org/170842b.mp3",
+            "https://redeye-391831.c.cdn77.org/170842c.mp3",
+            "https://redeye-391831.c.cdn77.org/170842d.mp3",
+            "https://redeye-391831.c.cdn77.org/170842e.mp3",
+            "https://redeye-391831.c.cdn77.org/170842f.mp3",
+            "https://redeye-391831.c.cdn77.org/170842g.mp3",
+            "https://redeye-391831.c.cdn77.org/170842h.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/170842-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170842-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170842-2.jpg"
+        ],
+        "new_releases": 324
+    },
+    "170841": {
+        "id": "170841",
+        "track_names": [
+            "Boris Divider - Gods Of Olympus",
+            "Igors Vorobjovs - Nh3",
+            "Lectromagnetique - Space Coast",
+            "Francois Dillinger - Agitated Particles",
+            "Ch415 - Spaze Modulations"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165659-go008-various-artists-blue-binary-code-ep",
+        "cat": "GO008",
+        "label": "Gladio Operations",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/21643-gladio-operations",
+        "artist": "VARIOUS ARTISTS",
+        "title": "BLUE BINARY CODE EP",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/170841.mp3",
+            "https://redeye-391831.c.cdn77.org/170841b.mp3",
+            "https://redeye-391831.c.cdn77.org/170841c.mp3",
+            "https://redeye-391831.c.cdn77.org/170841d.mp3",
+            "https://redeye-391831.c.cdn77.org/170841e.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/170841-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170841-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170841-2.jpg"
+        ],
+        "new_releases": 325
+    },
+    "170839": {
+        "id": "170839",
+        "track_names": [
+            "As Above",
+            "Where It Begins",
+            "La Figa",
+            "We, The Witches",
+            "Les Mis Muses",
+            "Tensegrity",
+            "Wallada",
+            "Tremors",
+            "Inner City Light",
+            "So Below"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165650-hth168-ana-quiroga-azabache",
+        "cat": "HTH168",
+        "label": "Houndstooth",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/6314-houndstooth",
+        "artist": "Ana Quiroga",
+        "title": "Azabache",
+        "track_urls": [],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/170839-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170839-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170839-2.jpg"
+        ],
+        "new_releases": 326
+    },
+    "170838": {
+        "id": "170838",
+        "track_names": [
+            "A1. Reviens La Nuit (Works Of Intent Farewell Remix) A2. Tales From The",
+            "real World (Voltaire Remix) A3. In Your Phase (22carbone Remix)",
+            "b1. Liebe Gr\u00fc\u00dfe Aus Cucuron (Rocco Rodamaal Remix) B2. Le Swin..."
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165648-33tepsvrmxs-laurent-garnier-33t-e-p-s-v-remixes",
+        "cat": "33TEPSVRMXS",
+        "label": "Cod3 Qr",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/20600-cod3-qr",
+        "artist": "Laurent Garnier",
+        "title": "33T.E.P.S.V. REMIXES",
+        "track_urls": [],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/170838-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170838-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170838-2.jpg"
+        ],
+        "new_releases": 327
+    },
+    "170824": {
+        "id": "170824",
+        "track_names": [
+            "Slip",
+            "Switchblade"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165616-trad001-<tradition>",
+        "cat": "TRAD001",
+        "label": "'><tradition></a",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/30382-<tradition>",
+        "artist": "<tradition",
+        "title": "<tradition>",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/170824.mp3",
+            "https://redeye-391831.c.cdn77.org/170824b.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/170824-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170824-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170824-2.jpg"
+        ],
+        "new_releases": 328
+    },
+    "170832": {
+        "id": "170832",
+        "track_names": [
+            "A1 Other World",
+            "a2 Born As Indigo",
+            "b1 Sunshine Dragon",
+            "b2 Eterno El Nuestro",
+            "b3 Jupiters Dream"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165624-true-two-dan-piu-zeit-des-erwachens",
+        "cat": "TRUE-TWO",
+        "label": "True Confession",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/30384-true-confession",
+        "artist": "Dan Piu",
+        "title": "Zeit Des Erwachens",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/170832.mp3",
+            "https://redeye-391831.c.cdn77.org/170832b.mp3",
+            "https://redeye-391831.c.cdn77.org/170832c.mp3",
+            "https://redeye-391831.c.cdn77.org/170832d.mp3",
+            "https://redeye-391831.c.cdn77.org/170832e.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/170832-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170832-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170832-2.jpg"
+        ],
+        "new_releases": 329
+    },
+    "170831": {
+        "id": "170831",
+        "track_names": [
+            "01. Candy Shoppe",
+            "02. The Cycle Of Abuse",
+            "03. Double Helix",
+            "04. Science Center",
+            "05. Genetic",
+            "06. Goes By",
+            "07. Does It Look Like I\u2019m Here?",
+            "08. Summerdata",
+            "09. Shade",
+            "10. It Doesn\u2019t Arrive",
+            "11. Now Y..."
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165623-gi408lpc1-emeralds-does-it-look-like-im-here?-contains-foldout-poster-with-liner-notes-by-chris-madak-bee-mask-and-download-card-with-bonus-tracks-ectomorph-clear-with-black-center-",
+        "cat": "GI408LPC1",
+        "label": "Ghostly",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/2052-ghostly",
+        "artist": "Emeralds",
+        "title": "Does It Look Like I'm Here? - Contains Foldout Poster With Liner Notes By Chris Madak/Bee Mask And Download Card With Bonus Tracks - Ectomorph (Clear With Black Center)",
+        "track_urls": [],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/170831-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170831-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170831-2.jpg"
+        ],
+        "new_releases": 330
+    },
+    "122388": {
+        "id": "122388",
+        "track_names": [
+            "Drone Y Besa",
+            "Time",
+            "All The Things",
+            "Csymphony At Dawn",
+            "Cbring You",
+            "Dwe Have Power"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/89781-ns-17-eric-maltz-ns-17-2-x-12",
+        "cat": "NS-17",
+        "label": "Novel Sound",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/4312-novel-sound",
+        "artist": "Eric Maltz",
+        "title": "NS-17 (2 X 12'')",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/122388.mp3",
+            "https://redeye-391831.c.cdn77.org/122388b.mp3",
+            "https://redeye-391831.c.cdn77.org/122388c.mp3",
+            "https://redeye-391831.c.cdn77.org/122388d.mp3",
+            "https://redeye-391831.c.cdn77.org/122388e.mp3",
+            "https://redeye-391831.c.cdn77.org/122388f.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/122388-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/122388-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/122388-2.jpg"
+        ],
+        "new_releases": 331
+    },
+    "170823": {
+        "id": "170823",
+        "track_names": [
+            "Itch The Scratch",
+            "Do You Like Sound?",
+            "Nine Four",
+            "Dub 1"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165615-hysep47-fergus-sweetland-thank-you-brain-",
+        "cat": "HYSEP47",
+        "label": "Hayes",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/18375-hayes",
+        "artist": "Fergus Sweetland",
+        "title": "Thank You, Brain.",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/170823.mp3",
+            "https://redeye-391831.c.cdn77.org/170823b.mp3",
+            "https://redeye-391831.c.cdn77.org/170823c.mp3",
+            "https://redeye-391831.c.cdn77.org/170823d.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/170823-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170823-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170823-2.jpg"
+        ],
+        "new_releases": 332
+    },
+    "101631": {
+        "id": "101631",
+        "track_names": [
+            "The Beginning",
+            "Phantom Power",
+            "Junkies On Hermann Street",
+            "Launch Ramp To The Sky",
+            "For Mona, My Beloved Cat",
+            "Her Light Goes Through Everything",
+            "Black Arm W",
+            "Wolf",
+            "Confetti",
+            "Anti-Corporate Music ..."
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/61704-ns-09-levon-vincent-levon-vincent-4-x-12",
+        "cat": "NS-09",
+        "label": "Novel Sound",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/4312-novel-sound",
+        "artist": "Levon Vincent",
+        "title": "Levon Vincent (4 X 12\")",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/101631.mp3",
+            "https://redeye-391831.c.cdn77.org/101631b.mp3",
+            "https://redeye-391831.c.cdn77.org/101631c.mp3",
+            "https://redeye-391831.c.cdn77.org/101631d.mp3",
+            "https://redeye-391831.c.cdn77.org/101631e.mp3",
+            "https://redeye-391831.c.cdn77.org/101631f.mp3",
+            "https://redeye-391831.c.cdn77.org/101631g.mp3",
+            "https://redeye-391831.c.cdn77.org/101631h.mp3",
+            "https://redeye-391831.c.cdn77.org/101631i.mp3",
+            "https://redeye-391831.c.cdn77.org/101631j.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/101631-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/101631-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/101631-2.jpg"
+        ],
+        "new_releases": 333
+    },
+    "170835": {
+        "id": "170835",
+        "track_names": [
+            "01: R\u00e5ttornas Vinter",
+            "02: Spasm",
+            "03: Contrebande",
+            "04: Non Fiction",
+            "05: Aenigma",
+            "06: Shocking Dark",
+            "07: Lia Rousseau",
+            "08: Lost In Reality",
+            ""
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165631-pmlp17-metro-riders-lost-in-reality",
+        "cat": "PMLP17",
+        "label": "Possible Motive",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/16681-possible-motive",
+        "artist": "Metro Riders",
+        "title": "Lost In Reality",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/170835.mp3",
+            "https://redeye-391831.c.cdn77.org/170835b.mp3",
+            "https://redeye-391831.c.cdn77.org/170835c.mp3",
+            "https://redeye-391831.c.cdn77.org/170835d.mp3",
+            "https://redeye-391831.c.cdn77.org/170835e.mp3",
+            "https://redeye-391831.c.cdn77.org/170835f.mp3",
+            "https://redeye-391831.c.cdn77.org/170835g.mp3",
+            "https://redeye-391831.c.cdn77.org/170835h.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/170835-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170835-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/170835-2.jpg"
+        ],
+        "new_releases": 334
+    },
+    "3200693": {
+        "id": "3200693",
+        "track_names": [
+            "A1 - Prelude To A Quest",
+            "a2 - Blow The Conch",
+            "a3 - Rapids",
+            "b1 - Behind The Waterfall",
+            "b2 - Polite Rudboi",
+            "b3 - Surface/sirens",
+            "",
+            "c1 - Hypnotized",
+            "c2 - Leave Me Alone",
+            "c3 - Where U From",
+            "d1 - Erotica",
+            "..."
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/165610-tem10-simo-cell-cuspide-des-sir\u00e8nes-2lp",
+        "cat": "TEM10",
+        "label": "Temet",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/26406-temet-",
+        "artist": "Simo Cell",
+        "title": "Cuspide Des Sir\u00e8nes - 2LP",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/3200693.mp3",
+            "https://redeye-391831.c.cdn77.org/3200693b.mp3",
+            "https://redeye-391831.c.cdn77.org/3200693c.mp3",
+            "https://redeye-391831.c.cdn77.org/3200693d.mp3",
+            "https://redeye-391831.c.cdn77.org/3200693e.mp3",
+            "https://redeye-391831.c.cdn77.org/3200693f.mp3",
+            "https://redeye-391831.c.cdn77.org/3200693g.mp3",
+            "https://redeye-391831.c.cdn77.org/3200693h.mp3",
+            "https://redeye-391831.c.cdn77.org/3200693i.mp3",
+            "https://redeye-391831.c.cdn77.org/3200693j.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/3200693-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/3200693-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/3200693-2.jpg"
+        ],
+        "new_releases": 335
     }
 }

@@ -147,6 +147,8 @@ def get_red_eye_artwork_urls(release_id):
 
 # scrape redeyerecords.co.uk
 def scrape_red_eye(get_urls=True, test_single=False):
+    print("scraping: redeye", flush=True)
+
     urls = [
         ("https://www.redeyerecords.co.uk/techno-electro/weekly-chart", "weekly_chart"),
         ("https://www.redeyerecords.co.uk/techno-electro/monthly-chart", "monthly_chart"),
@@ -183,6 +185,7 @@ def scrape_red_eye(get_urls=True, test_single=False):
             release_dict["link"] = parse_red_eye_release_link(link_elem)
 
             # this takes a little while so its useful to skip during dev
+            print(f"scraping release urls: {release_dict['id']}", flush=True)
             if get_urls and release_dict["id"] not in releases_dict:
                 release_dict["track_urls"] = get_red_eye_snippit_urls(release_dict["id"])
                 release_dict["artworks"] = get_red_eye_artwork_urls(release_dict["id"])

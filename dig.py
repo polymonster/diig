@@ -159,7 +159,7 @@ def scrape_red_eye(get_urls=True, test_single=False):
     releases_dict = dict()
     new_releases = 0
     for (url, category) in urls:
-        print(f"scraping page: {url}")
+        print(f"scraping page: {url}", flush=True)
 
         # try and then continue if the page does not exist
         try:

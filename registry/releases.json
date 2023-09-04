@@ -21,8 +21,8 @@
         "label_link": "https://www.redeyerecords.co.uk/record-label-releases/24097-ad-93",
         "artist": "LORD OF THE ISLES & ELLEN RENTON",
         "title": "MY NOISE IS NOTHING",
-        "weekly_chart": 2,
-        "monthly_chart": 3,
+        "weekly_chart": 9,
+        "monthly_chart": 1,
         "new_releases": 128
     },
     "170989": {
@@ -111,7 +111,7 @@
         "artist": "The Future Sound Of London",
         "title": "Papua New Guinea",
         "weekly_chart": 14,
-        "monthly_chart": 1,
+        "monthly_chart": 2,
         "new_releases": 217
     },
     "169564": {
@@ -136,7 +136,7 @@
         "artist": "Model 500",
         "title": "Starlight",
         "weekly_chart": 27,
-        "monthly_chart": 22
+        "monthly_chart": 21
     },
     "170401": {
         "id": "170401",
@@ -163,7 +163,7 @@
         "label_link": "https://www.redeyerecords.co.uk/record-label-releases/21551-dust-world",
         "artist": "ANF",
         "title": "Costly Blooms On The Eve Of Collapse",
-        "weekly_chart": 5,
+        "weekly_chart": 8,
         "monthly_chart": 5,
         "new_releases": 622
     },
@@ -298,7 +298,7 @@
         "artist": "Reptant",
         "title": "Duality Of The Gecko",
         "weekly_chart": 12,
-        "monthly_chart": 2,
+        "monthly_chart": 3,
         "new_releases": 350
     },
     "171025": {
@@ -443,9 +443,9 @@
         "label_link": "https://www.redeyerecords.co.uk/record-label-releases/22956-klf-communications",
         "artist": "KLF",
         "title": "CHILL OUT ALBUM (CLEAR VINYL)",
-        "weekly_chart": 9,
+        "weekly_chart": 4,
         "new_releases": 142,
-        "monthly_chart": 20
+        "monthly_chart": 13
     },
     "105064": {
         "id": "105064",
@@ -637,7 +637,7 @@
         "label_link": "https://www.redeyerecords.co.uk/record-label-releases/27260-mutual-rytm",
         "artist": "SHDW & Obscure Shape",
         "title": "Poetic Justice EP",
-        "weekly_chart": 19,
+        "weekly_chart": 21,
         "monthly_chart": 34,
         "new_releases": 480
     },
@@ -780,8 +780,8 @@
         "label_link": "https://www.redeyerecords.co.uk/record-label-releases/7624-metroplex",
         "artist": "Channel One",
         "title": "Technicolor",
-        "weekly_chart": 25,
-        "monthly_chart": 21
+        "weekly_chart": 28,
+        "monthly_chart": 20
     },
     "169567": {
         "id": "169567",
@@ -806,7 +806,7 @@
         "label_link": "https://www.redeyerecords.co.uk/record-label-releases/30071-oboro-records",
         "artist": "E.T.I & Graeme",
         "title": "Babyrise, Bluedreamers (Incl. E.T.I Rework)",
-        "weekly_chart": 26
+        "weekly_chart": 29
     },
     "169568": {
         "id": "169568",
@@ -885,7 +885,7 @@
         "label_link": "https://www.redeyerecords.co.uk/record-label-releases/27302-batter-down",
         "artist": "Various Artists",
         "title": "??????????",
-        "monthly_chart": 16,
+        "monthly_chart": 17,
         "new_releases": 671,
         "weekly_chart": 34
     },
@@ -942,7 +942,7 @@
         "label_link": "https://www.redeyerecords.co.uk/record-label-releases/22030-gestalt-records",
         "artist": "Utopian Streams",
         "title": "Second Wave EP",
-        "monthly_chart": 17,
+        "monthly_chart": 23,
         "new_releases": 463
     },
     "171105": {
@@ -1026,9 +1026,9 @@
         "label_link": "https://www.redeyerecords.co.uk/record-label-releases/23839-big-saldos-chunkers",
         "artist": "Sally C",
         "title": "Big Saldo's Chunker 003",
-        "monthly_chart": 14,
+        "monthly_chart": 15,
         "new_releases": 163,
-        "weekly_chart": 28
+        "weekly_chart": 31
     },
     "170579": {
         "id": "170579",
@@ -1161,7 +1161,7 @@
         "label_link": "https://www.redeyerecords.co.uk/record-label-releases/25116-choki-biki",
         "artist": "DiGJit",
         "title": "All My Friends Are Djs",
-        "monthly_chart": 23,
+        "monthly_chart": 22,
         "new_releases": 537
     },
     "170770": {
@@ -1243,7 +1243,7 @@
         "label_link": "https://www.redeyerecords.co.uk/record-label-releases/27260-mutual-rytm",
         "artist": "Alarico",
         "title": "Drops Of You [cut-Out Label Sleeve / Printed Inner Sleeve]",
-        "monthly_chart": 26,
+        "monthly_chart": 25,
         "new_releases": 339
     },
     "171097": {
@@ -1338,7 +1338,7 @@
         "label_link": "https://www.redeyerecords.co.uk/record-label-releases/1108-hessle-audio",
         "artist": "Pangaea",
         "title": "Changing Channels: Part 1",
-        "monthly_chart": 30,
+        "monthly_chart": 31,
         "new_releases": 346
     },
     "142292": {
@@ -1368,7 +1368,7 @@
         "title": "Freak Like U",
         "monthly_chart": 33,
         "new_releases": 756,
-        "weekly_chart": 15
+        "weekly_chart": 5
     },
     "162695": {
         "id": "162695",
@@ -1659,7 +1659,7 @@
         "artist": "Azu Tiwaline",
         "title": "The Fifth Dream - 2LP",
         "new_releases": 106,
-        "weekly_chart": 6
+        "weekly_chart": 10
     },
     "171292": {
         "id": "171292",
@@ -3925,7 +3925,7 @@
         "title": "Secret Tapes",
         "new_releases": 193,
         "weekly_chart": 0,
-        "monthly_chart": 13
+        "monthly_chart": 14
     },
     "3200373": {
         "id": "3200373",
@@ -5803,7 +5803,8 @@
             "https://www.redeyerecords.co.uk/imagery/171022-1.jpg",
             "https://www.redeyerecords.co.uk/imagery/171022-2.jpg"
         ],
-        "new_releases": 259
+        "new_releases": 259,
+        "monthly_chart": 26
     },
     "171073": {
         "id": "171073",
@@ -6345,7 +6346,7 @@
             "https://www.redeyerecords.co.uk/imagery/159309-2.jpg"
         ],
         "new_releases": 276,
-        "weekly_chart": 18
+        "weekly_chart": 20
     },
     "151418": {
         "id": "151418",
@@ -11555,7 +11556,7 @@
             "https://www.redeyerecords.co.uk/imagery/161690-2.jpg"
         ],
         "new_releases": 460,
-        "weekly_chart": 3,
+        "weekly_chart": 6,
         "monthly_chart": 35
     },
     "170734": {
@@ -11954,7 +11955,7 @@
             "https://www.redeyerecords.co.uk/imagery/164952-2.jpg"
         ],
         "new_releases": 476,
-        "weekly_chart": 21,
+        "weekly_chart": 24,
         "monthly_chart": 36
     },
     "165971": {
@@ -11985,7 +11986,7 @@
             "https://www.redeyerecords.co.uk/imagery/165971-2.jpg"
         ],
         "new_releases": 477,
-        "weekly_chart": 22
+        "weekly_chart": 25
     },
     "170590": {
         "id": "170590",
@@ -17496,7 +17497,7 @@
             "https://www.redeyerecords.co.uk/imagery/170282-2.jpg"
         ],
         "new_releases": 665,
-        "weekly_chart": 32
+        "weekly_chart": 34
     },
     "170288": {
         "id": "170288",
@@ -18421,7 +18422,7 @@
             "https://www.redeyerecords.co.uk/imagery/170206-2.jpg"
         ],
         "new_releases": 694,
-        "weekly_chart": 31
+        "weekly_chart": 33
     },
     "305223": {
         "id": "305223",
@@ -20094,8 +20095,8 @@
             "https://www.redeyerecords.co.uk/imagery/170063-2.jpg"
         ],
         "new_releases": 747,
-        "weekly_chart": 4,
-        "monthly_chart": 15
+        "weekly_chart": 7,
+        "monthly_chart": 16
     },
     "170060": {
         "id": "170060",
@@ -20364,7 +20365,7 @@
             "https://www.redeyerecords.co.uk/imagery/103634-2.jpg"
         ],
         "new_releases": 756,
-        "weekly_chart": 10
+        "weekly_chart": 13
     },
     "96341": {
         "id": "96341",
@@ -20486,7 +20487,7 @@
             "https://www.redeyerecords.co.uk/imagery/170077-2.jpg"
         ],
         "new_releases": 761,
-        "weekly_chart": 30
+        "weekly_chart": 32
     },
     "166121": {
         "id": "166121",
@@ -21237,7 +21238,7 @@
             "https://www.redeyerecords.co.uk/imagery/169978-2.jpg"
         ],
         "new_releases": 746,
-        "weekly_chart": 27
+        "weekly_chart": 30
     },
     "169987": {
         "id": "169987",
@@ -22633,7 +22634,7 @@
             "https://www.redeyerecords.co.uk/imagery/121640-1.jpg",
             "https://www.redeyerecords.co.uk/imagery/121640-2.jpg"
         ],
-        "weekly_chart": 11
+        "weekly_chart": 14
     },
     "171334": {
         "id": "171334",
@@ -23447,7 +23448,7 @@
             "https://www.redeyerecords.co.uk/imagery/3200718-1.jpg",
             "https://www.redeyerecords.co.uk/imagery/3200718-2.jpg"
         ],
-        "weekly_chart": 2,
+        "weekly_chart": 3,
         "new_releases": 63,
         "monthly_chart": 32
     },
@@ -23474,7 +23475,7 @@
             "https://www.redeyerecords.co.uk/imagery/152139-1.jpg",
             "https://www.redeyerecords.co.uk/imagery/152139-2.jpg"
         ],
-        "weekly_chart": 17
+        "weekly_chart": 19
     },
     "168186": {
         "id": "168186",
@@ -23501,7 +23502,7 @@
             "https://www.redeyerecords.co.uk/imagery/168186-1.jpg",
             "https://www.redeyerecords.co.uk/imagery/168186-2.jpg"
         ],
-        "weekly_chart": 24
+        "weekly_chart": 27
     },
     "130294": {
         "id": "130294",
@@ -23881,7 +23882,7 @@
             "https://www.redeyerecords.co.uk/imagery/171398-2.jpg"
         ],
         "new_releases": 61,
-        "weekly_chart": 7
+        "weekly_chart": 11
     },
     "171405": {
         "id": "171405",
@@ -24101,7 +24102,7 @@
             "https://www.redeyerecords.co.uk/imagery/133332-1.jpg",
             "https://www.redeyerecords.co.uk/imagery/133332-2.jpg"
         ],
-        "weekly_chart": 13
+        "weekly_chart": 16
     },
     "167980": {
         "id": "167980",
@@ -24128,7 +24129,7 @@
             "https://www.redeyerecords.co.uk/imagery/167980-1.jpg",
             "https://www.redeyerecords.co.uk/imagery/167980-2.jpg"
         ],
-        "weekly_chart": 23
+        "weekly_chart": 26
     },
     "171410": {
         "id": "171410",
@@ -24155,7 +24156,8 @@
             "https://www.redeyerecords.co.uk/imagery/171410-1.jpg",
             "https://www.redeyerecords.co.uk/imagery/171410-2.jpg"
         ],
-        "new_releases": 26
+        "new_releases": 26,
+        "weekly_chart": 12
     },
     "171434": {
         "id": "171434",
@@ -24183,7 +24185,8 @@
             "https://www.redeyerecords.co.uk/imagery/171434-2.jpg"
         ],
         "new_releases": 27,
-        "weekly_chart": 8
+        "weekly_chart": 2,
+        "monthly_chart": 30
     },
     "171437": {
         "id": "171437",
@@ -24800,7 +24803,7 @@
             "https://www.redeyerecords.co.uk/imagery/146090-1.jpg",
             "https://www.redeyerecords.co.uk/imagery/146090-2.jpg"
         ],
-        "weekly_chart": 16
+        "weekly_chart": 18
     },
     "164240": {
         "id": "164240",
@@ -24831,7 +24834,7 @@
             "https://www.redeyerecords.co.uk/imagery/164240-1.jpg",
             "https://www.redeyerecords.co.uk/imagery/164240-2.jpg"
         ],
-        "weekly_chart": 20
+        "weekly_chart": 22
     },
     "171447": {
         "id": "171447",
@@ -25556,7 +25559,7 @@
             "https://www.redeyerecords.co.uk/imagery/121919-1.jpg",
             "https://www.redeyerecords.co.uk/imagery/121919-2.jpg"
         ],
-        "weekly_chart": 12
+        "weekly_chart": 15
     },
     "134443": {
         "id": "134443",
@@ -25587,7 +25590,7 @@
             "https://www.redeyerecords.co.uk/imagery/134443-1.jpg",
             "https://www.redeyerecords.co.uk/imagery/134443-2.jpg"
         ],
-        "weekly_chart": 14
+        "weekly_chart": 17
     },
     "169716": {
         "id": "169716",
@@ -25615,5 +25618,26 @@
             "https://www.redeyerecords.co.uk/imagery/169716-2.jpg"
         ],
         "new_releases": 0
+    },
+    "164648": {
+        "id": "164648",
+        "track_names": [
+            "Plastic Dreams"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/154876-rsplasticdreamsclear-jaydee-plastic-dreams-clear-vinyl-repress",
+        "cat": "RSPLASTICDREAMSCLEAR",
+        "label": "R&s",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/5649-rands",
+        "artist": "JAYDEE",
+        "title": "PLASTIC DREAMS (Clear Vinyl Repress)",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/164648.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/164648-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/164648-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/164648-2.jpg"
+        ],
+        "weekly_chart": 23
     }
 }

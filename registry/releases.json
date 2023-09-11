@@ -48,7 +48,7 @@
         "artist": "Rod Modell",
         "title": "Ghost Lights - 2x 12\u201d 180g Black Vinyl/gatefold",
         "weekly_chart": 10,
-        "monthly_chart": 4,
+        "monthly_chart": 8,
         "new_releases": 388
     },
     "171209": {
@@ -111,7 +111,7 @@
         "artist": "The Future Sound Of London",
         "title": "Papua New Guinea",
         "weekly_chart": 14,
-        "monthly_chart": 1,
+        "monthly_chart": 2,
         "new_releases": 292
     },
     "169564": {
@@ -443,9 +443,9 @@
         "label_link": "https://www.redeyerecords.co.uk/record-label-releases/22956-klf-communications",
         "artist": "KLF",
         "title": "CHILL OUT ALBUM (CLEAR VINYL)",
-        "weekly_chart": 13,
+        "weekly_chart": 11,
         "new_releases": 224,
-        "monthly_chart": 6
+        "monthly_chart": 4
     },
     "105064": {
         "id": "105064",
@@ -542,7 +542,7 @@
         "label_link": "https://www.redeyerecords.co.uk/record-label-releases/5111-rawax",
         "artist": "Technical Onslaught (Joey Beltram)",
         "title": "The Calling",
-        "weekly_chart": 15,
+        "weekly_chart": 13,
         "monthly_chart": 33
     },
     "143175": {
@@ -608,7 +608,7 @@
         "artist": "Ebi",
         "title": "Space Teddy Collection (2XLP)",
         "weekly_chart": 19,
-        "monthly_chart": 7,
+        "monthly_chart": 6,
         "new_releases": 449
     },
     "161609": {
@@ -1028,9 +1028,9 @@
         "label_link": "https://www.redeyerecords.co.uk/record-label-releases/23839-big-saldos-chunkers",
         "artist": "Sally C",
         "title": "Big Saldo's Chunker 003",
-        "monthly_chart": 17,
+        "monthly_chart": 11,
         "new_releases": 245,
-        "weekly_chart": 33
+        "weekly_chart": 28
     },
     "170579": {
         "id": "170579",
@@ -1057,7 +1057,7 @@
         "label_link": "https://www.redeyerecords.co.uk/record-label-releases/26093-orbital-mechanics",
         "artist": "Sound Synthesis",
         "title": "Orbital 107",
-        "monthly_chart": 8,
+        "monthly_chart": 7,
         "new_releases": 612
     },
     "170624": {
@@ -1281,7 +1281,7 @@
         "label_link": "https://www.redeyerecords.co.uk/record-label-releases/10506-musique-pour-la-danse",
         "artist": "A3000",
         "title": "MAGNETIC GLIDING - 2LP",
-        "monthly_chart": 23,
+        "monthly_chart": 22,
         "new_releases": 324
     },
     "171166": {
@@ -1342,7 +1342,7 @@
         "title": "Changing Channels: Part 1",
         "monthly_chart": 29,
         "new_releases": 416,
-        "weekly_chart": 11
+        "weekly_chart": 9
     },
     "142292": {
         "id": "142292",
@@ -5266,7 +5266,9 @@
         "label_link": "https://www.redeyerecords.co.uk/record-label-releases/8193-a-r-t-less",
         "artist": "Viktor Apo",
         "title": "Regenerate EP/limited 12\" In Screen-Printed Cover",
-        "new_releases": 314
+        "new_releases": 314,
+        "weekly_chart": 5,
+        "monthly_chart": 23
     },
     "171131": {
         "id": "171131",
@@ -12140,7 +12142,7 @@
             "https://www.redeyerecords.co.uk/imagery/166970-2.jpg"
         ],
         "new_releases": 539,
-        "weekly_chart": 21
+        "weekly_chart": 19
     },
     "170707": {
         "id": "170707",
@@ -20107,7 +20109,7 @@
         ],
         "new_releases": 756,
         "weekly_chart": 30,
-        "monthly_chart": 11
+        "monthly_chart": 17
     },
     "170060": {
         "id": "170060",
@@ -21107,7 +21109,7 @@
             "https://www.redeyerecords.co.uk/imagery/169856-2.jpg"
         ],
         "new_releases": 5,
-        "weekly_chart": 26
+        "weekly_chart": 24
     },
     "169857": {
         "id": "169857",
@@ -21145,7 +21147,7 @@
             "https://www.redeyerecords.co.uk/imagery/169857-2.jpg"
         ],
         "new_releases": 6,
-        "weekly_chart": 27
+        "weekly_chart": 25
     },
     "169968": {
         "id": "169968",
@@ -22064,7 +22066,7 @@
             "https://www.redeyerecords.co.uk/imagery/169913-2.jpg"
         ],
         "new_releases": 765,
-        "weekly_chart": 29
+        "weekly_chart": 27
     },
     "169177": {
         "id": "169177",
@@ -25096,7 +25098,7 @@
             "https://www.redeyerecords.co.uk/imagery/169618-2.jpg"
         ],
         "new_releases": 91,
-        "weekly_chart": 24
+        "weekly_chart": 22
     },
     "171438": {
         "id": "171438",
@@ -25634,7 +25636,7 @@
             "https://www.redeyerecords.co.uk/imagery/169716-2.jpg"
         ],
         "new_releases": 83,
-        "weekly_chart": 25
+        "weekly_chart": 23
     },
     "164648": {
         "id": "164648",
@@ -25742,7 +25744,7 @@
             "https://www.redeyerecords.co.uk/imagery/169307-1.jpg",
             "https://www.redeyerecords.co.uk/imagery/169307-2.jpg"
         ],
-        "weekly_chart": 23
+        "weekly_chart": 21
     },
     "3200725": {
         "id": "3200725",
@@ -26134,7 +26136,7 @@
             "https://www.redeyerecords.co.uk/imagery/3200727-2.jpg"
         ],
         "new_releases": 71,
-        "weekly_chart": 12
+        "weekly_chart": 10
     },
     "171475": {
         "id": "171475",
@@ -26281,7 +26283,7 @@
             "https://www.redeyerecords.co.uk/imagery/171494-2.jpg"
         ],
         "new_releases": 76,
-        "weekly_chart": 8
+        "weekly_chart": 6
     },
     "77675": {
         "id": "77675",
@@ -26448,7 +26450,7 @@
             "https://www.redeyerecords.co.uk/imagery/171521-1.jpg",
             "https://www.redeyerecords.co.uk/imagery/171521-2.jpg"
         ],
-        "weekly_chart": 9,
+        "weekly_chart": 7,
         "new_releases": 51
     },
     "3200728": {
@@ -26476,7 +26478,7 @@
         ],
         "weekly_chart": 0,
         "new_releases": 54,
-        "monthly_chart": 2
+        "monthly_chart": 1
     },
     "139085": {
         "id": "139085",
@@ -26516,7 +26518,7 @@
             "https://www.redeyerecords.co.uk/imagery/139085-1.jpg",
             "https://www.redeyerecords.co.uk/imagery/139085-2.jpg"
         ],
-        "weekly_chart": 17
+        "weekly_chart": 15
     },
     "160375": {
         "id": "160375",
@@ -26551,7 +26553,7 @@
             "https://www.redeyerecords.co.uk/imagery/160375-1.jpg",
             "https://www.redeyerecords.co.uk/imagery/160375-2.jpg"
         ],
-        "weekly_chart": 19
+        "weekly_chart": 17
     },
     "171508": {
         "id": "171508",
@@ -28085,7 +28087,7 @@
             "https://www.redeyerecords.co.uk/imagery/171590-2.jpg"
         ],
         "new_releases": 2,
-        "weekly_chart": 10
+        "weekly_chart": 8
     },
     "165388": {
         "id": "165388",
@@ -28191,7 +28193,7 @@
             "https://www.redeyerecords.co.uk/imagery/118676-1.jpg",
             "https://www.redeyerecords.co.uk/imagery/118676-2.jpg"
         ],
-        "weekly_chart": 14
+        "weekly_chart": 12
     },
     "133462": {
         "id": "133462",
@@ -28216,7 +28218,7 @@
             "https://www.redeyerecords.co.uk/imagery/133462-1.jpg",
             "https://www.redeyerecords.co.uk/imagery/133462-2.jpg"
         ],
-        "weekly_chart": 16
+        "weekly_chart": 14
     },
     "167995": {
         "id": "167995",
@@ -28239,7 +28241,7 @@
             "https://www.redeyerecords.co.uk/imagery/167995-1.jpg",
             "https://www.redeyerecords.co.uk/imagery/167995-2.jpg"
         ],
-        "weekly_chart": 22
+        "weekly_chart": 20
     },
     "169879": {
         "id": "169879",
@@ -28266,6 +28268,62 @@
             "https://www.redeyerecords.co.uk/imagery/169879-1.jpg",
             "https://www.redeyerecords.co.uk/imagery/169879-2.jpg"
         ],
-        "weekly_chart": 28
+        "weekly_chart": 26
+    },
+    "156166": {
+        "id": "156166",
+        "track_names": [
+            "Long Time",
+            "Breaking Point",
+            "Cover-Up",
+            "Threshold"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/138911-savage002-dj-savage-grooves-2000-2002-[hand-stamped]",
+        "cat": "SAVAGE002",
+        "label": "Savage002",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/26485-savage002",
+        "artist": "DJ Savage",
+        "title": "Grooves 2000-2002 [hand-Stamped]",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/156166.mp3",
+            "https://redeye-391831.c.cdn77.org/156166b.mp3",
+            "https://redeye-391831.c.cdn77.org/156166c.mp3",
+            "https://redeye-391831.c.cdn77.org/156166d.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/156166-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/156166-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/156166-2.jpg"
+        ],
+        "weekly_chart": 16
+    },
+    "166967": {
+        "id": "166967",
+        "track_names": [
+            "Abdul Raeva - Invasive Overdrive Track",
+            "Aldonna - Inner Elation",
+            "Demi Riqu\u00edsimo - Maggy Doesn\u2019t Need To Know",
+            "Inner Zone - The Vision",
+            "Donald\u2019s House - Jam 3"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/158873-hips001-various-artists-invasive-overdrive-ep",
+        "cat": "HIPS001",
+        "label": "A Lifetime On The Hips",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/29475-a-lifetime-on-the-hips",
+        "artist": "Various Artists",
+        "title": "Invasive Overdrive EP",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/166967.mp3",
+            "https://redeye-391831.c.cdn77.org/166967b.mp3",
+            "https://redeye-391831.c.cdn77.org/166967c.mp3",
+            "https://redeye-391831.c.cdn77.org/166967d.mp3",
+            "https://redeye-391831.c.cdn77.org/166967e.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/166967-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/166967-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/166967-2.jpg"
+        ],
+        "weekly_chart": 18
     }
 }

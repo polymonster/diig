@@ -1,0 +1,331 @@
+{
+    "cmdline": "pmtech/third_party/pmbuild/scripts/pmfx-shader/pmfx.py -v1 -shader_platform metal -i pmtech/assets/shaders -o bin/osx/data/pmfx/metal -h shader_structs -t temp/shaders -source ",
+    "files": [
+        {
+            "name": "/Users/alex.dixon/dev/dig/app/pmtech/third_party/pmbuild/scripts/pmfx-shader/pmfx.py",
+            "timestamp": 1694949058.7702253
+        },
+        {
+            "name": "/Users/alex.dixon/dev/dig/app/pmtech/third_party/pmbuild/scripts/pmfx-shader/platform/pmfx.h",
+            "timestamp": 1694949058.7697594
+        },
+        {
+            "name": "/Users/alex.dixon/dev/dig/app/pmtech/third_party/pmbuild/scripts/pmfx-shader/platform/metal.h",
+            "timestamp": 1694949058.7696881
+        },
+        {
+            "name": "/Users/alex.dixon/dev/dig/app/pmtech/assets/shaders/trace.pmfx",
+            "timestamp": 1694947982.35463
+        },
+        {
+            "name": "/Users/alex.dixon/dev/dig/app/pmtech/assets/shaders/libs/globals.pmfx",
+            "timestamp": 1694947982.3539824
+        },
+        {
+            "name": "/Users/alex.dixon/dev/dig/app/pmtech/assets/shaders/libs/maths.pmfx",
+            "timestamp": 1694947982.354131
+        },
+        {
+            "name": "/Users/alex.dixon/dev/dig/app/pmtech/assets/shaders/libs/lighting.pmfx",
+            "timestamp": 1694947982.3540654
+        },
+        {
+            "name": "/Users/alex.dixon/dev/dig/app/pmtech/assets/shaders/ray_march.pmfx",
+            "timestamp": 1694947982.3545547
+        }
+    ],
+    "techniques": [
+        {
+            "vs": "vs_ndc_quad",
+            "ps": "ps_box",
+            "name": "box",
+            "texture_sampler_bindings": [],
+            "structured_buffers": [],
+            "descriptor_tables": [],
+            "samplers": [],
+            "cbuffers": [
+                {
+                    "name": "per_pass_view",
+                    "location": 0,
+                    "space": -1
+                },
+                {
+                    "name": "per_draw_call",
+                    "location": 1,
+                    "space": -1
+                },
+                {
+                    "name": "per_pass_lights",
+                    "location": 3,
+                    "space": -1
+                },
+                {
+                    "name": "per_pass_shadow",
+                    "location": 4,
+                    "space": -1
+                },
+                {
+                    "name": "per_pass_shadow_distance_fields",
+                    "location": 5,
+                    "space": -1
+                },
+                {
+                    "name": "per_pass_area_lights",
+                    "location": 6,
+                    "space": -1
+                },
+                {
+                    "name": "cbuffer_single_light",
+                    "location": 10,
+                    "space": -1
+                },
+                {
+                    "name": "cbuffer_gi_volume",
+                    "location": 11,
+                    "space": -1
+                }
+            ],
+            "vs_inputs": [
+                {
+                    "name": "position",
+                    "semantic_index": 0,
+                    "semantic_id": 1,
+                    "size": 16,
+                    "element_size": 4,
+                    "num_elements": 4,
+                    "offset": 0
+                },
+                {
+                    "name": "texcoord",
+                    "semantic_index": 0,
+                    "semantic_id": 2,
+                    "size": 16,
+                    "element_size": 4,
+                    "num_elements": 4,
+                    "offset": 16
+                }
+            ],
+            "instance_inputs": [],
+            "vs_outputs": [
+                {
+                    "name": "position",
+                    "semantic_index": 0,
+                    "semantic_id": 0,
+                    "size": 16,
+                    "element_size": 4,
+                    "num_elements": 4,
+                    "offset": 0
+                },
+                {
+                    "name": "texcoord",
+                    "semantic_index": 0,
+                    "semantic_id": 2,
+                    "size": 16,
+                    "element_size": 4,
+                    "num_elements": 4,
+                    "offset": 16
+                }
+            ],
+            "vs_file": "box.vsc",
+            "ps_file": "box.psc",
+            "permutations": {},
+            "permutation_id": 0,
+            "permutation_option_mask": 0
+        },
+        {
+            "vs": "vs_ndc_quad",
+            "ps": "ps_octahedron",
+            "name": "octahedron",
+            "texture_sampler_bindings": [],
+            "structured_buffers": [],
+            "descriptor_tables": [],
+            "samplers": [],
+            "cbuffers": [
+                {
+                    "name": "per_pass_view",
+                    "location": 0,
+                    "space": -1
+                },
+                {
+                    "name": "per_draw_call",
+                    "location": 1,
+                    "space": -1
+                },
+                {
+                    "name": "per_pass_lights",
+                    "location": 3,
+                    "space": -1
+                },
+                {
+                    "name": "per_pass_shadow",
+                    "location": 4,
+                    "space": -1
+                },
+                {
+                    "name": "per_pass_shadow_distance_fields",
+                    "location": 5,
+                    "space": -1
+                },
+                {
+                    "name": "per_pass_area_lights",
+                    "location": 6,
+                    "space": -1
+                },
+                {
+                    "name": "cbuffer_single_light",
+                    "location": 10,
+                    "space": -1
+                },
+                {
+                    "name": "cbuffer_gi_volume",
+                    "location": 11,
+                    "space": -1
+                }
+            ],
+            "vs_inputs": [
+                {
+                    "name": "position",
+                    "semantic_index": 0,
+                    "semantic_id": 1,
+                    "size": 16,
+                    "element_size": 4,
+                    "num_elements": 4,
+                    "offset": 0
+                },
+                {
+                    "name": "texcoord",
+                    "semantic_index": 0,
+                    "semantic_id": 2,
+                    "size": 16,
+                    "element_size": 4,
+                    "num_elements": 4,
+                    "offset": 16
+                }
+            ],
+            "instance_inputs": [],
+            "vs_outputs": [
+                {
+                    "name": "position",
+                    "semantic_index": 0,
+                    "semantic_id": 0,
+                    "size": 16,
+                    "element_size": 4,
+                    "num_elements": 4,
+                    "offset": 0
+                },
+                {
+                    "name": "texcoord",
+                    "semantic_index": 0,
+                    "semantic_id": 2,
+                    "size": 16,
+                    "element_size": 4,
+                    "num_elements": 4,
+                    "offset": 16
+                }
+            ],
+            "vs_file": "box.vsc",
+            "ps_file": "octahedron.psc",
+            "permutations": {},
+            "permutation_id": 0,
+            "permutation_option_mask": 0
+        },
+        {
+            "vs": "vs_ndc_quad",
+            "ps": "ps_torus",
+            "name": "torus",
+            "texture_sampler_bindings": [],
+            "structured_buffers": [],
+            "descriptor_tables": [],
+            "samplers": [],
+            "cbuffers": [
+                {
+                    "name": "per_pass_view",
+                    "location": 0,
+                    "space": -1
+                },
+                {
+                    "name": "per_draw_call",
+                    "location": 1,
+                    "space": -1
+                },
+                {
+                    "name": "per_pass_lights",
+                    "location": 3,
+                    "space": -1
+                },
+                {
+                    "name": "per_pass_shadow",
+                    "location": 4,
+                    "space": -1
+                },
+                {
+                    "name": "per_pass_shadow_distance_fields",
+                    "location": 5,
+                    "space": -1
+                },
+                {
+                    "name": "per_pass_area_lights",
+                    "location": 6,
+                    "space": -1
+                },
+                {
+                    "name": "cbuffer_single_light",
+                    "location": 10,
+                    "space": -1
+                },
+                {
+                    "name": "cbuffer_gi_volume",
+                    "location": 11,
+                    "space": -1
+                }
+            ],
+            "vs_inputs": [
+                {
+                    "name": "position",
+                    "semantic_index": 0,
+                    "semantic_id": 1,
+                    "size": 16,
+                    "element_size": 4,
+                    "num_elements": 4,
+                    "offset": 0
+                },
+                {
+                    "name": "texcoord",
+                    "semantic_index": 0,
+                    "semantic_id": 2,
+                    "size": 16,
+                    "element_size": 4,
+                    "num_elements": 4,
+                    "offset": 16
+                }
+            ],
+            "instance_inputs": [],
+            "vs_outputs": [
+                {
+                    "name": "position",
+                    "semantic_index": 0,
+                    "semantic_id": 0,
+                    "size": 16,
+                    "element_size": 4,
+                    "num_elements": 4,
+                    "offset": 0
+                },
+                {
+                    "name": "texcoord",
+                    "semantic_index": 0,
+                    "semantic_id": 2,
+                    "size": 16,
+                    "element_size": 4,
+                    "num_elements": 4,
+                    "offset": 16
+                }
+            ],
+            "vs_file": "box.vsc",
+            "ps_file": "torus.psc",
+            "permutations": {},
+            "permutation_id": 0,
+            "permutation_option_mask": 0
+        }
+    ],
+    "failures": {}
+}

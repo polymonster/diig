@@ -1,0 +1,5 @@
+{
+    "profile": "mac",
+    "pmbuild_cmd": "pmtech/third_party/pmbuild/pmbuild",
+    "pmbuild": "cd /Users/alex.dixon/dev/dig/app && pmtech/third_party/pmbuild/pmbuild mac "
+}

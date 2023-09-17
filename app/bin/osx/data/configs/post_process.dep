@@ -1,0 +1,17 @@
+{
+    "cmdline": "pmtech/third_party/pmbuild/scripts/jsn/jsn -i pmtech/assets/configs/post_process.jsn -o bin/osx/data/configs/post_process.jsn -I ../assets/configs assets/configs",
+    "files": {
+        "/Users/alex.dixon/dev/dig/app/bin/osx/data/configs/post_process.jsn": [
+            {
+                "name": "/Users/alex.dixon/dev/dig/app/pmtech/assets/configs/post_process.jsn",
+                "timestamp": 1694947982.3520463,
+                "data_file": "data/configs/post_process.jsn"
+            },
+            {
+                "name": "/Users/alex.dixon/dev/dig/app/pmtech/third_party/pmbuild/scripts/jsn/jsn",
+                "timestamp": 1694949058.5419445,
+                "data_file": "data/configs/post_process.jsn"
+            }
+        ]
+    }
+}

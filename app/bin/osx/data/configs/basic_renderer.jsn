@@ -1,0 +1,2149 @@
+{
+    "view_sets": {
+        "example": [
+            "main_view",
+            "picking_view"
+        ],
+        "editor": [
+            "multiple_shadow_views",
+            "multiple_area_light_views",
+            "multiple_omni_shadow_views",
+            "picking_view",
+            "editor_main",
+            "editor_view"
+        ],
+        "editor_basic": [
+            "single_shadow_view",
+            "editor_main_basic",
+            "editor_view"
+        ],
+        "editor_gi": [
+            "multiple_shadow_views",
+            "multiple_colour_shadow_views",
+            "multiple_area_light_views",
+            "multiple_omni_shadow_views",
+            "volume_gi_compute",
+            "picking_view",
+            "editor_main_gi",
+            "editor_view"
+        ],
+        "editor_post_processed": [
+            "picking_view",
+            "main_view_post_processed",
+            "editor_view",
+            "volume_rasteriser"
+        ],
+        "deferred_render": [
+            "gbuffer_view",
+            "deferred_lights_view"
+        ],
+        "deferred_render_msaa": [
+            "gbuffer_view_msaa",
+            "deferred_lights_view_msaa"
+        ]
+    },
+    "view_set": "example",
+    "blend_states": {
+        "disabled": {
+            "blend_enable": false
+        },
+        "additive": {
+            "blend_enable": true,
+            "src_blend": "one",
+            "dest_blend": "one"
+        },
+        "alpha_blend": {
+            "blend_enable": true,
+            "src_blend": "src_alpha",
+            "dest_blend": "inv_src_alpha"
+        }
+    },
+    "sampler_states": {
+        "wrap_linear": {
+            "filter": "linear",
+            "address": "wrap"
+        },
+        "wrap_point": {
+            "filter": "point",
+            "address": "wrap"
+        },
+        "clamp_linear": {
+            "filter": "linear",
+            "address": "clamp"
+        },
+        "clamp_point": {
+            "filter": "point",
+            "address": "clamp"
+        },
+        "clamp_linear_lod": {
+            "filter": "linear_lod",
+            "address": "clamp"
+        },
+        "shadow_compare": {
+            "filter": "linear",
+            "address": "clamp",
+            "comparison_func": "less"
+        }
+    },
+    "depth_stencil_states": {
+        "disabled": {
+            "depth_enable": false
+        },
+        "default": {
+            "depth_enable": true,
+            "depth_write": true,
+            "depth_func": "less"
+        },
+        "depth_never": {
+            "depth_enable": true,
+            "depth_write": true,
+            "depth_func": "never"
+        },
+        "depth_always": {
+            "depth_enable": true,
+            "depth_write": true,
+            "depth_func": "always"
+        },
+        "depth_equal": {
+            "depth_enable": true,
+            "depth_write": false,
+            "depth_func": "equal"
+        },
+        "depth_always_no_write": {
+            "depth_enable": true,
+            "depth_write": false,
+            "depth_func": "always"
+        },
+        "stencil_test": {
+            "depth_enable": true,
+            "depth_write": true,
+            "depth_func": "always",
+            "stencil_enable": true,
+            "stencil_write_mask": 255,
+            "stencil_read_mask": 255,
+            "stencil_op": {
+                "stencil_fail": "keep",
+                "depth_fail": "keep",
+                "stencil_pass": "replace",
+                "stencil_func": "equal"
+            }
+        }
+    },
+    "raster_states": {
+        "default": {
+            "cull_mode": "back"
+        },
+        "wireframe": {
+            "cull_mode": "none",
+            "fill_mode": "wireframe"
+        },
+        "front_face_cull": {
+            "cull_mode": "front",
+            "fill_mode": "solid"
+        },
+        "volume_raster": {
+            "cull_mode": "back"
+        },
+        "post_process": {
+            "cull_mode": "none"
+        },
+        "no_cull": {
+            "cull_mode": "none"
+        },
+        "disabled": {
+            "cull_mode": "none"
+        }
+    },
+    "render_targets": {
+        "single_shadow_map": {
+            "size": [
+                2048,
+                2048
+            ],
+            "format": "d32f"
+        },
+        "shadow_map": {
+            "size": [
+                2048,
+                2048
+            ],
+            "format": "d32f",
+            "type": "array"
+        },
+        "omni_shadow_map": {
+            "size": [
+                2048,
+                2048
+            ],
+            "format": "d32f",
+            "type": "cube_array"
+        },
+        "colour_shadow_map": {
+            "size": [
+                512,
+                512
+            ],
+            "format": "rgba8",
+            "type": "array"
+        },
+        "colour_shadow_map_depth": {
+            "size": [
+                512,
+                512
+            ],
+            "format": "d24s8",
+            "type": "array"
+        },
+        "area_light_textures": {
+            "size": [
+                640,
+                480
+            ],
+            "format": "rgba8",
+            "type": "array",
+            "mips": true
+        },
+        "taa_history": {
+            "format": "rgba8",
+            "size": "equal"
+        },
+        "taa_colour": {
+            "format": "rgba8",
+            "size": "equal"
+        },
+        "taa_depth": {
+            "format": "d24s8",
+            "size": "equal"
+        },
+        "velocity_buffer": {
+            "format": "r32f",
+            "size": "equal"
+        },
+        "picking": {
+            "size": "equal",
+            "format": "r32u",
+            "cpu_read": true
+        },
+        "picking_ds": {
+            "size": "equal",
+            "format": "d24s8"
+        },
+        "volume_raster": {
+            "size": [
+                128,
+                128
+            ],
+            "format": "rgba8",
+            "cpu_read": true
+        },
+        "volume_raster_ds": {
+            "size": [
+                128,
+                128
+            ],
+            "format": "d24s8"
+        },
+        "volume_gi": {
+            "size": [
+                256,
+                256,
+                256
+            ],
+            "format": "rgba8",
+            "gpu_write": true,
+            "mips": true
+        },
+        "gbuffer_depth": {
+            "size": "equal",
+            "format": "d24s8"
+        },
+        "gbuffer_albedo": {
+            "size": "equal",
+            "format": "rgba8"
+        },
+        "gbuffer_normals": {
+            "size": "equal",
+            "format": "rgba32f"
+        },
+        "gbuffer_world_pos": {
+            "size": "equal",
+            "format": "rgba32f"
+        },
+        "gbuffer_depth_msaa": {
+            "size": "equal",
+            "format": "d24s8",
+            "samples": 4
+        },
+        "gbuffer_albedo_msaa": {
+            "size": "equal",
+            "format": "rgba8",
+            "samples": 4
+        },
+        "gbuffer_normals_msaa": {
+            "size": "equal",
+            "format": "rgba32f",
+            "samples": 4
+        },
+        "gbuffer_world_pos_msaa": {
+            "size": "equal",
+            "format": "rgba32f",
+            "samples": 4
+        },
+        "post_process_colour": {
+            "size": "equal",
+            "samples": 4,
+            "format": "rgba8"
+        },
+        "post_process_depth": {
+            "size": "equal",
+            "samples": 4,
+            "format": "d24s8"
+        },
+        "pp_output_full": {
+            "size": "equal",
+            "format": "rgba8",
+            "pp": "write",
+            "init_read": "post_process_colour"
+        },
+        "pp_output_half": {
+            "size": "half",
+            "format": "rgba8",
+            "pp": "write"
+        },
+        "pp_output_quarter": {
+            "size": "quarter",
+            "format": "rgba8",
+            "pp": "write"
+        },
+        "pp_output_eighth": {
+            "size": "eighth",
+            "format": "rgba8",
+            "pp": "write"
+        }
+    },
+    "views": {
+        "main_view_no_clear": {
+            "target": [
+                "main_colour",
+                "main_depth"
+            ],
+            "colour_write_mask": 15,
+            "blend_state": "disabled",
+            "viewport": [
+                0.0,
+                0.0,
+                1.0,
+                1.0
+            ],
+            "raster_state": "default",
+            "depth_stencil_state": "default",
+            "scene": "main_scene",
+            "camera": "model_viewer_camera",
+            "scene_views": [
+                "ecs_render_scene"
+            ],
+            "render_flags": [
+                "forward_lit"
+            ],
+            "sampler_bindings": [
+                {
+                    "texture": "shadow_map",
+                    "unit": 15,
+                    "state": "shadow_compare",
+                    "shader": "ps"
+                },
+                {
+                    "texture": "area_light_textures",
+                    "unit": 11,
+                    "state": "clamp_linear",
+                    "shader": "ps"
+                },
+                {
+                    "texture": "omni_shadow_map",
+                    "unit": 10,
+                    "state": "shadow_compare",
+                    "shader": "ps"
+                }
+            ]
+        },
+        "main_view": {
+            "target": [
+                "main_colour",
+                "main_depth"
+            ],
+            "clear_colour": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "clear_depth": 1.0,
+            "colour_write_mask": 15,
+            "blend_state": "disabled",
+            "viewport": [
+                0.0,
+                0.0,
+                1.0,
+                1.0
+            ],
+            "raster_state": "default",
+            "depth_stencil_state": "default",
+            "scene": "main_scene",
+            "camera": "model_viewer_camera",
+            "scene_views": [
+                "ecs_render_scene"
+            ],
+            "render_flags": [
+                "forward_lit"
+            ],
+            "sampler_bindings": [
+                {
+                    "texture": "shadow_map",
+                    "unit": 15,
+                    "state": "shadow_compare",
+                    "shader": "ps"
+                },
+                {
+                    "texture": "area_light_textures",
+                    "unit": 11,
+                    "state": "clamp_linear",
+                    "shader": "ps"
+                },
+                {
+                    "texture": "omni_shadow_map",
+                    "unit": 10,
+                    "state": "shadow_compare",
+                    "shader": "ps"
+                }
+            ]
+        },
+        "main_view_basic": {
+            "raster_state": "default",
+            "clear_colour": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "pmfx_shader": "forward_render",
+            "technique": "simple_lighting",
+            "sampler_bindings": [
+                {
+                    "texture": "single_shadow_map",
+                    "unit": 7,
+                    "state": "shadow_compare",
+                    "shader": "ps"
+                }
+            ],
+            "target": [
+                "main_colour",
+                "main_depth"
+            ],
+            "clear_depth": 1.0,
+            "colour_write_mask": 15,
+            "blend_state": "disabled",
+            "viewport": [
+                0.0,
+                0.0,
+                1.0,
+                1.0
+            ],
+            "depth_stencil_state": "default",
+            "scene": "main_scene",
+            "camera": "model_viewer_camera",
+            "scene_views": [
+                "ecs_render_scene"
+            ],
+            "render_flags": [
+                "forward_lit"
+            ]
+        },
+        "main_view_alpha_blended": {
+            "target": [
+                "main_colour",
+                "main_depth"
+            ],
+            "colour_write_mask": 15,
+            "blend_state": "alpha_blend",
+            "viewport": [
+                0.0,
+                0.0,
+                1.0,
+                1.0
+            ],
+            "raster_state": "default",
+            "depth_stencil_state": "default",
+            "scene": "main_scene",
+            "camera": "model_viewer_camera",
+            "scene_views": [
+                "ecs_render_scene"
+            ],
+            "render_flags": [
+                "forward_lit",
+                "alpha_blended"
+            ],
+            "sampler_bindings": [
+                {
+                    "texture": "shadow_map",
+                    "unit": 15,
+                    "state": "shadow_compare",
+                    "shader": "ps"
+                },
+                {
+                    "texture": "area_light_textures",
+                    "unit": 11,
+                    "state": "clamp_linear_lod",
+                    "shader": "ps"
+                },
+                {
+                    "texture": "omni_shadow_map",
+                    "unit": 10,
+                    "state": "shadow_compare",
+                    "shader": "ps"
+                }
+            ]
+        },
+        "multiple_shadow_views": {
+            "target": [
+                "shadow_map"
+            ],
+            "clear_depth": 1.0,
+            "colour_write_mask": 15,
+            "blend_state": "disabled",
+            "viewport": [
+                0.0,
+                0.0,
+                1.0,
+                1.0
+            ],
+            "raster_state": "front_face_cull",
+            "depth_stencil_state": "default",
+            "pmfx_shader": "forward_render",
+            "technique": "zonly",
+            "scene": "main_scene",
+            "scene_views": [
+                "ecs_render_shadow_maps"
+            ],
+            "render_flags": [
+                "shadow_map"
+            ]
+        },
+        "single_shadow_view": {
+            "target": [
+                "single_shadow_map"
+            ],
+            "clear_depth": 1.0,
+            "colour_write_mask": 15,
+            "blend_state": "disabled",
+            "viewport": [
+                0.0,
+                0.0,
+                1.0,
+                1.0
+            ],
+            "raster_state": "front_face_cull",
+            "depth_stencil_state": "default",
+            "pmfx_shader": "forward_render",
+            "technique": "zonly",
+            "scene": "main_scene",
+            "scene_views": [
+                "ecs_render_shadow_maps"
+            ],
+            "render_flags": [
+                "shadow_map"
+            ]
+        },
+        "multiple_colour_shadow_views": {
+            "target": [
+                "colour_shadow_map",
+                "colour_shadow_map_depth"
+            ],
+            "clear_colour": [
+                0.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "clear_depth": 1.0,
+            "colour_write_mask": 15,
+            "blend_state": "disabled",
+            "viewport": [
+                0.0,
+                0.0,
+                1.0,
+                1.0
+            ],
+            "raster_state": "back_face_cull",
+            "depth_stencil_state": "default",
+            "scene": "main_scene",
+            "pmfx_shader": "forward_render",
+            "technique": "gi",
+            "scene_views": [
+                "ecs_render_shadow_maps"
+            ],
+            "render_flags": [
+                "forward_lit"
+            ]
+        },
+        "multiple_omni_shadow_views": {
+            "target": [
+                "omni_shadow_map"
+            ],
+            "clear_depth": 1.0,
+            "colour_write_mask": 15,
+            "blend_state": "disabled",
+            "viewport": [
+                0.0,
+                0.0,
+                1.0,
+                1.0
+            ],
+            "raster_state": "front_face_cull",
+            "depth_stencil_state": "default",
+            "pmfx_shader": "forward_render",
+            "technique": "omni_shadow",
+            "scene": "main_scene",
+            "scene_views": [
+                "ecs_render_omni_shadow_maps"
+            ],
+            "render_flags": [
+                "shadow_map"
+            ]
+        },
+        "multiple_area_light_views": {
+            "target": [
+                "area_light_textures"
+            ],
+            "clear_colour": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "clear_depth": 1.0,
+            "colour_write_mask": 15,
+            "blend_state": "disabled",
+            "viewport": [
+                0.0,
+                0.0,
+                1.0,
+                1.0
+            ],
+            "raster_state": "post_process",
+            "depth_stencil_state": "default",
+            "pmfx_shader": "forward_render",
+            "technique": "zonly",
+            "scene": "main_scene",
+            "scene_views": [
+                "ecs_render_area_light_textures"
+            ],
+            "render_flags": [
+                "area_light_textures"
+            ],
+            "generate_mip_maps": true
+        },
+        "main_view_post_processed": {
+            "target": [
+                "post_process_colour",
+                "post_process_depth"
+            ],
+            "post_process": "editor_default",
+            "resolve": [
+                "average_4x",
+                "max_4x"
+            ],
+            "clear_colour": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "clear_depth": 1.0,
+            "colour_write_mask": 15,
+            "blend_state": "disabled",
+            "viewport": [
+                0.0,
+                0.0,
+                1.0,
+                1.0
+            ],
+            "raster_state": "default",
+            "depth_stencil_state": "default",
+            "scene": "main_scene",
+            "camera": "model_viewer_camera",
+            "scene_views": [
+                "ecs_render_scene"
+            ],
+            "render_flags": [
+                "forward_lit"
+            ],
+            "sampler_bindings": [
+                {
+                    "texture": "shadow_map",
+                    "unit": 15,
+                    "state": "shadow_compare",
+                    "shader": "ps"
+                },
+                {
+                    "texture": "area_light_textures",
+                    "unit": 11,
+                    "state": "clamp_linear",
+                    "shader": "ps"
+                },
+                {
+                    "texture": "omni_shadow_map",
+                    "unit": 10,
+                    "state": "shadow_compare",
+                    "shader": "ps"
+                }
+            ]
+        },
+        "main_view_temporal_aa": {
+            "target": [
+                "taa_colour",
+                "taa_depth"
+            ],
+            "post_process": "taa_resolve",
+            "jitter": true,
+            "clear_colour": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "clear_depth": 1.0,
+            "colour_write_mask": 15,
+            "blend_state": "disabled",
+            "viewport": [
+                0.0,
+                0.0,
+                1.0,
+                1.0
+            ],
+            "raster_state": "default",
+            "depth_stencil_state": "default",
+            "scene": "main_scene",
+            "camera": "model_viewer_camera",
+            "scene_views": [
+                "ecs_render_scene"
+            ],
+            "render_flags": [
+                "forward_lit"
+            ],
+            "sampler_bindings": [
+                {
+                    "texture": "shadow_map",
+                    "unit": 15,
+                    "state": "shadow_compare",
+                    "shader": "ps"
+                },
+                {
+                    "texture": "area_light_textures",
+                    "unit": 11,
+                    "state": "clamp_linear",
+                    "shader": "ps"
+                },
+                {
+                    "texture": "omni_shadow_map",
+                    "unit": 10,
+                    "state": "shadow_compare",
+                    "shader": "ps"
+                }
+            ]
+        },
+        "velocity_buffer": {
+            "target": [
+                "velocity_buffer"
+            ],
+            "clear_colour": [
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "colour_write_mask": 15,
+            "blend_state": "disabled",
+            "viewport": [
+                0.0,
+                0.0,
+                1.0,
+                1.0
+            ],
+            "raster_state": "default",
+            "depth_stencil_state": "default",
+            "scene": "main_scene",
+            "pmfx_shader": "forward_render",
+            "technique": "per_pixel_velocity",
+            "camera": "model_viewer_camera",
+            "scene_views": [
+                "ecs_render_scene"
+            ],
+            "render_flags": [
+                "forward_lit"
+            ]
+        },
+        "editor_main": {
+            "raster_state": "default",
+            "clear_colour": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "target": [
+                "main_colour",
+                "main_depth"
+            ],
+            "clear_depth": 1.0,
+            "colour_write_mask": 15,
+            "blend_state": "disabled",
+            "viewport": [
+                0.0,
+                0.0,
+                1.0,
+                1.0
+            ],
+            "depth_stencil_state": "default",
+            "scene": "main_scene",
+            "camera": "model_viewer_camera",
+            "scene_views": [
+                "ecs_render_scene"
+            ],
+            "render_flags": [
+                "forward_lit"
+            ],
+            "sampler_bindings": [
+                {
+                    "texture": "shadow_map",
+                    "unit": 15,
+                    "state": "shadow_compare",
+                    "shader": "ps"
+                },
+                {
+                    "texture": "area_light_textures",
+                    "unit": 11,
+                    "state": "clamp_linear",
+                    "shader": "ps"
+                },
+                {
+                    "texture": "omni_shadow_map",
+                    "unit": 10,
+                    "state": "shadow_compare",
+                    "shader": "ps"
+                }
+            ]
+        },
+        "editor_main_basic": {
+            "raster_state": "default",
+            "clear_colour": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "pmfx_shader": "forward_render",
+            "technique": "simple_lighting",
+            "sampler_bindings": [
+                {
+                    "texture": "single_shadow_map",
+                    "unit": 7,
+                    "state": "shadow_compare",
+                    "shader": "ps"
+                }
+            ],
+            "target": [
+                "main_colour",
+                "main_depth"
+            ],
+            "clear_depth": 1.0,
+            "colour_write_mask": 15,
+            "blend_state": "disabled",
+            "viewport": [
+                0.0,
+                0.0,
+                1.0,
+                1.0
+            ],
+            "depth_stencil_state": "default",
+            "scene": "main_scene",
+            "camera": "model_viewer_camera",
+            "scene_views": [
+                "ecs_render_scene"
+            ],
+            "render_flags": [
+                "forward_lit"
+            ]
+        },
+        "editor_main_gi": {
+            "raster_state": "default",
+            "clear_colour": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "sampler_bindings": [
+                {
+                    "texture": "shadow_map",
+                    "unit": 15,
+                    "state": "shadow_compare",
+                    "shader": "ps"
+                },
+                {
+                    "texture": "area_light_textures",
+                    "unit": 11,
+                    "state": "clamp_linear",
+                    "shader": "ps"
+                },
+                {
+                    "texture": "omni_shadow_map",
+                    "unit": 10,
+                    "state": "shadow_compare",
+                    "shader": "ps"
+                },
+                {
+                    "texture": "volume_gi",
+                    "unit": 9,
+                    "state": "clamp_linear",
+                    "shader": "ps"
+                }
+            ],
+            "target": [
+                "taa_colour",
+                "taa_depth"
+            ],
+            "post_process": "taa_resolve",
+            "jitter": true,
+            "clear_depth": 1.0,
+            "colour_write_mask": 15,
+            "blend_state": "disabled",
+            "viewport": [
+                0.0,
+                0.0,
+                1.0,
+                1.0
+            ],
+            "depth_stencil_state": "default",
+            "scene": "main_scene",
+            "camera": "model_viewer_camera",
+            "scene_views": [
+                "ecs_render_scene"
+            ],
+            "render_flags": [
+                "forward_lit"
+            ]
+        },
+        "editor_view": {
+            "target": [
+                "main_colour",
+                "main_depth"
+            ],
+            "colour_write_mask": 15,
+            "blend_state": "disabled",
+            "viewport": [
+                0.0,
+                0.0,
+                1.0,
+                1.0
+            ],
+            "raster_state": "wireframe",
+            "depth_stencil_state": "default",
+            "pmfx_shader": "pmfx_utility",
+            "technique": "constant_colour",
+            "scene": "main_scene",
+            "camera": "model_viewer_camera",
+            "scene_views": [
+                "ecs_render_editor"
+            ]
+        },
+        "picking_view": {
+            "target": [
+                "picking",
+                "picking_ds"
+            ],
+            "clear": {
+                "picking": {
+                    "clear_colour_u": [
+                        -1,
+                        -1,
+                        -1,
+                        -1
+                    ]
+                }
+            },
+            "clear_depth": 1.0,
+            "viewport": [
+                0.0,
+                0.0,
+                1.0,
+                1.0
+            ],
+            "blend_state": "disabled",
+            "raster_state": "default",
+            "depth_stencil_state": "default",
+            "pmfx_shader": "pmfx_utility",
+            "technique": "picking",
+            "scene": "main_scene",
+            "camera": "model_viewer_camera",
+            "scene_views": [
+                "ecs_render_scene"
+            ]
+        },
+        "volume_rasteriser": {
+            "target": [
+                "volume_raster",
+                "volume_raster_ds"
+            ],
+            "clear_colour": [
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "clear_depth": 1.0,
+            "colour_write_mask": 15,
+            "blend_state": "disabled",
+            "viewport": [
+                0.0,
+                0.0,
+                1.0,
+                1.0
+            ],
+            "raster_state": "volume_raster",
+            "depth_stencil_state": "default",
+            "scene": "main_scene",
+            "camera": "volume_rasteriser_camera",
+            "pmfx_shader": "pmfx_utility",
+            "technique": "volume_raster_albedo",
+            "scene_views": [
+                "ecs_render_scene"
+            ],
+            "render_flags": [
+                "forward_lit"
+            ],
+            "sampler_bindings": [
+                {
+                    "texture": "shadow_map",
+                    "unit": 15,
+                    "state": "wrap_linear",
+                    "shader": "ps"
+                }
+            ]
+        },
+        "volume_gi_compute": {
+            "type": "compute",
+            "target": [
+                "volume_gi"
+            ],
+            "clear_colour": [
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "pmfx_shader": "compute",
+            "technique": "volume_gi",
+            "scene": "main_scene",
+            "scene_views": [
+                "ecs_compute_volume_gi"
+            ],
+            "generate_mip_maps": true
+        },
+        "gbuffer_view": {
+            "target": [
+                "gbuffer_albedo",
+                "gbuffer_normals",
+                "gbuffer_world_pos",
+                "gbuffer_depth"
+            ],
+            "clear_colour": [
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "clear_depth": 1.0,
+            "clear": {
+                "gbuffer_albedo": {
+                    "clear_colour_f": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                },
+                "gbuffer_normals": {
+                    "clear_colour_f": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                },
+                "gbuffer_world_pos": {
+                    "clear_colour_f": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                }
+            },
+            "viewport": [
+                0.0,
+                0.0,
+                1.0,
+                1.0
+            ],
+            "blend_state": "disabled",
+            "raster_state": "default",
+            "depth_stencil_state": "default",
+            "pmfx_shader": "forward_render",
+            "technique": "gbuffer",
+            "scene": "main_scene",
+            "camera": "model_viewer_camera",
+            "scene_views": [
+                "ecs_render_scene"
+            ]
+        },
+        "deferred_lights_view": {
+            "target": [
+                "main_colour"
+            ],
+            "clear_colour": [
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "clear_depth": 1.0,
+            "colour_write_mask": 15,
+            "blend_state": "additive",
+            "viewport": [
+                0.0,
+                0.0,
+                1.0,
+                1.0
+            ],
+            "raster_state": "default",
+            "depth_stencil_state": "depth_always_no_write",
+            "shader": "deferred_render",
+            "scene": "main_scene",
+            "camera": "model_viewer_camera",
+            "scene_views": [
+                "ecs_render_light_volumes"
+            ],
+            "sampler_bindings": [
+                {
+                    "texture": "gbuffer_albedo",
+                    "unit": 0,
+                    "state": "wrap_linear"
+                },
+                {
+                    "texture": "gbuffer_normals",
+                    "unit": 1,
+                    "state": "wrap_linear"
+                },
+                {
+                    "texture": "gbuffer_world_pos",
+                    "unit": 2,
+                    "state": "wrap_linear"
+                },
+                {
+                    "texture": "gbuffer_depth",
+                    "unit": 4,
+                    "state": "wrap_linear"
+                }
+            ]
+        },
+        "gbuffer_view_msaa": {
+            "target": [
+                "gbuffer_albedo_msaa",
+                "gbuffer_normals_msaa",
+                "gbuffer_world_pos_msaa",
+                "gbuffer_depth_msaa"
+            ],
+            "resolve": [
+                "average_4x",
+                "average_4x",
+                "average_4x",
+                "max_4x"
+            ],
+            "clear_colour": [
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "clear_depth": 1.0,
+            "clear": {
+                "gbuffer_albedo": {
+                    "clear_colour_f": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                },
+                "gbuffer_normals": {
+                    "clear_colour_f": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                },
+                "gbuffer_world_pos": {
+                    "clear_colour_f": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                }
+            },
+            "viewport": [
+                0.0,
+                0.0,
+                1.0,
+                1.0
+            ],
+            "blend_state": "disabled",
+            "raster_state": "default",
+            "depth_stencil_state": "default",
+            "pmfx_shader": "forward_render",
+            "technique": "gbuffer",
+            "scene": "main_scene",
+            "camera": "model_viewer_camera",
+            "scene_views": [
+                "ecs_render_scene"
+            ]
+        },
+        "deferred_lights_view_msaa": {
+            "sampler_bindings": [
+                {
+                    "texture": "gbuffer_albedo_msaa",
+                    "unit": 4,
+                    "state": "wrap_linear",
+                    "bind_flags": [
+                        "ps",
+                        "msaa"
+                    ]
+                },
+                {
+                    "texture": "gbuffer_normals_msaa",
+                    "unit": 5,
+                    "state": "wrap_linear",
+                    "bind_flags": [
+                        "ps",
+                        "msaa"
+                    ]
+                },
+                {
+                    "texture": "gbuffer_world_pos_msaa",
+                    "unit": 6,
+                    "state": "wrap_linear",
+                    "bind_flags": [
+                        "ps",
+                        "msaa"
+                    ]
+                },
+                {
+                    "texture": "gbuffer_depth_msaa",
+                    "unit": 7,
+                    "state": "wrap_linear",
+                    "bind_flags": [
+                        "ps",
+                        "msaa"
+                    ]
+                }
+            ],
+            "permutation": 2,
+            "target": [
+                "main_colour"
+            ],
+            "clear_colour": [
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "clear_depth": 1.0,
+            "colour_write_mask": 15,
+            "blend_state": "additive",
+            "viewport": [
+                0.0,
+                0.0,
+                1.0,
+                1.0
+            ],
+            "raster_state": "default",
+            "depth_stencil_state": "depth_always_no_write",
+            "shader": "deferred_render",
+            "scene": "main_scene",
+            "camera": "model_viewer_camera",
+            "scene_views": [
+                "ecs_render_light_volumes"
+            ]
+        },
+        "blit": {
+            "colour_write_mask": 15,
+            "blend_state": "disabled",
+            "viewport": [
+                0.0,
+                0.0,
+                1.0,
+                1.0
+            ],
+            "raster_state": "post_process",
+            "depth_stencil_state": "depth_always_no_write",
+            "pmfx_shader": "post_process",
+            "technique": "blit"
+        },
+        "blit_depth": {
+            "clear_depth": 1.0,
+            "colour_write_mask": 0,
+            "blend_state": "disabled",
+            "viewport": [
+                0.0,
+                0.0,
+                1.0,
+                1.0
+            ],
+            "raster_state": "post_process",
+            "depth_stencil_state": "depth_always",
+            "pmfx_shader": "post_process",
+            "technique": "blit_depth"
+        },
+        "blit_colour_depth": {
+            "clear_depth": 1.0,
+            "colour_write_mask": 15,
+            "blend_state": "disabled",
+            "viewport": [
+                0.0,
+                0.0,
+                1.0,
+                1.0
+            ],
+            "raster_state": "post_process",
+            "depth_stencil_state": "depth_always",
+            "pmfx_shader": "post_process",
+            "technique": "blit_colour_depth"
+        },
+        "colour_lut": {
+            "colour_write_mask": 15,
+            "blend_state": "disabled",
+            "viewport": [
+                0.0,
+                0.0,
+                1.0,
+                1.0
+            ],
+            "raster_state": "post_process",
+            "depth_stencil_state": "disabled",
+            "pmfx_shader": "post_process",
+            "technique": "colour_lut"
+        },
+        "high_pass": {
+            "colour_write_mask": 15,
+            "blend_state": "disabled",
+            "viewport": [
+                0.0,
+                0.0,
+                1.0,
+                1.0
+            ],
+            "raster_state": "post_process",
+            "depth_stencil_state": "disabled",
+            "pmfx_shader": "post_process",
+            "technique": "high_pass"
+        },
+        "filter": {
+            "colour_write_mask": 15,
+            "blend_state": "disabled",
+            "viewport": [
+                0.0,
+                0.0,
+                1.0,
+                1.0
+            ],
+            "raster_state": "post_process",
+            "depth_stencil_state": "disabled",
+            "pmfx_shader": "post_process",
+            "technique": "filter"
+        },
+        "downsample_2x2": {
+            "colour_write_mask": 15,
+            "blend_state": "disabled",
+            "viewport": [
+                0.0,
+                0.0,
+                1.0,
+                1.0
+            ],
+            "raster_state": "post_process",
+            "depth_stencil_state": "disabled",
+            "pmfx_shader": "post_process",
+            "technique": "downsample_2x2"
+        },
+        "downsample_average": {
+            "colour_write_mask": 15,
+            "blend_state": "disabled",
+            "viewport": [
+                0.0,
+                0.0,
+                1.0,
+                1.0
+            ],
+            "raster_state": "post_process",
+            "depth_stencil_state": "disabled",
+            "pmfx_shader": "post_process",
+            "technique": "downsample_average"
+        },
+        "bloom_upsample": {
+            "colour_write_mask": 15,
+            "blend_state": "disabled",
+            "viewport": [
+                0.0,
+                0.0,
+                1.0,
+                1.0
+            ],
+            "raster_state": "post_process",
+            "depth_stencil_state": "disabled",
+            "pmfx_shader": "post_process",
+            "technique": "bloom_upsample"
+        },
+        "depth_of_field": {
+            "colour_write_mask": 15,
+            "blend_state": "disabled",
+            "viewport": [
+                0.0,
+                0.0,
+                1.0,
+                1.0
+            ],
+            "raster_state": "post_process",
+            "depth_stencil_state": "disabled",
+            "pmfx_shader": "post_process",
+            "technique": "depth_of_field",
+            "camera": "model_viewer_camera"
+        },
+        "menger_sponge": {
+            "clear_depth": 1.0,
+            "colour_write_mask": 15,
+            "blend_state": "disabled",
+            "viewport": [
+                0.0,
+                0.0,
+                1.0,
+                1.0
+            ],
+            "raster_state": "post_process",
+            "depth_stencil_state": "depth_always",
+            "pmfx_shader": "post_process",
+            "technique": "menger_sponge",
+            "camera": "model_viewer_camera"
+        },
+        "crt": {
+            "colour_write_mask": 15,
+            "blend_state": "disabled",
+            "viewport": [
+                0.0,
+                0.0,
+                1.0,
+                1.0
+            ],
+            "raster_state": "post_process",
+            "depth_stencil_state": "disabled",
+            "pmfx_shader": "post_process",
+            "technique": "crt",
+            "camera": "model_viewer_camera"
+        },
+        "taa_resolve": {
+            "colour_write_mask": 15,
+            "clear_colour": [
+                0.0,
+                1.0,
+                0.0,
+                1.0
+            ],
+            "clear_depth": 1.0,
+            "blend_state": "disabled",
+            "viewport": [
+                0.0,
+                0.0,
+                1.0,
+                1.0
+            ],
+            "raster_state": "post_process",
+            "depth_stencil_state": "disabled",
+            "pmfx_shader": "post_process",
+            "technique": "taa_resolve"
+        }
+    },
+    "filter_kernels": {
+        "gauss_5_1": {
+            "weights": [
+                0.06136,
+                0.24477,
+                0.38774,
+                0.24477,
+                0.06136
+            ],
+            "offsets": [
+                -2.0,
+                -1.0,
+                0.0,
+                1.0,
+                2.0
+            ]
+        },
+        "gauss_7_1": {
+            "weights": [
+                0.00598,
+                0.060626,
+                0.241843,
+                0.383103,
+                0.241843,
+                0.060626,
+                0.00598
+            ],
+            "offsets": [
+                -3.0,
+                -2.0,
+                -1.0,
+                0.0,
+                1.0,
+                2.0,
+                3.0
+            ]
+        },
+        "gauss_9_1": {
+            "weights": [
+                0.000229,
+                0.005977,
+                0.060598,
+                0.241732,
+                0.382928,
+                0.241732,
+                0.060598,
+                0.005977,
+                0.000229
+            ],
+            "offsets": [
+                -4.0,
+                -3.0,
+                -2.0,
+                -1.0,
+                0.0,
+                1.0,
+                2.0,
+                3.0,
+                4.0
+            ]
+        },
+        "poisson_disc_16": {
+            "offsets_xy": [
+                0.2069841,
+                0.2245269,
+                0.525808,
+                -0.2310817,
+                0.1383943,
+                0.9056122,
+                0.6633009,
+                0.5129843,
+                -0.4002792,
+                0.3727058,
+                0.07912822,
+                -0.6512921,
+                -0.7726067,
+                -0.5151217,
+                -0.3843193,
+                -0.1494132,
+                -0.9107782,
+                0.2500633,
+                0.6940153,
+                -0.7098927,
+                -0.1964669,
+                -0.379389,
+                -0.4769286,
+                0.1840863,
+                -0.247328,
+                -0.8798459,
+                0.4206541,
+                -0.714772,
+                0.5829348,
+                -0.09794202,
+                0.3691838,
+                0.4140642
+            ]
+        },
+        "unjitter": {
+            "offsets": [],
+            "weights": []
+        }
+    },
+    "post_processes": {
+        "bloom": [
+            {
+                "inherit": "high_pass",
+                "target": [
+                    "pp_output_full"
+                ],
+                "camera": "model_viewer_camera",
+                "sampler_bindings": [
+                    {
+                        "texture": "pp_output_full",
+                        "unit": 0,
+                        "state": "clamp_linear",
+                        "shader": "ps"
+                    }
+                ]
+            },
+            {
+                "inherit": "filter",
+                "target": [
+                    "pp_output_full"
+                ],
+                "camera": "model_viewer_camera",
+                "sampler_bindings": [
+                    {
+                        "texture": "pp_output_full",
+                        "unit": 0,
+                        "state": "clamp_linear",
+                        "shader": "ps"
+                    }
+                ],
+                "filter_kernel": "gauss_9_1",
+                "filter_direction": "horizontal"
+            },
+            {
+                "inherit": "filter",
+                "target": [
+                    "pp_output_full"
+                ],
+                "camera": "model_viewer_camera",
+                "sampler_bindings": [
+                    {
+                        "texture": "pp_output_full",
+                        "unit": 0,
+                        "state": "clamp_linear",
+                        "shader": "ps"
+                    }
+                ],
+                "filter_kernel": "gauss_9_1",
+                "filter_direction": "vertical"
+            },
+            {
+                "inherit": "downsample_average",
+                "target": [
+                    "pp_output_half"
+                ],
+                "camera": "model_viewer_camera",
+                "sampler_bindings": [
+                    {
+                        "texture": "pp_output_full",
+                        "unit": 0,
+                        "state": "clamp_linear",
+                        "shader": "ps"
+                    }
+                ]
+            },
+            {
+                "inherit": "filter",
+                "target": [
+                    "pp_output_half"
+                ],
+                "camera": "model_viewer_camera",
+                "sampler_bindings": [
+                    {
+                        "texture": "pp_output_half",
+                        "unit": 0,
+                        "state": "clamp_linear",
+                        "shader": "ps"
+                    }
+                ],
+                "filter_kernel": "gauss_9_1",
+                "filter_direction": "horizontal"
+            },
+            {
+                "inherit": "filter",
+                "target": [
+                    "pp_output_half"
+                ],
+                "camera": "model_viewer_camera",
+                "sampler_bindings": [
+                    {
+                        "texture": "pp_output_half",
+                        "unit": 0,
+                        "state": "clamp_linear",
+                        "shader": "ps"
+                    }
+                ],
+                "filter_kernel": "gauss_9_1",
+                "filter_direction": "vertical"
+            },
+            {
+                "inherit": "downsample_average",
+                "target": [
+                    "pp_output_quarter"
+                ],
+                "camera": "model_viewer_camera",
+                "sampler_bindings": [
+                    {
+                        "texture": "pp_output_half",
+                        "unit": 0,
+                        "state": "clamp_linear",
+                        "shader": "ps"
+                    }
+                ]
+            },
+            {
+                "inherit": "filter",
+                "target": [
+                    "pp_output_quarter"
+                ],
+                "camera": "model_viewer_camera",
+                "sampler_bindings": [
+                    {
+                        "texture": "pp_output_quarter",
+                        "unit": 0,
+                        "state": "clamp_linear",
+                        "shader": "ps"
+                    }
+                ],
+                "filter_kernel": "gauss_9_1",
+                "filter_direction": "horizontal"
+            },
+            {
+                "inherit": "filter",
+                "target": [
+                    "pp_output_quarter"
+                ],
+                "camera": "model_viewer_camera",
+                "sampler_bindings": [
+                    {
+                        "texture": "pp_output_quarter",
+                        "unit": 0,
+                        "state": "clamp_linear",
+                        "shader": "ps"
+                    }
+                ],
+                "filter_kernel": "gauss_9_1",
+                "filter_direction": "vertical"
+            },
+            {
+                "inherit": "downsample_average",
+                "target": [
+                    "pp_output_eighth"
+                ],
+                "camera": "model_viewer_camera",
+                "sampler_bindings": [
+                    {
+                        "texture": "pp_output_quarter",
+                        "unit": 0,
+                        "state": "clamp_linear",
+                        "shader": "ps"
+                    }
+                ]
+            },
+            {
+                "inherit": "filter",
+                "target": [
+                    "pp_output_eighth"
+                ],
+                "camera": "model_viewer_camera",
+                "sampler_bindings": [
+                    {
+                        "texture": "pp_output_eighth",
+                        "unit": 0,
+                        "state": "clamp_linear",
+                        "shader": "ps"
+                    }
+                ],
+                "filter_kernel": "gauss_9_1",
+                "filter_direction": "horizontal"
+            },
+            {
+                "inherit": "filter",
+                "target": [
+                    "pp_output_eighth"
+                ],
+                "camera": "model_viewer_camera",
+                "sampler_bindings": [
+                    {
+                        "texture": "pp_output_eighth",
+                        "unit": 0,
+                        "state": "clamp_linear",
+                        "shader": "ps"
+                    }
+                ],
+                "filter_kernel": "gauss_9_1",
+                "filter_direction": "vertical"
+            },
+            {
+                "inherit": "bloom_upsample",
+                "target": [
+                    "pp_output_full"
+                ],
+                "camera": "model_viewer_camera",
+                "sampler_bindings": [
+                    {
+                        "texture": "post_process_colour",
+                        "unit": 0,
+                        "state": "clamp_linear",
+                        "shader": "ps"
+                    },
+                    {
+                        "texture": "pp_output_full",
+                        "unit": 1,
+                        "state": "clamp_linear",
+                        "shader": "ps"
+                    },
+                    {
+                        "texture": "pp_output_half",
+                        "unit": 2,
+                        "state": "clamp_linear",
+                        "shader": "ps"
+                    },
+                    {
+                        "texture": "pp_output_quarter",
+                        "unit": 3,
+                        "state": "clamp_linear",
+                        "shader": "ps"
+                    },
+                    {
+                        "texture": "pp_output_eighth",
+                        "unit": 4,
+                        "state": "clamp_linear",
+                        "shader": "ps"
+                    }
+                ]
+            }
+        ],
+        "depth_of_field": [
+            {
+                "inherit": "downsample_2x2",
+                "target": [
+                    "pp_output_half"
+                ],
+                "camera": "model_viewer_camera",
+                "sampler_bindings": [
+                    {
+                        "texture": "pp_output_full",
+                        "unit": 0,
+                        "state": "clamp_linear",
+                        "shader": "ps"
+                    }
+                ]
+            },
+            {
+                "inherit": "filter",
+                "target": [
+                    "pp_output_half"
+                ],
+                "camera": "model_viewer_camera",
+                "sampler_bindings": [
+                    {
+                        "texture": "pp_output_half",
+                        "unit": 0,
+                        "state": "clamp_linear",
+                        "shader": "ps"
+                    }
+                ],
+                "filter_kernel": "gauss_9_1",
+                "filter_direction": "horizontal"
+            },
+            {
+                "inherit": "filter",
+                "target": [
+                    "pp_output_half"
+                ],
+                "camera": "model_viewer_camera",
+                "sampler_bindings": [
+                    {
+                        "texture": "pp_output_half",
+                        "unit": 0,
+                        "state": "clamp_linear",
+                        "shader": "ps"
+                    }
+                ],
+                "filter_kernel": "gauss_9_1",
+                "filter_direction": "vertical"
+            },
+            {
+                "inherit": "depth_of_field",
+                "target": [
+                    "pp_output_full"
+                ],
+                "camera": "model_viewer_camera",
+                "sampler_bindings": [
+                    {
+                        "texture": "post_process_depth",
+                        "unit": 0,
+                        "state": "clamp_linear",
+                        "shader": "ps"
+                    },
+                    {
+                        "texture": "pp_output_full",
+                        "unit": 1,
+                        "state": "clamp_linear",
+                        "shader": "ps"
+                    },
+                    {
+                        "texture": "pp_output_half",
+                        "unit": 2,
+                        "state": "clamp_linear",
+                        "shader": "ps"
+                    }
+                ]
+            }
+        ],
+        "colour_lut": [
+            {
+                "inherit": "colour_lut",
+                "target": [
+                    "pp_output_full"
+                ],
+                "camera": "model_viewer_camera",
+                "sampler_bindings": [
+                    {
+                        "texture": "pp_output_full",
+                        "unit": 0,
+                        "state": "clamp_linear",
+                        "shader": "ps"
+                    }
+                ]
+            }
+        ],
+        "blit_depth": [
+            {
+                "inherit": "blit_depth",
+                "target": [
+                    "main_depth"
+                ],
+                "camera": "model_viewer_camera",
+                "sampler_bindings": [
+                    {
+                        "texture": "post_process_depth",
+                        "unit": 0,
+                        "state": "clamp_linear",
+                        "shader": "ps"
+                    }
+                ]
+            }
+        ],
+        "blit_taa_depth": [
+            {
+                "inherit": "blit_depth",
+                "technique": "blit_depth_unjittered",
+                "target": [
+                    "main_depth"
+                ],
+                "camera": "model_viewer_camera",
+                "sampler_bindings": [
+                    {
+                        "texture": "taa_depth",
+                        "unit": 0,
+                        "state": "clamp_linear",
+                        "shader": "ps"
+                    }
+                ]
+            }
+        ],
+        "blit_post_process": [
+            {
+                "inherit": "blit",
+                "target": [
+                    "main_colour"
+                ],
+                "camera": "model_viewer_camera",
+                "sampler_bindings": [
+                    {
+                        "texture": "pp_output_full",
+                        "unit": 0,
+                        "state": "clamp_linear",
+                        "shader": "ps"
+                    }
+                ]
+            }
+        ],
+        "blit_colour_depth": [
+            {
+                "inherit": "blit_colour_depth",
+                "target": [
+                    "main_colour",
+                    "main_depth"
+                ],
+                "camera": "model_viewer_camera",
+                "sampler_bindings": [
+                    {
+                        "texture": "post_process_colour",
+                        "unit": 0,
+                        "state": "clamp_linear",
+                        "shader": "ps"
+                    },
+                    {
+                        "texture": "post_process_depth",
+                        "unit": 1,
+                        "state": "clamp_linear",
+                        "shader": "ps"
+                    }
+                ]
+            }
+        ],
+        "menger_sponge": [
+            {
+                "inherit": "menger_sponge",
+                "target": [
+                    "post_process_colour",
+                    "post_process_depth"
+                ],
+                "pp_write_non_aux": true,
+                "technique": "menger_sponge",
+                "camera": "model_viewer_camera",
+                "resolve": [
+                    "average_4x",
+                    "max_4x"
+                ]
+            }
+        ],
+        "crt": [
+            {
+                "inherit": "crt",
+                "target": [
+                    "pp_output_full"
+                ],
+                "camera": "model_viewer_camera",
+                "sampler_bindings": [
+                    {
+                        "texture": "pp_output_full",
+                        "unit": 0,
+                        "state": "clamp_linear",
+                        "shader": "ps"
+                    }
+                ]
+            }
+        ],
+        "sss_reflectance": [
+            {
+                "inherit": "filter",
+                "target": [
+                    "pp_output_full"
+                ],
+                "technique": "sss_reflectance",
+                "camera": "model_viewer_camera",
+                "filter_kernel": "gauss_9_1",
+                "filter_direction": "horizontal",
+                "sampler_bindings": [
+                    {
+                        "texture": "pp_output_full",
+                        "unit": 0,
+                        "state": "clamp_linear",
+                        "shader": "ps"
+                    },
+                    {
+                        "texture": "post_process_depth",
+                        "unit": 1,
+                        "state": "clamp_linear",
+                        "shader": "ps"
+                    }
+                ]
+            },
+            {
+                "inherit": "filter",
+                "target": [
+                    "pp_output_full"
+                ],
+                "technique": "sss_reflectance",
+                "camera": "model_viewer_camera",
+                "filter_kernel": "gauss_9_1",
+                "filter_direction": "vertical",
+                "sampler_bindings": [
+                    {
+                        "texture": "pp_output_full",
+                        "unit": 0,
+                        "state": "clamp_linear",
+                        "shader": "ps"
+                    },
+                    {
+                        "texture": "post_process_depth",
+                        "unit": 1,
+                        "state": "clamp_linear",
+                        "shader": "ps"
+                    }
+                ]
+            }
+        ],
+        "taa_resolve": [
+            {
+                "inherit": "taa_resolve",
+                "target": [
+                    "pp_output_full"
+                ],
+                "technique": "taa_resolve",
+                "camera": "model_viewer_camera",
+                "scene_views": [
+                    "ecs_taa_resolve"
+                ],
+                "sampler_bindings": [
+                    {
+                        "texture": "taa_colour",
+                        "unit": 0,
+                        "state": "clamp_linear",
+                        "shader": "ps"
+                    },
+                    {
+                        "texture": "taa_depth",
+                        "unit": 1,
+                        "state": "clamp_point",
+                        "shader": "ps"
+                    },
+                    {
+                        "texture": "taa_history",
+                        "unit": 2,
+                        "state": "clamp_linear",
+                        "shader": "ps"
+                    }
+                ]
+            },
+            {
+                "inherit": "blit",
+                "target": [
+                    "taa_history"
+                ],
+                "pp_write_non_aux": true,
+                "camera": "model_viewer_camera",
+                "sampler_bindings": [
+                    {
+                        "texture": "pp_output_full",
+                        "unit": 0,
+                        "state": "clamp_linear",
+                        "shader": "ps"
+                    }
+                ]
+            }
+        ]
+    },
+    "post_process_sets": {
+        "blit_only": {
+            "chain": [
+                "blit_colour_depth"
+            ]
+        },
+        "editor_default": {
+            "chain": [
+                "blit_depth",
+                "blit_post_process"
+            ]
+        },
+        "taa_resolve": {
+            "chain": [
+                "taa_resolve",
+                "blit_taa_depth",
+                "blit_post_process"
+            ]
+        }
+    }
+}

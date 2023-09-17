@@ -1,0 +1,3 @@
+[submodule "app/pmtech"]
+	path = app/pmtech
+	url = https://github.com/polymonster/pmtech

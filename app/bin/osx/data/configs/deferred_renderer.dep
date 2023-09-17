@@ -1,0 +1,17 @@
+{
+    "cmdline": "pmtech/third_party/pmbuild/scripts/jsn/jsn -i pmtech/assets/configs/deferred_renderer.jsn -o bin/osx/data/configs/deferred_renderer.jsn -I ../assets/configs assets/configs",
+    "files": {
+        "/Users/alex.dixon/dev/dig/app/bin/osx/data/configs/deferred_renderer.jsn": [
+            {
+                "name": "/Users/alex.dixon/dev/dig/app/pmtech/assets/configs/deferred_renderer.jsn",
+                "timestamp": 1694947982.3519063,
+                "data_file": "data/configs/deferred_renderer.jsn"
+            },
+            {
+                "name": "/Users/alex.dixon/dev/dig/app/pmtech/third_party/pmbuild/scripts/jsn/jsn",
+                "timestamp": 1694949058.5419445,
+                "data_file": "data/configs/deferred_renderer.jsn"
+            }
+        ]
+    }
+}

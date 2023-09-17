@@ -1,0 +1,17 @@
+{
+    "cmdline": "pmtech/third_party/pmbuild/scripts/jsn/jsn -i pmtech/assets/configs/common.jsn -o bin/osx/data/configs/common.jsn -I ../assets/configs assets/configs",
+    "files": {
+        "/Users/alex.dixon/dev/dig/app/bin/osx/data/configs/common.jsn": [
+            {
+                "name": "/Users/alex.dixon/dev/dig/app/pmtech/assets/configs/common.jsn",
+                "timestamp": 1694947982.3518507,
+                "data_file": "data/configs/common.jsn"
+            },
+            {
+                "name": "/Users/alex.dixon/dev/dig/app/pmtech/third_party/pmbuild/scripts/jsn/jsn",
+                "timestamp": 1694949058.5419445,
+                "data_file": "data/configs/common.jsn"
+            }
+        ]
+    }
+}

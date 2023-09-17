@@ -1,0 +1,118 @@
+import "pmtech/tools/pmbuild_ext/pmbuild_init.jsn"
+{
+    jsn_vars: {
+        pmbuild_dir: "pmtech/third_party/pmbuild"
+        pmtech_dir: "pmtech"
+    }
+
+	base:
+	{
+		jsn_vars: {
+            data_dir: ""
+            build_dir: ""
+            bin_dir: ""
+        }
+
+        clean: {
+            directories: [
+                "${data_dir}"
+                "${build_dir}"
+                "${bin_dir}"
+                "temp"
+            ]
+        }
+
+        render_configs: {
+            type: jsn
+            args: [
+                "-i %{input_file} -o %{output_file}"
+                "-I ../assets/configs assets/configs",
+            ]
+            files: [
+                ["${pmtech_dir}/assets/configs", "${data_dir}/configs"]
+            ]
+            dependencies: true
+        }
+
+		base_copy: {
+            type: copy
+            files: [
+                ["${pmtech_dir}/assets/fonts", "${data_dir}/fonts"]
+                ["${pmtech_dir}/assets/textures/**/*.dds", "${data_dir}/textures"]
+            ]
+        }
+
+		pmbuild_config: {
+            pmbuild_cmd: "${pmbuild_dir}/pmbuild"
+            destination: "${data_dir}"
+        }
+
+	}
+
+	//
+    // mac
+    //
+
+    mac(base):
+    {
+        jsn_vars: {
+            data_dir: "bin/osx/data"
+            build_dir: "build/osx"
+            bin_dir: "bin/osx"
+        }
+
+        shared_libs: {
+            type: copy
+            files: [
+                ["${pmtech_dir}/third_party/shared_libs/osx", "bin/osx"]
+            ]
+        }
+
+        premake: {
+            args: [
+                "xcode4"
+                "--renderer=metal"
+                "--platform_dir=osx"
+				"--pmtech_dir=${pmtech_dir}/"
+            ]
+        },
+
+        pmfx: {
+            args: [
+                "-v1"
+                "-shader_platform metal"
+                "-i ${pmtech_dir}/assets/shaders"
+                "-o bin/osx/data/pmfx/metal"
+                "-h shader_structs"
+                "-t temp/shaders"
+                "-source"
+            ]
+        }
+
+        make: {
+            toolchain: "xcodebuild"
+            workspace: "digosx.xcworkspace"
+            files: [
+                "build/osx/**/*.xcodeproj"
+            ]
+            change_ext: ""
+        }
+
+        launch: {
+            cmd: "%{target_path}/Contents/MacOS/%{target_name}"
+            files: [
+                "bin/osx/**/*.app"
+            ]
+        }
+
+		libs: {
+            type: shell
+            explicit: true
+            commands: [
+                "cd ${pmtech_dir}/third_party && ../pmbuild bullet-mac"
+                "cd ${pmtech_dir}/third_party && ../pmbuild make bullet-mac all -configuration Release -quiet"
+                "cd ${pmtech_dir}/third_party && ../pmbuild make bullet-mac all -configuration Debug -quiet"
+            ]
+        }
+    }
+}

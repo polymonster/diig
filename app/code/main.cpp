@@ -37,8 +37,8 @@ namespace pen
     pen_creation_params pen_entry(int argc, char** argv)
     {
         pen::pen_creation_params p;
-        p.window_width = 1280;
-        p.window_height = 720;
+        p.window_width = 828;
+        p.window_height = 1792;
         p.window_title = "dig";
         p.window_sample_count = 4;
         p.user_thread_function = user_setup;
@@ -125,10 +125,6 @@ namespace
         pen::timer_start(frame_timer);
 
         editor_enable(false);
-        
-        // start in non debug mode
-        main_scene->view_flags |= e_scene_view_flags::hide_debug;
-        put::dev_ui::enable(false);
 
         pen_main_loop(user_update);
         return PEN_THREAD_OK;
@@ -147,6 +143,8 @@ namespace
 
     loop_t user_update()
     {
+        put::dev_ui::show_console(false);
+        
         pen::renderer_new_frame();
 
         f32 dt = pen::timer_elapsed_ms(frame_timer) / 1000.0f;
@@ -155,12 +153,12 @@ namespace
         put::dev_ui::new_frame();
 
         ecs::update(dt);
-
         pmfx::render();
         
-        pmfx::show_dev_ui();
-        put::vgt::show_dev_ui();
-        put::dev_ui::console();
+        ImGui::Begin("Main");
+        ImGui::Text("%s", "Hello this is dig");
+        ImGui::End();
+        
         put::dev_ui::render();
 
         // present

@@ -445,7 +445,7 @@
         "title": "CHILL OUT ALBUM (CLEAR VINYL)",
         "weekly_chart": 14,
         "new_releases": 495,
-        "monthly_chart": 11
+        "monthly_chart": 21
     },
     "105064": {
         "id": "105064",
@@ -495,7 +495,7 @@
         "label_link": "https://www.redeyerecords.co.uk/record-label-releases/1432-soma",
         "artist": "Deepchord",
         "title": "Atmospherica Vol. 2",
-        "weekly_chart": 12
+        "weekly_chart": 14
     },
     "120906": {
         "id": "120906",
@@ -859,8 +859,9 @@
         "label_link": "https://www.redeyerecords.co.uk/record-label-releases/20029-jumpin-and-pumpin",
         "artist": "The Future Sound Of London",
         "title": "Papua New Guinea",
-        "monthly_chart": 15,
-        "new_releases": 87
+        "monthly_chart": 7,
+        "new_releases": 87,
+        "weekly_chart": 10
     },
     "170294": {
         "id": "170294",
@@ -1031,7 +1032,7 @@
         "title": "Big Saldo's Chunker 003",
         "monthly_chart": 16,
         "new_releases": 511,
-        "weekly_chart": 24
+        "weekly_chart": 32
     },
     "170579": {
         "id": "170579",
@@ -12451,7 +12452,7 @@
             "https://www.redeyerecords.co.uk/imagery/170693-2.jpg"
         ],
         "new_releases": 704,
-        "monthly_chart": 21
+        "monthly_chart": 23
     },
     "77412": {
         "id": "77412",
@@ -16798,7 +16799,7 @@
             "https://www.redeyerecords.co.uk/imagery/170369-2.jpg"
         ],
         "new_releases": 742,
-        "weekly_chart": 26
+        "weekly_chart": 33
     },
     "170349": {
         "id": "170349",
@@ -23498,7 +23499,7 @@
         ],
         "weekly_chart": 8,
         "new_releases": 444,
-        "monthly_chart": 10
+        "monthly_chart": 11
     },
     "152139": {
         "id": "152139",
@@ -25693,7 +25694,7 @@
             "https://www.redeyerecords.co.uk/imagery/164648-1.jpg",
             "https://www.redeyerecords.co.uk/imagery/164648-2.jpg"
         ],
-        "weekly_chart": 18
+        "weekly_chart": 23
     },
     "171491": {
         "id": "171491",
@@ -26469,7 +26470,7 @@
         ],
         "new_releases": 401,
         "weekly_chart": 12,
-        "monthly_chart": 5
+        "monthly_chart": 8
     },
     "171521": {
         "id": "171521",
@@ -28133,7 +28134,7 @@
         ],
         "new_releases": 343,
         "weekly_chart": 8,
-        "monthly_chart": 6
+        "monthly_chart": 9
     },
     "165388": {
         "id": "165388",
@@ -28287,8 +28288,8 @@
             "https://www.redeyerecords.co.uk/imagery/167995-1.jpg",
             "https://www.redeyerecords.co.uk/imagery/167995-2.jpg"
         ],
-        "weekly_chart": 22,
-        "monthly_chart": 19
+        "weekly_chart": 26,
+        "monthly_chart": 13
     },
     "169879": {
         "id": "169879",
@@ -28316,7 +28317,7 @@
             "https://www.redeyerecords.co.uk/imagery/169879-2.jpg"
         ],
         "weekly_chart": 28,
-        "monthly_chart": 13
+        "monthly_chart": 14
     },
     "156166": {
         "id": "156166",
@@ -28441,7 +28442,7 @@
             "https://www.redeyerecords.co.uk/imagery/100975-2.jpg"
         ],
         "weekly_chart": 15,
-        "monthly_chart": 35
+        "monthly_chart": 34
     },
     "147019": {
         "id": "147019",
@@ -29904,7 +29905,7 @@
             "https://www.redeyerecords.co.uk/imagery/168848-2.jpg"
         ],
         "weekly_chart": 6,
-        "monthly_chart": 20,
+        "monthly_chart": 22,
         "new_releases": 189
     },
     "171646": {
@@ -30038,7 +30039,7 @@
         ],
         "new_releases": 285,
         "weekly_chart": 11,
-        "monthly_chart": 24
+        "monthly_chart": 25
     },
     "171655": {
         "id": "171655",
@@ -30538,7 +30539,7 @@
         ],
         "new_releases": 301,
         "weekly_chart": 12,
-        "monthly_chart": 23
+        "monthly_chart": 24
     },
     "171649": {
         "id": "171649",
@@ -30784,7 +30785,7 @@
             "https://www.redeyerecords.co.uk/imagery/171697-2.jpg"
         ],
         "new_releases": 276,
-        "monthly_chart": 25
+        "monthly_chart": 26
     },
     "171707": {
         "id": "171707",
@@ -32160,7 +32161,7 @@
             "https://www.redeyerecords.co.uk/imagery/171807-1.jpg",
             "https://www.redeyerecords.co.uk/imagery/171807-2.jpg"
         ],
-        "weekly_chart": 1,
+        "weekly_chart": 3,
         "new_releases": 233,
         "monthly_chart": 1
     },
@@ -33631,7 +33632,7 @@
         ],
         "new_releases": 204,
         "weekly_chart": 15,
-        "monthly_chart": 18
+        "monthly_chart": 19
     },
     "171863": {
         "id": "171863",
@@ -33775,7 +33776,7 @@
             "https://www.redeyerecords.co.uk/imagery/3200745-2.jpg"
         ],
         "weekly_chart": 10,
-        "monthly_chart": 4,
+        "monthly_chart": 6,
         "new_releases": 182
     },
     "3200746": {
@@ -33805,7 +33806,7 @@
         ],
         "weekly_chart": 15,
         "new_releases": 177,
-        "monthly_chart": 34
+        "monthly_chart": 20
     },
     "163148": {
         "id": "163148",
@@ -33832,7 +33833,7 @@
             "https://www.redeyerecords.co.uk/imagery/163148-1.jpg",
             "https://www.redeyerecords.co.uk/imagery/163148-2.jpg"
         ],
-        "weekly_chart": 17,
+        "weekly_chart": 22,
         "new_releases": 175,
         "monthly_chart": 12
     },
@@ -33937,7 +33938,7 @@
             "https://www.redeyerecords.co.uk/imagery/130165-2.jpg"
         ],
         "new_releases": 174,
-        "weekly_chart": 13
+        "weekly_chart": 17
     },
     "171897": {
         "id": "171897",
@@ -34410,7 +34411,7 @@
         ],
         "weekly_chart": 5,
         "new_releases": 158,
-        "monthly_chart": 26
+        "monthly_chart": 27
     },
     "171924": {
         "id": "171924",
@@ -34629,7 +34630,7 @@
             "https://www.redeyerecords.co.uk/imagery/171943-2.jpg"
         ],
         "weekly_chart": 4,
-        "monthly_chart": 27,
+        "monthly_chart": 28,
         "new_releases": 146
     },
     "171953": {
@@ -34659,9 +34660,9 @@
             "https://www.redeyerecords.co.uk/imagery/171953-1.jpg",
             "https://www.redeyerecords.co.uk/imagery/171953-2.jpg"
         ],
-        "weekly_chart": 8,
+        "weekly_chart": 5,
         "new_releases": 134,
-        "monthly_chart": 7
+        "monthly_chart": 4
     },
     "101309": {
         "id": "101309",
@@ -35264,7 +35265,7 @@
         ],
         "weekly_chart": 5,
         "new_releases": 133,
-        "monthly_chart": 28
+        "monthly_chart": 29
     },
     "170154": {
         "id": "170154",
@@ -35293,7 +35294,7 @@
         ],
         "weekly_chart": 4,
         "new_releases": 131,
-        "monthly_chart": 14
+        "monthly_chart": 15
     },
     "172000": {
         "id": "172000",
@@ -35624,8 +35625,8 @@
             "https://www.redeyerecords.co.uk/imagery/172002-2.jpg"
         ],
         "new_releases": 122,
-        "weekly_chart": 9,
-        "monthly_chart": 29
+        "weekly_chart": 6,
+        "monthly_chart": 18
     },
     "171983": {
         "id": "171983",
@@ -36609,7 +36610,7 @@
             "https://www.redeyerecords.co.uk/imagery/172049-1.jpg",
             "https://www.redeyerecords.co.uk/imagery/172049-2.jpg"
         ],
-        "weekly_chart": 5,
+        "weekly_chart": 7,
         "new_releases": 72,
         "monthly_chart": 30
     },
@@ -36638,7 +36639,7 @@
             "https://www.redeyerecords.co.uk/imagery/172062-1.jpg",
             "https://www.redeyerecords.co.uk/imagery/172062-2.jpg"
         ],
-        "weekly_chart": 6,
+        "weekly_chart": 8,
         "new_releases": 62,
         "monthly_chart": 31
     },
@@ -36663,7 +36664,7 @@
             "https://www.redeyerecords.co.uk/imagery/140182-1.jpg",
             "https://www.redeyerecords.co.uk/imagery/140182-2.jpg"
         ],
-        "weekly_chart": 14
+        "weekly_chart": 19
     },
     "169007": {
         "id": "169007",
@@ -36702,7 +36703,7 @@
             "https://www.redeyerecords.co.uk/imagery/169007-1.jpg",
             "https://www.redeyerecords.co.uk/imagery/169007-2.jpg"
         ],
-        "weekly_chart": 20,
+        "weekly_chart": 28,
         "new_releases": 64
     },
     "169428": {
@@ -36736,7 +36737,7 @@
             "https://www.redeyerecords.co.uk/imagery/169428-1.jpg",
             "https://www.redeyerecords.co.uk/imagery/169428-2.jpg"
         ],
-        "weekly_chart": 21,
+        "weekly_chart": 29,
         "new_releases": 80
     },
     "172070": {
@@ -36821,7 +36822,7 @@
             "https://www.redeyerecords.co.uk/imagery/172071-2.jpg"
         ],
         "new_releases": 61,
-        "weekly_chart": 10
+        "weekly_chart": 11
     },
     "172043": {
         "id": "172043",
@@ -37563,7 +37564,7 @@
             "https://www.redeyerecords.co.uk/imagery/162614-1.jpg",
             "https://www.redeyerecords.co.uk/imagery/162614-2.jpg"
         ],
-        "weekly_chart": 16
+        "weekly_chart": 21
     },
     "167083": {
         "id": "167083",
@@ -37585,7 +37586,7 @@
             "https://www.redeyerecords.co.uk/imagery/167083-1.jpg",
             "https://www.redeyerecords.co.uk/imagery/167083-2.jpg"
         ],
-        "weekly_chart": 19
+        "weekly_chart": 25
     },
     "3200754": {
         "id": "3200754",
@@ -38059,7 +38060,8 @@
             "https://www.redeyerecords.co.uk/imagery/172092-1.jpg",
             "https://www.redeyerecords.co.uk/imagery/172092-2.jpg"
         ],
-        "new_releases": 54
+        "new_releases": 54,
+        "weekly_chart": 12
     },
     "172085": {
         "id": "172085",
@@ -38190,8 +38192,8 @@
             "https://www.redeyerecords.co.uk/imagery/172113-1.jpg",
             "https://www.redeyerecords.co.uk/imagery/172113-2.jpg"
         ],
-        "weekly_chart": 2,
-        "monthly_chart": 8,
+        "weekly_chart": 1,
+        "monthly_chart": 5,
         "new_releases": 33
     },
     "172116": {
@@ -38226,7 +38228,7 @@
             "https://www.redeyerecords.co.uk/imagery/172116-1.jpg",
             "https://www.redeyerecords.co.uk/imagery/172116-2.jpg"
         ],
-        "weekly_chart": 11,
+        "weekly_chart": 13,
         "new_releases": 30
     },
     "172112": {
@@ -38253,7 +38255,7 @@
             "https://www.redeyerecords.co.uk/imagery/172112-2.jpg"
         ],
         "new_releases": 8,
-        "weekly_chart": 7,
+        "weekly_chart": 9,
         "monthly_chart": 32
     },
     "3200757": {
@@ -38755,9 +38757,9 @@
             "https://www.redeyerecords.co.uk/imagery/172144-1.jpg",
             "https://www.redeyerecords.co.uk/imagery/172144-2.jpg"
         ],
-        "weekly_chart": 3,
+        "weekly_chart": 2,
         "new_releases": 17,
-        "monthly_chart": 9
+        "monthly_chart": 10
     },
     "152723": {
         "id": "152723",
@@ -38780,7 +38782,7 @@
             "https://www.redeyerecords.co.uk/imagery/152723-1.jpg",
             "https://www.redeyerecords.co.uk/imagery/152723-2.jpg"
         ],
-        "weekly_chart": 15
+        "weekly_chart": 20
     },
     "169732": {
         "id": "169732",
@@ -38807,7 +38809,7 @@
             "https://www.redeyerecords.co.uk/imagery/169732-1.jpg",
             "https://www.redeyerecords.co.uk/imagery/169732-2.jpg"
         ],
-        "weekly_chart": 22
+        "weekly_chart": 30
     },
     "169812": {
         "id": "169812",
@@ -38834,7 +38836,7 @@
             "https://www.redeyerecords.co.uk/imagery/169812-1.jpg",
             "https://www.redeyerecords.co.uk/imagery/169812-2.jpg"
         ],
-        "weekly_chart": 23
+        "weekly_chart": 31
     },
     "172153": {
         "id": "172153",
@@ -38993,7 +38995,8 @@
             "https://www.redeyerecords.co.uk/imagery/132461-1.jpg",
             "https://www.redeyerecords.co.uk/imagery/132461-2.jpg"
         ],
-        "new_releases": 13
+        "new_releases": 13,
+        "weekly_chart": 18
     },
     "172134": {
         "id": "172134",
@@ -39379,5 +39382,129 @@
             "https://www.redeyerecords.co.uk/imagery/172159-2.jpg"
         ],
         "new_releases": 6
+    },
+    "128502": {
+        "id": "128502",
+        "track_names": [
+            "Foreplay",
+            "Taste Test",
+            "Inuendo",
+            "Double Entenere",
+            "Cnovice With No Vices",
+            "Cboudoir",
+            "Dbedpost",
+            "Dafterglow"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/97925-rez003clp-titonton-duvante-voyeurism-2-x-lp",
+        "cat": "REZ003CLP",
+        "label": "Residual Recording",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/19409-residual-recording",
+        "artist": "Titonton Duvante",
+        "title": "Voyeurism (2 X LP)",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/128502.mp3",
+            "https://redeye-391831.c.cdn77.org/128502b.mp3",
+            "https://redeye-391831.c.cdn77.org/128502c.mp3",
+            "https://redeye-391831.c.cdn77.org/128502d.mp3",
+            "https://redeye-391831.c.cdn77.org/128502e.mp3",
+            "https://redeye-391831.c.cdn77.org/128502f.mp3",
+            "https://redeye-391831.c.cdn77.org/128502g.mp3",
+            "https://redeye-391831.c.cdn77.org/128502h.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/128502-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/128502-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/128502-2.jpg"
+        ],
+        "weekly_chart": 15
+    },
+    "129697": {
+        "id": "129697",
+        "track_names": [
+            "Canada Line",
+            "Wheeler Road",
+            "Dialogue 6",
+            "Dotty",
+            "Something Is Happening To Me",
+            "Always Glad",
+            "Frog Fractions",
+            "Fever Loop",
+            "Health Pack",
+            "New Window"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/99538-pr002-khotin-new-tab",
+        "cat": "PR002",
+        "label": "Pacific Rhythm",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/10248-pacific-rhythm",
+        "artist": "Khotin",
+        "title": "New Tab",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/129697.mp3",
+            "https://redeye-391831.c.cdn77.org/129697b.mp3",
+            "https://redeye-391831.c.cdn77.org/129697c.mp3",
+            "https://redeye-391831.c.cdn77.org/129697d.mp3",
+            "https://redeye-391831.c.cdn77.org/129697e.mp3",
+            "https://redeye-391831.c.cdn77.org/129697f.mp3",
+            "https://redeye-391831.c.cdn77.org/129697g.mp3",
+            "https://redeye-391831.c.cdn77.org/129697h.mp3",
+            "https://redeye-391831.c.cdn77.org/129697i.mp3",
+            "https://redeye-391831.c.cdn77.org/129697j.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/129697-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/129697-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/129697-2.jpg"
+        ],
+        "weekly_chart": 16
+    },
+    "166559": {
+        "id": "166559",
+        "track_names": [
+            "Orchestre",
+            "La Nuit"
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/158119-a2001-any2-la-nuit-ep",
+        "cat": "A2001",
+        "label": "A2 Records",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/29372-a2-records",
+        "artist": "Any2",
+        "title": "La Nuit EP",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/166559.mp3",
+            "https://redeye-391831.c.cdn77.org/166559b.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/166559-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/166559-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/166559-2.jpg"
+        ],
+        "weekly_chart": 24
+    },
+    "168524": {
+        "id": "168524",
+        "track_names": [
+            "Union Jack - Two Full Moons And A Trout (Caspar Pound Remix)",
+            "Art Of Trance - Madagascar (Cygnus X Remix)",
+            "Simon Berry & Luke Brancaccio Featuring Kiki Cave - Here Comes The Rain (Original Mix)",
+            "Ad..."
+        ],
+        "link": "https://www.redeyerecords.co.uk/vinyl/161469-platmu30yv1-various-artists-platipus-30-years-01-12",
+        "cat": "PLATMU30YV1",
+        "label": "Platipus",
+        "label_link": "https://www.redeyerecords.co.uk/record-label-releases/29839-platipus",
+        "artist": "VARIOUS ARTISTS",
+        "title": "PLATIPUS 30 YEARS 01/12",
+        "track_urls": [
+            "https://redeye-391831.c.cdn77.org/168524.mp3",
+            "https://redeye-391831.c.cdn77.org/168524b.mp3",
+            "https://redeye-391831.c.cdn77.org/168524c.mp3",
+            "https://redeye-391831.c.cdn77.org/168524d.mp3"
+        ],
+        "artworks": [
+            "https://www.redeyerecords.co.uk/imagery/168524-0.jpg",
+            "https://www.redeyerecords.co.uk/imagery/168524-1.jpg",
+            "https://www.redeyerecords.co.uk/imagery/168524-2.jpg"
+        ],
+        "weekly_chart": 27
     }
 }

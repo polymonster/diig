@@ -861,7 +861,7 @@
         "title": "Papua New Guinea",
         "monthly_chart": 7,
         "new_releases": 87,
-        "weekly_chart": 10
+        "weekly_chart": 11
     },
     "170294": {
         "id": "170294",
@@ -1032,7 +1032,7 @@
         "title": "Big Saldo's Chunker 003",
         "monthly_chart": 16,
         "new_releases": 511,
-        "weekly_chart": 32
+        "weekly_chart": 31
     },
     "170579": {
         "id": "170579",
@@ -3336,7 +3336,7 @@
         "title": "SPLIT EP (HANDSTAMPED / MARBLED VINYL)",
         "new_releases": 513,
         "weekly_chart": 12,
-        "monthly_chart": 16
+        "monthly_chart": 15
     },
     "171227": {
         "id": "171227",
@@ -14875,7 +14875,8 @@
             "https://www.redeyerecords.co.uk/imagery/170521-1.jpg",
             "https://www.redeyerecords.co.uk/imagery/170521-2.jpg"
         ],
-        "new_releases": 746
+        "new_releases": 746,
+        "weekly_chart": 34
     },
     "170505": {
         "id": "170505",
@@ -16366,7 +16367,7 @@
             "https://www.redeyerecords.co.uk/imagery/170402-2.jpg"
         ],
         "new_releases": 763,
-        "weekly_chart": 27
+        "weekly_chart": 33
     },
     "170416": {
         "id": "170416",
@@ -16799,7 +16800,7 @@
             "https://www.redeyerecords.co.uk/imagery/170369-2.jpg"
         ],
         "new_releases": 742,
-        "weekly_chart": 33
+        "weekly_chart": 32
     },
     "170349": {
         "id": "170349",
@@ -23499,7 +23500,7 @@
         ],
         "weekly_chart": 8,
         "new_releases": 444,
-        "monthly_chart": 11
+        "monthly_chart": 10
     },
     "152139": {
         "id": "152139",
@@ -25694,7 +25695,7 @@
             "https://www.redeyerecords.co.uk/imagery/164648-1.jpg",
             "https://www.redeyerecords.co.uk/imagery/164648-2.jpg"
         ],
-        "weekly_chart": 23
+        "weekly_chart": 22
     },
     "171491": {
         "id": "171491",
@@ -28134,7 +28135,7 @@
         ],
         "new_releases": 343,
         "weekly_chart": 8,
-        "monthly_chart": 9
+        "monthly_chart": 16
     },
     "165388": {
         "id": "165388",
@@ -28288,8 +28289,8 @@
             "https://www.redeyerecords.co.uk/imagery/167995-1.jpg",
             "https://www.redeyerecords.co.uk/imagery/167995-2.jpg"
         ],
-        "weekly_chart": 26,
-        "monthly_chart": 13
+        "weekly_chart": 25,
+        "monthly_chart": 12
     },
     "169879": {
         "id": "169879",
@@ -28317,7 +28318,7 @@
             "https://www.redeyerecords.co.uk/imagery/169879-2.jpg"
         ],
         "weekly_chart": 28,
-        "monthly_chart": 14
+        "monthly_chart": 13
     },
     "156166": {
         "id": "156166",
@@ -28442,7 +28443,7 @@
             "https://www.redeyerecords.co.uk/imagery/100975-2.jpg"
         ],
         "weekly_chart": 15,
-        "monthly_chart": 34
+        "monthly_chart": 35
     },
     "147019": {
         "id": "147019",
@@ -31041,7 +31042,7 @@
         ],
         "new_releases": 264,
         "weekly_chart": 16,
-        "monthly_chart": 33
+        "monthly_chart": 34
     },
     "171737": {
         "id": "171737",
@@ -33835,7 +33836,7 @@
         ],
         "weekly_chart": 22,
         "new_releases": 175,
-        "monthly_chart": 12
+        "monthly_chart": 11
     },
     "171893": {
         "id": "171893",
@@ -35294,7 +35295,7 @@
         ],
         "weekly_chart": 4,
         "new_releases": 131,
-        "monthly_chart": 15
+        "monthly_chart": 14
     },
     "172000": {
         "id": "172000",
@@ -36703,7 +36704,7 @@
             "https://www.redeyerecords.co.uk/imagery/169007-1.jpg",
             "https://www.redeyerecords.co.uk/imagery/169007-2.jpg"
         ],
-        "weekly_chart": 28,
+        "weekly_chart": 27,
         "new_releases": 64
     },
     "169428": {
@@ -36737,7 +36738,7 @@
             "https://www.redeyerecords.co.uk/imagery/169428-1.jpg",
             "https://www.redeyerecords.co.uk/imagery/169428-2.jpg"
         ],
-        "weekly_chart": 29,
+        "weekly_chart": 28,
         "new_releases": 80
     },
     "172070": {
@@ -36822,7 +36823,7 @@
             "https://www.redeyerecords.co.uk/imagery/172071-2.jpg"
         ],
         "new_releases": 61,
-        "weekly_chart": 11
+        "weekly_chart": 12
     },
     "172043": {
         "id": "172043",
@@ -37586,7 +37587,7 @@
             "https://www.redeyerecords.co.uk/imagery/167083-1.jpg",
             "https://www.redeyerecords.co.uk/imagery/167083-2.jpg"
         ],
-        "weekly_chart": 25
+        "weekly_chart": 24
     },
     "3200754": {
         "id": "3200754",
@@ -38061,7 +38062,7 @@
             "https://www.redeyerecords.co.uk/imagery/172092-2.jpg"
         ],
         "new_releases": 54,
-        "weekly_chart": 12
+        "weekly_chart": 13
     },
     "172085": {
         "id": "172085",
@@ -38228,8 +38229,9 @@
             "https://www.redeyerecords.co.uk/imagery/172116-1.jpg",
             "https://www.redeyerecords.co.uk/imagery/172116-2.jpg"
         ],
-        "weekly_chart": 13,
-        "new_releases": 30
+        "weekly_chart": 10,
+        "new_releases": 30,
+        "monthly_chart": 33
     },
     "172112": {
         "id": "172112",
@@ -38759,7 +38761,7 @@
         ],
         "weekly_chart": 2,
         "new_releases": 17,
-        "monthly_chart": 10
+        "monthly_chart": 9
     },
     "152723": {
         "id": "152723",
@@ -38809,7 +38811,7 @@
             "https://www.redeyerecords.co.uk/imagery/169732-1.jpg",
             "https://www.redeyerecords.co.uk/imagery/169732-2.jpg"
         ],
-        "weekly_chart": 30
+        "weekly_chart": 29
     },
     "169812": {
         "id": "169812",
@@ -38836,7 +38838,7 @@
             "https://www.redeyerecords.co.uk/imagery/169812-1.jpg",
             "https://www.redeyerecords.co.uk/imagery/169812-2.jpg"
         ],
-        "weekly_chart": 31
+        "weekly_chart": 30
     },
     "172153": {
         "id": "172153",
@@ -39478,7 +39480,7 @@
             "https://www.redeyerecords.co.uk/imagery/166559-1.jpg",
             "https://www.redeyerecords.co.uk/imagery/166559-2.jpg"
         ],
-        "weekly_chart": 24
+        "weekly_chart": 23
     },
     "168524": {
         "id": "168524",
@@ -39505,6 +39507,6 @@
             "https://www.redeyerecords.co.uk/imagery/168524-1.jpg",
             "https://www.redeyerecords.co.uk/imagery/168524-2.jpg"
         ],
-        "weekly_chart": 27
+        "weekly_chart": 26
     }
 }

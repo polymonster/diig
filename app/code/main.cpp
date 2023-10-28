@@ -19,6 +19,11 @@
 #include "data_struct.h"
 #include "maths/maths.h"
 
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb/stb_image.h"
+
+#include "audio/audio.h"
+
 #include "../shader_structs/forward_render.h"
 
 using namespace put;
@@ -54,7 +59,7 @@ namespace curl
         // allocate. with a min alloc amount to avoid excessive small allocs
         if(required_size >= db->alloc_size)
         {
-            size_t new_alloc_size = std::max(required_size, k_min_alloc);
+            size_t new_alloc_size = std::max(required_size+1, k_min_alloc+1); // alloc with +1 space for null term
             db->data = (u8*)realloc(db->data, new_alloc_size);
             db->size = required_size;
             db->alloc_size = new_alloc_size;
@@ -62,11 +67,11 @@ namespace curl
         }
         
         memcpy(db->data + prev_pos, ptr, size * nmemb);
-        db->data[required_size] = '\0'; // is necessary ??
+        db->data[required_size] = '\0'; // null term
         return size * nmemb;
     }
 
-    void download(const c8* url)
+    DataBuffer download(const c8* url)
     {
         CURL *curl;
         CURLcode res;
@@ -90,6 +95,8 @@ namespace curl
 
             curl_easy_cleanup(curl);
         }
+        
+        return db;
     }
 }
 
@@ -135,6 +142,8 @@ namespace
     put::scene_view_renderer    svr_area_light_textures;
     put::scene_view_renderer    svr_omni_shadow_maps;
 
+    pen::json                   releases_registry;
+
     void* user_setup(void* params)
     {
         //unpack the params passed to the thread and signal to the engine it ok to proceed
@@ -144,12 +153,17 @@ namespace
 
         // intialise pmtech systems
         pen::jobs_create_job(physics::physics_thread_main, 1024 * 10, nullptr, pen::e_thread_start_flags::detached);
+        pen::jobs_create_job(put::audio_thread_function, 1024 * 10, nullptr, pen::e_thread_start_flags::detached);
+        
         dev_ui::init();
         dbg::init();
         curl::init();
         
-        curl::download("https://raw.githubusercontent.com/polymonster/dig/main/registry/releases.json");
+        auto registry_data = curl::download("https://raw.githubusercontent.com/polymonster/dig/main/registry/releases.json");
+        PEN_LOG("%s\n", registry_data.data);
         
+        releases_registry = pen::json::load((const c8*)registry_data.data);
+
         // timer
         frame_timer = pen::timer_create();
 
@@ -227,15 +241,109 @@ namespace
         pmfx::render();
         
         ImGui::Begin("Main");
-        ImGui::Text("%s", "Hello this is dig");
+        
+        //
+        // ..
+        
+        static constexpr size_t count = 100;
+        static curl::DataBuffer* artwork[count];
+        
+        static bool init = true;
+        if(init)
+        {
+            memset(&artwork[0], 0x0, sizeof(curl::DataBuffer*) * count);
+            init = false;
+        }
+    
+        static u32 artwork_textures[count] = { 0 };
+        
+        static curl::DataBuffer* play_track = nullptr;
+        
+        for(u32 r = 0; r < count; ++r)
+        {
+            auto release = releases_registry[r];
+            auto title = release["title"].as_str();
+            
+            if(release["artworks"].size() > 0)
+            {
+                if(!artwork[r])
+                {
+                    auto art = release["artworks"];
+                    
+                    auto url = art[1].as_str();
+                    
+                    artwork[r] = new curl::DataBuffer;
+                    *artwork[r] = curl::download(url.c_str());
+                    
+                    //
+                    s32 w, h, c;
+                    stbi_uc* rgba = stbi_load_from_memory((stbi_uc const*)artwork[r]->data, (s32)artwork[r]->size, &w, &h, &c, 4);
+                    
+                    pen::texture_creation_params tcp;
+                    tcp.width = w;
+                    tcp.height = h;
+                    tcp.format = PEN_TEX_FORMAT_RGBA8_UNORM;
+                    tcp.data = rgba;
+                    tcp.sample_count = 1;
+                    tcp.sample_quality = 0;
+                    tcp.num_arrays = 1;
+                    tcp.num_mips = 1;
+                    tcp.collection_type = 0;
+                    tcp.bind_flags =
+                    tcp.usage = PEN_USAGE_DEFAULT;
+                    tcp.bind_flags = PEN_BIND_SHADER_RESOURCE;
+                    tcp.cpu_access_flags = 0;
+                    tcp.flags = 0;
+                    tcp.block_size = 4;
+                    tcp.pixels_per_block = 1;
+                    tcp.collection_type = pen::TEXTURE_COLLECTION_NONE;
+                    
+                    tcp.data = rgba;
+                    tcp.data_size = w * h * c * 4;
+                    
+                    artwork_textures[r] = pen::renderer_create_texture(tcp);
+                }
+            }
+            
+            // display
+            ImGui::Image(IMG(artwork_textures[r]), ImVec2(350, 350));
+            ImGui::Text("%s", title.c_str());
+            
+            if(release["track_urls"].size() > 0)
+            {
+                for(u32 i = 0; i < release["track_urls"].size(); ++i)
+                {
+                    if(i > 0)
+                    {
+                        ImGui::SameLine();
+                    }
+                    
+                    ImGui::PushID(r * 100 + i);
+                    
+                    if(ImGui::Button(ICON_FA_PLAY))
+                    {
+                        auto url = release["track_urls"][i].as_str();
+                        
+                        play_track = new curl::DataBuffer;
+                        *play_track = curl::download(url.c_str());
+                    }
+                    
+                    ImGui::PopID();
+                }
+            }
+            
+            
+        }
+        
         ImGui::End();
         
-        put::dev_ui::render();
-
         // present
+        put::dev_ui::render();
         pen::renderer_present();
         pen::renderer_consume_cmd_buffer();
-
+        put::audio_consume_command_buffer();
+        
+        // hot reload
         pmfx::poll_for_changes();
         put::poll_hot_loader();
 

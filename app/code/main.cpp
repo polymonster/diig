@@ -25,6 +25,74 @@ using namespace put;
 using namespace pen;
 using namespace ecs;
 
+// curl api
+
+// curls include
+#define CURL_STATICLIB
+#include "curl/curl.h"
+
+namespace curl
+{
+    constexpr size_t k_min_alloc = 1024;
+
+    struct DataBuffer {
+        u8*    data = nullptr;
+        size_t size = 0;
+        size_t alloc_size = 0;
+    };
+
+    void init()
+    {
+        curl_global_init(CURL_GLOBAL_ALL);
+    }
+
+    size_t write_function(void *ptr, size_t size, size_t nmemb, DataBuffer* db)
+    {
+        size_t required_size = db->size + size * nmemb;
+        size_t prev_pos = db->size;
+        
+        // allocate. with a min alloc amount to avoid excessive small allocs
+        if(required_size >= db->alloc_size)
+        {
+            size_t new_alloc_size = std::max(required_size, k_min_alloc);
+            db->data = (u8*)realloc(db->data, new_alloc_size);
+            db->size = required_size;
+            db->alloc_size = new_alloc_size;
+            PEN_ASSERT(db->data);
+        }
+        
+        memcpy(db->data + prev_pos, ptr, size * nmemb);
+        db->data[required_size] = '\0'; // is necessary ??
+        return size * nmemb;
+    }
+
+    void download(const c8* url)
+    {
+        CURL *curl;
+        CURLcode res;
+        DataBuffer db = {};
+        
+        curl = curl_easy_init();
+        
+        if(curl) {
+            curl_easy_setopt(curl, CURLOPT_URL, url);
+            curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
+            curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, false);
+            curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_function);
+            curl_easy_setopt(curl, CURLOPT_WRITEDATA, &db);
+        
+            res = curl_easy_perform(curl);
+
+            if(res != CURLE_OK)
+            {
+                PEN_LOG("curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+            }
+
+            curl_easy_cleanup(curl);
+        }
+    }
+}
+
 namespace
 {
     void*  user_setup(void* params);
@@ -78,7 +146,10 @@ namespace
         pen::jobs_create_job(physics::physics_thread_main, 1024 * 10, nullptr, pen::e_thread_start_flags::detached);
         dev_ui::init();
         dbg::init();
-
+        curl::init();
+        
+        curl::download("https://raw.githubusercontent.com/polymonster/dig/main/registry/releases.json");
+        
         // timer
         frame_timer = pen::timer_create();
 

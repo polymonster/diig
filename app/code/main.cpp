@@ -1,34 +1,23 @@
 #include "renderer.h"
 #include "timer.h"
 #include "file_system.h"
-#include "volume_generator.h"
 #include "pen_string.h"
 #include "loader.h"
 #include "dev_ui.h"
-#include "camera.h"
-#include "debug_render.h"
-#include "pmfx.h"
 #include "pen_json.h"
 #include "hash.h"
 #include "str_utilities.h"
 #include "input.h"
-#include "ecs/ecs_scene.h"
-#include "ecs/ecs_resources.h"
-#include "ecs/ecs_editor.h"
-#include "ecs/ecs_utilities.h"
 #include "data_struct.h"
+
 #include "maths/maths.h"
+#include "audio/audio.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb/stb_image.h"
 
-#include "audio/audio.h"
-
-#include "../shader_structs/forward_render.h"
-
 using namespace put;
 using namespace pen;
-using namespace ecs;
 
 // curl api
 
@@ -112,8 +101,8 @@ namespace pen
     pen_creation_params pen_entry(int argc, char** argv)
     {
         pen::pen_creation_params p;
-        p.window_width = 828;
-        p.window_height = 1792;
+        p.window_width = 1125 / 3;
+        p.window_height = 2436 / 3;
         p.window_title = "dig";
         p.window_sample_count = 4;
         p.user_thread_function = user_setup;
@@ -129,20 +118,10 @@ namespace physics
 
 namespace
 {
-    pen::job*                   s_thread_info = nullptr;
-
-    put::camera                 main_camera;
-    ecs::ecs_controller         game_controller;
-    ecs_scene*                  main_scene;
-    pen::timer*                 frame_timer;
-
-    put::scene_view_renderer    svr_main;
-    put::scene_view_renderer    svr_editor;
-    put::scene_view_renderer    svr_shadow_maps;
-    put::scene_view_renderer    svr_area_light_textures;
-    put::scene_view_renderer    svr_omni_shadow_maps;
-
-    pen::json                   releases_registry;
+    pen::job*   s_thread_info = nullptr;
+    pen::timer* frame_timer;
+    pen::json   releases_registry;
+    u32         clear_screen;
 
     void* user_setup(void* params)
     {
@@ -152,64 +131,26 @@ namespace
         pen::semaphore_post(s_thread_info->p_sem_continue, 1);
 
         // intialise pmtech systems
-        pen::jobs_create_job(physics::physics_thread_main, 1024 * 10, nullptr, pen::e_thread_start_flags::detached);
         pen::jobs_create_job(put::audio_thread_function, 1024 * 10, nullptr, pen::e_thread_start_flags::detached);
-        
         dev_ui::init();
-        dbg::init();
         curl::init();
         
+        // load registry
         auto registry_data = curl::download("https://raw.githubusercontent.com/polymonster/dig/main/registry/releases.json");
         PEN_LOG("%s\n", registry_data.data);
-        
         releases_registry = pen::json::load((const c8*)registry_data.data);
 
         // timer
         frame_timer = pen::timer_create();
-
-        //create main camera and controller
-        put::camera_create_perspective(&main_camera, 60.0f, k_use_window_aspect, 0.1f, 1000.0f);
-
-        //create the main scene and controller
-        main_scene = create_scene("main_scene");
-        editor_init(main_scene, &main_camera);
-
-        //create view renderers
-        svr_main.name = "ecs_render_scene";
-        svr_main.id_name = PEN_HASH(svr_main.name.c_str());
-        svr_main.render_function = &render_scene_view;
-
-        svr_editor.name = "ecs_render_editor";
-        svr_editor.id_name = PEN_HASH(svr_editor.name.c_str());
-        svr_editor.render_function = &render_scene_editor;
-
-        svr_shadow_maps.name = "ecs_render_shadow_maps";
-        svr_shadow_maps.id_name = PEN_HASH(svr_shadow_maps.name.c_str());
-        svr_shadow_maps.render_function = &render_shadow_views;
-
-        svr_area_light_textures.name = "ecs_render_area_light_textures";
-        svr_area_light_textures.id_name = PEN_HASH(svr_area_light_textures.name.c_str());
-        svr_area_light_textures.render_function = &ecs::render_area_light_textures;
-
-        svr_omni_shadow_maps.name = "ecs_render_omni_shadow_maps";
-        svr_omni_shadow_maps.id_name = PEN_HASH(svr_omni_shadow_maps.name.c_str());
-        svr_omni_shadow_maps.render_function = &ecs::render_omni_shadow_views;
-
-        pmfx::register_scene_view_renderer(svr_main);
-        pmfx::register_scene_view_renderer(svr_editor);
-        pmfx::register_scene_view_renderer(svr_shadow_maps);
-        pmfx::register_scene_view_renderer(svr_area_light_textures);
-        pmfx::register_scene_view_renderer(svr_omni_shadow_maps);
-
-        pmfx::register_scene(main_scene, "main_scene");
-        pmfx::register_camera(&main_camera, "model_viewer_camera");
-
-        pmfx::init("data/configs/editor_renderer.jsn");
-        put::init_hot_loader();
-
         pen::timer_start(frame_timer);
-
-        editor_enable(false);
+        
+        // for clearing the backbuffer
+        clear_state cs;
+        cs.r = 1.0f;
+        cs.g = 1.0f;
+        cs.b = 1.0f;
+        cs.a = 1.0f;
+        clear_screen = pen::renderer_create_clear_state(cs);
 
         pen_main_loop(user_update);
         return PEN_THREAD_OK;
@@ -228,24 +169,29 @@ namespace
 
     loop_t user_update()
     {
-        put::dev_ui::show_console(false);
-        
-        pen::renderer_new_frame();
-
-        f32 dt = pen::timer_elapsed_ms(frame_timer) / 1000.0f;
         pen::timer_start(frame_timer);
+        pen::renderer_new_frame();
+        
+        // clear backbuffer
+        pen::renderer_set_targets(PEN_BACK_BUFFER_COLOUR, PEN_BACK_BUFFER_DEPTH);
+        pen::renderer_clear(clear_screen);
 
         put::dev_ui::new_frame();
-
-        ecs::update(dt);
-        pmfx::render();
-        
-        ImGui::Begin("Main");
-        
+                
         //
-        // ..
+        s32 w, h;
+        pen::window_get_size(w, h);
+        ImGui::SetNextWindowPos(ImVec2(0.0, 0.0));
+        ImGui::SetNextWindowSize(ImVec2((f32)w, (f32)h));
         
-        static constexpr size_t count = 100;
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0, 0.0));
+        ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0, 0.0));
+        
+        ImGui::Begin("Main", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_HorizontalScrollbar);
+        
+        static constexpr size_t count = 5;
         static curl::DataBuffer* artwork[count];
         
         static bool init = true;
@@ -258,9 +204,13 @@ namespace
         static u32 artwork_textures[count] = { 0 };
         
         static curl::DataBuffer* play_track = nullptr;
+        static Str play_track_filepath;
+        static bool playing = false;
         
         for(u32 r = 0; r < count; ++r)
         {
+            // ImGui::BeginChild(r+1);
+            
             auto release = releases_registry[r];
             auto title = release["title"].as_str();
             
@@ -306,9 +256,6 @@ namespace
             }
             
             // display
-            ImGui::Image(IMG(artwork_textures[r]), ImVec2(350, 350));
-            ImGui::Text("%s", title.c_str());
-            
             if(release["track_urls"].size() > 0)
             {
                 for(u32 i = 0; i < release["track_urls"].size(); ++i)
@@ -318,23 +265,57 @@ namespace
                         ImGui::SameLine();
                     }
                     
-                    ImGui::PushID(r * 100 + i);
+                    ImGui::Image(IMG(artwork_textures[r]), ImVec2(w, w));
+                    ImGui::SameLine();
                     
+                    ImGui::PushID(r);
+                    ImGui::PushID(i);
+                    
+                    /*
                     if(ImGui::Button(ICON_FA_PLAY))
                     {
                         auto url = release["track_urls"][i].as_str();
                         
                         play_track = new curl::DataBuffer;
                         *play_track = curl::download(url.c_str());
+                        
+                        url = pen::str_replace_string(url, "https://", "");
+                        url = pen::str_replace_string(url, "/", "_");
+                        
+                        Str root = "/Users/alex.dixon/dev/";
+                        root.append(url.c_str());
+                        url = root;
+                        
+                        // stash
+                        FILE* fp = fopen(url.c_str(), "wb");
+                        fwrite(play_track->data, play_track->size, 1, fp);
+                        fclose(fp);
+                        
+                        play_track_filepath = url;
                     }
+                    */
                     
                     ImGui::PopID();
+                    ImGui::PopID();
                 }
+                
+                ImGui::Text("%s", title.c_str());
             }
-            
-            
         }
         
+        if(play_track_filepath.length() > 0 && playing == false)
+        {
+            u32 si = put::audio_create_sound(play_track_filepath.c_str());
+            u32 ci = put::audio_create_channel_for_sound(si);
+            u32 gi = put::audio_create_channel_group();
+            
+            put::audio_add_channel_to_group(ci, gi);
+            put::audio_group_set_volume(gi, 1.0f);
+            
+            playing = true;
+        }
+        
+        ImGui::PopStyleVar(4);
         ImGui::End();
         
         // present
@@ -342,10 +323,6 @@ namespace
         pen::renderer_present();
         pen::renderer_consume_cmd_buffer();
         put::audio_consume_command_buffer();
-        
-        // hot reload
-        pmfx::poll_for_changes();
-        put::poll_hot_loader();
 
         if (pen::semaphore_try_wait(s_thread_info->p_sem_exit))
         {

@@ -189,9 +189,9 @@ namespace
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0, 0.0));
         ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0, 0.0));
         
-        ImGui::Begin("Main", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_HorizontalScrollbar);
+        ImGui::Begin("Main", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar);
         
-        static constexpr size_t count = 5;
+        static constexpr size_t count = 25;
         static curl::DataBuffer* artwork[count];
         
         static bool init = true;
@@ -209,8 +209,6 @@ namespace
         
         for(u32 r = 0; r < count; ++r)
         {
-            // ImGui::BeginChild(r+1);
-            
             auto release = releases_registry[r];
             auto title = release["title"].as_str();
             
@@ -255,7 +253,34 @@ namespace
                 }
             }
             
-            // display
+            // title
+            ImGui::TextWrapped("%s", title.c_str());
+            
+            // images
+            ImGui::BeginChildEx("rel", r+1, ImVec2(w, w), false, 0);
+            u32 numImages = std::max<u32>(1, release["track_urls"].size());
+            for(u32 i = 0; i < numImages; ++i)
+            {
+                if(i > 0)
+                {
+                    ImGui::SameLine();
+                }
+                
+                ImGui::Image(IMG(artwork_textures[r]), ImVec2(w, w));
+                
+                static float sx = 0.0f;
+                if(ImGui::IsItemHovered())
+                {
+                    if(pen::input_is_mouse_down(PEN_MOUSE_L))
+                    {
+                        sx -= ImGui::GetIO().MouseDelta.x;
+                        ImGui::SetScrollX(sx);
+                    }
+                }
+            }
+            ImGui::EndChild();
+            
+            // tracks
             if(release["track_urls"].size() > 0)
             {
                 for(u32 i = 0; i < release["track_urls"].size(); ++i)
@@ -265,8 +290,7 @@ namespace
                         ImGui::SameLine();
                     }
                     
-                    ImGui::Image(IMG(artwork_textures[r]), ImVec2(w, w));
-                    ImGui::SameLine();
+                    ImGui::Text("%s", ICON_FA_DOT_CIRCLE_O);
                     
                     ImGui::PushID(r);
                     ImGui::PushID(i);
@@ -299,8 +323,19 @@ namespace
                     ImGui::PopID();
                 }
                 
-                ImGui::Text("%s", title.c_str());
+                // track name
+                if(release["track_names"].size() > 0)
+                {
+                    ImGui::TextWrapped("%s", release["track_names"][0].as_cstr());
+                }
             }
+            else
+            {
+                ImGui::Text("%s", ICON_FA_MOON_O);
+            }
+            
+            ImGui::Spacing();
+            ImGui::Spacing();
         }
         
         if(play_track_filepath.length() > 0 && playing == false)

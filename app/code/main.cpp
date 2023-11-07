@@ -100,7 +100,8 @@ namespace EntryFlags
         tracks_cached = 1<<2,
         artwork_loaded = 1<<3,
         tracks_loaded = 1<<4,
-        transitioning = 1<<5
+        transitioning = 1<<5,
+        dragging = 1<<6
     };
 };
 
@@ -180,8 +181,8 @@ Str download_and_cache(const Str& url, u64 releaseid)
     Str filepath = pen::str_replace_string(url, "https://", "");
     filepath = pen::str_replace_chars(filepath, '/', '_');
     
-    Str dir = "/Users/alex.dixon/dev/dig/cache/"; // TODO get user dir
-    dir.appendf("%llu", releaseid);
+    Str dir = os_get_persistent_data_directory(); // "/Users/alex.dixon/dev/dig/cache/"; // TODO get user dir
+    dir.appendf("/%llu", releaseid);
     
     // filepath
     Str path = dir;
@@ -194,24 +195,22 @@ Str download_and_cache(const Str& url, u64 releaseid)
     if(mtime == 0)
     {
         // mkdirs
-        Str cmd = "mkdir -p ";
-        cmd.append(dir.c_str());
-        std::system(cmd.c_str());
+        pen::os_create_directory(dir.c_str());
         
         // download
-        PEN_LOG("downloading: %s\n", url.c_str());
+        //PEN_LOG("downloading: %s\n", url.c_str());
         auto db = new curl::DataBuffer;
         *db = curl::download(url.c_str());
         
         // stash
-        PEN_LOG("caching: %s\n", filepath.c_str());
+        //PEN_LOG("caching: %s\n", filepath.c_str());
         FILE* fp = fopen(filepath.c_str(), "wb");
         fwrite(db->data, db->size, 1, fp);
         fclose(fp);
     }
     else
     {
-        PEN_LOG("cache hit: %s\n", filepath.c_str());
+        // PEN_LOG("cache hit: %s", filepath.c_str());
     }
     
     return filepath;
@@ -241,7 +240,7 @@ pen::texture_creation_params load_texture_from_disk(const Str& filepath)
     tcp.pixels_per_block = 1;
     tcp.collection_type = pen::TEXTURE_COLLECTION_NONE;
     tcp.data = rgba;
-    tcp.data_size = w * h * c * 4;
+    tcp.data_size = w * h * c;
     
     return tcp;
 }
@@ -250,7 +249,7 @@ void* info_loader(void* userdata)
 {
     // load registry
     auto registry_data = curl::download("https://raw.githubusercontent.com/polymonster/dig/main/registry/releases.json");
-    PEN_LOG("%s\n", registry_data.data);
+    //PEN_LOG("%s\n", registry_data.data);
     pen::json releases_registry = pen::json::load((const c8*)registry_data.data);
     
     // get the count
@@ -309,6 +308,7 @@ void* info_loader(void* userdata)
         }
         
         s_releases.available_entries++;
+        pen::thread_sleep_ms(3);
     }
     
     return nullptr;
@@ -327,6 +327,8 @@ void* data_cacher(void* userdata)
                 if(s_releases.artwork_filepath[i].empty())
                 {
                     s_releases.artwork_filepath[i] = download_and_cache(s_releases.artwork_url[i], s_releases.id[i]);
+                    pen::thread_sleep_ms(16);
+                    
                     s_releases.flags[i] |= EntryFlags::artwork_cached;
                 }
             }
@@ -335,9 +337,26 @@ void* data_cacher(void* userdata)
             if((s_releases.flags[i] & EntryFlags::artwork_cached) && !(s_releases.flags[i] & EntryFlags::artwork_loaded))
             {
                 s_releases.artwork_tcp[i] = load_texture_from_disk(s_releases.artwork_filepath[i]);
+                pen::thread_sleep_ms(16);
                 
                 std::atomic_thread_fence(std::memory_order_release);
                 s_releases.flags[i] |= EntryFlags::artwork_loaded;
+            }
+            
+            // cache tracks
+            if(s_releases.track_url_count[i] > 0 && s_releases.track_filepaths[i] == nullptr)
+            {
+                s_releases.track_filepaths[i] = new Str[s_releases.track_url_count[i]];
+                
+                for(u32 t = 0; t < s_releases.track_url_count[i]; ++t)
+                {
+                    s_releases.track_filepaths[i][t] = download_and_cache(s_releases.track_urls[i][t], s_releases.id[i]);
+                    pen::thread_sleep_ms(16);
+                }
+                
+                std::atomic_thread_fence(std::memory_order_release);
+                s_releases.flags[i] |= EntryFlags::tracks_cached;
+
             }
         }
         
@@ -368,6 +387,30 @@ namespace pen
         return p;
     }
 } // namespace pen
+
+vec2f touch_screen_mouse_wheel()
+{
+    const pen::mouse_state& ms = pen::input_get_mouse_state();
+    vec2f cur = vec2f((f32)ms.x, (f32)ms.y);
+    static vec2f prev = cur;
+    
+    static bool prevdown = false;
+    if(!prevdown) {
+        prev = cur;
+    }
+    
+    vec2f delta = (cur - prev);
+    prev = cur;
+    
+    if(ms.buttons[PEN_MOUSE_L])
+    {
+        prevdown = true;
+        return delta;
+    }
+    
+    prevdown = false;
+    return 0.0f;
+}
 
 namespace
 {
@@ -424,6 +467,16 @@ namespace
 
     loop_t user_update()
     {
+        //
+        s32 w, h;
+        pen::window_get_size(w, h);
+        
+        // state
+        static vec2f    scroll = vec2f(0.0f, 0.0f);
+        static Str      play_track_filepath = "";
+        static bool     invalidate_track = false;
+        static bool     mute = false;
+        
         pen::timer_start(frame_timer);
         pen::renderer_new_frame();
         
@@ -433,9 +486,7 @@ namespace
 
         put::dev_ui::new_frame();
                 
-        //
-        s32 w, h;
-        pen::window_get_size(w, h);
+
         ImGui::SetNextWindowPos(ImVec2(0.0, 0.0));
         ImGui::SetNextWindowSize(ImVec2((f32)w, (f32)h));
         
@@ -445,32 +496,24 @@ namespace
         ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0, 0.0));
         
         ImGui::Begin("Main", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar);
+        auto current_window = ImGui::GetCurrentWindow();
         
-        static constexpr size_t count = 25;
-        static curl::DataBuffer* artwork[count];
+        //
+        vec2f scroll_delta = touch_screen_mouse_wheel();
         
-        static bool init = true;
-        if(init)
-        {
-            memset(&artwork[0], 0x0, sizeof(curl::DataBuffer*) * count);
-            init = false;
-        }
-            
-        static curl::DataBuffer* play_track = nullptr;
-        static Str play_track_filepath;
-        static bool playing = false;
-        
+        s32 top = -1;
         for(u32 r = 0; r < s_releases.available_entries; ++r)
         {
-            auto title = s_releases.title[r];
-            auto artist = s_releases.artist[r];
-            
-            if(r > 10)
+            if(r > 100)
             {
                 continue;
             }
             
+            auto title = s_releases.title[r];
+            auto artist = s_releases.artist[r];
+            
             // apply loads
+            std::atomic_thread_fence(std::memory_order_acquire);
             if(s_releases.flags[r] & EntryFlags::artwork_loaded)
             {
                 if(s_releases.artwork_texture[r] == 0)
@@ -488,10 +531,6 @@ namespace
                 continue;
             }
             
-            // title
-            ImGui::TextWrapped("%s", artist.c_str());
-            ImGui::TextWrapped("%s", title.c_str());
-            
             // images
             if(s_releases.artwork_texture[r])
             {
@@ -500,7 +539,8 @@ namespace
                 
                 u32 numImages = std::max<u32>(1, s_releases.track_url_count[r]);
                 
-                bool dragging = false;
+                bool hovered = false;
+                f32 max_scroll = (numImages * w) - w;
                 for(u32 i = 0; i < numImages; ++i)
                 {
                     if(i > 0)
@@ -509,17 +549,44 @@ namespace
                     }
                     
                     ImGui::Image(IMG(s_releases.artwork_texture[r]), ImVec2(w, w));
-                    if(ImGui::IsItemHovered())
+                    
+                    
+                    if(ImGui::IsItemHovered() && pen::input_is_mouse_down(PEN_MOUSE_L))
                     {
-                        if(pen::input_is_mouse_down(PEN_MOUSE_L))
+                        if(abs(scroll_delta.x) > 5)
                         {
-                            s_releases.scrollx[r] -= ImGui::GetIO().MouseDelta.x;
-                            dragging = true;
+                            s_releases.flags[r] |= EntryFlags::dragging;
+                        }
+                        hovered = true;
+                    }
+                    
+                    if(ImGui::IsItemVisible())
+                    {
+                        if(top == -1)
+                        {
+                            top = r;
                         }
                     }
                 }
                 
-                if(!dragging)
+                // stop drags if we no longer hover
+                if(!hovered)
+                {
+                    if(s_releases.flags[r] & EntryFlags::dragging)
+                    {
+                        s_releases.flags[r] &= ~EntryFlags::dragging;
+                    }
+                }
+                
+                if(s_releases.flags[r] & EntryFlags::dragging)
+                {
+                    // scroll_delta.y = 0.0f;
+                    s_releases.scrollx[r] -= scroll_delta.x;
+                    s_releases.scrollx[r] = std::max(s_releases.scrollx[r], 0.0f);
+                    s_releases.scrollx[r] = std::min(s_releases.scrollx[r], max_scroll);
+                    s_releases.flags[r] &= ~EntryFlags::transitioning;
+                }
+                else
                 {
                     f32 target = s_releases.select_track[r] * w;
                     f32 ssx = s_releases.scrollx[r];
@@ -543,18 +610,16 @@ namespace
                     }
                     else
                     {
-                        if(abs(ssx - target) < 0.1)
+                        if(abs(ssx - target) < 3.33)
                         {
                             s_releases.scrollx[r] = target;
                             s_releases.flags[r] &= ~EntryFlags::transitioning;
                         }
                         else
                         {
-                            s_releases.scrollx[r] = lerp(ssx, target, 0.1f);
+                            s_releases.scrollx[r] = lerp(ssx, target, 0.33f);
                         }
                     }
-                    
-                    ImGui::SetScrollX(s_releases.scrollx[r]);
                 }
                 
                 ImGui::SetScrollX(s_releases.scrollx[r]);
@@ -566,6 +631,11 @@ namespace
             // tracks
             if(s_releases.track_url_count[r])
             {
+                // offset to centre
+                auto ww = ImGui::GetWindowSize().x;
+                auto tw = ImGui::CalcTextSize(ICON_FA_STOP_CIRCLE).x * s_releases.track_url_count[r] * 1.5f;
+                ImGui::SetCursorPosX((ww - tw) * 0.5f);
+                
                 // dots
                 for(u32 i = 0; i < s_releases.track_url_count[r]; ++i)
                 {
@@ -574,102 +644,93 @@ namespace
                         ImGui::SameLine();
                     }
                     
-                    if(i == s_releases.select_track[r])
+                    u32 sel = s_releases.select_track[r];
+                    if(i == sel)
                     {
-                        ImGui::Text("%s", ICON_FA_PLAY);
+                        if(top == r)
+                        {
+                            ImGui::Text("%s", ICON_FA_PLAY);
+                            
+                            // load up the track
+                            if(!(play_track_filepath == s_releases.track_filepaths[r][sel]))
+                            {
+                                play_track_filepath = s_releases.track_filepaths[r][sel];
+                                invalidate_track = true;
+                            }
+                            
+                        }
+                        else
+                        {
+                            ImGui::Text("%s", ICON_FA_STOP_CIRCLE);
+                        }
                     }
                     else
                     {
                         ImGui::Text("%s", ICON_FA_STOP_CIRCLE);
                     }
-                    
-                }
-                
-                // track name
-                u32 sel = s_releases.select_track[r];
-                if(s_releases.track_name_count[r] > s_releases.select_track[r])
-                {
-                    ImGui::TextWrapped("%s", s_releases.track_names[r][sel].c_str());
                 }
             }
-            else
+            
+            // buttons
+            ImGui::SetWindowFontScale(2.0f);
+            ImGui::Text("%s", ICON_FA_HEART_O);
+            ImGui::SameLine();
+            ImGui::Text("%s", ICON_FA_SHOPPING_BASKET);
+            ImGui::SetWindowFontScale(1.0f);
+            
+            // release info
+            ImGui::TextWrapped("%s", artist.c_str());
+            ImGui::TextWrapped("%s", title.c_str());
+            
+            // track name
+            u32 sel = s_releases.select_track[r];
+            if(s_releases.track_name_count[r] > s_releases.select_track[r])
             {
-                ImGui::Text("%s", ICON_FA_MOON_O);
+                ImGui::TextWrapped("%s", s_releases.track_names[r][sel].c_str());
             }
-#if 0
-            if(release["track_urls"].size() > 0)
-            {
-                for(u32 i = 0; i < release["track_urls"].size(); ++i)
-                {
-                    if(i > 0)
-                    {
-                        ImGui::SameLine();
-                    }
-                    
-                    ImGui::Text("%s", ICON_FA_DOT_CIRCLE_O);
-                    
-                    ImGui::PushID(r);
-                    ImGui::PushID(i);
-                    
-                    /*
-                    if(ImGui::Button(ICON_FA_PLAY))
-                    {
-                        auto url = release["track_urls"][i].as_str();
-                        
-                        play_track = new curl::DataBuffer;
-                        *play_track = curl::download(url.c_str());
-                        
-                        url = pen::str_replace_string(url, "https://", "");
-                        url = pen::str_replace_string(url, "/", "_");
-                        
-                        Str root = "/Users/alex.dixon/dev/";
-                        root.append(url.c_str());
-                        url = root;
-                        
-                        // stash
-                        FILE* fp = fopen(url.c_str(), "wb");
-                        fwrite(play_track->data, play_track->size, 1, fp);
-                        fclose(fp);
-                        
-                        play_track_filepath = url;
-                    }
-                    */
-                    
-                    ImGui::PopID();
-                    ImGui::PopID();
-                }
-                
-                // track name
-                if(release["track_names"].size() > 0)
-                {
-                    ImGui::TextWrapped("%s", release["track_names"][0].as_cstr());
-                }
-            }
-            else
-            {
-                ImGui::Text("%s", ICON_FA_MOON_O);
-            }
-#endif
             
             ImGui::Spacing();
             ImGui::Spacing();
         }
         
-        if(play_track_filepath.length() > 0 && playing == false)
+        if(!mute)
         {
-            u32 si = put::audio_create_sound(play_track_filepath.c_str());
-            u32 ci = put::audio_create_channel_for_sound(si);
-            u32 gi = put::audio_create_channel_group();
-            
-            put::audio_add_channel_to_group(ci, gi);
-            put::audio_group_set_volume(gi, 1.0f);
-            
-            playing = true;
+            if(play_track_filepath.length() > 0 && invalidate_track)
+            {
+                static u32 si = -1;
+                static u32 ci = -1;
+                static u32 gi = -1;
+                
+                // stop existing
+                if(is_valid(si))
+                {
+                    // release existing
+                    put::audio_channel_stop(ci);
+                    put::audio_release_resource(si);
+                    put::audio_release_resource(ci);
+                    put::audio_release_resource(gi);
+                }
+                
+                si = put::audio_create_sound(play_track_filepath.c_str());
+                ci = put::audio_create_channel_for_sound(si);
+                gi = put::audio_create_channel_group();
+                
+                put::audio_add_channel_to_group(ci, gi);
+                put::audio_group_set_volume(gi, 1.0f);
+
+                invalidate_track = false;
+            }
         }
-        
+
         ImGui::PopStyleVar(4);
         ImGui::End();
         
+        // main window scroll
+        {
+            scroll.y -= scroll_delta.y;
+            ImGui::SetScrollY(current_window, scroll.y);
+        }
+                
         // present
         put::dev_ui::render();
         pen::renderer_present();

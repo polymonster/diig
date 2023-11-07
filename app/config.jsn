@@ -115,4 +115,47 @@ import "pmtech/tools/pmbuild_ext/pmbuild_init.jsn"
             ]
         }
     }
+
+    // ios
+    ios(base):
+    {
+        jsn_vars: {
+            data_dir: "bin/ios/data"
+            build_dir: "build/ios"
+            bin_dir: "bin/ios"
+        }
+
+        premake: {
+            args: [
+                "xcode4"
+                "--renderer=metal"
+                "--platform_dir=ios"
+                "--xcode_target=ios"
+                "--pmtech_dir=${pmtech_dir}/"
+            ]
+        }
+
+        pmfx: {
+            args: [
+                "-v1"
+                "-shader_platform metal"
+                "-metal_sdk iphoneos"
+                "-i ${pmtech_dir}/assets/shaders"
+                "-o bin/ios/data/pmfx/metal"
+                "-h shader_structs"
+                "-t build/temp/shaders"
+                "-source"
+            ]
+        }
+
+        libs: {
+            type: shell
+            explicit: true
+            commands: [
+                "cd ${pmtech_dir}/third_party && ../pmbuild bullet-ios"
+                "cd ${pmtech_dir}/third_party && ../pmbuild make bullet-ios all -destination generic/platform=iOS -configuration Release -quiet"
+                "cd ${pmtech_dir}/third_party && ../pmbuild make bullet-ios all -destination generic/platform=iOS -configuration Debug -quiet"
+            ]
+        }
+    }
 }

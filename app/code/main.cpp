@@ -471,11 +471,19 @@ namespace
         s32 w, h;
         pen::window_get_size(w, h);
         
+        constexpr f32   k_drag_threshold = 3.0f;
+        constexpr f32   k_inertia = 0.96f;
+        constexpr f32   k_inertia_cutoff = 3.33f;
+        constexpr f32   k_snap_lerp = 0.33f;
+                
         // state
-        static vec2f    scroll = vec2f(0.0f, 0.0f);
+        static vec2f    scroll = vec2f(0.0f, w); // start scroll so the dummy is off
         static Str      play_track_filepath = "";
         static bool     invalidate_track = false;
         static bool     mute = false;
+        static bool     scroll_lock_y = false;
+        static bool     scroll_lock_x = false;
+        static vec2f    scroll_delta = vec2f::zero();
         
         pen::timer_start(frame_timer);
         pen::renderer_new_frame();
@@ -486,7 +494,6 @@ namespace
 
         put::dev_ui::new_frame();
                 
-
         ImGui::SetNextWindowPos(ImVec2(0.0, 0.0));
         ImGui::SetNextWindowSize(ImVec2((f32)w, (f32)h));
         
@@ -496,15 +503,60 @@ namespace
         ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0, 0.0));
         
         ImGui::Begin("Main", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar);
+        
+        // dragging and scrolling
+        vec2f cur_scroll_delta = touch_screen_mouse_wheel();
+        if(pen::input_is_mouse_down(PEN_MOUSE_L))
+        {
+            scroll_delta = cur_scroll_delta;
+        }
+        else
+        {
+            // apply inertia
+            scroll_delta *= k_inertia;
+            if(mag(scroll_delta) < k_inertia_cutoff) {
+                scroll_delta = vec2f::zero();
+            }
+            
+            // snap back to min top
+            if(scroll.y < w) {
+                scroll.y = lerp(scroll.y, (f32)w, 0.5f);
+            }
+            
+            // release locks
+            scroll_lock_x = false;
+            scroll_lock_y = false;
+        }
+        
+        // clamp to top
+        if(scroll.y < w) {
+            f32 miny = (f32)w / 1.5f;
+            if(scroll.y < miny) {
+                scroll.y = miny;
+            }
+        }
+        
+        // header
+        ImGui::SetWindowFontScale(3.0f);
+        ImGui::Text("Dig");
+        
+        ImGui::Text("Techno / Latest");
+
+        ImGui::SetWindowFontScale(1.0f);
+        
+        // releases
+        ImGui::BeginChildEx("releases", 1, ImVec2(0, 0), false, ImGuiWindowFlags_NoScrollbar);
         auto current_window = ImGui::GetCurrentWindow();
         
-        //
-        vec2f scroll_delta = touch_screen_mouse_wheel();
+        ImVec2 avail = ImGui::GetContentRegionAvail();
+        
+        // Add an empty dummy at the top
+        ImGui::Dummy(ImVec2(w, w));
         
         s32 top = -1;
         for(u32 r = 0; r < s_releases.available_entries; ++r)
         {
-            if(r > 100)
+            if(r > 10)
             {
                 continue;
             }
@@ -550,16 +602,20 @@ namespace
                     
                     ImGui::Image(IMG(s_releases.artwork_texture[r]), ImVec2(w, w));
                     
-                    
-                    if(ImGui::IsItemHovered() && pen::input_is_mouse_down(PEN_MOUSE_L))
+                    // initiate side drag
+                    if(!scroll_lock_y)
                     {
-                        if(abs(scroll_delta.x) > 5)
+                        if(ImGui::IsItemHovered() && pen::input_is_mouse_down(PEN_MOUSE_L))
                         {
-                            s_releases.flags[r] |= EntryFlags::dragging;
+                            if(abs(scroll_delta.x) > k_drag_threshold)
+                            {
+                                s_releases.flags[r] |= EntryFlags::dragging;
+                                scroll_lock_x = true;
+                            }
+                            hovered = true;
                         }
-                        hovered = true;
                     }
-                    
+
                     if(ImGui::IsItemVisible())
                     {
                         if(top == -1)
@@ -580,7 +636,6 @@ namespace
                 
                 if(s_releases.flags[r] & EntryFlags::dragging)
                 {
-                    // scroll_delta.y = 0.0f;
                     s_releases.scrollx[r] -= scroll_delta.x;
                     s_releases.scrollx[r] = std::max(s_releases.scrollx[r], 0.0f);
                     s_releases.scrollx[r] = std::min(s_releases.scrollx[r], max_scroll);
@@ -588,6 +643,9 @@ namespace
                 }
                 else
                 {
+                    // still apply inertia
+                    s_releases.scrollx[r] -= scroll_delta.x;
+                    
                     f32 target = s_releases.select_track[r] * w;
                     f32 ssx = s_releases.scrollx[r];
                     
@@ -610,14 +668,14 @@ namespace
                     }
                     else
                     {
-                        if(abs(ssx - target) < 3.33)
+                        if(abs(ssx - target) < k_inertia_cutoff)
                         {
                             s_releases.scrollx[r] = target;
                             s_releases.flags[r] &= ~EntryFlags::transitioning;
                         }
                         else
                         {
-                            s_releases.scrollx[r] = lerp(ssx, target, 0.33f);
+                            s_releases.scrollx[r] = lerp(ssx, target, k_snap_lerp);
                         }
                     }
                 }
@@ -657,7 +715,6 @@ namespace
                                 play_track_filepath = s_releases.track_filepaths[r][sel];
                                 invalidate_track = true;
                             }
-                            
                         }
                         else
                         {
@@ -693,6 +750,45 @@ namespace
             ImGui::Spacing();
         }
         
+        // couple of emoty ones so we can reach the end
+        ImGui::Dummy(ImVec2(w, w));
+        ImGui::Dummy(ImVec2(w, w));
+        ImVec2 end_pos = ImGui::GetWindowPos();
+        
+        ImGui::EndChild();
+        
+        ImGui::PopStyleVar(4);
+        ImGui::End();
+        
+        // main window scroll
+        if(abs(scroll_delta.y) > k_drag_threshold)
+        {
+            scroll_lock_y = true;
+        }
+        
+        // only not if already scrolling x
+        if(!scroll_lock_x)
+        {
+            scroll.y -= scroll_delta.y;
+            ImGui::SetScrollY(current_window, scroll.y);
+        }
+        
+        /*
+        // clamp to bottom
+        if(scroll.y > end_pos.y) {
+            f32 maxy = end_pos.y + (f32)w / 0.25f;
+            scroll.y = std::min(scroll.y, maxy);
+        }
+        
+        // lerp / snap back
+        if(pen::input_is_mouse_down(PEN_MOUSE_L)) {
+            if(scroll.y > end_pos.y) {
+                scroll.y = lerp(scroll.y, end_pos.y, 0.5f);
+            }
+        }
+        */
+        
+        // audio player
         if(!mute)
         {
             if(play_track_filepath.length() > 0 && invalidate_track)
@@ -720,15 +816,6 @@ namespace
 
                 invalidate_track = false;
             }
-        }
-
-        ImGui::PopStyleVar(4);
-        ImGui::End();
-        
-        // main window scroll
-        {
-            scroll.y -= scroll_delta.y;
-            ImGui::SetScrollY(current_window, scroll.y);
         }
                 
         // present

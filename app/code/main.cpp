@@ -101,7 +101,8 @@ namespace EntryFlags
         artwork_loaded = 1<<3,
         tracks_loaded = 1<<4,
         transitioning = 1<<5,
-        dragging = 1<<6
+        dragging = 1<<6,
+        artwork_requested = 1<<7
     };
 };
 
@@ -327,20 +328,9 @@ void* data_cacher(void* userdata)
                 if(s_releases.artwork_filepath[i].empty())
                 {
                     s_releases.artwork_filepath[i] = download_and_cache(s_releases.artwork_url[i], s_releases.id[i]);
-                    pen::thread_sleep_ms(16);
                     
                     s_releases.flags[i] |= EntryFlags::artwork_cached;
                 }
-            }
-            
-            // load art if cached and not loaded
-            if((s_releases.flags[i] & EntryFlags::artwork_cached) && !(s_releases.flags[i] & EntryFlags::artwork_loaded))
-            {
-                s_releases.artwork_tcp[i] = load_texture_from_disk(s_releases.artwork_filepath[i]);
-                pen::thread_sleep_ms(16);
-                
-                std::atomic_thread_fence(std::memory_order_release);
-                s_releases.flags[i] |= EntryFlags::artwork_loaded;
             }
             
             // cache tracks
@@ -351,7 +341,6 @@ void* data_cacher(void* userdata)
                 for(u32 t = 0; t < s_releases.track_url_count[i]; ++t)
                 {
                     s_releases.track_filepaths[i][t] = download_and_cache(s_releases.track_urls[i][t], s_releases.id[i]);
-                    pen::thread_sleep_ms(16);
                 }
                 
                 std::atomic_thread_fence(std::memory_order_release);
@@ -364,6 +353,31 @@ void* data_cacher(void* userdata)
     }
     
     return nullptr;
+}
+
+void* data_loader(void* userdata)
+{
+    for(;;)
+    {
+        for(size_t i = 0; i < s_releases.available_entries; ++i)
+        {
+            // load art if cached and not loaded
+            std::atomic_thread_fence(std::memory_order_acquire);
+            
+            if((s_releases.flags[i] & EntryFlags::artwork_cached) &&
+               !(s_releases.flags[i] & EntryFlags::artwork_loaded) &&
+               (s_releases.flags[i] & EntryFlags::artwork_requested))
+            {
+                s_releases.artwork_tcp[i] = load_texture_from_disk(s_releases.artwork_filepath[i]);
+                
+                std::atomic_thread_fence(std::memory_order_release);
+                s_releases.flags[i] |= EntryFlags::artwork_loaded;
+            }
+            
+        }
+        
+        pen::thread_sleep_ms(16);
+    }
 }
 
 namespace
@@ -431,8 +445,10 @@ namespace
         dev_ui::init();
         curl::init();
         
+        // workers
         pen::thread_create(info_loader, 10 * 1024 * 1024, nullptr, pen::e_thread_start_flags::detached);
         pen::thread_create(data_cacher, 10 * 1024 * 1024, nullptr, pen::e_thread_start_flags::detached);
+        pen::thread_create(data_loader, 10 * 1024 * 1024, nullptr, pen::e_thread_start_flags::detached);
 
         // timer
         frame_timer = pen::timer_create();
@@ -471,7 +487,7 @@ namespace
         s32 w, h;
         pen::window_get_size(w, h);
         
-        constexpr f32   k_drag_threshold = 3.0f;
+        constexpr f32   k_drag_threshold = 0.1f;
         constexpr f32   k_inertia = 0.96f;
         constexpr f32   k_inertia_cutoff = 3.33f;
         constexpr f32   k_snap_lerp = 0.33f;
@@ -484,6 +500,7 @@ namespace
         static bool     scroll_lock_y = false;
         static bool     scroll_lock_x = false;
         static vec2f    scroll_delta = vec2f::zero();
+        static u32      playing_item = -1;
         
         pen::timer_start(frame_timer);
         pen::renderer_new_frame();
@@ -494,15 +511,17 @@ namespace
 
         put::dev_ui::new_frame();
                 
-        ImGui::SetNextWindowPos(ImVec2(0.0, 0.0));
+        ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f));
         ImGui::SetNextWindowSize(ImVec2((f32)w, (f32)h));
         
         ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
         ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0, 0.0));
-        ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0, 0.0));
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+        ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
         
         ImGui::Begin("Main", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar);
+        
+        ImGui::Dummy(ImVec2(0.0f, 85.0f));
         
         // dragging and scrolling
         vec2f cur_scroll_delta = touch_screen_mouse_wheel();
@@ -536,31 +555,35 @@ namespace
             }
         }
         
+        f32 dx = abs(dot(scroll_delta, vec2f::unit_x()));
+        f32 dy = abs(dot(scroll_delta, vec2f::unit_y()));
+        
+        bool side_drag = false;
+        if(dx > dy)
+        {
+            side_drag = true;
+        }
+        
         // header
         ImGui::SetWindowFontScale(3.0f);
         ImGui::Text("Dig");
         
-        ImGui::Text("Techno / Latest");
-
+        ImGui::SetWindowFontScale(2.0f);
+        ImGui::Text("Latest");
+        
         ImGui::SetWindowFontScale(1.0f);
+        ImGui::Text("Techno / Electro");
         
         // releases
-        ImGui::BeginChildEx("releases", 1, ImVec2(0, 0), false, ImGuiWindowFlags_NoScrollbar);
+        ImGui::BeginChildEx("releases", 1, ImVec2(0, 0), false, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
         auto current_window = ImGui::GetCurrentWindow();
-        
-        ImVec2 avail = ImGui::GetContentRegionAvail();
-        
+
         // Add an empty dummy at the top
         ImGui::Dummy(ImVec2(w, w));
         
         s32 top = -1;
         for(u32 r = 0; r < s_releases.available_entries; ++r)
         {
-            if(r > 10)
-            {
-                continue;
-            }
-            
             auto title = s_releases.title[r];
             auto artist = s_releases.artist[r];
             
@@ -573,14 +596,25 @@ namespace
                     if(s_releases.artwork_tcp[r].data)
                     {
                         s_releases.artwork_texture[r] = pen::renderer_create_texture(s_releases.artwork_tcp[r]);
+                        pen::memory_free(s_releases.artwork_tcp[r].data); // data is copied for the render thread. safe to delete
+                        s_releases.artwork_tcp[r].data = nullptr;
+                        
                     }
                 }
             }
             
-            // skip unloaded
-            if(s_releases.artwork_texture[r] == 0)
+            // select primary
+            ImGui::Spacing();
+            f32 y = ImGui::GetCursorPos().y - ImGui::GetScrollY();
+            if(y < (f32)h - ((f32)w * 1.1f))
             {
-                continue;
+                if(y > -w * 0.33f)
+                {
+                    if(top == -1)
+                    {
+                        top = r;
+                    }
+                }
             }
             
             // images
@@ -601,26 +635,18 @@ namespace
                     }
                     
                     ImGui::Image(IMG(s_releases.artwork_texture[r]), ImVec2(w, w));
-                    
+
                     // initiate side drag
                     if(!scroll_lock_y)
                     {
                         if(ImGui::IsItemHovered() && pen::input_is_mouse_down(PEN_MOUSE_L))
                         {
-                            if(abs(scroll_delta.x) > k_drag_threshold)
+                            if(abs(scroll_delta.x) > k_drag_threshold && side_drag)
                             {
                                 s_releases.flags[r] |= EntryFlags::dragging;
                                 scroll_lock_x = true;
                             }
                             hovered = true;
-                        }
-                    }
-
-                    if(ImGui::IsItemVisible())
-                    {
-                        if(top == -1)
-                        {
-                            top = r;
                         }
                     }
                 }
@@ -643,39 +669,38 @@ namespace
                 }
                 else
                 {
-                    // still apply inertia
-                    s_releases.scrollx[r] -= scroll_delta.x;
-                    
-                    f32 target = s_releases.select_track[r] * w;
-                    f32 ssx = s_releases.scrollx[r];
-                    
-                    if(!(s_releases.flags[r] & EntryFlags::transitioning))
                     {
-                        if(ssx > target + (w/2))
+                        f32 target = s_releases.select_track[r] * w;
+                        f32 ssx = s_releases.scrollx[r];
+                        
+                        if(!(s_releases.flags[r] & EntryFlags::transitioning))
                         {
-                            s_releases.select_track[r] += 1;
-                            s_releases.flags[r] |= EntryFlags::transitioning;
-                        }
-                        else if(ssx < target - (w/2) )
-                        {
-                            s_releases.select_track[r] -= 1;
-                            s_releases.flags[r] |= EntryFlags::transitioning;
-                        }
-                        else if(ssx != target)
-                        {
-                            s_releases.flags[r] |= EntryFlags::transitioning;
-                        }
-                    }
-                    else
-                    {
-                        if(abs(ssx - target) < k_inertia_cutoff)
-                        {
-                            s_releases.scrollx[r] = target;
-                            s_releases.flags[r] &= ~EntryFlags::transitioning;
+                            if(ssx > target + (w/2))
+                            {
+                                s_releases.select_track[r] += 1;
+                                s_releases.flags[r] |= EntryFlags::transitioning;
+                            }
+                            else if(ssx < target - (w/2) )
+                            {
+                                s_releases.select_track[r] -= 1;
+                                s_releases.flags[r] |= EntryFlags::transitioning;
+                            }
+                            else if(ssx != target)
+                            {
+                                s_releases.flags[r] |= EntryFlags::transitioning;
+                            }
                         }
                         else
                         {
-                            s_releases.scrollx[r] = lerp(ssx, target, k_snap_lerp);
+                            if(abs(ssx - target) < k_inertia_cutoff)
+                            {
+                                s_releases.scrollx[r] = target;
+                                s_releases.flags[r] &= ~EntryFlags::transitioning;
+                            }
+                            else
+                            {
+                                s_releases.scrollx[r] = lerp(ssx, target, k_snap_lerp);
+                            }
                         }
                     }
                 }
@@ -684,6 +709,10 @@ namespace
                 
                 ImGui::PopStyleVar();
                 ImGui::EndChild();
+            }
+            else
+            {
+                ImGui::Dummy(ImVec2(w, w));
             }
             
             // tracks
@@ -728,6 +757,8 @@ namespace
                 }
             }
             
+            ImGui::Spacing();
+            
             // buttons
             ImGui::SetWindowFontScale(2.0f);
             ImGui::Text("%s", ICON_FA_HEART_O);
@@ -747,21 +778,19 @@ namespace
             }
             
             ImGui::Spacing();
-            ImGui::Spacing();
         }
         
         // couple of emoty ones so we can reach the end
         ImGui::Dummy(ImVec2(w, w));
         ImGui::Dummy(ImVec2(w, w));
-        ImVec2 end_pos = ImGui::GetWindowPos();
         
+        f32 maxy = ImGui::GetScrollMaxY() - w;
         ImGui::EndChild();
         
         ImGui::PopStyleVar(4);
         ImGui::End();
         
-        // main window scroll
-        if(abs(scroll_delta.y) > k_drag_threshold)
+        if(!side_drag && abs(scroll_delta.y) > k_drag_threshold)
         {
             scroll_lock_y = true;
         }
@@ -773,30 +802,20 @@ namespace
             ImGui::SetScrollY(current_window, scroll.y);
         }
         
-        /*
         // clamp to bottom
-        if(scroll.y > end_pos.y) {
-            f32 maxy = end_pos.y + (f32)w / 0.25f;
+        if(scroll.y > maxy) {
             scroll.y = std::min(scroll.y, maxy);
         }
-        
-        // lerp / snap back
-        if(pen::input_is_mouse_down(PEN_MOUSE_L)) {
-            if(scroll.y > end_pos.y) {
-                scroll.y = lerp(scroll.y, end_pos.y, 0.5f);
-            }
-        }
-        */
         
         // audio player
         if(!mute)
         {
-            if(play_track_filepath.length() > 0 && invalidate_track)
+            static u32 si = -1;
+            static u32 ci = -1;
+            static u32 gi = -1;
+            
+            if(top == -1)
             {
-                static u32 si = -1;
-                static u32 ci = -1;
-                static u32 gi = -1;
-                
                 // stop existing
                 if(is_valid(si))
                 {
@@ -805,6 +824,21 @@ namespace
                     put::audio_release_resource(si);
                     put::audio_release_resource(ci);
                     put::audio_release_resource(gi);
+                    si = -1;
+                }
+            }
+            
+            if(play_track_filepath.length() > 0 && invalidate_track)
+            {
+                // stop existing
+                if(is_valid(si))
+                {
+                    // release existing
+                    put::audio_channel_stop(ci);
+                    put::audio_release_resource(si);
+                    put::audio_release_resource(ci);
+                    put::audio_release_resource(gi);
+                    si = -1;
                 }
                 
                 si = put::audio_create_sound(play_track_filepath.c_str());
@@ -817,7 +851,33 @@ namespace
                 invalidate_track = false;
             }
         }
-                
+        
+        // make requests for data
+        if(top != -1)
+        {
+            s32 range_start = max(top - 10, 0);
+            s32 range_end = min<s32>(top + 10, (s32)s_releases.available_entries);
+            
+            for(size_t i = 0; i < s_releases.available_entries; ++i)
+            {
+                if(i >= range_start && i <= range_end) {
+                    if(s_releases.artwork_texture[i] == 0) {
+                        s_releases.flags[i] |= EntryFlags::artwork_requested;
+                    }
+                }
+                else if (s_releases.flags[i]){
+                    if(s_releases.artwork_texture[i] != 0) {
+                        // proper release
+                        pen::renderer_release_texture(s_releases.artwork_texture[i]);
+                        s_releases.artwork_texture[i] = 0;
+                        s_releases.flags[i] &= ~EntryFlags::artwork_loaded;
+                        s_releases.flags[i] &= ~EntryFlags::artwork_requested;
+                    }
+                }
+            }
+            std::atomic_thread_fence(std::memory_order_release);
+        }
+
         // present
         put::dev_ui::render();
         pen::renderer_present();

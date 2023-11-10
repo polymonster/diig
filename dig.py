@@ -3,7 +3,7 @@ import cgu
 import json
 import sys
 import os
-
+import datetime
 
 # member wise merge 2 dicts, second will overwrite dest
 def merge_dicts(dest, second):
@@ -165,6 +165,16 @@ def scrape_red_eye(page_count, get_urls=True, test_single=False, verbose=False):
     if os.path.exists(reg_filepath):
         releases_dict = json.loads(open(reg_filepath, "r").read())
 
+    # reset the chart and release pos
+    for release in releases_dict:
+        release = releases_dict[release]
+        for (url, category) in urls:
+            if "added" not in release:
+                now = datetime.datetime.now()
+                release["added"] = now.timestamp()
+            if category in release:
+                release.pop(category, None)
+
     new_releases = 0
     for (url, category) in urls:
         print(f"scraping page: {url}", flush=True)
@@ -232,6 +242,14 @@ def scrape_red_eye(page_count, get_urls=True, test_single=False, verbose=False):
         if test_single:
             break
 
+    # add added time
+    for release in releases_dict:
+        release = releases_dict[release]
+        for (url, category) in urls:
+            if "added" not in release:
+                now = datetime.datetime.now()
+                release["added"] = now.timestamp()
+
     release_registry = (json.dumps(releases_dict, indent=4))
     open("registry/releases.json", "w+").write(release_registry)
 
@@ -241,4 +259,4 @@ if __name__ == '__main__':
     get_urls = "-urls" in sys.argv
     test_single = "-test_single" in sys.argv
     verbose = "-verbose" in sys.argv
-    scrape_red_eye(32, get_urls, test_single, verbose)
+    scrape_red_eye(100, get_urls, test_single, verbose)

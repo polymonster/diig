@@ -123,6 +123,7 @@ struct soa
     cmp_array<Str*>                         track_names;
     cmp_array<u32>                          track_url_count;
     cmp_array<Str*>                         track_urls;
+    cmp_array<u32>                          track_filepath_count;
     cmp_array<Str*>                         track_filepaths;
     cmp_array<u32>                          select_track;
     cmp_array<f32>                          scrollx;
@@ -182,8 +183,8 @@ Str download_and_cache(const Str& url, u64 releaseid)
     Str filepath = pen::str_replace_string(url, "https://", "");
     filepath = pen::str_replace_chars(filepath, '/', '_');
     
-    Str dir = os_get_persistent_data_directory(); // "/Users/alex.dixon/dev/dig/cache/"; // TODO get user dir
-    dir.appendf("/%llu", releaseid);
+    Str dir = os_get_persistent_data_directory();
+    dir.appendf("/dig/cache/%llu", releaseid);
     
     // filepath
     Str path = dir;
@@ -222,6 +223,33 @@ pen::texture_creation_params load_texture_from_disk(const Str& filepath)
     s32 w, h, c;
     stbi_uc* rgba = stbi_load(filepath.c_str(), &w, &h, &c, 4);
     
+    if(c == 3)
+    {
+        u8* dst = (u8*)pen::memory_alloc(w * h * 4);
+        u8* src = (u8*)rgba;
+        
+        u32 src_stride = w * c;
+        u32 dst_stride = w * 4;
+        
+        for(u32 y = 0; y < h; ++y)
+        {
+            u8* row_pos_src = src + src_stride * y;
+            u8* row_pos_dst = dst + dst_stride * y;
+            
+            for(u32 x = 0; x < h; x += 3)
+            {
+                row_pos_dst[x*4 + 0] = row_pos_src[x*c + 0];
+                row_pos_dst[x*4 + 1] = row_pos_src[x*c + 1];
+                row_pos_dst[x*4 + 2] = row_pos_src[x*c + 2];
+                row_pos_dst[x*4 + 3] = 255;
+            }
+        }
+        
+        pen::memory_free(rgba);
+        rgba = dst;
+        c = 4;
+    }
+    
     pen::texture_creation_params tcp;
     tcp.width = w;
     tcp.height = h;
@@ -232,7 +260,7 @@ pen::texture_creation_params load_texture_from_disk(const Str& filepath)
     tcp.num_arrays = 1;
     tcp.num_mips = 1;
     tcp.collection_type = 0;
-    tcp.bind_flags =
+    tcp.bind_flags = 0;
     tcp.usage = PEN_USAGE_DEFAULT;
     tcp.bind_flags = PEN_BIND_SHADER_RESOURCE;
     tcp.cpu_access_flags = 0;
@@ -242,15 +270,16 @@ pen::texture_creation_params load_texture_from_disk(const Str& filepath)
     tcp.collection_type = pen::TEXTURE_COLLECTION_NONE;
     tcp.data = rgba;
     tcp.data_size = w * h * c;
-    
+
     return tcp;
 }
+
+static std::atomic<u32> s_request_mode = {0};
 
 void* info_loader(void* userdata)
 {
     // load registry
     auto registry_data = curl::download("https://raw.githubusercontent.com/polymonster/dig/main/registry/releases.json");
-    //PEN_LOG("%s\n", registry_data.data);
     pen::json releases_registry = pen::json::load((const c8*)registry_data.data);
     
     // get the count
@@ -260,56 +289,143 @@ void* info_loader(void* userdata)
     resize_components(s_releases, count);
     
     // crawl releases
+    
+    // find weekly chart
+    struct ChartItem
+    {
+        u32 index;
+        u32 pos;
+    };
+    
+    std::vector<ChartItem> weekly_chart;
+    std::vector<ChartItem> monthly_chart;
+    std::vector<ChartItem> new_releases;
+    
+    new_releases.reserve(1024);
+    weekly_chart.reserve(128);
+    monthly_chart.reserve(128);
+    
+    // find the charts
     for(u32 i = 0; i < count; ++i)
     {
-        u32 ri = (u32)s_releases.available_entries;
         auto release = releases_registry[i];
         
-        // simple info
-        s_releases.id[ri] = release["id"].as_u64();
-        s_releases.artist[ri] = release["artist"].as_str();
-        s_releases.title[ri] = release["title"].as_str();
-        s_releases.link[ri] = release["link"].as_str();
-        s_releases.label[ri] = release["label"].as_str();
-        s_releases.cat[ri] = release["cat"].as_str();
-        
-        // assign artwork url
-        if(release["artworks"].size() > 1)
+        // add to weekly
+        if(!release["weekly_chart"].is_null())
         {
-            s_releases.artwork_url[ri] = release["artworks"][1].as_str();
-        }
-        else
-        {
-            s_releases.artwork_url[ri] = "";
+            weekly_chart.push_back({
+                i,
+                release["weekly_chart"].as_u32()
+            });
         }
         
-        // clear the artwork filepath
-        s_releases.artwork_filepath[ri] = "";
-        
-        // track names
-        s_releases.track_name_count[ri] = release["track_names"].size();
-        if(s_releases.track_name_count[ri] > 0)
+        // add to monthly
+        if(!release["monthly_chart"].is_null())
         {
-            s_releases.track_names[ri] = new Str[s_releases.track_name_count[ri]];
-            for(u32 t = 0; t < release["track_names"].size(); ++t)
+            monthly_chart.push_back({
+                i,
+                release["monthly_chart"].as_u32()
+            });
+        }
+        
+        // add to new releases
+        if(!release["new_releases"].is_null())
+        {
+            new_releases.push_back({
+                i,
+                release["new_releases"].as_u32()
+            });
+        }
+    }
+    
+    // load internal
+    u32 internal_mode = -1;
+    std::vector<ChartItem>* modes[] = {
+        &new_releases,
+        &weekly_chart,
+        &monthly_chart
+    };
+    
+    for(;;)
+    {
+        if(internal_mode != s_request_mode) {
+            internal_mode = s_request_mode;
+            s_releases.available_entries = 0;
+            
+            for(auto& entry : *modes[internal_mode])
             {
-                s_releases.track_names[ri][t] = release["track_names"][t].as_str();
+                u32 ri = (u32)s_releases.available_entries;
+                auto release = releases_registry[entry.index];
+                
+                // simple info
+                s_releases.id[ri] = release["id"].as_u64();
+                s_releases.artist[ri] = release["artist"].as_str();
+                s_releases.title[ri] = release["title"].as_str();
+                s_releases.link[ri] = release["link"].as_str();
+                s_releases.label[ri] = release["label"].as_str();
+                s_releases.cat[ri] = release["cat"].as_str();
+
+                // assign artwork url
+                if(release["artworks"].size() > 1)
+                {
+                   s_releases.artwork_url[ri] = release["artworks"][1].as_str();
+                }
+                else
+                {
+                   s_releases.artwork_url[ri] = "";
+                }
+
+                // clear
+                s_releases.artwork_filepath[ri] = "";
+                s_releases.artwork_texture[ri] = 0; // TODO: leaks
+                s_releases.flags[ri] = 0;
+                
+                s_releases.track_name_count[ri] = 0;
+                s_releases.track_names[ri] = nullptr;
+                
+                s_releases.track_url_count[ri] = 0;
+                s_releases.track_urls[ri] = nullptr;
+                
+                s_releases.track_filepath_count[ri] = 0;
+                s_releases.track_filepaths[ri] = nullptr; // TODO: leaks
+
+                // track names
+                u32 name_count = release["track_names"].size();
+                if(name_count > 0)
+                {
+                    s_releases.track_names[ri] = new Str[name_count];
+                    for(u32 t = 0; t < release["track_names"].size(); ++t)
+                    {
+                       s_releases.track_names[ri][t] = release["track_names"][t].as_str();
+                    }
+                    
+                    std::atomic_thread_fence(std::memory_order_release);
+                    s_releases.track_name_count[ri] = name_count;
+                }
+
+                // track urls
+                u32 url_count = release["track_urls"].size();
+                if(url_count > 0)
+                {
+                    s_releases.track_urls[ri] = new Str[url_count];
+                    for(u32 t = 0; t < release["track_urls"].size(); ++t)
+                    {
+                       s_releases.track_urls[ri][t] = release["track_urls"][t].as_str();
+                    }
+                    
+                    std::atomic_thread_fence(std::memory_order_release);
+                    s_releases.track_url_count[ri] = url_count;
+                }
+
+                pen::thread_sleep_ms(1);
+                s_releases.available_entries++;
+                
+                if(s_releases.available_entries > 250)
+                {
+                    break;
+                }
             }
         }
-        
-        // track urls
-        s_releases.track_url_count[ri] = release["track_urls"].size();
-        if(s_releases.track_url_count[ri] > 0)
-        {
-            s_releases.track_urls[ri] = new Str[s_releases.track_url_count[ri]];
-            for(u32 t = 0; t < release["track_urls"].size(); ++t)
-            {
-                s_releases.track_urls[ri][t] = release["track_urls"][t].as_str();
-            }
-        }
-        
-        s_releases.available_entries++;
-        pen::thread_sleep_ms(3);
     }
     
     return nullptr;
@@ -345,6 +461,7 @@ void* data_cacher(void* userdata)
                 
                 std::atomic_thread_fence(std::memory_order_release);
                 s_releases.flags[i] |= EntryFlags::tracks_cached;
+                s_releases.track_filepath_count[i] = s_releases.track_url_count[i];
 
             }
         }
@@ -460,6 +577,7 @@ namespace
         cs.g = 1.0f;
         cs.b = 1.0f;
         cs.a = 1.0f;
+        cs.depth = 0.0f;
         cs.num_colour_targets = 1;
         clear_screen = pen::renderer_create_clear_state(cs);
         
@@ -490,7 +608,7 @@ namespace
         constexpr f32   k_drag_threshold = 0.1f;
         constexpr f32   k_inertia = 0.96f;
         constexpr f32   k_inertia_cutoff = 3.33f;
-        constexpr f32   k_snap_lerp = 0.33f;
+        constexpr f32   k_snap_lerp = 0.3f;
                 
         // state
         static vec2f    scroll = vec2f(0.0f, w); // start scroll so the dummy is off
@@ -500,7 +618,6 @@ namespace
         static bool     scroll_lock_y = false;
         static bool     scroll_lock_x = false;
         static vec2f    scroll_delta = vec2f::zero();
-        static u32      playing_item = -1;
         
         pen::timer_start(frame_timer);
         pen::renderer_new_frame();
@@ -521,7 +638,7 @@ namespace
         
         ImGui::Begin("Main", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar);
         
-        ImGui::Dummy(ImVec2(0.0f, 85.0f));
+        ImGui::Dummy(ImVec2(0.0f, 90.0f));
         
         // dragging and scrolling
         vec2f cur_scroll_delta = touch_screen_mouse_wheel();
@@ -569,7 +686,57 @@ namespace
         ImGui::Text("Dig");
         
         ImGui::SetWindowFontScale(2.0f);
-        ImGui::Text("Latest");
+        
+        constexpr const char* k_modes[] = {
+            "Latest",
+            "Weekly Chart",
+            "Monthly Chart"
+        };
+        
+        ImGui::Text("%s", k_modes[s_request_mode]);
+        if(ImGui::IsItemClicked()) {
+            ImGui::OpenPopup("Mode Select");
+        }
+        
+        bool release_textures = false;
+        if(ImGui::BeginPopup("Mode Select"))
+        {
+            if(ImGui::MenuItem("Latest"))
+            {
+                s_releases.available_entries = 0;
+                s_request_mode = 0;
+                release_textures = true;
+            }
+            if(ImGui::MenuItem("Weekly Chart"))
+            {
+                s_releases.available_entries = 0;
+                s_request_mode = 1;
+                release_textures = true;
+            }
+            if(ImGui::MenuItem("Monthly Chart"))
+            {
+                s_releases.available_entries = 0;
+                s_request_mode = 2;
+                release_textures = true;
+            }
+            ImGui::EndPopup();
+        }
+        
+        if(release_textures)
+        {
+            for(size_t i = 0; i < s_releases.available_entries; ++i)
+            {
+                if (s_releases.flags[i] & EntryFlags::artwork_loaded){
+                    if(s_releases.artwork_texture[i] != 0) {
+                        pen::renderer_release_texture(s_releases.artwork_texture[i]);
+                        s_releases.artwork_texture[i] = 0;
+                    }
+                    memset(&s_releases.artwork_tcp, 0x0, sizeof(texture_creation_params));
+                    s_releases.flags[i] &= ~EntryFlags::artwork_loaded;
+                    s_releases.flags[i] &= ~EntryFlags::artwork_requested;
+                }
+            }
+        }
         
         ImGui::SetWindowFontScale(1.0f);
         ImGui::Text("Techno / Electro");
@@ -598,7 +765,6 @@ namespace
                         s_releases.artwork_texture[r] = pen::renderer_create_texture(s_releases.artwork_tcp[r]);
                         pen::memory_free(s_releases.artwork_tcp[r].data); // data is copied for the render thread. safe to delete
                         s_releases.artwork_tcp[r].data = nullptr;
-                        
                     }
                 }
             }
@@ -617,10 +783,16 @@ namespace
                 }
             }
             
+            ImGui::SetWindowFontScale(1.5f);
+            ImGui::Text("%s : %s", s_releases.label[r].c_str(), s_releases.cat[r].c_str());
+            ImGui::SetWindowFontScale(1.0f);
+            
             // images
             if(s_releases.artwork_texture[r])
             {
-                ImGui::BeginChildEx("rel", r+1, ImVec2(w, w), false, 0);
+                f32 h = (f32)w * ((f32)s_releases.artwork_tcp[r].height / (f32)s_releases.artwork_tcp[r].width);
+                
+                ImGui::BeginChildEx("rel", r+1, ImVec2((f32)w, h), false, 0);
                 ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0.0, 0.0));
                 
                 u32 numImages = std::max<u32>(1, s_releases.track_url_count[r]);
@@ -634,7 +806,7 @@ namespace
                         ImGui::SameLine();
                     }
                     
-                    ImGui::Image(IMG(s_releases.artwork_texture[r]), ImVec2(w, w));
+                    ImGui::Image(IMG(s_releases.artwork_texture[r]), ImVec2((f32)w, h));
 
                     // initiate side drag
                     if(!scroll_lock_y)
@@ -656,54 +828,57 @@ namespace
                 {
                     if(s_releases.flags[r] & EntryFlags::dragging)
                     {
-                        s_releases.flags[r] &= ~EntryFlags::dragging;
+                        scroll_delta.y = 0.0f;
+                        f32 scaled_vel = scroll_delta.x * 4.0f;
+                        
+                        s_releases.scrollx[r] -= scaled_vel;
+                        
+                        if(abs(scaled_vel) < 1.0)
+                        {
+                            s_releases.flags[r] &= ~EntryFlags::dragging;
+                            s_releases.flags[r] |= EntryFlags::transitioning;
+                        }
+                    }
+                    
+                    f32 target = s_releases.select_track[r] * w;
+                    f32 ssx = s_releases.scrollx[r];
+                    
+                    if(!(s_releases.flags[r] & EntryFlags::transitioning))
+                    {
+                        if(ssx > target + (w/2))
+                        {
+                            scroll_delta.x = 0.0;
+                            s_releases.select_track[r] += 1;
+                            s_releases.flags[r] |= EntryFlags::transitioning;
+                        }
+                        else if(ssx < target - (w/2) )
+                        {
+                            scroll_delta.x = 0.0;
+                            s_releases.select_track[r] -= 1;
+                            s_releases.flags[r] |= EntryFlags::transitioning;
+                        }
+                    }
+                    else
+                    {
+                        if(abs(ssx - target) < k_inertia_cutoff)
+                        {
+                            s_releases.scrollx[r] = target;
+                            s_releases.flags[r] &= ~EntryFlags::transitioning;
+                        }
+                        else
+                        {
+                            s_releases.scrollx[r] = lerp(ssx, target, k_snap_lerp);
+                        }
                     }
                 }
-                
-                if(s_releases.flags[r] & EntryFlags::dragging)
+                else if (s_releases.flags[r] & EntryFlags::dragging)
                 {
                     s_releases.scrollx[r] -= scroll_delta.x;
                     s_releases.scrollx[r] = std::max(s_releases.scrollx[r], 0.0f);
                     s_releases.scrollx[r] = std::min(s_releases.scrollx[r], max_scroll);
                     s_releases.flags[r] &= ~EntryFlags::transitioning;
                 }
-                else
-                {
-                    {
-                        f32 target = s_releases.select_track[r] * w;
-                        f32 ssx = s_releases.scrollx[r];
-                        
-                        if(!(s_releases.flags[r] & EntryFlags::transitioning))
-                        {
-                            if(ssx > target + (w/2))
-                            {
-                                s_releases.select_track[r] += 1;
-                                s_releases.flags[r] |= EntryFlags::transitioning;
-                            }
-                            else if(ssx < target - (w/2) )
-                            {
-                                s_releases.select_track[r] -= 1;
-                                s_releases.flags[r] |= EntryFlags::transitioning;
-                            }
-                            else if(ssx != target)
-                            {
-                                s_releases.flags[r] |= EntryFlags::transitioning;
-                            }
-                        }
-                        else
-                        {
-                            if(abs(ssx - target) < k_inertia_cutoff)
-                            {
-                                s_releases.scrollx[r] = target;
-                                s_releases.flags[r] &= ~EntryFlags::transitioning;
-                            }
-                            else
-                            {
-                                s_releases.scrollx[r] = lerp(ssx, target, k_snap_lerp);
-                            }
-                        }
-                    }
-                }
+
                 
                 ImGui::SetScrollX(s_releases.scrollx[r]);
                 
@@ -716,7 +891,8 @@ namespace
             }
             
             // tracks
-            if(s_releases.track_url_count[r])
+            s32 tc = s_releases.track_filepath_count[r];
+            if(tc != 0)
             {
                 // offset to centre
                 auto ww = ImGui::GetWindowSize().x;
@@ -755,6 +931,13 @@ namespace
                         ImGui::Text("%s", ICON_FA_STOP_CIRCLE);
                     }
                 }
+            }
+            else
+            {
+                // no audio
+                auto ww = ImGui::GetWindowSize().x;
+                ImGui::SetCursorPosX(ww * 0.5f);
+                ImGui::Text("%s", ICON_FA_TIMES_CIRCLE);
             }
             
             ImGui::Spacing();
@@ -813,6 +996,7 @@ namespace
             static u32 si = -1;
             static u32 ci = -1;
             static u32 gi = -1;
+            static bool started = false;
             
             if(top == -1)
             {
@@ -825,6 +1009,9 @@ namespace
                     put::audio_release_resource(ci);
                     put::audio_release_resource(gi);
                     si = -1;
+                    ci = -1;
+                    gi = -1;
+                    started = false;
                 }
             }
             
@@ -839,6 +1026,9 @@ namespace
                     put::audio_release_resource(ci);
                     put::audio_release_resource(gi);
                     si = -1;
+                    ci = -1;
+                    gi = -1;
+                    started = false;
                 }
                 
                 si = put::audio_create_sound(play_track_filepath.c_str());
@@ -849,6 +1039,40 @@ namespace
                 put::audio_group_set_volume(gi, 1.0f);
 
                 invalidate_track = false;
+                started = false;
+            }
+            
+            // playing
+            if(is_valid(ci))
+            {
+                put::audio_group_state gstate;
+                memset(&gstate, 0x0, sizeof(put::audio_group_state));
+                put::audio_group_get_state(gi, &gstate);
+                
+                if(started && gstate.play_state == put::e_audio_play_state::not_playing)
+                {                    
+                    //
+                    put::audio_channel_stop(ci);
+                    put::audio_release_resource(si);
+                    put::audio_release_resource(ci);
+                    put::audio_release_resource(gi);
+                    si = -1;
+                    ci = -1;
+                    gi = -1;
+                    
+                    // move to next
+                    u32 next = s_releases.select_track[top] + 1;
+                    if(next < s_releases.track_filepath_count[top])
+                    {
+                        scroll_delta.x = 0.0;
+                        s_releases.select_track[top] += 1;
+                        s_releases.flags[top] |= EntryFlags::transitioning;
+                    }
+                }
+                else if(gstate.play_state == put::e_audio_play_state::playing)
+                {
+                    started = true;
+                }
             }
         }
         
@@ -865,7 +1089,7 @@ namespace
                         s_releases.flags[i] |= EntryFlags::artwork_requested;
                     }
                 }
-                else if (s_releases.flags[i]){
+                else if (s_releases.flags[i] & EntryFlags::artwork_loaded){
                     if(s_releases.artwork_texture[i] != 0) {
                         // proper release
                         pen::renderer_release_texture(s_releases.artwork_texture[i]);

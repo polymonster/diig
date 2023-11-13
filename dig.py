@@ -144,9 +144,21 @@ def get_red_eye_artwork_urls(release_id):
     return artworks
 
 
+# function to sort release
+def sort_func(kv):
+    if kv != None:
+        if "new_releases" in kv[1]:
+            return kv[1]["new_releases"]
+        else:
+            now = datetime.datetime.now()
+            return now.timestamp() - kv[1]["added"]
+
+
 # scrape redeyerecords.co.uk
 def scrape_red_eye(page_count, get_urls=True, test_single=False, verbose=False):
     print("scraping: redeye", flush=True)
+
+    x = lambda a : a + 10
 
     urls = [
         ("https://www.redeyerecords.co.uk/techno-electro/weekly-chart", "weekly_chart"),
@@ -249,6 +261,17 @@ def scrape_red_eye(page_count, get_urls=True, test_single=False, verbose=False):
             if "added" not in release:
                 now = datetime.datetime.now()
                 release["added"] = now.timestamp()
+
+    # sort the entries
+    sort = sorted(releases_dict.items(), key=lambda kv: sort_func(kv))
+
+    releases_dict = dict()
+
+    # add them back in order
+    for i in sort:
+        k = i[0]
+        v = i[1]
+        releases_dict[k] = v
 
     release_registry = (json.dumps(releases_dict, indent=4))
     open("registry/releases.json", "w+").write(release_registry)

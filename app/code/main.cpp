@@ -17,6 +17,8 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb/stb_image.h"
 
+#include "json.hpp"
+
 using namespace put;
 using namespace pen;
 using namespace ecs;
@@ -102,7 +104,8 @@ namespace EntryFlags
         tracks_loaded = 1<<4,
         transitioning = 1<<5,
         dragging = 1<<6,
-        artwork_requested = 1<<7
+        artwork_requested = 1<<7,
+        liked = 1<<8
     };
 };
 
@@ -280,20 +283,14 @@ void* info_loader(void* userdata)
 {
     // load registry
     auto registry_data = curl::download("https://raw.githubusercontent.com/polymonster/dig/main/registry/releases.json");
-    pen::json releases_registry = pen::json::load((const c8*)registry_data.data);
     
-    // get the count
-    size_t count = releases_registry.size();
-    
-    // allocate mem
-    resize_components(s_releases, count);
-    
-    // crawl releases
+    nlohmann::json releases_registry = nlohmann::json::parse((const c8*)registry_data.data);
+    releases_registry.size();
     
     // find weekly chart
     struct ChartItem
     {
-        u32 index;
+        std::string index;
         u32 pos;
     };
     
@@ -305,38 +302,40 @@ void* info_loader(void* userdata)
     weekly_chart.reserve(128);
     monthly_chart.reserve(128);
     
-    // find the charts
-    for(u32 i = 0; i < count; ++i)
+    for(auto& item : releases_registry)
     {
-        auto release = releases_registry[i];
-        
-        // add to weekly
-        if(!release["weekly_chart"].is_null())
+        if(item.contains("weekly_chart"))
         {
             weekly_chart.push_back({
-                i,
-                release["weekly_chart"].as_u32()
+                item["id"],
+                item["weekly_chart"]
             });
         }
         
-        // add to monthly
-        if(!release["monthly_chart"].is_null())
+        if(item.contains("monthly_chart"))
         {
             monthly_chart.push_back({
-                i,
-                release["monthly_chart"].as_u32()
+                item["id"],
+                item["monthly_chart"]
             });
         }
         
-        // add to new releases
-        if(!release["new_releases"].is_null())
+        if(item.contains("new_releases"))
         {
             new_releases.push_back({
-                i,
-                release["new_releases"].as_u32()
+                item["id"],
+                item["new_releases"]
             });
         }
     }
+    
+    // sort
+    std::sort(begin(new_releases),end(new_releases),[](ChartItem a, ChartItem b) {return a.pos < b.pos; });
+    std::sort(begin(weekly_chart),end(weekly_chart),[](ChartItem a, ChartItem b) {return a.pos < b.pos; });
+    std::sort(begin(monthly_chart),end(monthly_chart),[](ChartItem a, ChartItem b) {return a.pos < b.pos; });
+    
+    // allocate mem
+    resize_components(s_releases, releases_registry.size());
     
     // load internal
     u32 internal_mode = -1;
@@ -358,17 +357,16 @@ void* info_loader(void* userdata)
                 auto release = releases_registry[entry.index];
                 
                 // simple info
-                s_releases.id[ri] = release["id"].as_u64();
-                s_releases.artist[ri] = release["artist"].as_str();
-                s_releases.title[ri] = release["title"].as_str();
-                s_releases.link[ri] = release["link"].as_str();
-                s_releases.label[ri] = release["label"].as_str();
-                s_releases.cat[ri] = release["cat"].as_str();
+                s_releases.artist[ri] = release["artist"];
+                s_releases.title[ri] = release["title"];
+                s_releases.link[ri] = release["link"];
+                s_releases.label[ri] = release["label"];
+                s_releases.cat[ri] = release["cat"];
 
                 // assign artwork url
                 if(release["artworks"].size() > 1)
                 {
-                   s_releases.artwork_url[ri] = release["artworks"][1].as_str();
+                   s_releases.artwork_url[ri] = release["artworks"][1];
                 }
                 else
                 {
@@ -377,7 +375,7 @@ void* info_loader(void* userdata)
 
                 // clear
                 s_releases.artwork_filepath[ri] = "";
-                s_releases.artwork_texture[ri] = 0; // TODO: leaks
+                s_releases.artwork_texture[ri] = 0;
                 s_releases.flags[ri] = 0;
                 
                 s_releases.track_name_count[ri] = 0;
@@ -387,16 +385,17 @@ void* info_loader(void* userdata)
                 s_releases.track_urls[ri] = nullptr;
                 
                 s_releases.track_filepath_count[ri] = 0;
-                s_releases.track_filepaths[ri] = nullptr; // TODO: leaks
+                // s_releases.track_filepaths[ri] = nullptr; // TODO: leaks
+                s_releases.select_track[ri] = 0; // reset
 
                 // track names
-                u32 name_count = release["track_names"].size();
+                u32 name_count = (u32)release["track_names"].size();
                 if(name_count > 0)
                 {
                     s_releases.track_names[ri] = new Str[name_count];
                     for(u32 t = 0; t < release["track_names"].size(); ++t)
                     {
-                       s_releases.track_names[ri][t] = release["track_names"][t].as_str();
+                       s_releases.track_names[ri][t] = release["track_names"][t];
                     }
                     
                     std::atomic_thread_fence(std::memory_order_release);
@@ -404,13 +403,13 @@ void* info_loader(void* userdata)
                 }
 
                 // track urls
-                u32 url_count = release["track_urls"].size();
+                u32 url_count = (u32)release["track_urls"].size();
                 if(url_count > 0)
                 {
                     s_releases.track_urls[ri] = new Str[url_count];
                     for(u32 t = 0; t < release["track_urls"].size(); ++t)
                     {
-                       s_releases.track_urls[ri][t] = release["track_urls"][t].as_str();
+                       s_releases.track_urls[ri][t] = release["track_urls"][t];
                     }
                     
                     std::atomic_thread_fence(std::memory_order_release);
@@ -450,19 +449,29 @@ void* data_cacher(void* userdata)
             }
             
             // cache tracks
-            if(s_releases.track_url_count[i] > 0 && s_releases.track_filepaths[i] == nullptr)
+            if(!(s_releases.flags[i] & EntryFlags::tracks_cached))
             {
-                s_releases.track_filepaths[i] = new Str[s_releases.track_url_count[i]];
-                
-                for(u32 t = 0; t < s_releases.track_url_count[i]; ++t)
+                if(s_releases.track_filepaths[i] != nullptr)
                 {
-                    s_releases.track_filepaths[i][t] = download_and_cache(s_releases.track_urls[i][t], s_releases.id[i]);
+                    delete[] s_releases.track_filepaths[i];
+                    s_releases.track_filepaths[i] = nullptr;
                 }
                 
-                std::atomic_thread_fence(std::memory_order_release);
-                s_releases.flags[i] |= EntryFlags::tracks_cached;
-                s_releases.track_filepath_count[i] = s_releases.track_url_count[i];
-
+                if(s_releases.track_url_count[i] > 0 && s_releases.track_filepaths[i] == nullptr)
+                {
+                    s_releases.track_filepaths[i] = new Str[s_releases.track_url_count[i]];
+                    
+                    for(u32 t = 0; t < s_releases.track_url_count[i]; ++t)
+                    {
+                        s_releases.track_filepaths[i][t] = "";
+                        Str fp = download_and_cache(s_releases.track_urls[i][t], s_releases.id[i]);
+                        s_releases.track_filepaths[i][t] = fp;
+                    }
+                    
+                    std::atomic_thread_fence(std::memory_order_release);
+                    s_releases.flags[i] |= EntryFlags::tracks_cached;
+                    s_releases.track_filepath_count[i] = s_releases.track_url_count[i];
+                }
             }
         }
         
@@ -609,6 +618,8 @@ namespace
         constexpr f32   k_inertia = 0.96f;
         constexpr f32   k_inertia_cutoff = 3.33f;
         constexpr f32   k_snap_lerp = 0.3f;
+        constexpr f32   k_indent1 = 2.0f;
+        constexpr f32   k_indent2 = 10.0f;
                 
         // state
         static vec2f    scroll = vec2f(0.0f, w); // start scroll so the dummy is off
@@ -784,7 +795,11 @@ namespace
             }
             
             ImGui::SetWindowFontScale(1.5f);
-            ImGui::Text("%s : %s", s_releases.label[r].c_str(), s_releases.cat[r].c_str());
+            
+            ImGui::Dummy(ImVec2(k_indent1, 0.0f));
+            ImGui::SameLine();
+            ImGui::Text("%s: %s", s_releases.label[r].c_str(), s_releases.cat[r].c_str());
+            
             ImGui::SetWindowFontScale(1.0f);
             
             // images
@@ -941,22 +956,57 @@ namespace
             }
             
             ImGui::Spacing();
-            
+                        
             // buttons
-            ImGui::SetWindowFontScale(2.0f);
-            ImGui::Text("%s", ICON_FA_HEART_O);
+            ImGui::Dummy(ImVec2(k_indent2, 0.0f));
             ImGui::SameLine();
+            
+            ImGui::SetWindowFontScale(2.0f);
+            ImGui::PushID("like");
+            if(s_releases.flags[r] & EntryFlags::liked)
+            {
+                ImGui::Text("%s", ICON_FA_HEART);
+                if(ImGui::IsItemClicked())
+                {
+                    s_releases.flags[r] &= ~EntryFlags::liked;
+                }
+            }
+            else
+            {
+                ImGui::Text("%s", ICON_FA_HEART_O);
+                if(ImGui::IsItemClicked())
+                {
+                    s_releases.flags[r] |= EntryFlags::liked;
+                }
+            }
+            ImGui::PopID();
+        
+            ImGui::SameLine();
+            ImGui::PushID("buy");
             ImGui::Text("%s", ICON_FA_SHOPPING_BASKET);
+            if(ImGui::IsItemClicked())
+            {
+                pen::os_open_url(s_releases.link[r]);
+            }
+            ImGui::PopID();
+            
             ImGui::SetWindowFontScale(1.0f);
             
             // release info
+            ImGui::Dummy(ImVec2(k_indent2, 0.0f));
+            ImGui::SameLine();
             ImGui::TextWrapped("%s", artist.c_str());
+            
+            ImGui::Dummy(ImVec2(k_indent2, 0.0f));
+            ImGui::SameLine();
             ImGui::TextWrapped("%s", title.c_str());
             
             // track name
             u32 sel = s_releases.select_track[r];
             if(s_releases.track_name_count[r] > s_releases.select_track[r])
             {
+                ImGui::Dummy(ImVec2(k_indent2, 0.0f));
+                ImGui::SameLine();
                 ImGui::TextWrapped("%s", s_releases.track_names[r][sel].c_str());
             }
             
@@ -1050,7 +1100,7 @@ namespace
                 put::audio_group_get_state(gi, &gstate);
                 
                 if(started && gstate.play_state == put::e_audio_play_state::not_playing)
-                {                    
+                {
                     //
                     put::audio_channel_stop(ci);
                     put::audio_release_resource(si);

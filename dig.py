@@ -153,21 +153,36 @@ def sort_func(kv):
             now = datetime.datetime.now()
             return now.timestamp() - kv[1]["added"]
 
-
 # scrape redeyerecords.co.uk
 def scrape_red_eye(page_count, get_urls=True, test_single=False, verbose=False):
     print("scraping: redeye", flush=True)
 
     x = lambda a : a + 10
 
+    # categories
     urls = [
-        ("https://www.redeyerecords.co.uk/techno-electro/weekly-chart", "weekly_chart"),
-        ("https://www.redeyerecords.co.uk/techno-electro/monthly-chart", "monthly_chart"),
-        ("https://www.redeyerecords.co.uk/techno-electro/new-releases/", "new_releases")
+        ("https://www.redeyerecords.co.uk/techno-electro/weekly-chart", "weekly_chart", ["techno", "electro"]),
+        ("https://www.redeyerecords.co.uk/techno-electro/monthly-chart", "monthly_chart", ["techno", "electro"]),
+        ("https://www.redeyerecords.co.uk/techno-electro/new-releases/", "new_releases", ["techno", "electro"])
     ]
 
     for page in range(2, page_count):
-        urls.append((f"https://www.redeyerecords.co.uk/techno-electro/new-releases/page-{page}", "new_releases"))
+        urls.append((f"https://www.redeyerecords.co.uk/techno-electro/new-releases/page-{page}", "new_releases", ["techno", "electro"]))
+
+    urls.append(
+        ("https://www.redeyerecords.co.uk/house-disco/weekly-chart", "weekly_chart", ["house", "disco"])
+    )
+
+    urls.append(
+        ("https://www.redeyerecords.co.uk/house-disco/monthly-chart", "monthly_chart", ["house", "disco"])
+    )
+
+    urls.append(
+        ("https://www.redeyerecords.co.uk/house-disco/new-releases/", "new_releases", ["house", "disco"])
+    )
+
+    for page in range(2, page_count):
+        urls.append((f"https://www.redeyerecords.co.uk/house-disco/new-releases/page-{page}", "new_releases", ["house", "disco"]))
 
     # store release entries in dict
     releases_dict = dict()
@@ -180,7 +195,7 @@ def scrape_red_eye(page_count, get_urls=True, test_single=False, verbose=False):
     # reset the chart and release pos
     for release in releases_dict:
         release = releases_dict[release]
-        for (url, category) in urls:
+        for (url, category, tags) in urls:
             if "added" not in release:
                 now = datetime.datetime.now()
                 release["added"] = now.timestamp()
@@ -188,7 +203,7 @@ def scrape_red_eye(page_count, get_urls=True, test_single=False, verbose=False):
                 release.pop(category, None)
 
     new_releases = 0
-    for (url, category) in urls:
+    for (url, category, tags) in urls:
         print(f"scraping page: {url}", flush=True)
 
         # try and then continue if the page does not exist
@@ -214,6 +229,11 @@ def scrape_red_eye(page_count, get_urls=True, test_single=False, verbose=False):
             merge_dicts(release_dict, parse_red_eye_label(label_elem))
             merge_dicts(release_dict, parse_red_eye_artist(artist_elem))
             id = release_dict["id"]
+            release_dict["tags"] = dict()
+
+            # add tags
+            for tag in tags:
+                release_dict["tags"][tag] = True
 
             # extra print for debugging long jobs
             if verbose:
@@ -257,7 +277,7 @@ def scrape_red_eye(page_count, get_urls=True, test_single=False, verbose=False):
     # add added time
     for release in releases_dict:
         release = releases_dict[release]
-        for (url, category) in urls:
+        for (url, category, tags) in urls:
             if "added" not in release:
                 now = datetime.datetime.now()
                 release["added"] = now.timestamp()

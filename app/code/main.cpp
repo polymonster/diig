@@ -924,18 +924,24 @@ namespace
             
             ImGui::SetWindowFontScale(1.0f);
             
+            // ..
+            f32 scaled_vel = scroll_delta.x;
+            // ImGui::Text("sv: %f", scaled_vel);
+            
             // images
             if(s_releases.artwork_texture[r])
             {
                 f32 h = (f32)w * ((f32)s_releases.artwork_tcp[r].height / (f32)s_releases.artwork_tcp[r].width);
+                f32 spacing = 20.0f;
                 
                 ImGui::BeginChildEx("rel", r+1, ImVec2((f32)w, h + 50), false, 0);
-                ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0.0, 0.0));
+                ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(spacing, 0.0));
                 
-                u32 numImages = std::max<u32>(1, s_releases.track_url_count[r]);
+                u32 num_images = std::max<u32>(1, s_releases.track_url_count[r]);
+                f32 imgw = w + spacing;
                 
-                f32 max_scroll = (numImages * w) - w;
-                for(u32 i = 0; i < numImages; ++i)
+                f32 max_scroll = (num_images * imgw) - imgw;
+                for(u32 i = 0; i < num_images; ++i)
                 {
                     if(i > 0)
                     {
@@ -959,8 +965,6 @@ namespace
                     }
                 }
                 
-                f32 scaled_vel = scroll_delta.x * 4.0f;
-                
                 if(!pen::input_is_mouse_down(PEN_MOUSE_L))
                 {
                     s_releases.flags[r] &= ~EntryFlags::hovered;
@@ -977,35 +981,31 @@ namespace
                     {
                         scroll_delta.y = 0.0f;
                         s_releases.scrollx[r] -= scaled_vel;
-                        
-                        if(abs(scaled_vel) < 1.0)
-                        {
-                            s_releases.flags[r] &= ~EntryFlags::dragging;
-                            s_releases.flags[r] |= EntryFlags::transitioning;
-                        }
                     }
                     
-                    f32 target = s_releases.select_track[r] * w;
+                    f32 target = s_releases.select_track[r] * imgw;
                     f32 ssx = s_releases.scrollx[r];
                     
                     if(!(s_releases.flags[r] & EntryFlags::transitioning))
                     {
-                        if(ssx > target + (w/2) && s_releases.select_track[r]+1 < numImages)
+                        if(ssx > target + (imgw/2) && s_releases.select_track[r]+1 < num_images)
                         {
                             scroll_delta.x = 0.0;
                             s_releases.select_track[r] += 1;
                             s_releases.flags[r] |= EntryFlags::transitioning;
                         }
-                        else if(ssx < target - (w/2) && (ssize_t)s_releases.select_track[r]-1 >= 0)
+                        else if(ssx < target - (imgw/2) && (ssize_t)s_releases.select_track[r]-1 >= 0)
                         {
                             scroll_delta.x = 0.0;
                             s_releases.select_track[r] -= 1;
                             s_releases.flags[r] |= EntryFlags::transitioning;
                         }
-                        else if(abs(ssx - target) > k_inertia_cutoff)
+                        else
                         {
-                            scroll_delta.x = 0.0;
-                            s_releases.flags[r] |= EntryFlags::transitioning;
+                            if(abs(scaled_vel) < 5.0)
+                            {
+                                s_releases.flags[r] |= EntryFlags::transitioning;
+                            }
                         }
                     }
                     else
@@ -1017,7 +1017,10 @@ namespace
                         }
                         else
                         {
-                            s_releases.scrollx[r] = lerp(ssx, target, k_snap_lerp);
+                            if(abs(scaled_vel) < 5.0)
+                            {
+                                s_releases.scrollx[r] = lerp(ssx, target, k_snap_lerp);
+                            }
                         }
                     }
                 }

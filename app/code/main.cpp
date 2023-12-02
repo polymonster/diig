@@ -715,7 +715,6 @@ namespace
         constexpr f32   k_inertia_cutoff = 3.33f;
         constexpr f32   k_snap_lerp = 0.3f;
         constexpr f32   k_indent1 = 2.0f;
-        constexpr f32   k_indent2 = 20.0f;
                 
         // state
         static vec2f    scroll = vec2f(0.0f, w); // start scroll so the dummy is off
@@ -725,6 +724,8 @@ namespace
         static bool     scroll_lock_y = false;
         static bool     scroll_lock_x = false;
         static vec2f    scroll_delta = vec2f::zero();
+        static Str      open_url_request = "";
+        static u32      open_url_counter = 0;
         
         pen::timer_start(frame_timer);
         pen::renderer_new_frame();
@@ -874,7 +875,11 @@ namespace
             ImGui::EndPopup();
         }
         
+        // mouse
+        auto ms = pen::input_get_mouse_state();
+        
         // releases
+        f32 releases_pos = ImGui::GetCursorPosY();
         ImGui::BeginChildEx("releases", 1, ImVec2(0, 0), false, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
         auto current_window = ImGui::GetCurrentWindow();
 
@@ -926,7 +931,6 @@ namespace
             
             // ..
             f32 scaled_vel = scroll_delta.x;
-            // ImGui::Text("sv: %f", scaled_vel);
             
             // images
             if(s_releases.artwork_texture[r])
@@ -1093,25 +1097,54 @@ namespace
             }
             
             ImGui::Spacing();
-                        
+            ImGui::Indent();
+            
             // buttons
-            ImGui::Dummy(ImVec2(k_indent2, 0.0f));
-            ImGui::SameLine();
+            auto cp = ImGui::GetCursorPos();
+            auto offset = ImGui::GetScrollY();
             
             ImGui::SetWindowFontScale(2.0f);
+            
+            auto button_size = ImGui::CalcTextSize("%s", ICON_FA_HEART);
+            
+            bool pressed = false;
+            if(!scroll_lock_x && !scroll_lock_y)
+            {
+                static bool debounce = false;
+                if(pen::input_is_mouse_down(PEN_MOUSE_L) && !debounce)
+                {
+                    if(ms.x < cp.x + button_size.y)
+                    {
+                        float by = cp.y - offset + releases_pos;
+                        float pad = 50.0;
+                        if(ms.y >= by - pad && ms.y <= by + button_size.y + pad)
+                        {
+                            pressed = true;
+                            debounce = true;
+                        }
+                    }
+                }
+                else if(!pen::input_is_mouse_down(PEN_MOUSE_L))
+                {
+                    debounce = false;
+                }
+            }
+            
             ImGui::PushID("like");
             if(s_releases.flags[r] & EntryFlags::liked)
             {
+                ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(225.0f/255.0f, 48.0f/255.0f, 108.0f/255.0f, 1.0f));
                 ImGui::Text("%s", ICON_FA_HEART);
-                if(ImGui::IsItemClicked())
+                if(pressed)
                 {
                     s_releases.flags[r] &= ~EntryFlags::liked;
                 }
+                ImGui::PopStyleColor();
             }
             else
             {
                 ImGui::Text("%s", ICON_FA_HEART_O);
-                if(ImGui::IsItemClicked())
+                if(pressed)
                 {
                     s_releases.flags[r] |= EntryFlags::liked;
                 }
@@ -1121,36 +1154,31 @@ namespace
             ImGui::SameLine();
             ImGui::PushID("buy");
             ImGui::Text("%s", ICON_FA_SHOPPING_BASKET);
-            if(ImGui::IsItemClicked())
+            if(ImGui::IsItemClicked() && !scroll_lock_x && !scroll_lock_y)
             {
-                pen::os_open_url(s_releases.link[r]);
+                open_url_request = s_releases.link[r];
             }
             ImGui::PopID();
             
             ImGui::SetWindowFontScale(1.0f);
             
             // release info
-            ImGui::Dummy(ImVec2(k_indent2, 0.0f));
-            ImGui::SameLine();
             ImGui::TextWrapped("%s", artist.c_str());
-            
-            ImGui::Dummy(ImVec2(k_indent2, 0.0f));
-            ImGui::SameLine();
             ImGui::TextWrapped("%s", title.c_str());
             
             // track name
             u32 sel = s_releases.select_track[r];
             if(s_releases.track_name_count[r] > s_releases.select_track[r])
             {
-                ImGui::Dummy(ImVec2(k_indent2, 0.0f));
-                ImGui::SameLine();
                 ImGui::TextWrapped("%s", s_releases.track_names[r][sel].c_str());
             }
+            
+            ImGui::Unindent();
             
             ImGui::Spacing();
         }
         
-        // couple of emoty ones so we can reach the end
+        // couple of empty ones so we can reach the end
         ImGui::Dummy(ImVec2(w, w));
         ImGui::Dummy(ImVec2(w, w));
         
@@ -1288,7 +1316,29 @@ namespace
             }
             std::atomic_thread_fence(std::memory_order_release);
         }
-
+        
+        // apply request for open url and handle it to ignore clicks that became drags
+        if(!open_url_request.empty())
+        {
+            // open url if we hacent scrolled within 5 frames
+            if(open_url_counter > 5)
+            {
+                pen::os_open_url(open_url_request);
+                open_url_request = "";
+                open_url_counter = 0;
+            }
+            else
+            {
+                open_url_counter++;
+            }
+                        
+            // disable url opening if we began a scroll
+            if(scroll_lock_x || scroll_lock_y)
+            {
+                open_url_request = "";
+                open_url_counter = 0;
+            }
+        }
         // present
         put::dev_ui::render();
         pen::renderer_present();

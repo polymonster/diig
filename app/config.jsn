@@ -132,6 +132,7 @@ import "pmtech/tools/pmbuild_ext/pmbuild_init.jsn"
                 "--platform_dir=ios"
                 "--xcode_target=ios"
                 "--pmtech_dir=${pmtech_dir}/"
+                "--plist=dist/ios/Info.plist"
             ]
         }
 

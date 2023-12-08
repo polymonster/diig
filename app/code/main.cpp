@@ -19,9 +19,24 @@
 
 #include "json.hpp"
 
+#include <fstream>
+
 using namespace put;
 using namespace pen;
 using namespace ecs;
+
+// TASKS
+// - side swipe still isnt perfect
+// - add missing glyphs (or at least some)
+// - track names are sometimes not split correctly
+// - track names can sometimes have trailing commas
+// - memory warnings
+// - should have multiple soas, switch on request and clean up the old
+// - cache the registry, 
+// - user store prev position, prev mode etc
+// - make back work properly (from likes menu) ^^
+// - img and audio file cache management
+// - test and implement on iphone7
 
 // curl api
 
@@ -191,7 +206,7 @@ u32 tag_menu(u32 tags)
 
 struct soa
 {
-    cmp_array<u64>                          id;
+    cmp_array<Str>                          id;
     cmp_array<u64>                          flags;
     cmp_array<Str>                          artist;
     cmp_array<Str>                          title;
@@ -214,7 +229,46 @@ struct soa
     std::atomic<size_t>                     available_entries = {0};
     std::atomic<size_t>                     soa_size = {0};
 };
-static soa s_releases;
+static soa              s_releases;
+static nlohmann::json   s_likes;
+static std::mutex       s_like_mutex;
+static bool             s_likes_invalidated = false;
+
+nlohmann::json get_likes()
+{
+    s_like_mutex.lock();
+    auto cp = s_likes;
+    s_like_mutex.unlock();
+    return cp;
+}
+
+bool has_like(Str id)
+{
+    bool ret = false;
+    s_like_mutex.lock();
+    if(s_likes.contains(id.c_str()))
+    {
+        ret = s_likes[id.c_str()];
+    }
+    s_like_mutex.unlock();
+    return ret;
+}
+
+void add_like(Str id)
+{
+    s_like_mutex.lock();
+    s_likes[id.c_str()] = true;
+    s_like_mutex.unlock();
+    s_likes_invalidated = true;
+}
+
+void remove_like(Str id)
+{
+    s_like_mutex.lock();
+    s_likes.erase(id.c_str());
+    s_like_mutex.unlock();
+    s_likes_invalidated = true;
+}
 
 generic_cmp_array& get_component_array(soa& s, size_t i)
 {
@@ -261,13 +315,13 @@ void resize_components(soa& s, size_t size)
     s.soa_size = new_size;
 }
 
-Str download_and_cache(const Str& url, u64 releaseid)
+Str download_and_cache(const Str& url, Str releaseid)
 {
     Str filepath = pen::str_replace_string(url, "https://", "");
     filepath = pen::str_replace_chars(filepath, '/', '_');
     
     Str dir = os_get_persistent_data_directory();
-    dir.appendf("/dig/cache/%llu", releaseid);
+    dir.appendf("/dig/cache/%s", releaseid.c_str());
     
     // filepath
     Str path = dir;
@@ -369,6 +423,18 @@ void* info_loader(void* userdata)
     nlohmann::json releases_registry = nlohmann::json::parse((const c8*)registry_data.data);
     releases_registry.size();
     
+    // load likes
+    Str likes_filepath = os_get_persistent_data_directory();
+    likes_filepath.appendf("/dig/user_data/likes.json");
+    
+    u32 mtime = 0;
+    pen::filesystem_getmtime(likes_filepath.c_str(), mtime);
+    if(mtime)
+    {
+        std::ifstream f(likes_filepath.c_str());
+        s_likes = nlohmann::json::parse(f);;
+    }
+    
     // find weekly chart
     struct ChartItem
     {
@@ -379,6 +445,7 @@ void* info_loader(void* userdata)
     std::vector<ChartItem> weekly_chart;
     std::vector<ChartItem> monthly_chart;
     std::vector<ChartItem> new_releases;
+    std::vector<ChartItem> likes;
     
     new_releases.reserve(1024);
     weekly_chart.reserve(128);
@@ -425,7 +492,8 @@ void* info_loader(void* userdata)
     std::vector<ChartItem>* modes[] = {
         &new_releases,
         &weekly_chart,
-        &monthly_chart
+        &monthly_chart,
+        &likes,
     };
     
     for(;;)
@@ -434,6 +502,22 @@ void* info_loader(void* userdata)
             internal_mode = s_request_mode;
             internal_tags = s_request_tags;
             s_releases.available_entries = 0;
+            
+            // populate likes
+            if(internal_mode == 3)
+            {
+                likes.clear();
+                for(auto& like : s_likes.items())
+                {
+                    if(releases_registry.contains(like.key()) && like.value())
+                    {
+                        likes.push_back({
+                            like.key(),
+                            0
+                        });
+                    }
+                }
+            }
             
             for(auto& entry : *modes[internal_mode])
             {
@@ -456,6 +540,9 @@ void* info_loader(void* userdata)
                 s_releases.link[ri] = release["link"];
                 s_releases.label[ri] = release["label"];
                 s_releases.cat[ri] = release["cat"];
+                
+                std::string id = release["id"];
+                s_releases.id[ri] = id.c_str();
 
                 // assign artwork url
                 if(release["artworks"].size() > 1)
@@ -508,6 +595,12 @@ void* info_loader(void* userdata)
                     std::atomic_thread_fence(std::memory_order_release);
                     s_releases.track_url_count[ri] = url_count;
                 }
+                
+                // check likes
+                if(has_like(s_releases.id[ri]))
+                {
+                    s_releases.flags[ri] |= EntryFlags::liked;
+                }
 
                 pen::thread_sleep_ms(1);
                 s_releases.available_entries++;
@@ -521,6 +614,35 @@ void* info_loader(void* userdata)
     }
     
     return nullptr;
+}
+
+void* user_data_save_thread(void* userdata)
+{
+    // get user data dir
+    Str user_data_dir = os_get_persistent_data_directory();
+    user_data_dir.append("/dig/user_data/");
+    
+    // create dir
+    pen::os_create_directory(user_data_dir);
+   
+    // likes
+    Str likes_filepath = user_data_dir;
+    likes_filepath.appendf("likes.json");
+    
+    for(;;)
+    {
+        if(s_likes_invalidated)
+        {
+            auto likes = get_likes();
+            auto likes_str = likes.dump();
+            
+            FILE* fp = fopen(likes_filepath.c_str(), "w");
+            fwrite(likes_str.c_str(), likes_str.length(), 1, fp);
+            fclose(fp);
+        }
+        
+        pen::thread_sleep_ms(66);
+    }
 }
 
 void* data_cacher(void* userdata)
@@ -671,6 +793,7 @@ namespace
         pen::thread_create(info_loader, 10 * 1024 * 1024, nullptr, pen::e_thread_start_flags::detached);
         pen::thread_create(data_cacher, 10 * 1024 * 1024, nullptr, pen::e_thread_start_flags::detached);
         pen::thread_create(data_loader, 10 * 1024 * 1024, nullptr, pen::e_thread_start_flags::detached);
+        pen::thread_create(user_data_save_thread, 10 * 1024 * 1024, nullptr, pen::e_thread_start_flags::detached);
 
         // timer
         frame_timer = pen::timer_create();
@@ -790,52 +913,119 @@ namespace
             side_drag = true;
         }
         
+        bool release_textures = false;
+        
         // header
         ImGui::SetWindowFontScale(3.0f);
         ImGui::Dummy(ImVec2(k_indent1, 0.0f));
         ImGui::SameLine();
-        ImGui::Text("Dig");
+        
+        if(s_request_mode == 3)
+        {
+            ImGui::Text("%s", ICON_FA_CHEVRON_LEFT);
+            if(ImGui::IsItemClicked())
+            {
+                s_request_mode = 0;
+                s_releases.available_entries = 0;
+                release_textures = true;
+            }
+        }
+        else
+        {
+            ImGui::Text("Dig");
+        }
         
         // mode
-        ImGui::SetWindowFontScale(2.0f);
-        
-        constexpr const char* k_modes[] = {
-            "Latest",
-            "Weekly Chart",
-            "Monthly Chart"
-        };
-        
-        ImGui::Dummy(ImVec2(k_indent1, 0.0f));
+
+        // likes button on same line
         ImGui::SameLine();
-        ImGui::Text("%s", k_modes[s_request_mode]);
-        if(ImGui::IsItemClicked()) {
-            ImGui::OpenPopup("Mode Select");
-        }
-        
-        bool release_textures = false;
-        if(ImGui::BeginPopup("Mode Select"))
+        f32 offset = ImGui::CalcTextSize("%s", ICON_FA_HEART_O).y;
+        ImGui::SetCursorPosX(w - offset * 1.5f);
+        ImGui::Text("%s", s_request_mode == 3 ? ICON_FA_HEART : ICON_FA_HEART_O);
+        if(ImGui::IsItemClicked())
         {
-            if(ImGui::MenuItem("Latest"))
-            {
-                s_releases.available_entries = 0;
-                s_request_mode = 0;
-                release_textures = true;
+            s_releases.available_entries = 0;
+            s_request_mode = 3;
+            release_textures = true;
+        }
+        ImGui::SetWindowFontScale(1.0f);
+        
+        if(s_request_mode != 3)
+        {
+            // store page
+            ImGui::SetWindowFontScale(2.0f);
+            
+            constexpr const char* k_modes[] = {
+                "Latest",
+                "Weekly Chart",
+                "Monthly Chart",
+                "Likes"
+            };
+            
+            ImGui::Dummy(ImVec2(k_indent1, 0.0f));
+            ImGui::SameLine();
+            ImGui::Text("%s", k_modes[s_request_mode]);
+            if(ImGui::IsItemClicked()) {
+                ImGui::OpenPopup("Mode Select");
             }
-            if(ImGui::MenuItem("Weekly Chart"))
+            
+            if(ImGui::BeginPopup("Mode Select"))
             {
-                s_releases.available_entries = 0;
-                s_request_mode = 1;
-                release_textures = true;
+                if(ImGui::MenuItem("Latest"))
+                {
+                    s_releases.available_entries = 0;
+                    s_request_mode = 0;
+                    release_textures = true;
+                }
+                if(ImGui::MenuItem("Weekly Chart"))
+                {
+                    s_releases.available_entries = 0;
+                    s_request_mode = 1;
+                    release_textures = true;
+                }
+                if(ImGui::MenuItem("Monthly Chart"))
+                {
+                    s_releases.available_entries = 0;
+                    s_request_mode = 2;
+                    release_textures = true;
+                }
+                ImGui::EndPopup();
             }
-            if(ImGui::MenuItem("Monthly Chart"))
+            
+            ImGui::SetWindowFontScale(1.0f);
+            
+            // tags
+            ImGui::Dummy(ImVec2(k_indent1, 0.0f));
+            ImGui::SameLine();
+                    
+            ImGui::Text("%s", get_tags_str(s_request_tags).c_str());
+            if(ImGui::IsItemClicked()) {
+                ImGui::OpenPopup("Tag Select");
+            }
+            
+            if(ImGui::BeginPopup("Tag Select"))
             {
-                s_releases.available_entries = 0;
-                s_request_mode = 2;
-                release_textures = true;
+                u32 new_tags = tag_menu(s_request_tags);
+                if(new_tags != s_request_tags)
+                {
+                    s_releases.available_entries = 0;
+                    s_request_tags = new_tags;
+                    release_textures = true;
+                }
+                ImGui::EndPopup();
             }
-            ImGui::EndPopup();
+        }
+        else
+        {
+            // likes page
+            ImGui::SetWindowFontScale(2.0f);
+            ImGui::Dummy(ImVec2(k_indent1, 0.0f));
+            ImGui::SameLine();
+            ImGui::Text("%s", "Likes");
+            ImGui::SetWindowFontScale(1.0f);
         }
         
+        //
         if(release_textures)
         {
             for(size_t i = 0; i < s_releases.available_entries; ++i)
@@ -850,29 +1040,6 @@ namespace
                     s_releases.flags[i] &= ~EntryFlags::artwork_requested;
                 }
             }
-        }
-        
-        ImGui::SetWindowFontScale(1.0f);
-        
-        // tags
-        ImGui::Dummy(ImVec2(k_indent1, 0.0f));
-        ImGui::SameLine();
-                
-        ImGui::Text("%s", get_tags_str(s_request_tags).c_str());
-        if(ImGui::IsItemClicked()) {
-            ImGui::OpenPopup("Tag Select");
-        }
-        
-        if(ImGui::BeginPopup("Tag Select"))
-        {
-            u32 new_tags = tag_menu(s_request_tags);
-            if(new_tags != s_request_tags)
-            {
-                s_releases.available_entries = 0;
-                s_request_tags = new_tags;
-                release_textures = true;
-            }
-            ImGui::EndPopup();
         }
         
         // mouse
@@ -925,7 +1092,7 @@ namespace
             
             ImGui::Dummy(ImVec2(k_indent1, 0.0f));
             ImGui::SameLine();
-            ImGui::Text("%s: %s", s_releases.label[r].c_str(), s_releases.cat[r].c_str());
+            ImGui::TextWrapped("%s: %s", s_releases.label[r].c_str(), s_releases.cat[r].c_str());
             
             ImGui::SetWindowFontScale(1.0f);
             
@@ -1137,6 +1304,7 @@ namespace
                 ImGui::Text("%s", ICON_FA_HEART);
                 if(pressed)
                 {
+                    remove_like(s_releases.id[r]);
                     s_releases.flags[r] &= ~EntryFlags::liked;
                 }
                 ImGui::PopStyleColor();
@@ -1146,6 +1314,7 @@ namespace
                 ImGui::Text("%s", ICON_FA_HEART_O);
                 if(pressed)
                 {
+                    add_like(s_releases.id[r]);
                     s_releases.flags[r] |= EntryFlags::liked;
                 }
             }
@@ -1232,6 +1401,9 @@ namespace
             
             if(play_track_filepath.length() > 0 && invalidate_track)
             {
+                //u32 sel = s_releases.select_track[top];
+                //PEN_LOG("%s", s_releases.track_names[top][sel].c_str());
+                
                 // stop existing
                 if(is_valid(si))
                 {

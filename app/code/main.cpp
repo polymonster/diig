@@ -9,9 +9,7 @@
 #include "str_utilities.h"
 #include "input.h"
 #include "data_struct.h"
-#include "ecs/ecs_scene.h"
-
-#include "maths/maths.h"
+#include "main.h"
 #include "audio/audio.h"
 
 #define STB_IMAGE_IMPLEMENTATION
@@ -21,22 +19,32 @@
 
 #include <fstream>
 
+#include "maths/maths.h"
+
 using namespace put;
 using namespace pen;
-using namespace ecs;
 
-// TASKS
-// - side swipe still isnt perfect
-// - add missing glyphs (or at least some)
-// - track names are sometimes not split correctly
-// - track names can sometimes have trailing commas
-// - memory warnings
-// - should have multiple soas, switch on request and clean up the old
-// - cache the registry, 
-// - user store prev position, prev mode etc
-// - make back work properly (from likes menu) ^^
-// - img and audio file cache management
-// - test and implement on iphone7
+namespace
+{
+    void*  user_setup(void* params);
+    loop_t user_update();
+    void   user_shutdown();
+} // namespace
+
+namespace pen
+{
+    pen_creation_params pen_entry(int argc, char** argv)
+    {
+        pen::pen_creation_params p;
+        p.window_width = 1125 / 3;
+        p.window_height = 2436 / 3;
+        p.window_title = "dig";
+        p.window_sample_count = 4;
+        p.user_thread_function = user_setup;
+        p.flags = pen::e_pen_create_flags::renderer;
+        return p;
+    }
+} // namespace pen
 
 // curl api
 
@@ -108,42 +116,6 @@ namespace curl
     }
 }
 
-namespace EntryFlags
-{
-    enum EntryFlags
-    {
-        allocated = 1<<0,
-        artwork_cached = 1<<1,
-        tracks_cached = 1<<2,
-        artwork_loaded = 1<<3,
-        tracks_loaded = 1<<4,
-        transitioning = 1<<5,
-        dragging = 1<<6,
-        artwork_requested = 1<<7,
-        liked = 1<<8,
-        hovered = 1<<9
-    };
-};
-
-namespace Tags
-{
-    enum Tag
-    {
-        techno = 1<<0,
-        electro = 1<<1,
-        house = 1<<2,
-        disco = 1<<3,
-        all = 0xffffffff
-    };
-
-    const c8* names[] = {
-        "techno",
-        "electro",
-        "house",
-        "disco"
-    };
-}
-
 u32 get_tags(nlohmann::json& tags)
 {
     u32 t = 0;
@@ -204,32 +176,9 @@ u32 tag_menu(u32 tags)
     return tags;
 }
 
-struct soa
-{
-    cmp_array<Str>                          id;
-    cmp_array<u64>                          flags;
-    cmp_array<Str>                          artist;
-    cmp_array<Str>                          title;
-    cmp_array<Str>                          label;
-    cmp_array<Str>                          cat;
-    cmp_array<Str>                          link;
-    cmp_array<Str>                          artwork_url;
-    cmp_array<Str>                          artwork_filepath;
-    cmp_array<u32>                          artwork_texture;
-    cmp_array<pen::texture_creation_params> artwork_tcp;
-    cmp_array<u32>                          track_name_count;
-    cmp_array<Str*>                         track_names;
-    cmp_array<u32>                          track_url_count;
-    cmp_array<Str*>                         track_urls;
-    cmp_array<u32>                          track_filepath_count;
-    cmp_array<Str*>                         track_filepaths;
-    cmp_array<u32>                          select_track;
-    cmp_array<f32>                          scrollx;
-    
-    std::atomic<size_t>                     available_entries = {0};
-    std::atomic<size_t>                     soa_size = {0};
-};
 static soa              s_releases;
+
+// TODO: make
 static nlohmann::json   s_likes;
 static std::mutex       s_like_mutex;
 static bool             s_likes_invalidated = false;
@@ -411,6 +360,7 @@ pen::texture_creation_params load_texture_from_disk(const Str& filepath)
     return tcp;
 }
 
+// TODO: remove
 // TODO: serialise
 static std::atomic<u32> s_request_mode = {0};
 static std::atomic<u32> s_request_tags = {Tags::all};
@@ -721,28 +671,6 @@ void* data_loader(void* userdata)
     }
 }
 
-namespace
-{
-    void*  user_setup(void* params);
-    loop_t user_update();
-    void   user_shutdown();
-} // namespace
-
-namespace pen
-{
-    pen_creation_params pen_entry(int argc, char** argv)
-    {
-        pen::pen_creation_params p;
-        p.window_width = 1125 / 3;
-        p.window_height = 2436 / 3;
-        p.window_title = "dig";
-        p.window_sample_count = 4;
-        p.user_thread_function = user_setup;
-        p.flags = pen::e_pen_create_flags::renderer;
-        return p;
-    }
-} // namespace pen
-
 vec2f touch_screen_mouse_wheel()
 {
     const pen::mouse_state& ms = pen::input_get_mouse_state();
@@ -773,6 +701,7 @@ namespace
     pen::timer* frame_timer;
     pen::json   releases_registry;
     u32         clear_screen;
+    AppContext  ctx;
 
     void* user_setup(void* params)
     {
@@ -794,6 +723,12 @@ namespace
         pen::thread_create(data_cacher, 10 * 1024 * 1024, nullptr, pen::e_thread_start_flags::detached);
         pen::thread_create(data_loader, 10 * 1024 * 1024, nullptr, pen::e_thread_start_flags::detached);
         pen::thread_create(user_data_save_thread, 10 * 1024 * 1024, nullptr, pen::e_thread_start_flags::detached);
+        
+        // init context
+        pen::window_get_size(ctx.w, ctx.h);
+        ctx.scroll = vec2f(0.0, ctx.h);
+        ctx.releases = &s_releases;
+        ctx.status_bar_height = pen::os_get_status_bar_portrait_height();
 
         // timer
         frame_timer = pen::timer_create();

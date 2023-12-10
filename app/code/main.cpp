@@ -775,6 +775,7 @@ namespace
         constexpr f32   k_indent1 = 2.0f;
                 
         // state
+        /*
         static vec2f    scroll = vec2f(0.0f, w); // start scroll so the dummy is off
         static Str      play_track_filepath = "";
         static bool     invalidate_track = false;
@@ -784,6 +785,7 @@ namespace
         static vec2f    scroll_delta = vec2f::zero();
         static Str      open_url_request = "";
         static u32      open_url_counter = 0;
+        */
         
         pen::timer_start(frame_timer);
         pen::renderer_new_frame();
@@ -811,38 +813,38 @@ namespace
         vec2f cur_scroll_delta = touch_screen_mouse_wheel();
         if(pen::input_is_mouse_down(PEN_MOUSE_L))
         {
-            scroll_delta = cur_scroll_delta;
+            ctx.scroll_delta = cur_scroll_delta;
         }
         else
         {
             // apply inertia
-            scroll_delta *= k_inertia;
-            if(mag(scroll_delta) < k_inertia_cutoff) {
-                scroll_delta = vec2f::zero();
+            ctx.scroll_delta *= k_inertia;
+            if(mag(ctx.scroll_delta) < k_inertia_cutoff) {
+                ctx.scroll_delta = vec2f::zero();
             }
             
             // snap back to min top
-            if(scroll.y < w) {
-                scroll.y = lerp(scroll.y, (f32)w, 0.5f);
+            if(ctx.scroll.y < w) {
+                ctx.scroll.y = lerp(ctx.scroll.y, (f32)w, 0.5f);
             }
             
             // release locks
-            scroll_lock_x = false;
-            scroll_lock_y = false;
+            ctx.scroll_lock_x = false;
+            ctx.scroll_lock_y = false;
         }
         
         // clamp to top
-        if(scroll.y < w) {
-            f32 miny = (f32)w / 1.5f;
-            if(scroll.y < miny) {
-                scroll.y = miny;
+        if(ctx.scroll.y < w) {
+            f32 miny = (f32)w / 1.5f; // TODO: constant
+            if(ctx.scroll.y < miny) {
+                ctx.scroll.y = miny;
             }
         }
         
-        f32 dx = abs(dot(scroll_delta, vec2f::unit_x()));
-        f32 dy = abs(dot(scroll_delta, vec2f::unit_y()));
+        f32 dx = abs(dot(ctx.scroll_delta, vec2f::unit_x()));
+        f32 dy = abs(dot(ctx.scroll_delta, vec2f::unit_y()));
         
-        bool side_drag = false;
+        bool side_drag = false; // TODO: move to ctx
         if(dx > dy)
         {
             side_drag = true;
@@ -1032,7 +1034,7 @@ namespace
             ImGui::SetWindowFontScale(1.0f);
             
             // ..
-            f32 scaled_vel = scroll_delta.x;
+            f32 scaled_vel = ctx.scroll_delta.x;
             
             // images
             if(s_releases.artwork_texture[r])
@@ -1058,12 +1060,12 @@ namespace
 
                     if(ImGui::IsItemHovered() && pen::input_is_mouse_down(PEN_MOUSE_L))
                     {
-                        if(!scroll_lock_y)
+                        if(!ctx.scroll_lock_y)
                         {
-                            if(abs(scroll_delta.x) > k_drag_threshold && side_drag)
+                            if(abs(ctx.scroll_delta.x) > k_drag_threshold && side_drag)
                             {
                                 s_releases.flags[r] |= EntryFlags::dragging;
-                                scroll_lock_x = true;
+                                ctx.scroll_lock_x = true;
                             }
                             
                             s_releases.flags[r] |= EntryFlags::hovered;
@@ -1085,7 +1087,7 @@ namespace
                 {
                     if(s_releases.flags[r] & EntryFlags::dragging)
                     {
-                        scroll_delta.y = 0.0f;
+                        ctx.scroll_delta.y = 0.0f;
                         s_releases.scrollx[r] -= scaled_vel;
                     }
                     
@@ -1096,13 +1098,13 @@ namespace
                     {
                         if(ssx > target + (imgw/2) && s_releases.select_track[r]+1 < num_images)
                         {
-                            scroll_delta.x = 0.0;
+                            ctx.scroll_delta.x = 0.0;
                             s_releases.select_track[r] += 1;
                             s_releases.flags[r] |= EntryFlags::transitioning;
                         }
                         else if(ssx < target - (imgw/2) && (ssize_t)s_releases.select_track[r]-1 >= 0)
                         {
-                            scroll_delta.x = 0.0;
+                            ctx.scroll_delta.x = 0.0;
                             s_releases.select_track[r] -= 1;
                             s_releases.flags[r] |= EntryFlags::transitioning;
                         }
@@ -1132,7 +1134,7 @@ namespace
                 }
                 else if (s_releases.flags[r] & EntryFlags::dragging)
                 {
-                    s_releases.scrollx[r] -= scroll_delta.x;
+                    s_releases.scrollx[r] -= ctx.scroll_delta.x;
                     s_releases.scrollx[r] = std::max(s_releases.scrollx[r], 0.0f);
                     s_releases.scrollx[r] = std::min(s_releases.scrollx[r], max_scroll);
                     s_releases.flags[r] &= ~EntryFlags::transitioning;
@@ -1173,10 +1175,10 @@ namespace
                             ImGui::Text("%s", ICON_FA_PLAY);
                             
                             // load up the track
-                            if(!(play_track_filepath == s_releases.track_filepaths[r][sel]))
+                            if(!(ctx.play_track_filepath == s_releases.track_filepaths[r][sel]))
                             {
-                                play_track_filepath = s_releases.track_filepaths[r][sel];
-                                invalidate_track = true;
+                                ctx.play_track_filepath = s_releases.track_filepaths[r][sel];
+                                ctx.invalidate_track = true;
                             }
                         }
                         else
@@ -1210,7 +1212,7 @@ namespace
             auto button_size = ImGui::CalcTextSize("%s", ICON_FA_HEART);
             
             bool pressed = false;
-            if(!scroll_lock_x && !scroll_lock_y)
+            if(!ctx.scroll_lock_x && !ctx.scroll_lock_y)
             {
                 static bool debounce = false;
                 if(pen::input_is_mouse_down(PEN_MOUSE_L) && !debounce)
@@ -1258,9 +1260,9 @@ namespace
             ImGui::SameLine();
             ImGui::PushID("buy");
             ImGui::Text("%s", ICON_FA_SHOPPING_BASKET);
-            if(ImGui::IsItemClicked() && !scroll_lock_x && !scroll_lock_y)
+            if(ImGui::IsItemClicked() && !ctx.scroll_lock_x && !ctx.scroll_lock_y)
             {
-                open_url_request = s_releases.link[r];
+                ctx.open_url_request = s_releases.link[r];
             }
             ImGui::PopID();
             
@@ -1292,25 +1294,25 @@ namespace
         ImGui::PopStyleVar(4);
         ImGui::End();
         
-        if(!side_drag && abs(scroll_delta.y) > k_drag_threshold)
+        if(!side_drag && abs(ctx.scroll_delta.y) > k_drag_threshold)
         {
-            scroll_lock_y = true;
+            ctx.scroll_lock_y = true;
         }
         
         // only not if already scrolling x
-        if(!scroll_lock_x)
+        if(!ctx.scroll_lock_x)
         {
-            scroll.y -= scroll_delta.y;
-            ImGui::SetScrollY(current_window, scroll.y);
+            ctx.scroll.y -= ctx.scroll_delta.y;
+            ImGui::SetScrollY(current_window, ctx.scroll.y);
         }
         
         // clamp to bottom
-        if(scroll.y > maxy) {
-            scroll.y = std::min(scroll.y, maxy);
+        if(ctx.scroll.y > maxy) {
+            ctx.scroll.y = std::min(ctx.scroll.y, maxy);
         }
         
         // audio player
-        if(!mute)
+        if(!ctx.mute)
         {
             static u32 si = -1;
             static u32 ci = -1;
@@ -1334,7 +1336,7 @@ namespace
                 }
             }
             
-            if(play_track_filepath.length() > 0 && invalidate_track)
+            if(ctx.play_track_filepath.length() > 0 && ctx.invalidate_track)
             {
                 //u32 sel = s_releases.select_track[top];
                 //PEN_LOG("%s", s_releases.track_names[top][sel].c_str());
@@ -1353,14 +1355,14 @@ namespace
                     started = false;
                 }
                 
-                si = put::audio_create_stream(play_track_filepath.c_str());
+                si = put::audio_create_stream(ctx.play_track_filepath.c_str());
                 ci = put::audio_create_channel_for_sound(si);
                 gi = put::audio_create_channel_group();
                 
                 put::audio_add_channel_to_group(ci, gi);
                 put::audio_group_set_volume(gi, 1.0f);
 
-                invalidate_track = false;
+                ctx.invalidate_track = false;
                 started = false;
             }
             
@@ -1386,7 +1388,7 @@ namespace
                     u32 next = s_releases.select_track[top] + 1;
                     if(next < s_releases.track_filepath_count[top])
                     {
-                        scroll_delta.x = 0.0;
+                        ctx.scroll_delta.x = 0.0;
                         s_releases.select_track[top] += 1;
                         s_releases.flags[top] |= EntryFlags::transitioning;
                     }
@@ -1425,25 +1427,25 @@ namespace
         }
         
         // apply request for open url and handle it to ignore clicks that became drags
-        if(!open_url_request.empty())
+        if(!ctx.open_url_request.empty())
         {
             // open url if we hacent scrolled within 5 frames
-            if(open_url_counter > 5)
+            if(ctx.open_url_counter > 5)
             {
-                pen::os_open_url(open_url_request);
-                open_url_request = "";
-                open_url_counter = 0;
+                pen::os_open_url(ctx.open_url_request);
+                ctx.open_url_request = "";
+                ctx.open_url_counter = 0;
             }
             else
             {
-                open_url_counter++;
+                ctx.open_url_counter++;
             }
                         
             // disable url opening if we began a scroll
-            if(scroll_lock_x || scroll_lock_y)
+            if(ctx.scroll_lock_x || ctx.scroll_lock_y)
             {
-                open_url_request = "";
-                open_url_counter = 0;
+                ctx.open_url_request = "";
+                ctx.open_url_counter = 0;
             }
         }
         // present

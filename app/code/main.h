@@ -15,6 +15,10 @@
 // - make back work properly (from likes menu) ^^
 // - test and implement on iphone7
 
+// - app icon
+// - fix / automate ability to set personal team
+// - add support for setting bundle identifier from config
+
 #include "types.h"
 #include "ecs/ecs_scene.h"
 
@@ -111,16 +115,18 @@ struct ReleasesView
 
 struct AppContext
 {
-    s32      w, h;
-    f32      status_bar_height;
-    vec2f    scroll = vec2f(0.0f, 0.0f);
-    Str      play_track_filepath = "";
-    bool     invalidate_track = false;
-    bool     mute = false;
-    bool     scroll_lock_y = false;
-    bool     scroll_lock_x = false;
-    vec2f    scroll_delta = vec2f::zero();
-    Str      open_url_request = "";
-    u32      open_url_counter = 0;
-    soa*     releases = nullptr;
+    s32             w, h;
+    f32             status_bar_height;
+    vec2f           scroll = vec2f(0.0f, 0.0f);
+    Str             play_track_filepath = "";
+    bool            invalidate_track = false;
+    bool            mute = false;
+    bool            scroll_lock_y = false;
+    bool            scroll_lock_x = false;
+    bool            side_drag = false;
+    vec2f           scroll_delta = vec2f::zero();
+    s32             top = -1;
+    Str             open_url_request = "";
+    u32             open_url_counter = 0;
+    ReleasesView*   view = nullptr;
 };

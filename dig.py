@@ -71,6 +71,38 @@ def parse_red_eye_artist(elem: str):
     }
 
 
+# try parsing and splitting tracks that do no match the target number of urls
+def reparse_and_split_tracks(track_names: list, target: int):
+    output_names = []
+    side = 'a'
+    track = 2
+    iter = 0
+    concated = ""
+    if len(track_names) == 1:
+        concated = track_names[0]
+        while len(output_names) < target:
+            # try lower
+            p = concated.find(side + str(track))
+            if p == -1:
+                # try upper
+                p = concated.find(side.upper() + str(track))
+            if p != -1:
+                output_names.append(concated[:p])
+                concated = concated[p:]
+                track += 1
+            else:
+                side = chr(ord(side) + 1)
+                track = 1
+            if iter > target:
+                break
+            iter += 1
+    else:
+        return track_names
+    if len(concated) > 0:
+        output_names.append(concated)
+    return output_names
+
+
 # extract the red eye track names (separated by '\n' '/' ',')
 def parse_red_eye_track_names(elem: str):
     body = parse_body(elem)
@@ -84,8 +116,9 @@ def parse_red_eye_track_names(elem: str):
     # strip out empty entries and strip whitespace
     strip_tracks = []
     for track in tracks:
-        if len(track) > 0:
-            strip_tracks.append(track.strip())
+        ss = track.strip()
+        if len(ss) > 0:
+            strip_tracks.append(ss)
     return strip_tracks
 
 
@@ -269,6 +302,13 @@ def scrape_red_eye(page_count, get_urls=True, test_single=False, verbose=False):
             merge = dict()
             merge[release_dict["id"]] = release_dict
             merge_dicts(releases_dict, merge)
+
+            # validate track counts and try reparsing
+            merged = releases_dict[release_dict["id"]]
+            if "track_urls" in merged and "track_names" in merged:
+                if len(merged["track_urls"]) > 0:
+                    if len(merged["track_urls"]) != len(merged["track_names"]):
+                        merged["track_names"] = reparse_and_split_tracks(merged["track_names"], len(merged["track_urls"]))
 
         # for dev just bail out after the first page
         if test_single:

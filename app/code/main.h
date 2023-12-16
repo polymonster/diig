@@ -1,12 +1,13 @@
 // TASKS
 // - side swipe still isnt perfect
 
+// UI / Text
 // - add missing glyphs (or at least some)
-// - track names are sometimes not split correctly
+// x - track names are sometimes not split correctly
 // - track names can sometimes have trailing commas
 
-// - memory warnings
 // - should have multiple soas, switch on request and clean up the old
+// - memory warnings
 // - cache the registry,
 // - img and audio file cache management
 // - selected track is not reset when changing mode
@@ -21,6 +22,8 @@
 
 #include "types.h"
 #include "ecs/ecs_scene.h"
+
+#include "json.hpp"
 
 using namespace put::ecs;
 
@@ -80,6 +83,18 @@ namespace View
 }
 typedef u32 View_t;
 
+namespace DataStatus
+{
+    enum DataStatus
+    {
+        e_not_initialised,
+        e_loading,
+        e_ready
+    };
+}
+typedef u32 DataStatus_t;
+
+
 struct soa
 {
     cmp_array<Str>                          id;
@@ -105,12 +120,24 @@ struct soa
     std::atomic<size_t>                     soa_size = {0};
 };
 
+struct DataContext
+{
+    nlohmann::json      cached_registry;
+    nlohmann::json      latest_registry;
+    nlohmann::json      user_data;
+    
+    std::atomic<u32>    cache_status = { 0 };
+    std::atomic<u32>    latest_status = { 0 };
+    std::atomic<u32>    user_data_status = { 0 };
+};
+
 struct ReleasesView
 {
     soa                 releases;
     View_t              view;
     Tags_t              tags;
     std::atomic<u32>    terminate;
+    DataContext*        data_ctx;
 };
 
 struct AppContext
@@ -129,4 +156,5 @@ struct AppContext
     Str             open_url_request = "";
     u32             open_url_counter = 0;
     ReleasesView*   view = nullptr;
+    DataContext     data_ctx;
 };

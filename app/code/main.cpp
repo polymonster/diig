@@ -15,8 +15,6 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb/stb_image.h"
 
-#include "json.hpp"
-
 #include <fstream>
 
 #include "maths/maths.h"
@@ -262,6 +260,13 @@ void resize_components(soa& s, size_t size)
     s.soa_size = new_size;
 }
 
+Str get_cache_path()
+{
+    Str dir = os_get_persistent_data_directory();
+    dir.appendf("/dig/cache/");
+    return dir;
+}
+
 Str download_and_cache(const Str& url, Str releaseid)
 {
     Str filepath = pen::str_replace_string(url, "https://", "");
@@ -284,19 +289,44 @@ Str download_and_cache(const Str& url, Str releaseid)
         pen::os_create_directory(dir.c_str());
         
         // download
-        //PEN_LOG("downloading: %s\n", url.c_str());
         auto db = new curl::DataBuffer;
         *db = curl::download(url.c_str());
         
         // stash
-        //PEN_LOG("caching: %s\n", filepath.c_str());
         FILE* fp = fopen(filepath.c_str(), "wb");
         fwrite(db->data, db->size, 1, fp);
         fclose(fp);
     }
-    else
+    
+    return filepath;
+}
+
+Str download_and_cache_named(const Str& url, const Str& filename)
+{
+    Str dir = os_get_persistent_data_directory();
+    dir.appendf("/dig/cache");
+    
+    // filepath
+    Str path = dir;
+    path.appendf("/%s", filename.c_str());
+    Str filepath = path;
+    
+    // check if file already exists
+    u32 mtime = 0;
+    pen::filesystem_getmtime(filepath.c_str(), mtime);
+    if(mtime == 0)
     {
-        // PEN_LOG("cache hit: %s", filepath.c_str());
+        // mkdirs
+        pen::os_create_directory(dir.c_str());
+        
+        // download
+        auto db = new curl::DataBuffer;
+        *db = curl::download(url.c_str());
+        
+        // stash
+        FILE* fp = fopen(filepath.c_str(), "wb");
+        fwrite(db->data, db->size, 1, fp);
+        fclose(fp);
     }
     
     return filepath;
@@ -363,16 +393,83 @@ pen::texture_creation_params load_texture_from_disk(const Str& filepath)
 static std::atomic<u32> s_request_mode = {0};
 static std::atomic<u32> s_request_tags = {Tags::all};
 
+void* registry_loader(void* userdata)
+{
+    DataContext* ctx = (DataContext*)userdata;
+    
+    // construct registry path
+    Str reg_path = get_cache_path();
+    reg_path.append("registry.json");
+    
+    // first we can check if we have a cached registry
+    ctx->cache_status = DataStatus::e_loading;
+        
+    u32 mtime = 0;
+    pen::filesystem_getmtime(reg_path.c_str(), mtime);
+    if(mtime != 0)
+    {
+        PEN_LOG("has cached");
+        ctx->cached_registry = nlohmann::json::parse(std::ifstream(reg_path.c_str()));
+        ctx->cache_status = DataStatus::e_ready;
+    }
+    
+    // grab the latest
+    ctx->latest_status = DataStatus::e_loading;
+    download_and_cache_named("https://raw.githubusercontent.com/polymonster/dig/main/registry/releases.json", "registry.json");
+    ctx->latest_registry = nlohmann::json::parse(std::ifstream(reg_path.c_str()));
+    ctx->latest_status = DataStatus::e_ready;
+    PEN_LOG("has latest");
+    
+    // assing latest as cached (if cache was not present)
+    if(ctx->cache_status != DataStatus::e_ready)
+    {
+        ctx->cached_registry = ctx->latest_registry;
+        ctx->cache_status = DataStatus::e_ready;
+    }
+    
+    for(;;)
+    {
+        pen::thread_sleep_ms(66);
+    }
+};
+
 void* info_loader(void* userdata)
 {
+    constexpr u32 k_latest_timeout = 1000;
+    
     // get view from userdata
     ReleasesView* view = (ReleasesView*)userdata;
     
-    // load registry
-    auto registry_data = curl::download("https://raw.githubusercontent.com/polymonster/dig/main/registry/releases.json");
+    // wait for a few seconds for a new registry
+    u32 timestart = pen::get_time_ms();
+    bool use_latest = true;
+    while(view->data_ctx->latest_registry != DataStatus::e_ready)
+    {
+        if(pen::get_time_ms() - timestart > k_latest_timeout)
+        {
+            use_latest = false;
+            break;
+        }
+    }
     
-    nlohmann::json releases_registry = nlohmann::json::parse((const c8*)registry_data.data);
-    releases_registry.size();
+    // grab registry either latest or cached
+    nlohmann::json releases_registry;
+    
+    if(use_latest)
+    {
+        PEN_LOG("using latest registry");
+        releases_registry = view->data_ctx->latest_registry;
+    }
+    else
+    {
+        while(view->data_ctx->cache_status != DataStatus::e_ready)
+        {
+            // need to wait on cached
+            pen::thread_sleep_ms(16);
+        }
+        
+        releases_registry = view->data_ctx->cached_registry;
+    }
     
     // load likes
     Str likes_filepath = os_get_persistent_data_directory();
@@ -706,7 +803,6 @@ namespace
 {
     pen::job*   s_thread_info = nullptr;
     pen::timer* frame_timer;
-    pen::json   releases_registry;
     u32         clear_screen;
     AppContext  ctx;
 
@@ -717,7 +813,7 @@ namespace
         s_thread_info = job_params->job_info;
         pen::semaphore_post(s_thread_info->p_sem_continue, 1);
 
-        // force audio in silet mode
+        // force audio in silent mode
         pen::os_ignore_slient();
         
         // intialise pmtech systems
@@ -730,8 +826,12 @@ namespace
         ctx.scroll = vec2f(0.0, ctx.h);
         ctx.status_bar_height = pen::os_get_status_bar_portrait_height();
         ctx.view = new ReleasesView;
+        ctx.view->data_ctx = &ctx.data_ctx;
         
-        // workers
+        // permanent workers
+        pen::thread_create(registry_loader, 10 * 1024 * 1024, &ctx.data_ctx, pen::e_thread_start_flags::detached);
+        
+        // workers... this will be setup per view
         pen::thread_create(info_loader, 10 * 1024 * 1024, ctx.view, pen::e_thread_start_flags::detached);
         pen::thread_create(data_cacher, 10 * 1024 * 1024, ctx.view, pen::e_thread_start_flags::detached);
         pen::thread_create(data_loader, 10 * 1024 * 1024, ctx.view, pen::e_thread_start_flags::detached);

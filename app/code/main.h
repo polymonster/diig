@@ -1,24 +1,24 @@
 // TASKS
 // - side swipe still isnt perfect
-
-// UI / Text
 // - add missing glyphs (or at least some)
-// x - track names are sometimes not split correctly
-// - track names can sometimes have trailing commas
-
-// - should have multiple soas, switch on request and clean up the old
 // - memory warnings
-// - cache the registry,
 // - img and audio file cache management
-// - selected track is not reset when changing mode
-
 // - user store prev position, prev mode etc
-// - make back work properly (from likes menu) ^^
+// - serialise prev position and prev mode?
+// - spinner and drag to reload
 // - test and implement on iphone7
-
+// - track names can sometimes have trailing commas
 // - app icon
 // - fix / automate ability to set personal team
 // - add support for setting bundle identifier from config
+
+// DONE
+// x - cache the registry
+// x - make back work properly (from likes menu)
+// x - track names are sometimes not split correctly
+// x - should have multiple soas, switch on request and clean up the old
+// x - selected track is not reset when changing mode
+
 
 #include "types.h"
 #include "ecs/ecs_scene.h"

@@ -20,7 +20,16 @@ configuration{}
 
 -- Example projects
 -- ( project name, current script dir, )
-create_app( "dig", "", script_path() )
+create_app("dig", "", script_path())
+
+-- ios dist overrides
+configuration{}
+if platform == "ios" then
+    xcodebuildsettings {
+        ["PRODUCT_BUNDLE_IDENTIFIER"] = "com.pmtech.dig",
+		["DEVELOPMENT_TEAM"] = "7C3Y39TX3G" -- personal team (Alex Dixon)
+    }
+end
 
 
 

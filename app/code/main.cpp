@@ -388,11 +388,6 @@ pen::texture_creation_params load_texture_from_disk(const Str& filepath)
     return tcp;
 }
 
-// TODO: remove
-// TODO: serialise
-static std::atomic<u32> s_request_mode = {0};
-static std::atomic<u32> s_request_tags = {Tags::all};
-
 void* registry_loader(void* userdata)
 {
     DataContext* ctx = (DataContext*)userdata;
@@ -412,7 +407,7 @@ void* registry_loader(void* userdata)
         ctx->cached_registry = nlohmann::json::parse(std::ifstream(reg_path.c_str()));
         ctx->cache_status = DataStatus::e_ready;
     }
-    
+        
     // grab the latest
     ctx->latest_status = DataStatus::e_loading;
     download_and_cache_named("https://raw.githubusercontent.com/polymonster/dig/main/registry/releases.json", "registry.json");
@@ -433,6 +428,42 @@ void* registry_loader(void* userdata)
     }
 };
 
+void* user_data_thread(void* userdata)
+{
+    // get user data dir
+    Str user_data_dir = os_get_persistent_data_directory();
+    user_data_dir.append("/dig/user_data/");
+    
+    // create dir
+    pen::os_create_directory(user_data_dir);
+    
+    // grab likes
+    u32 mtime  = 0;
+    Str likes_filepath = user_data_dir;
+    likes_filepath.appendf("likes.json");
+    pen::filesystem_getmtime(likes_filepath.c_str(), mtime);
+    if(mtime)
+    {
+        std::ifstream f(likes_filepath.c_str());
+        s_likes = nlohmann::json::parse(f);;
+    }
+
+    for(;;)
+    {
+        if(s_likes_invalidated)
+        {
+            auto likes = get_likes();
+            auto likes_str = likes.dump();
+            
+            FILE* fp = fopen(likes_filepath.c_str(), "w");
+            fwrite(likes_str.c_str(), likes_str.length(), 1, fp);
+            fclose(fp);
+        }
+        
+        pen::thread_sleep_ms(66);
+    }
+}
+
 void* info_loader(void* userdata)
 {
     constexpr u32 k_latest_timeout = 1000;
@@ -452,7 +483,7 @@ void* info_loader(void* userdata)
         }
     }
     
-    // grab registry either latest or cached
+    // grab registry; either latest or cached
     nlohmann::json releases_registry;
     
     if(use_latest)
@@ -471,226 +502,135 @@ void* info_loader(void* userdata)
         releases_registry = view->data_ctx->cached_registry;
     }
     
-    // load likes
-    Str likes_filepath = os_get_persistent_data_directory();
-    likes_filepath.appendf("/dig/user_data/likes.json");
+    // grab items for this requested view from the registry
+    std::vector<ChartItem> view_chart;
+    std::string view_name = View::lookup_names[view->view];
     
-    u32 mtime = 0;
-    pen::filesystem_getmtime(likes_filepath.c_str(), mtime);
-    if(mtime)
+    if(view->view == View::likes)
     {
-        std::ifstream f(likes_filepath.c_str());
-        s_likes = nlohmann::json::parse(f);;
-    }
-    
-    // find weekly chart
-    struct ChartItem
-    {
-        std::string index;
-        u32 pos;
-    };
-    
-    std::vector<ChartItem> weekly_chart;
-    std::vector<ChartItem> monthly_chart;
-    std::vector<ChartItem> new_releases;
-    std::vector<ChartItem> likes;
-    
-    new_releases.reserve(1024);
-    weekly_chart.reserve(128);
-    monthly_chart.reserve(128);
-    
-    for(auto& item : releases_registry)
-    {
-        if(item.contains("weekly_chart"))
+        for(auto& like : s_likes.items())
         {
-            weekly_chart.push_back({
-                item["id"],
-                item["weekly_chart"]
-            });
-        }
-        
-        if(item.contains("monthly_chart"))
-        {
-            monthly_chart.push_back({
-                item["id"],
-                item["monthly_chart"]
-            });
-        }
-        
-        if(item.contains("new_releases"))
-        {
-            new_releases.push_back({
-                item["id"],
-                item["new_releases"]
-            });
-        }
-    }
-    
-    // sort
-    std::sort(begin(new_releases),end(new_releases),[](ChartItem a, ChartItem b) {return a.pos < b.pos; });
-    std::sort(begin(weekly_chart),end(weekly_chart),[](ChartItem a, ChartItem b) {return a.pos < b.pos; });
-    std::sort(begin(monthly_chart),end(monthly_chart),[](ChartItem a, ChartItem b) {return a.pos < b.pos; });
-    
-    // allocate mem
-    resize_components(view->releases, releases_registry.size());
-    
-    // load internal
-    u32 internal_mode = -1;
-    u32 internal_tags = Tags::all;
-    std::vector<ChartItem>* modes[] = {
-        &new_releases,
-        &weekly_chart,
-        &monthly_chart,
-        &likes,
-    };
-    
-    for(;;)
-    {
-        if(internal_mode != s_request_mode || internal_tags != s_request_tags) {
-            internal_mode = s_request_mode;
-            internal_tags = s_request_tags;
-            view->releases.available_entries = 0;
-            
-            // populate likes
-            if(internal_mode == 3)
+            if(releases_registry.contains(like.key()) && like.value())
             {
-                likes.clear();
-                for(auto& like : s_likes.items())
-                {
-                    if(releases_registry.contains(like.key()) && like.value())
-                    {
-                        likes.push_back({
-                            like.key(),
-                            0
-                        });
-                    }
-                }
+                view_chart.push_back({
+                    like.key(),
+                    0
+                });
             }
-            
-            for(auto& entry : *modes[internal_mode])
+        }
+    }
+    else
+    {
+        // populate view
+        for(auto& item : releases_registry)
+        {
+            if(item.contains(view_name))
             {
-                u32 ri = (u32)view->releases.available_entries;
-                auto release = releases_registry[entry.index];
-                
-                // grab tags
-                if(release.contains("tags"))
-                {
-                    u32 tags = get_tags(release["tags"]);
-                    if(!(tags & internal_tags))
-                    {
-                        continue;
-                    }
-                }
-                
-                // simple info
-                view->releases.artist[ri] = release["artist"];
-                view->releases.title[ri] = release["title"];
-                view->releases.link[ri] = release["link"];
-                view->releases.label[ri] = release["label"];
-                view->releases.cat[ri] = release["cat"];
-                
-                std::string id = release["id"];
-                view->releases.id[ri] = id.c_str();
-
-                // assign artwork url
-                if(release["artworks"].size() > 1)
-                {
-                    view->releases.artwork_url[ri] = release["artworks"][1];
-                }
-                else
-                {
-                    view->releases.artwork_url[ri] = "";
-                }
-
-                // clear
-                view->releases.artwork_filepath[ri] = "";
-                view->releases.artwork_texture[ri] = 0;
-                view->releases.flags[ri] = 0;
-                
-                view->releases.track_name_count[ri] = 0;
-                view->releases.track_names[ri] = nullptr;
-                
-                view->releases.track_url_count[ri] = 0;
-                view->releases.track_urls[ri] = nullptr;
-                
-                view->releases.track_filepath_count[ri] = 0;
-                view->releases.select_track[ri] = 0; // reset
-
-                // track names
-                u32 name_count = (u32)release["track_names"].size();
-                if(name_count > 0)
-                {
-                    view->releases.track_names[ri] = new Str[name_count];
-                    for(u32 t = 0; t < release["track_names"].size(); ++t)
-                    {
-                        view->releases.track_names[ri][t] = release["track_names"][t];
-                    }
-                    
-                    std::atomic_thread_fence(std::memory_order_release);
-                    view->releases.track_name_count[ri] = name_count;
-                }
-
-                // track urls
-                u32 url_count = (u32)release["track_urls"].size();
-                if(url_count > 0)
-                {
-                    view->releases.track_urls[ri] = new Str[url_count];
-                    for(u32 t = 0; t < release["track_urls"].size(); ++t)
-                    {
-                        view->releases.track_urls[ri][t] = release["track_urls"][t];
-                    }
-                    
-                    std::atomic_thread_fence(std::memory_order_release);
-                    view->releases.track_url_count[ri] = url_count;
-                }
-                
-                // check likes
-                if(has_like(view->releases.id[ri]))
-                {
-                    view->releases.flags[ri] |= EntryFlags::liked;
-                }
-
-                pen::thread_sleep_ms(1);
-                view->releases.available_entries++;
-                
-                if(view->releases.available_entries > 250)
-                {
-                    break;
-                }
+                view_chart.push_back({
+                    item["id"],
+                    item[view_name]
+                });
             }
         }
     }
     
+    // sort the items
+    std::sort(begin(view_chart),end(view_chart),[](ChartItem a, ChartItem b) {return a.pos < b.pos; });
+    
+    // make space
+    resize_components(view->releases, view_chart.size());
+    
+    for(auto& entry : view_chart)
+    {
+        u32 ri = (u32)view->releases.available_entries;
+        auto release = releases_registry[entry.index];
+        
+        // grab tags
+        if(release.contains("tags"))
+        {
+            u32 tags = get_tags(release["tags"]);
+            if(!(tags & view->tags))
+            {
+                continue;
+            }
+        }
+        
+        // simple info
+        view->releases.artist[ri] = release["artist"];
+        view->releases.title[ri] = release["title"];
+        view->releases.link[ri] = release["link"];
+        view->releases.label[ri] = release["label"];
+        view->releases.cat[ri] = release["cat"];
+        
+        // clear
+        view->releases.artwork_filepath[ri] = "";
+        view->releases.artwork_texture[ri] = 0;
+        view->releases.flags[ri] = 0;
+        view->releases.track_name_count[ri] = 0;
+        view->releases.track_names[ri] = nullptr;
+        view->releases.track_url_count[ri] = 0;
+        view->releases.track_urls[ri] = nullptr;
+        view->releases.track_filepath_count[ri] = 0;
+        view->releases.select_track[ri] = 0; // reset
+        
+        std::string id = release["id"];
+        view->releases.id[ri] = id.c_str();
+
+        // assign artwork url
+        if(release["artworks"].size() > 1)
+        {
+            view->releases.artwork_url[ri] = release["artworks"][1];
+        }
+        else
+        {
+            view->releases.artwork_url[ri] = "";
+        }
+
+        // track names
+        u32 name_count = (u32)release["track_names"].size();
+        if(name_count > 0)
+        {
+            view->releases.track_names[ri] = new Str[name_count];
+            for(u32 t = 0; t < release["track_names"].size(); ++t)
+            {
+                view->releases.track_names[ri][t] = release["track_names"][t];
+            }
+            
+            std::atomic_thread_fence(std::memory_order_release);
+            view->releases.track_name_count[ri] = name_count;
+        }
+
+        // track urls
+        u32 url_count = (u32)release["track_urls"].size();
+        if(url_count > 0)
+        {
+            view->releases.track_urls[ri] = new Str[url_count];
+            for(u32 t = 0; t < release["track_urls"].size(); ++t)
+            {
+                view->releases.track_urls[ri][t] = release["track_urls"][t];
+            }
+            
+            std::atomic_thread_fence(std::memory_order_release);
+            view->releases.track_url_count[ri] = url_count;
+        }
+        
+        // check likes
+        if(has_like(view->releases.id[ri]))
+        {
+            view->releases.flags[ri] |= EntryFlags::liked;
+        }
+
+        pen::thread_sleep_ms(1);
+        view->releases.available_entries++;
+        
+        if(view->releases.available_entries > 250)
+        {
+            break;
+        }
+    }
+    
+    view->threads_terminated++;
     return nullptr;
-}
-
-void* user_data_save_thread(void* userdata)
-{
-    // get user data dir
-    Str user_data_dir = os_get_persistent_data_directory();
-    user_data_dir.append("/dig/user_data/");
-    
-    // create dir
-    pen::os_create_directory(user_data_dir);
-   
-    // likes
-    Str likes_filepath = user_data_dir;
-    likes_filepath.appendf("likes.json");
-    
-    for(;;)
-    {
-        if(s_likes_invalidated)
-        {
-            auto likes = get_likes();
-            auto likes_str = likes.dump();
-            
-            FILE* fp = fopen(likes_filepath.c_str(), "w");
-            fwrite(likes_str.c_str(), likes_str.length(), 1, fp);
-            fclose(fp);
-        }
-        
-        pen::thread_sleep_ms(66);
-    }
 }
 
 void* data_cacher(void* userdata)
@@ -700,6 +640,10 @@ void* data_cacher(void* userdata)
     
     for(;;)
     {
+        if(view->terminate) {
+            break;
+        }
+        
         // waits on info loader thread
         for(size_t i = 0; i < view->releases.available_entries; ++i)
         {
@@ -717,12 +661,6 @@ void* data_cacher(void* userdata)
             // cache tracks
             if(!(view->releases.flags[i] & EntryFlags::tracks_cached))
             {
-                if(view->releases.track_filepaths[i] != nullptr)
-                {
-                    delete[] view->releases.track_filepaths[i];
-                    view->releases.track_filepaths[i] = nullptr;
-                }
-                
                 if(view->releases.track_url_count[i] > 0 && view->releases.track_filepaths[i] == nullptr)
                 {
                     view->releases.track_filepaths[i] = new Str[view->releases.track_url_count[i]];
@@ -744,6 +682,8 @@ void* data_cacher(void* userdata)
         pen::thread_sleep_ms(16);
     }
     
+    // flag terminated
+    view->threads_terminated++;
     return nullptr;
 }
 
@@ -754,6 +694,10 @@ void* data_loader(void* userdata)
     
     for(;;)
     {
+        if(view->terminate) {
+            break;
+        }
+        
         for(size_t i = 0; i < view->releases.available_entries; ++i)
         {
             // load art if cached and not loaded
@@ -768,11 +712,13 @@ void* data_loader(void* userdata)
                 std::atomic_thread_fence(std::memory_order_release);
                 view->releases.flags[i] |= EntryFlags::artwork_loaded;
             }
-            
         }
         
         pen::thread_sleep_ms(16);
     }
+    
+    view->threads_terminated++;
+    return nullptr;
 }
 
 vec2f touch_screen_mouse_wheel()
@@ -806,6 +752,167 @@ namespace
     u32         clear_screen;
     AppContext  ctx;
 
+    void change_view(View_t new_view, Tags_t new_tags)
+    {
+        // first we add the current view into background views
+        if(ctx.view)
+        {
+            ctx.back_view = ctx.view;
+            ctx.background_views.insert(ctx.view);
+        }
+            
+        // kick off a new view
+        ctx.view = new ReleasesView;
+        ctx.view->data_ctx = &ctx.data_ctx;
+        ctx.view->tags = new_tags;
+        ctx.view->view = new_view;
+        
+        // workers per view
+        pen::thread_create(info_loader, 10 * 1024 * 1024, ctx.view, pen::e_thread_start_flags::detached);
+        pen::thread_create(data_cacher, 10 * 1024 * 1024, ctx.view, pen::e_thread_start_flags::detached);
+        pen::thread_create(data_loader, 10 * 1024 * 1024, ctx.view, pen::e_thread_start_flags::detached);
+    }
+
+    void cleanup_views()
+    {
+        std::vector<ReleasesView*> to_remove;
+        
+        for(auto& view : ctx.background_views)
+        {
+            if(view != ctx.back_view && view != ctx.view)
+            {
+                view->terminate = 1;
+                if(view->threads_terminated == 3)
+                {
+                    auto& releases = view->releases;
+                    for(size_t i = 0; i < releases.available_entries; ++i) {
+                        // unload textures
+                        if (releases.flags[i] & EntryFlags::artwork_loaded) {
+                            if(releases.artwork_texture[i] != 0) {
+                                pen::renderer_release_texture(releases.artwork_texture[i]);
+                                releases.artwork_texture[i] = 0;
+                            }
+                            memset(&releases.artwork_tcp, 0x0, sizeof(texture_creation_params));
+                            releases.flags[i] &= ~EntryFlags::artwork_loaded;
+                            releases.flags[i] &= ~EntryFlags::artwork_requested;
+                        }
+                        
+
+                        // unload strings
+                        if(view->releases.track_filepaths[i]) {
+                            delete[] view->releases.track_filepaths[i];
+                        }
+                        
+                        if(view->releases.track_names.data && view->releases.track_names[i]) {
+                            delete[] view->releases.track_names[i];
+                        }
+                        
+                        if(view->releases.track_urls[i]) {
+                            delete[] view->releases.track_urls[i];
+                        }
+                    }
+                    
+                    // TODO: cleanup the soa itself
+                    
+                    to_remove.push_back(view);
+                }
+            }
+        }
+        
+        for(auto& rm : to_remove) {
+            PEN_LOG("erasing view");
+            ctx.background_views.erase(ctx.background_views.find(rm));
+        }
+    }
+
+    void view_menu()
+    {
+        // view info
+        View_t cur_view = ctx.view->view;
+        Tags_t cur_tags = ctx.view->tags;
+        
+        // likes button on same line
+        ImGui::SameLine();
+        f32 offset = ImGui::CalcTextSize("%s", ICON_FA_HEART_O).y;
+        ImGui::SetCursorPosX(ctx.w - offset * 1.5f);
+        ImGui::Text("%s", cur_view == View::likes ? ICON_FA_HEART : ICON_FA_HEART_O);
+        if(ImGui::IsItemClicked())
+        {
+            change_view(View::likes, Tags::all);
+        }
+        ImGui::SetWindowFontScale(1.0f);
+        
+        if(cur_view != View::likes)
+        {
+            // store page
+            ImGui::SetWindowFontScale(2.0f);
+            
+            constexpr const char* k_modes[] = {
+                "Latest",
+                "Weekly Chart",
+                "Monthly Chart",
+                "Likes"
+            };
+            
+            ImGui::Dummy(ImVec2(k_indent1, 0.0f));
+            ImGui::SameLine();
+            ImGui::Text("%s", k_modes[cur_view]);
+            if(ImGui::IsItemClicked()) {
+                ImGui::OpenPopup("Mode Select");
+            }
+            
+            if(ImGui::BeginPopup("Mode Select"))
+            {
+                if(ImGui::MenuItem("Latest"))
+                {
+                    change_view(View::latest, ctx.view->tags);
+                }
+                if(ImGui::MenuItem("Weekly Chart"))
+                {
+                    change_view(View::weekly_chart, ctx.view->tags);
+                }
+                if(ImGui::MenuItem("Monthly Chart"))
+                {
+                    change_view(View::monthly_chart, ctx.view->tags);
+                }
+                ImGui::EndPopup();
+            }
+            
+            ImGui::SetWindowFontScale(1.0f);
+            
+            // tags
+            ImGui::Dummy(ImVec2(k_indent1, 0.0f));
+            ImGui::SameLine();
+                    
+            ImGui::Text("%s", get_tags_str(ctx.view->tags).c_str());
+            if(ImGui::IsItemClicked()) {
+                ImGui::OpenPopup("Tag Select");
+            }
+            
+            if(ImGui::BeginPopup("Tag Select"))
+            {
+                u32 new_tags = tag_menu(ctx.view->tags);
+                if(new_tags != cur_tags)
+                {
+                    change_view(ctx.view->view, new_tags);
+                }
+                ImGui::EndPopup();
+            }
+        }
+        else
+        {
+            // likes page
+            ImGui::SetWindowFontScale(2.0f);
+            ImGui::Dummy(ImVec2(k_indent1, 0.0f));
+            ImGui::SameLine();
+            ImGui::Text("%s", "Likes");
+            ImGui::SetWindowFontScale(1.0f);
+        }
+        
+        // cleanup memory on old views
+        cleanup_views();
+    }
+
     void* user_setup(void* params)
     {
         // unpack the params passed to the thread and signal to the engine it ok to proceed
@@ -825,17 +932,13 @@ namespace
         pen::window_get_size(ctx.w, ctx.h);
         ctx.scroll = vec2f(0.0, ctx.h);
         ctx.status_bar_height = pen::os_get_status_bar_portrait_height();
-        ctx.view = new ReleasesView;
-        ctx.view->data_ctx = &ctx.data_ctx;
-        
+
         // permanent workers
         pen::thread_create(registry_loader, 10 * 1024 * 1024, &ctx.data_ctx, pen::e_thread_start_flags::detached);
-        
-        // workers... this will be setup per view
-        pen::thread_create(info_loader, 10 * 1024 * 1024, ctx.view, pen::e_thread_start_flags::detached);
-        pen::thread_create(data_cacher, 10 * 1024 * 1024, ctx.view, pen::e_thread_start_flags::detached);
-        pen::thread_create(data_loader, 10 * 1024 * 1024, ctx.view, pen::e_thread_start_flags::detached);
-        pen::thread_create(user_data_save_thread, 10 * 1024 * 1024, ctx.view, pen::e_thread_start_flags::detached);
+        pen::thread_create(user_data_thread, 10 * 1024 * 1024, ctx.view, pen::e_thread_start_flags::detached);
+    
+        // enter initial view, the inputs can be serialised
+        change_view(View::latest, Tags::all);
 
         // timer
         frame_timer = pen::timer_create();
@@ -874,16 +977,6 @@ namespace
         //
         s32 w, h;
         pen::window_get_size(w, h);
-        
-        constexpr f32   k_drag_threshold = 0.1f;
-        constexpr f32   k_inertia = 0.96f;
-        constexpr f32   k_inertia_cutoff = 3.33f;
-        constexpr f32   k_snap_lerp = 0.3f;
-        constexpr f32   k_indent1 = 2.0f;
-        constexpr f32   k_top_pull_pad = 1.5f;
-
-        // get latest release
-        auto& releases = ctx.view->releases;
         
         pen::timer_start(frame_timer);
         pen::renderer_new_frame();
@@ -948,134 +1041,28 @@ namespace
             ctx.side_drag = true;
         }
         
-        bool release_textures = false;
-        
         // header
         ImGui::SetWindowFontScale(3.0f);
         ImGui::Dummy(ImVec2(k_indent1, 0.0f));
         ImGui::SameLine();
         
-        if(s_request_mode == 3)
+        if(ctx.view->view == View::likes)
         {
             ImGui::Text("%s", ICON_FA_CHEVRON_LEFT);
             if(ImGui::IsItemClicked())
             {
-                s_request_mode = 0;
-                releases.available_entries = 0;
-                release_textures = true;
+                ctx.view = ctx.back_view;
             }
         }
         else
         {
             ImGui::Text("Dig");
         }
-        
-        // mode
 
-        // likes button on same line
-        ImGui::SameLine();
-        f32 offset = ImGui::CalcTextSize("%s", ICON_FA_HEART_O).y;
-        ImGui::SetCursorPosX(w - offset * 1.5f);
-        ImGui::Text("%s", s_request_mode == 3 ? ICON_FA_HEART : ICON_FA_HEART_O);
-        if(ImGui::IsItemClicked())
-        {
-            releases.available_entries = 0;
-            s_request_mode = 3;
-            release_textures = true;
-        }
-        ImGui::SetWindowFontScale(1.0f);
+        view_menu();
         
-        if(s_request_mode != 3)
-        {
-            // store page
-            ImGui::SetWindowFontScale(2.0f);
-            
-            constexpr const char* k_modes[] = {
-                "Latest",
-                "Weekly Chart",
-                "Monthly Chart",
-                "Likes"
-            };
-            
-            ImGui::Dummy(ImVec2(k_indent1, 0.0f));
-            ImGui::SameLine();
-            ImGui::Text("%s", k_modes[s_request_mode]);
-            if(ImGui::IsItemClicked()) {
-                ImGui::OpenPopup("Mode Select");
-            }
-            
-            if(ImGui::BeginPopup("Mode Select"))
-            {
-                if(ImGui::MenuItem("Latest"))
-                {
-                    releases.available_entries = 0;
-                    s_request_mode = 0;
-                    release_textures = true;
-                }
-                if(ImGui::MenuItem("Weekly Chart"))
-                {
-                    releases.available_entries = 0;
-                    s_request_mode = 1;
-                    release_textures = true;
-                }
-                if(ImGui::MenuItem("Monthly Chart"))
-                {
-                    releases.available_entries = 0;
-                    s_request_mode = 2;
-                    release_textures = true;
-                }
-                ImGui::EndPopup();
-            }
-            
-            ImGui::SetWindowFontScale(1.0f);
-            
-            // tags
-            ImGui::Dummy(ImVec2(k_indent1, 0.0f));
-            ImGui::SameLine();
-                    
-            ImGui::Text("%s", get_tags_str(s_request_tags).c_str());
-            if(ImGui::IsItemClicked()) {
-                ImGui::OpenPopup("Tag Select");
-            }
-            
-            if(ImGui::BeginPopup("Tag Select"))
-            {
-                u32 new_tags = tag_menu(s_request_tags);
-                if(new_tags != s_request_tags)
-                {
-                    releases.available_entries = 0;
-                    s_request_tags = new_tags;
-                    release_textures = true;
-                }
-                ImGui::EndPopup();
-            }
-        }
-        else
-        {
-            // likes page
-            ImGui::SetWindowFontScale(2.0f);
-            ImGui::Dummy(ImVec2(k_indent1, 0.0f));
-            ImGui::SameLine();
-            ImGui::Text("%s", "Likes");
-            ImGui::SetWindowFontScale(1.0f);
-        }
-        
-        //
-        if(release_textures)
-        {
-            for(size_t i = 0; i < releases.available_entries; ++i)
-            {
-                if (releases.flags[i] & EntryFlags::artwork_loaded){
-                    if(releases.artwork_texture[i] != 0) {
-                        pen::renderer_release_texture(releases.artwork_texture[i]);
-                        releases.artwork_texture[i] = 0;
-                    }
-                    memset(&releases.artwork_tcp, 0x0, sizeof(texture_creation_params));
-                    releases.flags[i] &= ~EntryFlags::artwork_loaded;
-                    releases.flags[i] &= ~EntryFlags::artwork_requested;
-                }
-            }
-        }
+        // get latest releases
+        auto& releases = ctx.view->releases;
         
         // mouse
         auto ms = pen::input_get_mouse_state();

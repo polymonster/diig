@@ -24,6 +24,7 @@
 #include "ecs/ecs_scene.h"
 
 #include "json.hpp"
+#include <set>
 
 using namespace put::ecs;
 
@@ -74,11 +75,18 @@ namespace View
         likes
     };
 
-    const c8* names[] = {
+    const c8* display_names[] = {
         "Latest",
         "Weekly Chart",
         "Monthly Chart",
         "Likes"
+    };
+
+    const c8* lookup_names[] = {
+        "new_releases",
+        "weekly_chart",
+        "monthly_chart",
+        "likes"
     };
 }
 typedef u32 View_t;
@@ -93,7 +101,6 @@ namespace DataStatus
     };
 }
 typedef u32 DataStatus_t;
-
 
 struct soa
 {
@@ -133,28 +140,44 @@ struct DataContext
 
 struct ReleasesView
 {
-    soa                 releases;
-    View_t              view;
-    Tags_t              tags;
-    std::atomic<u32>    terminate;
-    DataContext*        data_ctx;
+    soa                 releases = {};
+    DataContext*        data_ctx = nullptr;
+    View_t              view = View::latest;
+    Tags_t              tags = Tags::all;
+    std::atomic<u32>    terminate = { 0 };
+    std::atomic<u32>    threads_terminated = { 0 };
+};
+
+struct ChartItem
+{
+    std::string index;
+    u32         pos;
 };
 
 struct AppContext
 {
-    s32             w, h;
-    f32             status_bar_height;
-    vec2f           scroll = vec2f(0.0f, 0.0f);
-    Str             play_track_filepath = "";
-    bool            invalidate_track = false;
-    bool            mute = false;
-    bool            scroll_lock_y = false;
-    bool            scroll_lock_x = false;
-    bool            side_drag = false;
-    vec2f           scroll_delta = vec2f::zero();
-    s32             top = -1;
-    Str             open_url_request = "";
-    u32             open_url_counter = 0;
-    ReleasesView*   view = nullptr;
-    DataContext     data_ctx;
+    s32                     w, h;
+    f32                     status_bar_height;
+    vec2f                   scroll = vec2f(0.0f, 0.0f);
+    Str                     play_track_filepath = "";
+    bool                    invalidate_track = false;
+    bool                    mute = false;
+    bool                    scroll_lock_y = false;
+    bool                    scroll_lock_x = false;
+    bool                    side_drag = false;
+    vec2f                   scroll_delta = vec2f::zero();
+    s32                     top = -1;
+    Str                     open_url_request = "";
+    u32                     open_url_counter = 0;
+    ReleasesView*           view = nullptr;
+    ReleasesView*           back_view = nullptr;
+    DataContext             data_ctx = {};
+    std::set<ReleasesView*> background_views = {};
 };
+
+constexpr f32   k_drag_threshold = 0.1f;
+constexpr f32   k_inertia = 0.96f;
+constexpr f32   k_inertia_cutoff = 3.33f;
+constexpr f32   k_snap_lerp = 0.3f;
+constexpr f32   k_indent1 = 2.0f;
+constexpr f32   k_top_pull_pad = 1.5f;

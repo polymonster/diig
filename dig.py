@@ -113,10 +113,10 @@ def parse_red_eye_track_names(elem: str):
     # some are separated by ','
     if len(tracks) == 1:
         tracks = body.split(",")
-    # strip out empty entries and strip whitespace
+    # strip out empty entries and strip whitespace and trailing commas
     strip_tracks = []
     for track in tracks:
-        ss = track.strip()
+        ss = track.strip().strip(",")
         if len(ss) > 0:
             strip_tracks.append(ss)
     return strip_tracks

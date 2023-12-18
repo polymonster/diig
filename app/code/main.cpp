@@ -813,7 +813,6 @@ namespace
                     }
                     
                     // TODO: cleanup the soa itself
-                    
                     to_remove.push_back(view);
                 }
             }

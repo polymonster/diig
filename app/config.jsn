@@ -158,5 +158,13 @@ import "pmtech/tools/pmbuild_ext/pmbuild_init.jsn"
                 "cd ${pmtech_dir}/third_party && ../pmbuild make bullet-ios all -destination generic/platform=iOS -configuration Debug -quiet"
             ]
         }
+
+        makeicon: {
+            type: shell
+            explicit: true
+            commands: [
+                "./tools/osx/makeicon -sizes:dist/ios/Images.xcassets/AppIcon.appiconset/Contents.json -input:dist/icon/dig_icon.png -resize -platform:ios dist/ios/Images.xcassets/AppIcon.appiconset"
+            ]
+        }
     }
 }

@@ -27,9 +27,18 @@ create_app("dig", "", script_path())
 configuration{}
 if platform == "ios" then
     xcodebuildsettings {
+		["ASSETCATALOG_COMPILER_APPICON_NAME"] = "AppIcon",
         ["PRODUCT_BUNDLE_IDENTIFIER"] = "com.pmtech.dig",
 		["DEVELOPMENT_TEAM"] = "7C3Y39TX3G" -- personal team (Alex Dixon)
     }
+
+	files {
+		"dist/ios/Images.xcassets"
+	}
+
+	xcodebuildresources {
+		"dist/ios/Images.xcassets"
+	}
 end
 
 

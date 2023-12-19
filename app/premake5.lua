@@ -10,16 +10,17 @@ solution ("dig" .. platform_dir)
 	buildoptions { build_cmd }
 	linkoptions { link_cmd }
 
--- Engine Project
+-- engine
 dofile "pmtech/core/pen/project.lua"
 dofile "pmtech/core/put/project.lua"
+
+-- includes for shader builds
 configuration{}
 	includedirs{
 		"."
 	}
 
--- Example projects
--- ( project name, current script dir, )
+-- app
 create_app("dig", "", script_path())
 
 -- ios dist overrides

@@ -186,6 +186,36 @@ def sort_func(kv):
             now = datetime.datetime.now()
             return now.timestamp() - kv[1]["added"]
 
+
+# find and parse all grid elems
+def parse_grid_elems(html_str):
+    releases_html = []
+    while True:
+        first = html_str.find('class="releaseGrid')
+        # no more left
+        if first == -1:
+            break
+        start = html_str[:first].rfind("<div ")
+        stack = 1
+        iter_pos = first
+        while stack > 0:
+            open = html_str.find("<div", iter_pos)
+            close = html_str.find("</div", iter_pos)
+            if open != 1 and close != -1 and open < close:
+                stack += 1
+                iter_pos = open + 5
+            elif close != -1:
+                stack -= 1
+                iter_pos = close + 5
+
+        releases_html.append(html_str[start:iter_pos])
+
+        # iterate
+        html_str = html_str[iter_pos:]
+
+    return releases_html
+
+
 # scrape redeyerecords.co.uk
 def scrape_red_eye(page_count, get_urls=True, test_single=False, verbose=False):
     print("scraping: redeye", flush=True)
@@ -246,14 +276,14 @@ def scrape_red_eye(page_count, get_urls=True, test_single=False, verbose=False):
             continue
 
         html_str = html_file.read().decode("utf8")
-        releases = cgu.find_all_tokens('class="releaseGrid grid', html_str)
+        grid_elems = parse_grid_elems(html_str)
 
-        for release_pos in releases:
-            (pos, id_elem) = find_parse_elem(html_str, release_pos, "<div id=", ">", reverse=True)
-            (_, artist_elem) = find_parse_elem(html_str, pos, '<p class="artist"', "</p>")
-            (_, tracks_elem) = find_parse_elem(html_str, pos, '<p class="tracks"', "</p>")
-            (_, label_elem) = find_parse_elem(html_str, pos, '<p class="label"', "</p>")
-            (_, link_elem) = find_parse_elem(html_str, pos, '<a class="link"', "</a>")
+        for grid_elem in grid_elems:
+            (_, id_elem) = find_parse_elem(grid_elem, 0, "<div id=", ">")
+            (_, artist_elem) = find_parse_elem(grid_elem, 0, '<p class="artist"', "</p>")
+            (_, tracks_elem) = find_parse_elem(grid_elem, 0, '<p class="tracks"', "</p>")
+            (_, label_elem) = find_parse_elem(grid_elem, 0, '<p class="label"', "</p>")
+            (_, link_elem) = find_parse_elem(grid_elem, 0, '<a class="link"', "</a>")
 
             release_dict = dict()
             release_dict["id"] = parse_red_eye_release_id(id_elem)
@@ -263,10 +293,22 @@ def scrape_red_eye(page_count, get_urls=True, test_single=False, verbose=False):
             merge_dicts(release_dict, parse_red_eye_artist(artist_elem))
             id = release_dict["id"]
             release_dict["tags"] = dict()
+            release_dict["store_tags"] = dict()
 
             # add tags
             for tag in tags:
                 release_dict["tags"][tag] = True
+
+            # add store tags
+            if grid_elem.find("price preorder") != -1:
+                release_dict["store_tags"]["preorder"] = True
+            else:
+                release_dict["store_tags"]["preorder"] = False
+
+            if grid_elem.find("Out Of Stock") != -1:
+                release_dict["store_tags"]["out_of_stock"] = True
+            else:
+                release_dict["store_tags"]["out_of_stock"] = False
 
             # extra print for debugging long jobs
             if verbose:
@@ -293,7 +335,8 @@ def scrape_red_eye(page_count, get_urls=True, test_single=False, verbose=False):
 
             # assign indices
             if category in ["weekly_chart", "monthly_chart"]:
-                release_dict[category] = releases.index(release_pos)
+                release_dict[category] = grid_elems.index(grid_elem)
+                release_dict["has_charted"] = True
             else:
                 release_dict[category] = new_releases
                 new_releases += 1

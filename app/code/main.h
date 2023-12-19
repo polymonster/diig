@@ -2,15 +2,19 @@
 // - side swipe still isnt perfect
 // - add missing glyphs (or at least some)
 // - memory warnings
+// - cleanup soa
+// - enum cache
 // - img and audio file cache management
 // - user store prev position, prev mode etc
 // - serialise prev position and prev mode?
+// - refactor user data into a single dict and move to context
 // - spinner and drag to reload
 // - test and implement on iphone7
 // - track names can sometimes have trailing commas
 // - app icon
-// - fix / automate ability to set personal team
-// - add support for setting bundle identifier from config
+// - store info pre-order badge
+// - store info out of stock badge
+// - store info has charted
 
 // DONE
 // x - cache the registry
@@ -18,7 +22,8 @@
 // x - track names are sometimes not split correctly
 // x - should have multiple soas, switch on request and clean up the old
 // x - selected track is not reset when changing mode
-
+// x - add support for setting bundle identifier from config
+// x - fix / automate ability to set personal team
 
 #include "types.h"
 #include "ecs/ecs_scene.h"

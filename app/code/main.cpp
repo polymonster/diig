@@ -318,16 +318,16 @@ Str download_and_cache_named(const Str& url, const Str& filename)
     {
         // mkdirs
         pen::os_create_directory(dir.c_str());
-        
-        // download
-        auto db = new curl::DataBuffer;
-        *db = curl::download(url.c_str());
-        
-        // stash
-        FILE* fp = fopen(filepath.c_str(), "wb");
-        fwrite(db->data, db->size, 1, fp);
-        fclose(fp);
     }
+        
+    // download
+    auto db = new curl::DataBuffer;
+    *db = curl::download(url.c_str());
+    
+    // stash
+    FILE* fp = fopen(filepath.c_str(), "wb");
+    fwrite(db->data, db->size, 1, fp);
+    fclose(fp);
     
     return filepath;
 }

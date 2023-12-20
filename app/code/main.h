@@ -1,22 +1,23 @@
 // TASKS
+// - bug where a track stops but another isnt playing and the prev track cannot restart (iphone 7)
 // - side swipe still isnt perfect
 // - add missing glyphs (or at least some)
-// - memory warnings
-// - cleanup soa
-// - enum cache
 // - img and audio file cache management
 // - user store prev position, prev mode etc
 // - serialise prev position and prev mode?
 // - refactor user data into a single dict and move to context
-// - spinner and drag to reload
-// - test and implement on iphone7
 // - track names can sometimes have trailing commas
-// - app icon
-// - store info pre-order badge
-// - store info out of stock badge
-// - store info has charted
+// - set min ios version on pen and put
+// - poll registry for updates periodically
 
 // DONE
+// x - cleanup soa
+// x - memory warnings
+// x - spinner and drag to reload
+// x - test and implement on iphone7
+// x - store info pre-order badge
+// x - store info out of stock badge
+// x - store info has charted
 // x - cache the registry
 // x - make back work properly (from likes menu)
 // x - track names are sometimes not split correctly
@@ -24,6 +25,8 @@
 // x - selected track is not reset when changing mode
 // x - add support for setting bundle identifier from config
 // x - fix / automate ability to set personal team
+// x - app icon
+// x - enum cache
 
 #include "types.h"
 #include "ecs/ecs_scene.h"
@@ -46,7 +49,8 @@ namespace EntryFlags
         dragging = 1<<6,
         artwork_requested = 1<<7,
         liked = 1<<8,
-        hovered = 1<<9
+        hovered = 1<<9,
+        cache_url_requested = 1<<10
     };
 };
 
@@ -69,6 +73,29 @@ namespace Tags
     };
 }
 typedef u32 Tags_t;
+
+namespace StoreTags
+{
+    enum StoreTags
+    {
+        preorder = 1<<0,
+        out_of_stock = 1<<1,
+        has_charted = 1<<2
+    };
+
+    const c8* names[] = {
+        "preorder",
+        "out_of_stock",
+        "has_charted"
+    };
+
+    const c8* icons[] = {
+        ICON_FA_CALENDAR_TIMES_O,
+        ICON_FA_EXCLAMATION_TRIANGLE,
+        ICON_FA_FIRE
+    };
+}
+typedef u32 StoreTags_t;
 
 namespace View
 {
@@ -128,6 +155,7 @@ struct soa
     cmp_array<Str*>                         track_filepaths;
     cmp_array<u32>                          select_track;
     cmp_array<f32>                          scrollx;
+    cmp_array<StoreTags_t>                  store_tags;
     std::atomic<size_t>                     available_entries = {0};
     std::atomic<size_t>                     soa_size = {0};
 };
@@ -138,9 +166,12 @@ struct DataContext
     nlohmann::json      latest_registry;
     nlohmann::json      user_data;
     
-    std::atomic<u32>    cache_status = { 0 };
-    std::atomic<u32>    latest_status = { 0 };
+    std::atomic<u32>    cache_registry_status = { 0 };
+    std::atomic<u32>    latest_registry_status = { 0 };
     std::atomic<u32>    user_data_status = { 0 };
+    
+    std::atomic<u32>    cached_release_folders = { 0 };
+    std::atomic<size_t> cached_release_bytes = { 0 };
 };
 
 struct ReleasesView
@@ -151,6 +182,7 @@ struct ReleasesView
     Tags_t              tags = Tags::all;
     std::atomic<u32>    terminate = { 0 };
     std::atomic<u32>    threads_terminated = { 0 };
+    u32                 top_pos = 0;
 };
 
 struct ChartItem
@@ -176,6 +208,7 @@ struct AppContext
     u32                     open_url_counter = 0;
     ReleasesView*           view = nullptr;
     ReleasesView*           back_view = nullptr;
+    ReleasesView*           reload_view = nullptr;
     DataContext             data_ctx = {};
     std::set<ReleasesView*> background_views = {};
 };
@@ -186,3 +219,4 @@ constexpr f32   k_inertia_cutoff = 3.33f;
 constexpr f32   k_snap_lerp = 0.3f;
 constexpr f32   k_indent1 = 2.0f;
 constexpr f32   k_top_pull_pad = 1.5f;
+constexpr f32   k_top_pull_reload = 1.25f;

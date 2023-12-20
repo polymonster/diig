@@ -9,6 +9,8 @@
 // - track names can sometimes have trailing commas
 // - set min ios version on pen and put
 // - poll registry for updates periodically
+// - settings menu
+// - add clear cache and cache options
 
 // DONE
 // x - cleanup soa

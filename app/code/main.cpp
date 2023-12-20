@@ -260,6 +260,16 @@ void resize_components(soa& s, size_t size)
     s.soa_size = new_size;
 }
 
+void free_components(soa& s)
+{
+    size_t num = get_num_components(s);
+    for (u32 i = 0; i < num; ++i)
+    {
+        generic_cmp_array& cmp = get_component_array(s, i);
+        pen::memory_free(cmp.data);
+    }
+}
+
 Str get_cache_path()
 {
     Str dir = os_get_persistent_data_directory();
@@ -296,6 +306,9 @@ Str download_and_cache(const Str& url, Str releaseid)
         FILE* fp = fopen(filepath.c_str(), "wb");
         fwrite(db->data, db->size, 1, fp);
         fclose(fp);
+        
+        // free
+        free(db->data);
     }
     
     return filepath;
@@ -328,6 +341,9 @@ Str download_and_cache_named(const Str& url, const Str& filename)
     FILE* fp = fopen(filepath.c_str(), "wb");
     fwrite(db->data, db->size, 1, fp);
     fclose(fp);
+    
+    // free
+    free(db->data);
     
     return filepath;
 }
@@ -397,33 +413,32 @@ void* registry_loader(void* userdata)
     reg_path.append("registry.json");
     
     // first we can check if we have a cached registry
-    ctx->cache_status = DataStatus::e_loading;
+    ctx->cache_registry_status = DataStatus::e_loading;
         
     u32 mtime = 0;
     pen::filesystem_getmtime(reg_path.c_str(), mtime);
     if(mtime != 0)
     {
-        PEN_LOG("has cached");
         ctx->cached_registry = nlohmann::json::parse(std::ifstream(reg_path.c_str()));
-        ctx->cache_status = DataStatus::e_ready;
+        ctx->cache_registry_status = DataStatus::e_ready;
     }
         
     // grab the latest
-    ctx->latest_status = DataStatus::e_loading;
+    ctx->latest_registry_status = DataStatus::e_loading;
     download_and_cache_named("https://raw.githubusercontent.com/polymonster/dig/main/registry/releases.json", "registry.json");
     ctx->latest_registry = nlohmann::json::parse(std::ifstream(reg_path.c_str()));
-    ctx->latest_status = DataStatus::e_ready;
-    PEN_LOG("has latest");
+    ctx->latest_registry_status = DataStatus::e_ready;
     
     // assing latest as cached (if cache was not present)
-    if(ctx->cache_status != DataStatus::e_ready)
+    if(ctx->cache_registry_status != DataStatus::e_ready)
     {
         ctx->cached_registry = ctx->latest_registry;
-        ctx->cache_status = DataStatus::e_ready;
+        ctx->cache_registry_status = DataStatus::e_ready;
     }
     
     for(;;)
     {
+        
         pen::thread_sleep_ms(66);
     }
 };
@@ -488,12 +503,11 @@ void* info_loader(void* userdata)
     
     if(use_latest)
     {
-        PEN_LOG("using latest registry");
         releases_registry = view->data_ctx->latest_registry;
     }
     else
     {
-        while(view->data_ctx->cache_status != DataStatus::e_ready)
+        while(view->data_ctx->cache_registry_status != DataStatus::e_ready)
         {
             // need to wait on cached
             pen::thread_sleep_ms(16);
@@ -572,6 +586,7 @@ void* info_loader(void* userdata)
         view->releases.track_urls[ri] = nullptr;
         view->releases.track_filepath_count[ri] = 0;
         view->releases.select_track[ri] = 0; // reset
+        memset(&view->releases.artwork_tcp[ri], 0x0, sizeof(pen::texture_creation_params));
         
         std::string id = release["id"];
         view->releases.id[ri] = id.c_str();
@@ -619,24 +634,87 @@ void* info_loader(void* userdata)
         {
             view->releases.flags[ri] |= EntryFlags::liked;
         }
+        
+        // store tags
+        if(release.contains("store_tags"))
+        {
+            for(u32 t = 0; t < PEN_ARRAY_SIZE(StoreTags::names); ++t) {
+                if(release["store_tags"].contains(StoreTags::names[t]) && release["store_tags"][StoreTags::names[t]])
+                {
+                    view->releases.store_tags[ri] |= (1<<t);
+                }
+            }
+        }
+        
+        // has charted
+        if(release.contains("has_charted") && release["has_charted"])
+        {
+            view->releases.store_tags[ri] |= StoreTags::has_charted;
+        }
 
         pen::thread_sleep_ms(1);
         view->releases.available_entries++;
-        
-        if(view->releases.available_entries > 250)
-        {
-            break;
-        }
     }
     
     view->threads_terminated++;
     return nullptr;
 }
 
+size_t get_folder_size_recursive(const pen::fs_tree_node& dir, const c8* root)
+{
+    size_t size = 0;
+    for(u32 i = 0; i < dir.num_children; ++i)
+    {
+        Str path = "";
+        path.appendf("%s/%s", root, dir.children[i].name);
+        
+        if(dir.children[i].num_children > 0)
+        {
+            size += get_folder_size_recursive(dir.children[i], path.c_str());
+        }
+        else
+        {
+            size += filesystem_getsize(path.c_str());
+        }
+    }
+    
+    return size;
+}
+
 void* data_cacher(void* userdata)
 {
     // get view from userdata
     ReleasesView* view = (ReleasesView*)userdata;
+    
+    Str cache_dir = os_get_persistent_data_directory();
+    cache_dir.append("/dig/cache/");
+    
+    // enum cache stats
+    pen::fs_tree_node dir;
+    pen::filesystem_enum_directory(cache_dir.c_str(), dir, 1, "**/*.*");
+    view->data_ctx->cached_release_folders = 0;
+    view->data_ctx->cached_release_bytes = 0;
+    for(u32 i = 0; i < dir.num_children; ++i)
+    {
+        Str path = cache_dir;
+        path.append(dir.children[i].name);
+        
+        if(dir.children[i].num_children > 0)
+        {
+            view->data_ctx->cached_release_folders++;
+            view->data_ctx->cached_release_bytes += get_folder_size_recursive(dir.children[i], cache_dir.c_str());
+        }
+        else
+        {
+            pen::fs_tree_node release_dir;
+            pen::filesystem_enum_directory(path.c_str(), release_dir);
+            view->data_ctx->cached_release_folders++;
+            view->data_ctx->cached_release_bytes += get_folder_size_recursive(release_dir, path.c_str());
+        }
+    }
+    
+    float mb = (((float)view->data_ctx->cached_release_bytes.load()) / 1024.0 / 1024.0);
+    PEN_LOG("stats = %i : %f", view->data_ctx->cached_release_folders.load(), mb);
     
     for(;;)
     {
@@ -647,13 +725,16 @@ void* data_cacher(void* userdata)
         // waits on info loader thread
         for(size_t i = 0; i < view->releases.available_entries; ++i)
         {
+            if(!(view->releases.flags[i] & EntryFlags::cache_url_requested)) {
+                continue;
+            }
+            
             // cache art
             if(!view->releases.artwork_url[i].empty())
             {
                 if(view->releases.artwork_filepath[i].empty())
                 {
                     view->releases.artwork_filepath[i] = download_and_cache(view->releases.artwork_url[i], view->releases.id[i]);
-                    
                     view->releases.flags[i] |= EntryFlags::artwork_cached;
                 }
             }
@@ -752,7 +833,22 @@ namespace
     u32         clear_screen;
     AppContext  ctx;
 
-    void change_view(View_t new_view, Tags_t new_tags)
+    ReleasesView* new_view(View_t new_view, Tags_t new_tags)
+    {
+        ReleasesView* view = new ReleasesView;
+        view->data_ctx = &ctx.data_ctx;
+        view->tags = new_tags;
+        view->view = new_view;
+        
+        // workers per view
+        pen::thread_create(info_loader, 10 * 1024 * 1024, view, pen::e_thread_start_flags::detached);
+        pen::thread_create(data_cacher, 10 * 1024 * 1024, view, pen::e_thread_start_flags::detached);
+        pen::thread_create(data_loader, 10 * 1024 * 1024, view, pen::e_thread_start_flags::detached);
+        
+        return view;
+    }
+
+    void change_view(View_t view, Tags_t tags)
     {
         // first we add the current view into background views
         if(ctx.view)
@@ -762,15 +858,7 @@ namespace
         }
             
         // kick off a new view
-        ctx.view = new ReleasesView;
-        ctx.view->data_ctx = &ctx.data_ctx;
-        ctx.view->tags = new_tags;
-        ctx.view->view = new_view;
-        
-        // workers per view
-        pen::thread_create(info_loader, 10 * 1024 * 1024, ctx.view, pen::e_thread_start_flags::detached);
-        pen::thread_create(data_cacher, 10 * 1024 * 1024, ctx.view, pen::e_thread_start_flags::detached);
-        pen::thread_create(data_loader, 10 * 1024 * 1024, ctx.view, pen::e_thread_start_flags::detached);
+        ctx.view = new_view(view, tags);
     }
 
     void cleanup_views()
@@ -789,15 +877,20 @@ namespace
                         // unload textures
                         if (releases.flags[i] & EntryFlags::artwork_loaded) {
                             if(releases.artwork_texture[i] != 0) {
+                                // textures themseleves
                                 pen::renderer_release_texture(releases.artwork_texture[i]);
                                 releases.artwork_texture[i] = 0;
+                            }
+                            else
+                            {
+                                // texture preloaded from disk
+                                free(releases.artwork_tcp[i].data);
                             }
                             memset(&releases.artwork_tcp, 0x0, sizeof(texture_creation_params));
                             releases.flags[i] &= ~EntryFlags::artwork_loaded;
                             releases.flags[i] &= ~EntryFlags::artwork_requested;
                         }
                         
-
                         // unload strings
                         if(view->releases.track_filepaths[i]) {
                             delete[] view->releases.track_filepaths[i];
@@ -812,15 +905,56 @@ namespace
                         }
                     }
                     
-                    // TODO: cleanup the soa itself
+                    // cleanup memory from the soa itself
+                    free_components(view->releases);
+                    
+                    // add to remove list to preserve the set iterator
                     to_remove.push_back(view);
                 }
             }
         }
         
+        // erase view
         for(auto& rm : to_remove) {
             PEN_LOG("erasing view");
             ctx.background_views.erase(ctx.background_views.find(rm));
+        }
+    }
+
+    void view_reload()
+    {
+        f32 reloady = (f32)ctx.w / k_top_pull_reload;
+        
+        // reload on drag
+        if(pen::input_is_mouse_down(PEN_MOUSE_L))
+        {
+            // check threshold
+            if(ctx.scroll.y < reloady)
+            {
+                if(ctx.reload_view == nullptr)
+                {
+                    // spawn reload view
+                    ctx.reload_view = new_view(ctx.view->view, ctx.view->tags);
+                }
+            }
+        }
+        
+        // reload anim
+        if(ctx.reload_view)
+        {
+            ImGui::SetWindowFontScale(2.0f);
+            auto ww = ImGui::GetWindowSize().x;
+            ImGui::SetCursorPosX((ww * 0.5f));
+            ImGui::Text("%s", ICON_FA_SPINNER);
+            ImGui::SetWindowFontScale(1.0f);
+            
+            if(ctx.reload_view->releases.available_entries > 0)
+            {
+                // swap existing view with the new one and reset
+                ctx.background_views.insert(ctx.view);
+                ctx.view = ctx.reload_view;
+                ctx.reload_view = nullptr;
+            }
         }
     }
 
@@ -922,13 +1056,19 @@ namespace
         // force audio in silent mode
         pen::os_ignore_slient();
         
+        // get window size
+        pen::window_get_size(ctx.w, ctx.h);
+        
+        // base ratio taken from iphone11 max dimension
+        f32 font_ratio = 42.0f / 1125.0f;
+        f32 font_pixel_size = ctx.w * font_ratio;
+        
         // intialise pmtech systems
         pen::jobs_create_job(put::audio_thread_function, 1024 * 10, nullptr, pen::e_thread_start_flags::detached);
-        dev_ui::init();
+        dev_ui::init(dev_ui::default_pmtech_style(), font_pixel_size);
         curl::init();
                 
         // init context
-        pen::window_get_size(ctx.w, ctx.h);
         ctx.scroll = vec2f(0.0, ctx.h);
         ctx.status_bar_height = pen::os_get_status_bar_portrait_height();
 
@@ -999,6 +1139,8 @@ namespace
         static f32 k_status_bar_height = pen::os_get_status_bar_portrait_height();
         ImGui::Dummy(ImVec2(0.0f, k_status_bar_height));
         
+        f32 miny = (f32)w / k_top_pull_pad;
+        
         // dragging and scrolling
         vec2f cur_scroll_delta = touch_screen_mouse_wheel();
         if(pen::input_is_mouse_down(PEN_MOUSE_L))
@@ -1024,11 +1166,9 @@ namespace
         }
         
         // clamp to top
-        if(ctx.scroll.y < w) {
-            f32 miny = (f32)w / k_top_pull_pad;
-            if(ctx.scroll.y < miny) {
-                ctx.scroll.y = miny;
-            }
+        if(ctx.scroll.y <= miny) {
+            ctx.scroll.y = miny;
+            ctx.scroll_delta = vec2f::zero();
         }
         
         f32 dx = abs(dot(ctx.scroll_delta, vec2f::unit_x()));
@@ -1059,6 +1199,7 @@ namespace
         }
 
         view_menu();
+        view_reload();
         
         // get latest releases
         auto& releases = ctx.view->releases;
@@ -1343,14 +1484,34 @@ namespace
         
             ImGui::SameLine();
             ImGui::PushID("buy");
-            ImGui::Text("%s", ICON_FA_SHOPPING_BASKET);
+            if(releases.store_tags[r] & StoreTags::preorder)
+            {
+                ImGui::Text("%s", ICON_FA_CALENDAR_PLUS_O);
+            }
+            else
+            {
+                ImGui::Text("%s", ICON_FA_CART_PLUS);
+            }
+            
             if(ImGui::IsItemClicked() && !ctx.scroll_lock_x && !ctx.scroll_lock_y)
             {
                 ctx.open_url_request = releases.link[r];
             }
             ImGui::PopID();
             
+            if(releases.store_tags[r] & StoreTags::out_of_stock)
+            {
+                ImGui::SameLine();
+                ImGui::Text("%s", ICON_FA_EXCLAMATION);
+            }
+            
             ImGui::SetWindowFontScale(1.0f);
+            
+            if(releases.store_tags[r] & StoreTags::has_charted)
+            {
+                ImGui::SameLine();
+                ImGui::Text("%s", ICON_FA_FIRE);
+            }
             
             // release info
             ImGui::TextWrapped("%s", artist.c_str());
@@ -1484,6 +1645,7 @@ namespace
             }
         }
         
+        // TODO: make the ranges data driven
         // make requests for data
         if(ctx.top != -1)
         {
@@ -1508,6 +1670,25 @@ namespace
                 }
             }
             std::atomic_thread_fence(std::memory_order_release);
+        }
+        
+        // make requests for cache
+        if(ctx.top != -1)
+        {
+            s32 range_start = max(ctx.top - 100, 0);
+            s32 range_end = min<s32>(ctx.top + 100, (s32)releases.available_entries);
+            
+            for(size_t i = 0; i < releases.available_entries; ++i)
+            {
+                if(i >= range_start && i <= range_end) {
+                    releases.flags[i] |= EntryFlags::cache_url_requested;
+                }
+                else {
+                    releases.flags[i] &= ~EntryFlags::cache_url_requested;
+                    
+                    // TODO: art preloads
+                }
+            }
         }
         
         // apply request for open url and handle it to ignore clicks that became drags

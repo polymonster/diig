@@ -883,8 +883,9 @@ namespace
                             }
                             else
                             {
+                                // TODO:
                                 // texture preloaded from disk
-                                free(releases.artwork_tcp[i].data);
+                                //free(releases.artwork_tcp[i].data);
                             }
                             memset(&releases.artwork_tcp, 0x0, sizeof(texture_creation_params));
                             releases.flags[i] &= ~EntryFlags::artwork_loaded;
@@ -934,20 +935,25 @@ namespace
                 if(ctx.reload_view == nullptr)
                 {
                     // spawn reload view
+                    PEN_LOG("spawn reload view");
                     ctx.reload_view = new_view(ctx.view->view, ctx.view->tags);
                 }
             }
         }
         
-        // reload anim
-        if(ctx.reload_view)
+        // reload anim if we have an empty view or are relaoding
+        if(ctx.reload_view || ctx.view->releases.available_entries == 0)
         {
             ImGui::SetWindowFontScale(2.0f);
             auto ww = ImGui::GetWindowSize().x;
             ImGui::SetCursorPosX((ww * 0.5f));
             ImGui::Text("%s", ICON_FA_SPINNER);
             ImGui::SetWindowFontScale(1.0f);
-            
+        }
+        
+        // if reloading wait until the new view has entries and then swap
+        if(ctx.reload_view)
+        {
             if(ctx.reload_view->releases.available_entries > 0)
             {
                 // swap existing view with the new one and reset
@@ -1046,6 +1052,17 @@ namespace
         cleanup_views();
     }
 
+    void add_utf_glyphs(f32 font_pixel_size)
+    {
+        auto io = ImGui::GetIO();
+        ImFontConfig config;
+        config.MergeMode = true;
+        
+        static const ImWchar icon_ranges[] = {0x2013, 0x2019, 0};
+        const Str cousine_reg = pen::os_path_for_resource("data/fonts/cousine-regular.ttf");
+        io.Fonts->AddFontFromFileTTF(cousine_reg.c_str(), font_pixel_size, &config, icon_ranges);
+    }
+
     void* user_setup(void* params)
     {
         // unpack the params passed to the thread and signal to the engine it ok to proceed
@@ -1066,6 +1083,8 @@ namespace
         // intialise pmtech systems
         pen::jobs_create_job(put::audio_thread_function, 1024 * 10, nullptr, pen::e_thread_start_flags::detached);
         dev_ui::init(dev_ui::default_pmtech_style(), font_pixel_size);
+        // add_utf_glyphs(font_pixel_size);
+        
         curl::init();
                 
         // init context

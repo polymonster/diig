@@ -307,6 +307,7 @@ def scrape_red_eye(page_count, get_urls=True, test_single=False, verbose=False):
 
             if grid_elem.find("Out Of Stock") != -1:
                 release_dict["store_tags"]["out_of_stock"] = True
+                release_dict["store_tags"]["has_been_out_of_stock"] = True
             else:
                 release_dict["store_tags"]["out_of_stock"] = False
 
@@ -336,7 +337,7 @@ def scrape_red_eye(page_count, get_urls=True, test_single=False, verbose=False):
             # assign indices
             if category in ["weekly_chart", "monthly_chart"]:
                 release_dict[category] = grid_elems.index(grid_elem)
-                release_dict["has_charted"] = True
+                release_dict["store_tags"]["has_charted"] = True
             else:
                 release_dict[category] = new_releases
                 new_releases += 1

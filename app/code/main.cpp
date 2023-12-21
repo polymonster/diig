@@ -1332,7 +1332,9 @@ namespace
                     {
                         if(ctx.top == r)
                         {
+                            ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.8f, 0.3f, 0.0f, 1.0f));
                             ImGui::Text("%s", ICON_FA_PLAY);
+                            ImGui::PopStyleColor();
                             
                             // load up the track
                             if(!(ctx.play_track_filepath == releases.track_filepaths[r][sel]))
@@ -1363,43 +1365,15 @@ namespace
             ImGui::Spacing();
             ImGui::Indent();
             
-            // buttons
-            auto cp = ImGui::GetCursorPos();
-            auto offset = ImGui::GetScrollY();
-            
-            ImGui::SetWindowFontScale(2.0f);
-            
-            auto button_size = ImGui::CalcTextSize("%s", ICON_FA_HEART);
-            
-            bool pressed = false;
-            if(!ctx.scroll_lock_x && !ctx.scroll_lock_y)
-            {
-                static bool debounce = false;
-                if(pen::input_is_mouse_down(PEN_MOUSE_L) && !debounce)
-                {
-                    if(ms.x < cp.x + button_size.y)
-                    {
-                        float by = cp.y - offset + releases_pos;
-                        float pad = 50.0;
-                        if(ms.y >= by - pad && ms.y <= by + button_size.y + pad)
-                        {
-                            pressed = true;
-                            debounce = true;
-                        }
-                    }
-                }
-                else if(!pen::input_is_mouse_down(PEN_MOUSE_L))
-                {
-                    debounce = false;
-                }
-            }
-            
+            ImGui::SetWindowFontScale(k_text_size_h2);
+                        
             ImGui::PushID("like");
+            static bool debounce = false;
             if(releases.flags[r] & EntryFlags::liked)
             {
                 ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(225.0f/255.0f, 48.0f/255.0f, 108.0f/255.0f, 1.0f));
                 ImGui::Text("%s", ICON_FA_HEART);
-                if(pressed)
+                if(lenient_button_click(64.0f, debounce) && !ctx.scroll_lock_x && !ctx.scroll_lock_y)
                 {
                     remove_like(releases.id[r]);
                     releases.flags[r] &= ~EntryFlags::liked;
@@ -1409,7 +1383,7 @@ namespace
             else
             {
                 ImGui::Text("%s", ICON_FA_HEART_O);
-                if(pressed)
+                if(lenient_button_click(64.0f, debounce) && !ctx.scroll_lock_x && !ctx.scroll_lock_y)
                 {
                     add_like(releases.id[r]);
                     releases.flags[r] |= EntryFlags::liked;
@@ -1428,7 +1402,7 @@ namespace
                 ImGui::Text("%s", ICON_FA_CART_PLUS);
             }
             
-            if(ImGui::IsItemClicked() && !ctx.scroll_lock_x && !ctx.scroll_lock_y)
+            if(lenient_button_click(64.0f, debounce) && !ctx.scroll_lock_x && !ctx.scroll_lock_y)
             {
                 ctx.open_url_request = releases.link[r];
             }
@@ -1453,11 +1427,13 @@ namespace
             ImGui::TextWrapped("%s", title.c_str());
             
             // track name
+            ImGui::SetWindowFontScale(k_text_size_track);
             u32 sel = releases.select_track[r];
             if(releases.track_name_count[r] > releases.select_track[r])
             {
                 ImGui::TextWrapped("%s", releases.track_names[r][sel].c_str());
             }
+            ImGui::SetWindowFontScale(k_text_size_body);
             
             ImGui::Unindent();
             

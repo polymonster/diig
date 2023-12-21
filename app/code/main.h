@@ -12,6 +12,7 @@
 // - img and audio file cache management
 // - add clear cache and cache options
 
+// - in app store prev position in a back view, or move scroll into view
 // - user store prev position, prev mode etc
 // - serialise prev position and prev mode?
 // - refactor user data into a single dict and move to context
@@ -124,7 +125,8 @@ namespace View
         latest,
         weekly_chart,
         monthly_chart,
-        likes
+        likes,
+        settings
     };
 
     const c8* display_names[] = {
@@ -132,13 +134,15 @@ namespace View
         "Weekly Chart",
         "Monthly Chart",
         "Likes"
+        "Settings"
     };
 
     const c8* lookup_names[] = {
         "new_releases",
         "weekly_chart",
         "monthly_chart",
-        "likes"
+        "likes",
+        "settings"
     };
 }
 typedef u32 View_t;

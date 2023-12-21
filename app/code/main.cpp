@@ -927,20 +927,32 @@ namespace
         f32 reloady = (f32)ctx.w / k_top_pull_reload;
         
         // reload on drag
-        if(pen::input_is_mouse_down(PEN_MOUSE_L))
+        static bool debounce = false;
+        if(debounce)
         {
-            // check threshold
-            if(ctx.scroll.y < reloady)
+            if(!pen::input_is_mouse_down(PEN_MOUSE_L))
             {
-                if(ctx.reload_view == nullptr)
+                debounce = false;
+            }
+        }
+        else
+        {
+            if(pen::input_is_mouse_down(PEN_MOUSE_L))
+            {
+                // check threshold
+                if(ctx.scroll.y < reloady)
                 {
-                    // spawn reload view
-                    PEN_LOG("spawn reload view");
-                    ctx.reload_view = new_view(ctx.view->view, ctx.view->tags);
+                    if(ctx.reload_view == nullptr)
+                    {
+                        // spawn reload view
+                        PEN_LOG("spawn reload view");
+                        ctx.reload_view = new_view(ctx.view->view, ctx.view->tags);
+                        debounce = true; // wait for debounce;
+                    }
                 }
             }
         }
-        
+
         // reload anim if we have an empty view or are relaoding
         if(ctx.reload_view || ctx.view->releases.available_entries == 0)
         {
@@ -1041,6 +1053,38 @@ namespace
         cleanup_views();
     }
 
+    bool lenient_button_click(f32 padding, bool& debounce)
+    {
+        auto& ms = pen::input_get_mouse_state();
+        ImVec2 bbmin = ImGui::GetItemRectMin();
+        ImVec2 bbmax = ImGui::GetItemRectMax();
+        
+        // need to wait on debounce
+        if(debounce)
+        {
+            if(!ms.buttons[PEN_MOUSE_L])
+            {
+                debounce = false;
+            }
+            
+            return false;
+        }
+        else
+        {
+            if(ms.buttons[PEN_MOUSE_L])
+            {
+                f32 d = maths::point_aabb_distance(vec2f(ms.x, ms.y), vec2f(bbmin.x, bbmin.y), vec2f(bbmax.x, bbmax.y));
+                if(d < padding)
+                {
+                    debounce = true;
+                    return true;
+                }
+            }
+        }
+        
+        return false;
+    }
+
     void header_menu()
     {
         ImGui::SetWindowFontScale(k_text_size_h1);
@@ -1050,7 +1094,9 @@ namespace
         if(ctx.view->view == View::likes)
         {
             ImGui::Text("%s", ICON_FA_CHEVRON_LEFT);
-            if(ImGui::IsItemClicked())
+            
+            static bool back_debounce = false;
+            if(lenient_button_click(32.0f, back_debounce))
             {
                 ctx.view = ctx.back_view;
             }
@@ -1063,12 +1109,17 @@ namespace
         // likes button on same line
         ImGui::SameLine();
         f32 offset = ImGui::CalcTextSize("%s", ICON_FA_HEART_O).y;
-        ImGui::SetCursorPosX(ctx.w - offset * 1.5f);
+        ImGui::SetCursorPosX(ctx.w - offset * 2.5f);
         ImGui::Text("%s", ctx.view->view == View::likes ? ICON_FA_HEART : ICON_FA_HEART_O);
-        if(ImGui::IsItemClicked())
+        
+        static bool heart_debounce = false;
+        if(lenient_button_click(20.0f, heart_debounce))
         {
             change_view(View::likes, Tags::all);
         }
+        
+        ImGui::SameLine();
+        ImGui::Text("%s", ICON_FA_ELLIPSIS_H);
         
         ImGui::SetWindowFontScale(k_text_size_body);
     }
@@ -1665,6 +1716,7 @@ namespace
         
         ImGui::Dummy(ImVec2(0.0f, ctx.status_bar_height));
         
+        // ui menus
         header_menu();
         view_menu();
         view_reload();

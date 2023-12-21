@@ -2,6 +2,7 @@
 // - lenient button click code
 // - align position of view and tags popup menu
 
+// - placeholder artwork image
 // - drag reload spinner
 // - text, sizes and spacing tweaks
 // - colour and accent tweaks
@@ -24,11 +25,12 @@
 // - side swipe still isnt perfect
 // - vertical swip still sometimes feel sticky
 
-// - add has sold out tag
-// - move has charted tag
 // - add a registry version field
 
 // DONE
+// x - add has sold out tag
+// x - move has charted tag
+// x - text, sizes and spacing tweaks 1
 // x - bug where a track stops but another isnt playing and the prev track cannot restart (iphone 7) + now repro on 11
 // x - track names can sometimes have trailing commas
 // x - add missing glyphs (or at least some)
@@ -251,3 +253,4 @@ constexpr f32 k_text_size_h1 = 2.25f;
 constexpr f32 k_text_size_h2 = 1.5f;
 constexpr f32 k_text_size_h3 = 1.25f;
 constexpr f32 k_text_size_body = 1.0f;
+constexpr f32 k_text_size_track = 0.75f;

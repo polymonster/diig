@@ -957,6 +957,11 @@ namespace
         if(ctx.reload_view || ctx.view->releases.available_entries == 0)
         {
             ImGui::SetWindowFontScale(2.0f);
+            
+            // small padding
+            ImGui::Dummy(ImVec2(0.0f, ImGui::GetFontSize() * 0.75f));
+            
+            // spinner
             auto ww = ImGui::GetWindowSize().x;
             ImGui::SetCursorPosX((ww * 0.5f));
             ImGui::Text("%s", ICON_FA_SPINNER);
@@ -1096,7 +1101,7 @@ namespace
             ImGui::Text("%s", ICON_FA_CHEVRON_LEFT);
             
             static bool back_debounce = false;
-            if(lenient_button_click(32.0f, back_debounce))
+            if(lenient_button_click(40.0f, back_debounce))
             {
                 ctx.view = ctx.back_view;
             }
@@ -1310,7 +1315,6 @@ namespace
             s32 tc = releases.track_filepath_count[r];
             if(tc != 0)
             {
-                // offset to centre
                 auto ww = ImGui::GetWindowSize().x;
                 auto tw = ImGui::CalcTextSize(ICON_FA_STOP_CIRCLE).x * releases.track_url_count[r] * 1.5f;
                 ImGui::SetCursorPosX((ww - tw) * 0.5f);

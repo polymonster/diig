@@ -970,21 +970,10 @@ namespace
         View_t cur_view = ctx.view->view;
         Tags_t cur_tags = ctx.view->tags;
         
-        // likes button on same line
-        ImGui::SameLine();
-        f32 offset = ImGui::CalcTextSize("%s", ICON_FA_HEART_O).y;
-        ImGui::SetCursorPosX(ctx.w - offset * 1.5f);
-        ImGui::Text("%s", cur_view == View::likes ? ICON_FA_HEART : ICON_FA_HEART_O);
-        if(ImGui::IsItemClicked())
-        {
-            change_view(View::likes, Tags::all);
-        }
-        ImGui::SetWindowFontScale(1.0f);
-        
         if(cur_view != View::likes)
         {
             // store page
-            ImGui::SetWindowFontScale(2.0f);
+            ImGui::SetWindowFontScale(k_text_size_h2);
             
             constexpr const char* k_modes[] = {
                 "Latest",
@@ -1017,7 +1006,7 @@ namespace
                 ImGui::EndPopup();
             }
             
-            ImGui::SetWindowFontScale(1.0f);
+            ImGui::SetWindowFontScale(k_text_size_body);
             
             // tags
             ImGui::Dummy(ImVec2(k_indent1, 0.0f));
@@ -1041,166 +1030,20 @@ namespace
         else
         {
             // likes page
-            ImGui::SetWindowFontScale(2.0f);
+            ImGui::SetWindowFontScale(k_text_size_h2);
             ImGui::Dummy(ImVec2(k_indent1, 0.0f));
             ImGui::SameLine();
             ImGui::Text("%s", "Likes");
-            ImGui::SetWindowFontScale(1.0f);
+            ImGui::SetWindowFontScale(k_text_size_body);
         }
         
         // cleanup memory on old views
         cleanup_views();
     }
 
-    void add_utf_glyphs(f32 font_pixel_size)
+    void header_menu()
     {
-        auto io = ImGui::GetIO();
-        ImFontConfig config;
-        config.MergeMode = true;
-        
-        static const ImWchar icon_ranges[] = {0x2013, 0x2019, 0};
-        const Str cousine_reg = pen::os_path_for_resource("data/fonts/cousine-regular.ttf");
-        io.Fonts->AddFontFromFileTTF(cousine_reg.c_str(), font_pixel_size, &config, icon_ranges);
-    }
-
-    void* user_setup(void* params)
-    {
-        // unpack the params passed to the thread and signal to the engine it ok to proceed
-        pen::job_thread_params* job_params = (pen::job_thread_params*)params;
-        s_thread_info = job_params->job_info;
-        pen::semaphore_post(s_thread_info->p_sem_continue, 1);
-
-        // force audio in silent mode
-        pen::os_ignore_slient();
-        
-        // get window size
-        pen::window_get_size(ctx.w, ctx.h);
-        
-        // base ratio taken from iphone11 max dimension
-        f32 font_ratio = 42.0f / 1125.0f;
-        f32 font_pixel_size = ctx.w * font_ratio;
-        
-        // intialise pmtech systems
-        pen::jobs_create_job(put::audio_thread_function, 1024 * 10, nullptr, pen::e_thread_start_flags::detached);
-        dev_ui::init(dev_ui::default_pmtech_style(), font_pixel_size);
-        // add_utf_glyphs(font_pixel_size);
-        
-        curl::init();
-                
-        // init context
-        ctx.scroll = vec2f(0.0, ctx.h);
-        ctx.status_bar_height = pen::os_get_status_bar_portrait_height();
-
-        // permanent workers
-        pen::thread_create(registry_loader, 10 * 1024 * 1024, &ctx.data_ctx, pen::e_thread_start_flags::detached);
-        pen::thread_create(user_data_thread, 10 * 1024 * 1024, ctx.view, pen::e_thread_start_flags::detached);
-    
-        // enter initial view, the inputs can be serialised
-        change_view(View::latest, Tags::all);
-
-        // timer
-        frame_timer = pen::timer_create();
-        pen::timer_start(frame_timer);
-        
-        // for clearing the backbuffer
-        clear_state cs;
-        cs.r = 1.0f;
-        cs.g = 1.0f;
-        cs.b = 1.0f;
-        cs.a = 1.0f;
-        cs.depth = 0.0f;
-        cs.num_colour_targets = 1;
-        clear_screen = pen::renderer_create_clear_state(cs);
-        
-        // white
-        ImGui::StyleColorsLight();
-
-        pen_main_loop(user_update);
-        return PEN_THREAD_OK;
-    }
-
-    void user_shutdown()
-    {
-        pen::renderer_new_frame();
-
-        pen::renderer_present();
-        pen::renderer_consume_cmd_buffer();
-
-        // signal to the engine the thread has finished
-        pen::semaphore_post(s_thread_info->p_sem_terminated, 1);
-    }
-
-    loop_t user_update()
-    {
-        //
-        s32 w, h;
-        pen::window_get_size(w, h);
-        
-        pen::timer_start(frame_timer);
-        pen::renderer_new_frame();
-        
-        // clear backbuffer
-        pen::renderer_set_targets(PEN_BACK_BUFFER_COLOUR, PEN_BACK_BUFFER_DEPTH);
-        pen::renderer_clear(clear_screen);
-
-        put::dev_ui::new_frame();
-                
-        ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f));
-        ImGui::SetNextWindowSize(ImVec2((f32)w, (f32)h));
-        
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-        ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
-        
-        ImGui::Begin("Main", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar);
-        
-        static f32 k_status_bar_height = pen::os_get_status_bar_portrait_height();
-        ImGui::Dummy(ImVec2(0.0f, k_status_bar_height));
-        
-        f32 miny = (f32)w / k_top_pull_pad;
-        
-        // dragging and scrolling
-        vec2f cur_scroll_delta = touch_screen_mouse_wheel();
-        if(pen::input_is_mouse_down(PEN_MOUSE_L))
-        {
-            ctx.scroll_delta = cur_scroll_delta;
-        }
-        else
-        {
-            // apply inertia
-            ctx.scroll_delta *= k_inertia;
-            if(mag(ctx.scroll_delta) < k_inertia_cutoff) {
-                ctx.scroll_delta = vec2f::zero();
-            }
-            
-            // snap back to min top
-            if(ctx.scroll.y < w) {
-                ctx.scroll.y = lerp(ctx.scroll.y, (f32)w, 0.5f);
-            }
-            
-            // release locks
-            ctx.scroll_lock_x = false;
-            ctx.scroll_lock_y = false;
-        }
-        
-        // clamp to top
-        if(ctx.scroll.y <= miny) {
-            ctx.scroll.y = miny;
-            ctx.scroll_delta = vec2f::zero();
-        }
-        
-        f32 dx = abs(dot(ctx.scroll_delta, vec2f::unit_x()));
-        f32 dy = abs(dot(ctx.scroll_delta, vec2f::unit_y()));
-        
-        ctx.side_drag = false;
-        if(dx > dy)
-        {
-            ctx.side_drag = true;
-        }
-        
-        // header
-        ImGui::SetWindowFontScale(3.0f);
+        ImGui::SetWindowFontScale(k_text_size_h1);
         ImGui::Dummy(ImVec2(k_indent1, 0.0f));
         ImGui::SameLine();
         
@@ -1216,9 +1059,24 @@ namespace
         {
             ImGui::Text("Dig");
         }
+        
+        // likes button on same line
+        ImGui::SameLine();
+        f32 offset = ImGui::CalcTextSize("%s", ICON_FA_HEART_O).y;
+        ImGui::SetCursorPosX(ctx.w - offset * 1.5f);
+        ImGui::Text("%s", ctx.view->view == View::likes ? ICON_FA_HEART : ICON_FA_HEART_O);
+        if(ImGui::IsItemClicked())
+        {
+            change_view(View::likes, Tags::all);
+        }
+        
+        ImGui::SetWindowFontScale(k_text_size_body);
+    }
 
-        view_menu();
-        view_reload();
+    void release_feed()
+    {
+        f32 w = ctx.w;
+        f32 h = ctx.h;
         
         // get latest releases
         auto& releases = ctx.view->releases;
@@ -1230,7 +1088,8 @@ namespace
         f32 releases_pos = ImGui::GetCursorPosY();
         ImGui::BeginChildEx("releases", 1, ImVec2(0, 0), false, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
         auto current_window = ImGui::GetCurrentWindow();
-
+        ctx.releases_window = current_window;
+        
         // Add an empty dummy at the top
         ImGui::Dummy(ImVec2(w, w));
         
@@ -1269,13 +1128,14 @@ namespace
                 }
             }
             
-            ImGui::SetWindowFontScale(1.5f);
+            // label and catalogue
+            ImGui::SetWindowFontScale(k_text_size_h3);
             
             ImGui::Dummy(ImVec2(k_indent1, 0.0f));
             ImGui::SameLine();
             ImGui::TextWrapped("%s: %s", releases.label[r].c_str(), releases.cat[r].c_str());
             
-            ImGui::SetWindowFontScale(1.0f);
+            ImGui::SetWindowFontScale(k_text_size_body);
             
             // ..
             f32 scaled_vel = ctx.scroll_delta.x;
@@ -1301,7 +1161,7 @@ namespace
                     }
                     
                     ImGui::Image(IMG(releases.artwork_texture[r]), ImVec2((f32)w, h));
-
+                    
                     if(ImGui::IsItemHovered() && pen::input_is_mouse_down(PEN_MOUSE_L))
                     {
                         if(!ctx.scroll_lock_y)
@@ -1325,7 +1185,7 @@ namespace
                         releases.flags[r] &= ~EntryFlags::dragging;
                     }
                 }
-           
+                
                 // stop drags if we no longer hover
                 if(!(releases.flags[r] & EntryFlags::hovered))
                 {
@@ -1391,6 +1251,7 @@ namespace
             }
             else
             {
+                // TODO: this is not scrollable
                 ImGui::Dummy(ImVec2(w, w));
             }
             
@@ -1500,7 +1361,7 @@ namespace
                 }
             }
             ImGui::PopID();
-        
+            
             ImGui::SameLine();
             ImGui::PushID("buy");
             if(releases.store_tags[r] & StoreTags::preorder)
@@ -1548,32 +1409,17 @@ namespace
             ImGui::Spacing();
         }
         
-        // couple of empty ones so we can reach the end
+        // couple of empty ones so we can reach the end of the feed
         ImGui::Dummy(ImVec2(w, w));
         ImGui::Dummy(ImVec2(w, w));
         
-        f32 maxy = ImGui::GetScrollMaxY() - w;
-        ImGui::EndChild();
-        
-        ImGui::PopStyleVar(4);
-        ImGui::End();
-        
-        if(!ctx.side_drag && abs(ctx.scroll_delta.y) > k_drag_threshold)
-        {
-            ctx.scroll_lock_y = true;
-        }
-        
-        // only not if already scrolling x
-        if(!ctx.scroll_lock_x)
-        {
-            ctx.scroll.y -= ctx.scroll_delta.y;
-            ImGui::SetScrollY(current_window, ctx.scroll.y);
-        }
-        
-        // clamp to bottom
-        if(ctx.scroll.y > maxy) {
-            ctx.scroll.y = std::min(ctx.scroll.y, maxy);
-        }
+        // get scroll limit
+        ctx.releases_scroll_maxy = ImGui::GetScrollMaxY() - w;
+    }
+
+    void audio_player()
+    {
+        auto& releases = ctx.view->releases;
         
         // audio player
         if(!ctx.mute)
@@ -1597,14 +1443,12 @@ namespace
                     ci = -1;
                     gi = -1;
                     started = false;
+                    ctx.play_track_filepath = "";
                 }
             }
             
             if(ctx.play_track_filepath.length() > 0 && ctx.invalidate_track)
             {
-                //u32 sel = releases.select_track[top];
-                //PEN_LOG("%s", releases.track_names[top][sel].c_str());
-                
                 // stop existing
                 if(is_valid(si))
                 {
@@ -1663,6 +1507,11 @@ namespace
                 }
             }
         }
+    }
+
+    void issue_data_requests()
+    {
+        auto& releases = ctx.view->releases;
         
         // TODO: make the ranges data driven
         // make requests for data
@@ -1709,7 +1558,10 @@ namespace
                 }
             }
         }
-        
+    }
+
+    void issue_open_url_requests()
+    {
         // apply request for open url and handle it to ignore clicks that became drags
         if(!ctx.open_url_request.empty())
         {
@@ -1732,6 +1584,120 @@ namespace
                 ctx.open_url_counter = 0;
             }
         }
+    }
+
+    void apply_drags()
+    {
+        f32 w = ctx.w;
+        
+        f32 miny = (f32)w / k_top_pull_pad;
+        
+        // dragging and scrolling
+        vec2f cur_scroll_delta = touch_screen_mouse_wheel();
+        if(pen::input_is_mouse_down(PEN_MOUSE_L))
+        {
+            ctx.scroll_delta = cur_scroll_delta;
+        }
+        else
+        {
+            // apply inertia
+            ctx.scroll_delta *= k_inertia;
+            if(mag(ctx.scroll_delta) < k_inertia_cutoff) {
+                ctx.scroll_delta = vec2f::zero();
+            }
+            
+            // snap back to min top
+            if(ctx.scroll.y < w) {
+                ctx.scroll.y = lerp(ctx.scroll.y, (f32)w, 0.5f);
+            }
+            
+            // release locks
+            ctx.scroll_lock_x = false;
+            ctx.scroll_lock_y = false;
+        }
+        
+        // clamp to top
+        if(ctx.scroll.y <= miny) {
+            ctx.scroll.y = miny;
+            ctx.scroll_delta = vec2f::zero();
+        }
+        
+        f32 dx = abs(dot(ctx.scroll_delta, vec2f::unit_x()));
+        f32 dy = abs(dot(ctx.scroll_delta, vec2f::unit_y()));
+        
+        ctx.side_drag = false;
+        if(dx > dy)
+        {
+            ctx.side_drag = true;
+        }
+        
+        if(!ctx.side_drag && abs(ctx.scroll_delta.y) > k_drag_threshold)
+        {
+            ctx.scroll_lock_y = true;
+        }
+        
+        // only not if already scrolling x
+        if(!ctx.scroll_lock_x)
+        {
+            ctx.scroll.y -= ctx.scroll_delta.y;
+            ImGui::SetScrollY((ImGuiWindow*)ctx.releases_window, ctx.scroll.y);
+        }
+        
+        // clamp to bottom
+        if(ctx.scroll.y > ctx.releases_scroll_maxy) {
+            ctx.scroll.y = std::min(ctx.scroll.y, ctx.releases_scroll_maxy);
+        }
+    }
+
+    void main_window()
+    {
+        s32 w, h;
+        pen::window_get_size(w, h);
+        ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f));
+        ImGui::SetNextWindowSize(ImVec2((f32)w, (f32)h));
+        
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+        ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.0f, 0.0f));
+        
+        ImGui::Begin("Main", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar);
+        
+        ImGui::Dummy(ImVec2(0.0f, ctx.status_bar_height));
+        
+        header_menu();
+        view_menu();
+        view_reload();
+        release_feed();
+        
+        ImGui::EndChild();
+        ImGui::PopStyleVar(4);
+        ImGui::End();
+    }
+
+    void main_update()
+    {
+        apply_drags();
+        audio_player();
+        issue_data_requests();
+        issue_open_url_requests();
+    }
+
+    loop_t user_update()
+    {
+        pen::timer_start(frame_timer);
+        pen::renderer_new_frame();
+        
+        // clear backbuffer
+        pen::renderer_set_targets(PEN_BACK_BUFFER_COLOUR, PEN_BACK_BUFFER_DEPTH);
+        pen::renderer_clear(clear_screen);
+
+        put::dev_ui::new_frame();
+        
+        // main code entry
+        main_window();
+        main_update();
+        
         // present
         put::dev_ui::render();
         pen::renderer_present();
@@ -1745,6 +1711,72 @@ namespace
         }
 
         pen_main_loop_continue();
+    }
+
+    void* user_setup(void* params)
+    {
+        // unpack the params passed to the thread and signal to the engine it ok to proceed
+        pen::job_thread_params* job_params = (pen::job_thread_params*)params;
+        s_thread_info = job_params->job_info;
+        pen::semaphore_post(s_thread_info->p_sem_continue, 1);
+
+        // force audio in silent mode
+        pen::os_ignore_slient();
+        
+        // get window size
+        pen::window_get_size(ctx.w, ctx.h);
+        
+        // base ratio taken from iphone11 max dimension
+        f32 font_ratio = 42.0f / 1125.0f;
+        f32 font_pixel_size = ctx.w * font_ratio;
+        
+        // intialise pmtech systems
+        pen::jobs_create_job(put::audio_thread_function, 1024 * 10, nullptr, pen::e_thread_start_flags::detached);
+        dev_ui::init(dev_ui::default_pmtech_style(), font_pixel_size);
+        
+        curl::init();
+                
+        // init context
+        ctx.scroll = vec2f(0.0, ctx.h);
+        ctx.status_bar_height = pen::os_get_status_bar_portrait_height();
+
+        // permanent workers
+        pen::thread_create(registry_loader, 10 * 1024 * 1024, &ctx.data_ctx, pen::e_thread_start_flags::detached);
+        pen::thread_create(user_data_thread, 10 * 1024 * 1024, ctx.view, pen::e_thread_start_flags::detached);
+
+        // enter initial view, the inputs can be serialised
+        change_view(View::latest, Tags::all);
+
+        // timer
+        frame_timer = pen::timer_create();
+        pen::timer_start(frame_timer);
+        
+        // for clearing the backbuffer
+        clear_state cs;
+        cs.r = 1.0f;
+        cs.g = 1.0f;
+        cs.b = 1.0f;
+        cs.a = 1.0f;
+        cs.depth = 0.0f;
+        cs.num_colour_targets = 1;
+        clear_screen = pen::renderer_create_clear_state(cs);
+        
+        // white
+        ImGui::StyleColorsLight();
+
+        pen_main_loop(user_update);
+        return PEN_THREAD_OK;
+    }
+
+    void user_shutdown()
+    {
+        pen::renderer_new_frame();
+
+        pen::renderer_present();
+        pen::renderer_consume_cmd_buffer();
+
+        // signal to the engine the thread has finished
+        pen::semaphore_post(s_thread_info->p_sem_terminated, 1);
     }
 } // namespace
 

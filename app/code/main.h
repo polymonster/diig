@@ -1,18 +1,36 @@
 // TASKS
-// - bug where a track stops but another isnt playing and the prev track cannot restart (iphone 7)
-// - side swipe still isnt perfect
-// - add missing glyphs (or at least some)
+// - lenient button click code
+// - align position of view and tags popup menu
+
+// - drag reload spinner
+// - text, sizes and spacing tweaks
+// - colour and accent tweaks
+
+// - settings menu / page
+// - thread to free up space
+// - function to delete files
 // - img and audio file cache management
+// - add clear cache and cache options
+
 // - user store prev position, prev mode etc
 // - serialise prev position and prev mode?
 // - refactor user data into a single dict and move to context
-// - track names can sometimes have trailing commas
+
 // - set min ios version on pen and put
 // - poll registry for updates periodically
-// - settings menu
-// - add clear cache and cache options
+// - registry seems to have trouble updating
+
+// - side swipe still isnt perfect
+// - vertical swip still sometimes feel sticky
+
+// - add has sold out tag
+// - move has charted tag
+// - add a registry version field
 
 // DONE
+// x - bug where a track stops but another isnt playing and the prev track cannot restart (iphone 7) + now repro on 11
+// x - track names can sometimes have trailing commas
+// x - add missing glyphs (or at least some)
 // x - cleanup soa
 // x - memory warnings
 // x - spinner and drag to reload
@@ -198,6 +216,8 @@ struct AppContext
     s32                     w, h;
     f32                     status_bar_height;
     vec2f                   scroll = vec2f(0.0f, 0.0f);
+    f32                     releases_scroll_maxy = 0.0f;
+    void*                   releases_window = nullptr;
     Str                     play_track_filepath = "";
     bool                    invalidate_track = false;
     bool                    mute = false;
@@ -215,10 +235,15 @@ struct AppContext
     std::set<ReleasesView*> background_views = {};
 };
 
-constexpr f32   k_drag_threshold = 0.1f;
-constexpr f32   k_inertia = 0.96f;
-constexpr f32   k_inertia_cutoff = 3.33f;
-constexpr f32   k_snap_lerp = 0.3f;
-constexpr f32   k_indent1 = 2.0f;
-constexpr f32   k_top_pull_pad = 1.5f;
-constexpr f32   k_top_pull_reload = 1.25f;
+// magic number constants
+constexpr f32 k_drag_threshold = 0.1f;
+constexpr f32 k_inertia = 0.96f;
+constexpr f32 k_inertia_cutoff = 3.33f;
+constexpr f32 k_snap_lerp = 0.3f;
+constexpr f32 k_indent1 = 2.0f;
+constexpr f32 k_top_pull_pad = 1.5f;
+constexpr f32 k_top_pull_reload = 1.25f;
+constexpr f32 k_text_size_h1 = 2.25f;
+constexpr f32 k_text_size_h2 = 1.5f;
+constexpr f32 k_text_size_h3 = 1.25f;
+constexpr f32 k_text_size_body = 1.0f;

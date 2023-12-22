@@ -1,7 +1,4 @@
 // TASKS
-// - lenient button click code
-// - align position of view and tags popup menu
-
 // - placeholder artwork image
 // - drag reload spinner
 // - text, sizes and spacing tweaks
@@ -19,8 +16,6 @@
 // - refactor user data into a single dict and move to context
 
 // - set min ios version on pen and put
-// - poll registry for updates periodically
-// - registry seems to have trouble updating
 
 // - side swipe still isnt perfect
 // - vertical swip still sometimes feel sticky
@@ -28,6 +23,10 @@
 // - add a registry version field
 
 // DONE
+// o - registry seems to have trouble updating
+// x - poll registry for updates periodically
+// x - align position of view and tags popup menu
+// x - lenient button click code
 // x - add has sold out tag
 // x - move has charted tag
 // x - text, sizes and spacing tweaks 1
@@ -103,19 +102,22 @@ namespace StoreTags
     {
         preorder = 1<<0,
         out_of_stock = 1<<1,
-        has_charted = 1<<2
+        has_charted = 1<<2,
+        has_been_out_of_stock = 1<<3
     };
 
     const c8* names[] = {
         "preorder",
         "out_of_stock",
-        "has_charted"
+        "has_charted",
+        "has_been_out_of_stock"
     };
 
     const c8* icons[] = {
         ICON_FA_CALENDAR_TIMES_O,
         ICON_FA_EXCLAMATION_TRIANGLE,
-        ICON_FA_FIRE
+        ICON_FA_FIRE,
+        ICON_FA_EXCLAMATION
     };
 }
 typedef u32 StoreTags_t;
@@ -209,6 +211,7 @@ struct ReleasesView
     std::atomic<u32>    terminate = { 0 };
     std::atomic<u32>    threads_terminated = { 0 };
     u32                 top_pos = 0;
+    u32                 reg_timeout = 1000;
 };
 
 struct ChartItem

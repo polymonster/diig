@@ -422,24 +422,29 @@ void* registry_loader(void* userdata)
         ctx->cached_registry = nlohmann::json::parse(std::ifstream(reg_path.c_str()));
         ctx->cache_registry_status = DataStatus::e_ready;
     }
-        
-    // grab the latest
-    ctx->latest_registry_status = DataStatus::e_loading;
-    download_and_cache_named("https://raw.githubusercontent.com/polymonster/dig/main/registry/releases.json", "registry.json");
-    ctx->latest_registry = nlohmann::json::parse(std::ifstream(reg_path.c_str()));
-    ctx->latest_registry_status = DataStatus::e_ready;
-    
-    // assing latest as cached (if cache was not present)
-    if(ctx->cache_registry_status != DataStatus::e_ready)
-    {
-        ctx->cached_registry = ctx->latest_registry;
-        ctx->cache_registry_status = DataStatus::e_ready;
-    }
     
     for(;;)
     {
+        // grab the latest
+        ctx->latest_registry_status = DataStatus::e_loading;
+        download_and_cache_named("https://raw.githubusercontent.com/polymonster/dig/main/registry/releases.json", "registry.json");
+        ctx->latest_registry = nlohmann::json::parse(std::ifstream(reg_path.c_str()));
+        ctx->latest_registry_status = DataStatus::e_ready;
         
-        pen::thread_sleep_ms(66);
+        // assing latest as cached (if cache was not present)
+        if(ctx->cache_registry_status != DataStatus::e_ready)
+        {
+            ctx->cached_registry = ctx->latest_registry;
+            ctx->cache_registry_status = DataStatus::e_ready;
+        }
+        
+        while(ctx->latest_registry_status == DataStatus::e_ready)
+        {
+            // wait for a request
+            pen::thread_sleep_ms(66);
+        }
+        
+        PEN_LOG("fetch new reg");
     }
 };
 
@@ -481,17 +486,22 @@ void* user_data_thread(void* userdata)
 
 void* info_loader(void* userdata)
 {
-    constexpr u32 k_latest_timeout = 1000;
-    
     // get view from userdata
     ReleasesView* view = (ReleasesView*)userdata;
     
     // wait for a few seconds for a new registry
     u32 timestart = pen::get_time_ms();
     bool use_latest = true;
+    
+    //
+    if(view->reg_timeout > 1000)
+    {
+        view->data_ctx->latest_registry_status = DataStatus::e_loading;
+    }
+    
     while(view->data_ctx->latest_registry != DataStatus::e_ready)
     {
-        if(pen::get_time_ms() - timestart > k_latest_timeout)
+        if(pen::get_time_ms() - timestart > view->reg_timeout)
         {
             use_latest = false;
             break;
@@ -644,12 +654,6 @@ void* info_loader(void* userdata)
                     view->releases.store_tags[ri] |= (1<<t);
                 }
             }
-        }
-        
-        // has charted
-        if(release.contains("has_charted") && release["has_charted"])
-        {
-            view->releases.store_tags[ri] |= StoreTags::has_charted;
         }
 
         pen::thread_sleep_ms(1);
@@ -833,12 +837,13 @@ namespace
     u32         clear_screen;
     AppContext  ctx;
 
-    ReleasesView* new_view(View_t new_view, Tags_t new_tags)
+    ReleasesView* new_view(View_t new_view, Tags_t new_tags, u32 reg_timeout)
     {
         ReleasesView* view = new ReleasesView;
         view->data_ctx = &ctx.data_ctx;
         view->tags = new_tags;
         view->view = new_view;
+        view->reg_timeout = reg_timeout;
         
         // workers per view
         pen::thread_create(info_loader, 10 * 1024 * 1024, view, pen::e_thread_start_flags::detached);
@@ -848,17 +853,24 @@ namespace
         return view;
     }
 
-    void change_view(View_t view, Tags_t tags)
+    void change_view(View_t view, Tags_t tags, u32 reg_timeout = 1000)
     {
+        // prevent entering same view twice
+        if(ctx.view) {
+            if(ctx.view->view == view && ctx.view->tags == tags) {
+                return;
+            }
+        }
+        
         // first we add the current view into background views
-        if(ctx.view)
+        if(ctx.view && ctx.view->view != View::likes)
         {
             ctx.back_view = ctx.view;
             ctx.background_views.insert(ctx.view);
         }
             
         // kick off a new view
-        ctx.view = new_view(view, tags);
+        ctx.view = new_view(view, tags, reg_timeout);
     }
 
     void cleanup_views()
@@ -883,7 +895,7 @@ namespace
                             }
                             else
                             {
-                                // TODO:
+                                // TODO: free
                                 // texture preloaded from disk
                                 //free(releases.artwork_tcp[i].data);
                             }
@@ -942,11 +954,11 @@ namespace
                 // check threshold
                 if(ctx.scroll.y < reloady)
                 {
-                    if(ctx.reload_view == nullptr)
+                    if(ctx.reload_view == nullptr && ctx.view->view != View::likes)
                     {
                         // spawn reload view
-                        PEN_LOG("spawn reload view");
-                        ctx.reload_view = new_view(ctx.view->view, ctx.view->tags);
+                        PEN_LOG("spawn reload view: %f, %f", ctx.scroll.y, reloady);
+                        ctx.reload_view = new_view(ctx.view->view, ctx.view->tags, 5000);
                         debounce = true; // wait for debounce;
                     }
                 }
@@ -1002,11 +1014,14 @@ namespace
             ImGui::Dummy(ImVec2(k_indent1, 0.0f));
             ImGui::SameLine();
             ImGui::Text("%s", k_modes[cur_view]);
+            ImVec2 view_menu_pos = ImGui::GetItemRectMin();
+            view_menu_pos.y = ImGui::GetItemRectMax().y;
             if(ImGui::IsItemClicked()) {
-                ImGui::OpenPopup("Mode Select");
+                ImGui::OpenPopup("View Select");
             }
             
-            if(ImGui::BeginPopup("Mode Select"))
+            ImGui::SetNextWindowPos(view_menu_pos);
+            if(ImGui::BeginPopup("View Select"))
             {
                 if(ImGui::MenuItem("Latest"))
                 {
@@ -1030,18 +1045,24 @@ namespace
             ImGui::SameLine();
                     
             ImGui::Text("%s", get_tags_str(ctx.view->tags).c_str());
+            ImVec2 tag_menu_pos = ImGui::GetItemRectMin();
+            tag_menu_pos.y = ImGui::GetItemRectMax().y;
+            
             if(ImGui::IsItemClicked()) {
                 ImGui::OpenPopup("Tag Select");
             }
             
+            ImGui::SetNextWindowPos(tag_menu_pos);
             if(ImGui::BeginPopup("Tag Select"))
             {
+                ImGui::SetWindowFontScale(k_text_size_h2);
                 u32 new_tags = tag_menu(ctx.view->tags);
                 if(new_tags != cur_tags)
                 {
                     change_view(ctx.view->view, new_tags);
                 }
                 ImGui::EndPopup();
+                ImGui::SetWindowFontScale(k_text_size_body);
             }
         }
         else
@@ -1096,12 +1117,12 @@ namespace
         ImGui::Dummy(ImVec2(k_indent1, 0.0f));
         ImGui::SameLine();
         
-        if(ctx.view->view == View::likes)
+        if(ctx.view->view == View::likes || ctx.view->view == View::settings)
         {
             ImGui::Text("%s", ICON_FA_CHEVRON_LEFT);
             
             static bool back_debounce = false;
-            if(lenient_button_click(40.0f, back_debounce))
+            if(lenient_button_click(80.0f, back_debounce))
             {
                 ctx.view = ctx.back_view;
             }
@@ -1126,6 +1147,12 @@ namespace
         ImGui::SameLine();
         ImGui::Text("%s", ICON_FA_ELLIPSIS_H);
         
+        static bool ellipsis_debounce = false;
+        if(lenient_button_click(64.0f, ellipsis_debounce))
+        {
+            change_view(View::settings, Tags::all);
+        }
+        
         ImGui::SetWindowFontScale(k_text_size_body);
     }
 
@@ -1137,11 +1164,7 @@ namespace
         // get latest releases
         auto& releases = ctx.view->releases;
         
-        // mouse
-        auto ms = pen::input_get_mouse_state();
-        
         // releases
-        f32 releases_pos = ImGui::GetCursorPosY();
         ImGui::BeginChildEx("releases", 1, ImVec2(0, 0), false, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
         auto current_window = ImGui::GetCurrentWindow();
         ctx.releases_window = current_window;
@@ -1411,15 +1434,24 @@ namespace
             if(releases.store_tags[r] & StoreTags::out_of_stock)
             {
                 ImGui::SameLine();
-                ImGui::Text("%s", ICON_FA_EXCLAMATION);
+                ImGui::Text("%s", ICON_FA_EXCLAMATION_TRIANGLE);
             }
             
-            ImGui::SetWindowFontScale(1.0f);
+            ImGui::SetWindowFontScale(k_text_size_body);
             
             if(releases.store_tags[r] & StoreTags::has_charted)
             {
                 ImGui::SameLine();
                 ImGui::Text("%s", ICON_FA_FIRE);
+            }
+            
+            if(!(releases.store_tags[r] & StoreTags::out_of_stock))
+            {
+                if(releases.store_tags[r] & StoreTags::has_been_out_of_stock)
+                {
+                    ImGui::SameLine();
+                    ImGui::Text("%s", ICON_FA_EXCLAMATION);
+                }
             }
             
             // release info
@@ -1680,6 +1712,32 @@ namespace
         }
     }
 
+    void settings_menu()
+    {
+        ImGui::SetWindowFontScale(k_text_size_h2);
+        
+        if(ImGui::CollapsingHeader("Help"))
+        {
+            ImGui::Text("%s - Released / Buy Link", ICON_FA_CART_PLUS);
+            ImGui::Text("%s - Preorder / Buy Link", ICON_FA_CALENDAR_O);
+            ImGui::Text("%s - Sold Out", ICON_FA_EXCLAMATION_TRIANGLE);
+            ImGui::Text("%s - Has Charted", ICON_FA_FIRE);
+            ImGui::Text("%s - Has Previously Sold Out", ICON_FA_EXCLAMATION);
+        }
+        
+        if(ImGui::CollapsingHeader("Contact"))
+        {
+            
+        }
+        
+        if(ImGui::CollapsingHeader("Cache"))
+        {
+            
+        }
+        
+        ImGui::SetWindowFontScale(k_text_size_body);
+    }
+
     void main_window()
     {
         s32 w, h;
@@ -1698,9 +1756,17 @@ namespace
         
         // ui menus
         header_menu();
-        view_menu();
-        view_reload();
-        release_feed();
+        
+        if(ctx.view->view == View::settings)
+        {
+            settings_menu();
+        }
+        else
+        {
+            view_menu();
+            view_reload();
+            release_feed();
+        }
         
         ImGui::EndChild();
         ImGui::PopStyleVar(4);

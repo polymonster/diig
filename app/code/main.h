@@ -4,7 +4,6 @@
 // - text, sizes and spacing tweaks
 // - colour and accent tweaks
 
-// - settings menu / page
 // - thread to free up space
 // - function to delete files
 // - img and audio file cache management
@@ -23,6 +22,8 @@
 // - add a registry version field
 
 // DONE
+// x - move item cache to cached/tmp
+// x - settings menu / page
 // o - registry seems to have trouble updating
 // x - poll registry for updates periodically
 // x - align position of view and tags popup menu

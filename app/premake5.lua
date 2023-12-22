@@ -12,7 +12,22 @@ solution ("dig" .. platform_dir)
 
 -- engine
 dofile "pmtech/core/pen/project.lua"
+
+configuration{}
+if platform == "ios" then
+    xcodebuildsettings {
+		["IPHONEOS_DEPLOYMENT_TARGET"] = 15.0
+	}
+end
+
 dofile "pmtech/core/put/project.lua"
+
+configuration{}
+if platform == "ios" then
+    xcodebuildsettings {
+		["IPHONEOS_DEPLOYMENT_TARGET"] = 15.0
+	}
+end
 
 -- includes for shader builds
 configuration{}
@@ -29,7 +44,8 @@ if platform == "ios" then
     xcodebuildsettings {
 		["ASSETCATALOG_COMPILER_APPICON_NAME"] = "AppIcon",
         ["PRODUCT_BUNDLE_IDENTIFIER"] = "com.pmtech.dig",
-		["DEVELOPMENT_TEAM"] = "7C3Y39TX3G" -- personal team (Alex Dixon)
+		["DEVELOPMENT_TEAM"] = "7C3Y39TX3G", -- personal team (Alex Dixon)
+		["IPHONEOS_DEPLOYMENT_TARGET"] = 15.0
     }
 
 	files {

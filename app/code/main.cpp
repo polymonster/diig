@@ -272,8 +272,15 @@ void free_components(soa& s)
 
 Str get_cache_path()
 {
-    Str dir = os_get_persistent_data_directory();
+    Str dir = os_get_cache_data_directory();
     dir.appendf("/dig/cache/");
+    return dir;
+}
+
+Str get_docs_path()
+{
+    Str dir = os_get_persistent_data_directory();
+    dir.appendf("/dig/");
     return dir;
 }
 
@@ -282,8 +289,8 @@ Str download_and_cache(const Str& url, Str releaseid)
     Str filepath = pen::str_replace_string(url, "https://", "");
     filepath = pen::str_replace_chars(filepath, '/', '_');
     
-    Str dir = os_get_persistent_data_directory();
-    dir.appendf("/dig/cache/%s", releaseid.c_str());
+    Str dir = get_cache_path();
+    dir.appendf("/%s", releaseid.c_str());
     
     // filepath
     Str path = dir;
@@ -317,7 +324,7 @@ Str download_and_cache(const Str& url, Str releaseid)
 Str download_and_cache_named(const Str& url, const Str& filename)
 {
     Str dir = os_get_persistent_data_directory();
-    dir.appendf("/dig/cache");
+    dir.appendf("/dig");
     
     // filepath
     Str path = dir;
@@ -409,7 +416,7 @@ void* registry_loader(void* userdata)
     DataContext* ctx = (DataContext*)userdata;
     
     // construct registry path
-    Str reg_path = get_cache_path();
+    Str reg_path = get_docs_path();
     reg_path.append("registry.json");
     
     // first we can check if we have a cached registry
@@ -690,8 +697,7 @@ void* data_cacher(void* userdata)
     // get view from userdata
     ReleasesView* view = (ReleasesView*)userdata;
     
-    Str cache_dir = os_get_persistent_data_directory();
-    cache_dir.append("/dig/cache/");
+    Str cache_dir = get_cache_path();
     
     // enum cache stats
     pen::fs_tree_node dir;
@@ -716,10 +722,7 @@ void* data_cacher(void* userdata)
             view->data_ctx->cached_release_bytes += get_folder_size_recursive(release_dir, path.c_str());
         }
     }
-    
-    float mb = (((float)view->data_ctx->cached_release_bytes.load()) / 1024.0 / 1024.0);
-    PEN_LOG("stats = %i : %f", view->data_ctx->cached_release_folders.load(), mb);
-    
+        
     for(;;)
     {
         if(view->terminate) {
@@ -863,7 +866,7 @@ namespace
         }
         
         // first we add the current view into background views
-        if(ctx.view && ctx.view->view != View::likes)
+        if(ctx.view && ctx.view->view < View::likes)
         {
             ctx.back_view = ctx.view;
             ctx.background_views.insert(ctx.view);
@@ -1719,20 +1722,22 @@ namespace
         if(ImGui::CollapsingHeader("Help"))
         {
             ImGui::Text("%s - Released / Buy Link", ICON_FA_CART_PLUS);
-            ImGui::Text("%s - Preorder / Buy Link", ICON_FA_CALENDAR_O);
+            ImGui::Text("%s - Preorder / Buy Link", ICON_FA_CALENDAR_PLUS_O);
             ImGui::Text("%s - Sold Out", ICON_FA_EXCLAMATION_TRIANGLE);
             ImGui::Text("%s - Has Charted", ICON_FA_FIRE);
             ImGui::Text("%s - Has Previously Sold Out", ICON_FA_EXCLAMATION);
         }
         
-        if(ImGui::CollapsingHeader("Contact"))
+        if(ImGui::CollapsingHeader("Contact / Invites"))
         {
             
         }
         
         if(ImGui::CollapsingHeader("Cache"))
         {
-            
+            float mb = (((float)ctx.data_ctx.cached_release_bytes.load()) / 1024.0 / 1024.0);
+            ImGui::Text("Cached Releases: %i", ctx.data_ctx.cached_release_folders.load());
+            ImGui::Text("Cached Data: %f(mb)", mb);
         }
         
         ImGui::SetWindowFontScale(k_text_size_body);

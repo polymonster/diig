@@ -1,4 +1,8 @@
 // TASKS
+// - improve visuals for loading in progress items
+// - improve lenient button
+// - fix ratio / scaling of sizes for lenient button
+
 // - placeholder artwork image
 // - drag reload spinner
 // - text, sizes and spacing tweaks
@@ -9,12 +13,9 @@
 // - img and audio file cache management
 // - add clear cache and cache options
 
-// - in app store prev position in a back view, or move scroll into view
 // - user store prev position, prev mode etc
 // - serialise prev position and prev mode?
 // - refactor user data into a single dict and move to context
-
-// - set min ios version on pen and put
 
 // - side swipe still isnt perfect
 // - vertical swip still sometimes feel sticky
@@ -22,6 +23,8 @@
 // - add a registry version field
 
 // DONE
+// x - set min ios version on pen and put
+// x - in app store prev position in a back view, or move scroll into view
 // x - move item cache to cached/tmp
 // x - settings menu / page
 // o - registry seems to have trouble updating
@@ -213,6 +216,7 @@ struct ReleasesView
     std::atomic<u32>    threads_terminated = { 0 };
     u32                 top_pos = 0;
     u32                 reg_timeout = 1000;
+    vec2f               scroll = vec2f(0.0f, 0.0f);
 };
 
 struct ChartItem
@@ -225,7 +229,6 @@ struct AppContext
 {
     s32                     w, h;
     f32                     status_bar_height;
-    vec2f                   scroll = vec2f(0.0f, 0.0f);
     f32                     releases_scroll_maxy = 0.0f;
     void*                   releases_window = nullptr;
     Str                     play_track_filepath = "";
@@ -258,3 +261,4 @@ constexpr f32 k_text_size_h2 = 1.5f;
 constexpr f32 k_text_size_h3 = 1.25f;
 constexpr f32 k_text_size_body = 1.0f;
 constexpr f32 k_text_size_track = 0.75f;
+constexpr f32 k_text_size_dots = 0.8f;

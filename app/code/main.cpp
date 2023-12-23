@@ -426,8 +426,13 @@ void* registry_loader(void* userdata)
     pen::filesystem_getmtime(reg_path.c_str(), mtime);
     if(mtime != 0)
     {
-        ctx->cached_registry = nlohmann::json::parse(std::ifstream(reg_path.c_str()));
-        ctx->cache_registry_status = DataStatus::e_ready;
+        try {
+            ctx->cached_registry = nlohmann::json::parse(std::ifstream(reg_path.c_str()));
+            ctx->cache_registry_status = DataStatus::e_ready;
+        } 
+        catch(...) {
+            ctx->cache_registry_status = DataStatus::e_loading;
+        }
     }
     
     for(;;)
@@ -847,6 +852,7 @@ namespace
         view->tags = new_tags;
         view->view = new_view;
         view->reg_timeout = reg_timeout;
+        view->scroll = vec2f(0.0f, ctx.w);
         
         // workers per view
         pen::thread_create(info_loader, 10 * 1024 * 1024, view, pen::e_thread_start_flags::detached);
@@ -955,12 +961,11 @@ namespace
             if(pen::input_is_mouse_down(PEN_MOUSE_L))
             {
                 // check threshold
-                if(ctx.scroll.y < reloady)
+                if(ctx.view->scroll.y < reloady)
                 {
                     if(ctx.reload_view == nullptr && ctx.view->view != View::likes)
                     {
                         // spawn reload view
-                        PEN_LOG("spawn reload view: %f, %f", ctx.scroll.y, reloady);
                         ctx.reload_view = new_view(ctx.view->view, ctx.view->tags, 5000);
                         debounce = true; // wait for debounce;
                     }
@@ -1227,8 +1232,8 @@ namespace
             {
                 f32 h = (f32)w * ((f32)releases.artwork_tcp[r].height / (f32)releases.artwork_tcp[r].width);
                 f32 spacing = 20.0f;
-                
-                ImGui::BeginChildEx("rel", r+1, ImVec2((f32)w, h + 50), false, 0);
+                                
+                ImGui::BeginChildEx("rel", r+1, ImVec2((f32)w, h + 10.0f), false, 0);
                 ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(spacing, 0.0));
                 
                 u32 num_images = std::max<u32>(1, releases.track_url_count[r]);
@@ -1338,6 +1343,7 @@ namespace
             }
             
             // tracks
+            ImGui::SetWindowFontScale(k_text_size_dots);
             s32 tc = releases.track_filepath_count[r];
             if(tc != 0)
             {
@@ -1387,6 +1393,7 @@ namespace
                 ImGui::SetCursorPosX(ww * 0.5f);
                 ImGui::Text("%s", ICON_FA_TIMES_CIRCLE);
             }
+            ImGui::SetWindowFontScale(k_text_size_body);
             
             ImGui::Spacing();
             ImGui::Indent();
@@ -1673,8 +1680,8 @@ namespace
             }
             
             // snap back to min top
-            if(ctx.scroll.y < w) {
-                ctx.scroll.y = lerp(ctx.scroll.y, (f32)w, 0.5f);
+            if(ctx.view->scroll.y < w) {
+                ctx.view->scroll.y = lerp(ctx.view->scroll.y, (f32)w, 0.5f);
             }
             
             // release locks
@@ -1683,8 +1690,8 @@ namespace
         }
         
         // clamp to top
-        if(ctx.scroll.y <= miny) {
-            ctx.scroll.y = miny;
+        if(ctx.view->scroll.y <= miny) {
+            ctx.view->scroll.y = miny;
             ctx.scroll_delta = vec2f::zero();
         }
         
@@ -1705,13 +1712,13 @@ namespace
         // only not if already scrolling x
         if(!ctx.scroll_lock_x)
         {
-            ctx.scroll.y -= ctx.scroll_delta.y;
-            ImGui::SetScrollY((ImGuiWindow*)ctx.releases_window, ctx.scroll.y);
+            ctx.view->scroll.y -= ctx.scroll_delta.y;
+            ImGui::SetScrollY((ImGuiWindow*)ctx.releases_window, ctx.view->scroll.y);
         }
         
         // clamp to bottom
-        if(ctx.scroll.y > ctx.releases_scroll_maxy) {
-            ctx.scroll.y = std::min(ctx.scroll.y, ctx.releases_scroll_maxy);
+        if(ctx.view->scroll.y > ctx.releases_scroll_maxy) {
+            ctx.view->scroll.y = std::min(ctx.view->scroll.y, ctx.releases_scroll_maxy);
         }
     }
 
@@ -1840,7 +1847,6 @@ namespace
         curl::init();
                 
         // init context
-        ctx.scroll = vec2f(0.0, ctx.h);
         ctx.status_bar_height = pen::os_get_status_bar_portrait_height();
 
         // permanent workers

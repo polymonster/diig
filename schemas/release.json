@@ -1,0 +1,31 @@
+{
+    "id": "string - store specific id for the release",
+    "link": "string - url link to the store specific page for the release",
+    "artist": "string - the artist name",
+    "title": "string - the releases title name",
+    "label": "string - name of the label",
+    "label_link": "string - url link to the store specific page for the label",
+    "cat": "string - the catalog number for the label of the release",
+    "artworks": [
+        "string list - 3 artwork sizes: [small, medium, large]"
+    ],
+    "track_names": [
+        "string list - track names"
+    ],
+    "track_urls": [
+        "string list - url links to track mp3s"
+    ],
+    "store": "string - the specifc store this release is from",
+    "store_tags": {
+        "out_of_stock": true,
+        "has_sold_out": true,
+        "has_charted": true,
+        "preorder": true
+    },
+    "tags": {
+        "techno": true,
+        "electro": true,
+        "house": true,
+        "disco": true
+    }
+}

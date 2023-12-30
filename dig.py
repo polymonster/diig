@@ -381,9 +381,64 @@ def scrape_red_eye(page_count, get_urls=True, test_single=False, verbose=False):
     open("registry/releases.json", "w+").write(release_registry)
 
 
+# parse entireity of a div section
+def parse_div(html_str, div_class):
+    divs = []
+    while True:
+        first = html_str.find(div_class)
+        # no more left
+        if first == -1:
+            break
+        start = html_str[:first].rfind("<div ")
+        stack = 1
+        iter_pos = first
+        escape = 5
+        while stack > 0:
+            open = cgu.us(html_str.find("<div", iter_pos))
+            close = html_str.find("</div", iter_pos)
+            if close != -1 and open < close:
+                stack += 1
+                iter_pos = open + 5
+            elif close != -1:
+                stack -= 1
+                iter_pos = close + 5
+
+        divs.append(html_str[start:iter_pos])
+
+        # iterate
+        html_str = html_str[iter_pos:]
+
+    return divs
+
+# juno
+def scrape_juno(url):
+    print("scraping: juno", flush=True)
+
+    # try and then continue if the page does not exist
+    try:
+        html_file = urllib.request.urlopen(url)
+    except:
+        return
+
+    html_str = html_file.read().decode("utf8")
+
+    # gets products
+    products = parse_div(html_str, 'class="product-list"')
+
+    # separate into items
+    releases = parse_div(products[0], 'class="dv-item"')
+
+
 # main
 if __name__ == '__main__':
     get_urls = "-urls" in sys.argv
     test_single = "-test_single" in sys.argv
     verbose = "-verbose" in sys.argv
-    scrape_red_eye(100, get_urls, test_single, verbose)
+    store = "redeye"
+    if "-store" in sys.argv:
+        store = sys.argv[sys.argv.index("-store") + 1]
+
+    if store == "juno":
+        scrape_juno("https://www.juno.co.uk/minimal-tech-house/charts/bestsellers/this-week/")
+    elif store == "redeye":
+        scrape_red_eye(100, get_urls, test_single, verbose)

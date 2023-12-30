@@ -428,6 +428,31 @@ def scrape_juno(url):
     # separate into items
     releases = parse_div(products[0], 'class="dv-item"')
 
+    for release in releases:
+        (_, id_elem) = find_parse_elem(release, 0, "<div id=", ">")
+        (_, link_elem) = find_parse_elem(release, 0, "<a href=", ">")
+        (_, artwork_elem) = find_parse_elem(release, 0, "<img class", ">")
+        # https://imagescdn.juno.co.uk/full/CS861163-01A-BIG.jpg
+
+        (offset, artist_elem) = find_parse_elem(release, 0, '<a class="text-md"', "</a>")
+        (offset, title_elem) = find_parse_elem(release, offset, '<a class="text-md"', "</a>")
+        (offset, label_elem) = find_parse_elem(release, offset, '<a class="text-md"', "</a>")
+        (offset, cat_elem) = find_parse_elem(release, offset, '<div class="vi-text', "<br class")
+
+        # tracks
+        tracks = parse_div(release, 'class="listing-track')
+        for track in tracks:
+            print(track)
+
+        print(id_elem)
+        print(link_elem)
+        print(artist_elem)
+        print(title_elem)
+        print(label_elem)
+        print(cat_elem)
+        print(artwork_elem)
+
+        break
 
 # main
 if __name__ == '__main__':

@@ -21,6 +21,9 @@
 // - vertical swip still sometimes feel sticky
 
 // - add a registry version field
+// - implement label link?
+// - store specific category selection. ie redeye ([techno / electro, house / disco])
+// - store field to items
 
 // DONE
 // x - set min ios version on pen and put

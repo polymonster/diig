@@ -6,14 +6,14 @@ import json
 import datetime
 
 # etxract the release id number from a red eye records release
-def parse_red_eye_release_id(elem: str):
+def parse_redeye_release_id(elem: str):
     (id_start, id_end) = cgu.enclose_start_end('"', '"', elem, 0)
     id_end = id_start + elem[id_start:id_end].find('"')
     return elem[id_start:id_end]
 
 
 # extract the red eye ARTIST - TITLE
-def parse_red_eye_artist(elem: str):
+def parse_redeye_artist(elem: str):
     body = dig.parse_body(elem)
     artist_end = body.find("-")
     return {
@@ -55,7 +55,7 @@ def reparse_and_split_tracks(track_names: list, target: int):
 
 
 # extract the red eye track names (separated by '\n' '/' ',')
-def parse_red_eye_track_names(elem: str):
+def parse_redeye_track_names(elem: str):
     body = dig.parse_body(elem)
     tracks = body.splitlines()
     # some are separated by '/'
@@ -74,7 +74,7 @@ def parse_red_eye_track_names(elem: str):
 
 
 # parse label info from release it has CAT<br><a href="link">LABEL_NAME</a>
-def parse_red_eye_label(elem: str):
+def parse_redeye_label(elem: str):
     (cat_start, cat_end) = cgu.enclose_start_end(">", "<", elem, 0)
     (ns, ne) = cgu.enclose_start_end(">", "<", elem, cat_end)
     (label_start, label_end) = cgu.enclose_start_end(">", "<", elem, ne)
@@ -86,12 +86,12 @@ def parse_red_eye_label(elem: str):
 
 
 # parse release link <a href="link"
-def parse_red_eye_release_link(elem: str):
+def parse_redeye_release_link(elem: str):
     return dig.get_value(elem, "href")
 
 
 # find snippit urls by trying id-track and returning when none are found
-def get_red_eye_snippit_urls(release_id):
+def get_redeye_snippit_urls(release_id):
     tracks = list()
     cdn = "https://redeye-391831.c.cdn77.org/"
     # check the releaseid exists, this is track-a
@@ -114,7 +114,7 @@ def get_red_eye_snippit_urls(release_id):
 
 
 # get red eye artwork urls trying releaseid-index for different sizes
-def get_red_eye_artwork_urls(release_id):
+def get_redeye_artwork_urls(release_id):
     artworks = list()
     cdn = "https://www.redeyerecords.co.uk/imagery/"
     # check the artwork exists
@@ -129,7 +129,7 @@ def get_red_eye_artwork_urls(release_id):
 
 
 # find and parse all grid elems
-def parse_red_eye_grid_elems(html_str):
+def parse_redeye_grid_elems(html_str):
     releases_html = []
     while True:
         first = html_str.find('class="releaseGrid')
@@ -217,7 +217,7 @@ def scrape(page_count, get_urls=True, test_single=False, verbose=False):
             continue
 
         html_str = html_file.read().decode("utf8")
-        grid_elems = parse_red_eye_grid_elems(html_str)
+        grid_elems = parse_redeye_grid_elems(html_str)
 
         for grid_elem in grid_elems:
             (_, id_elem) = dig.find_parse_elem(grid_elem, 0, "<div id=", ">")
@@ -227,11 +227,12 @@ def scrape(page_count, get_urls=True, test_single=False, verbose=False):
             (_, link_elem) = dig.find_parse_elem(grid_elem, 0, '<a class="link"', "</a>")
 
             release_dict = dict()
-            release_dict["id"] = parse_red_eye_release_id(id_elem)
-            release_dict["track_names"] = parse_red_eye_track_names(tracks_elem)
-            release_dict["link"] = parse_red_eye_release_link(link_elem)
-            dig.merge_dicts(release_dict, parse_red_eye_label(label_elem))
-            dig.merge_dicts(release_dict, parse_red_eye_artist(artist_elem))
+            release_dict["store"] = "redeye"
+            release_dict["id"] = parse_redeye_release_id(id_elem)
+            release_dict["track_names"] = parse_redeye_track_names(tracks_elem)
+            release_dict["link"] = parse_redeye_release_link(link_elem)
+            dig.merge_dicts(release_dict, parse_redeye_label(label_elem))
+            dig.merge_dicts(release_dict, parse_redeye_artist(artist_elem))
             id = release_dict["id"]
             release_dict["tags"] = dict()
             release_dict["store_tags"] = dict()
@@ -270,10 +271,10 @@ def scrape(page_count, get_urls=True, test_single=False, verbose=False):
                             has_artworks = True
 
                 if not has_tracks:
-                    release_dict["track_urls"] = get_red_eye_snippit_urls(id)
+                    release_dict["track_urls"] = get_redeye_snippit_urls(id)
 
                 if not has_artworks:
-                    release_dict["artworks"] = get_red_eye_artwork_urls(id)
+                    release_dict["artworks"] = get_redeye_artwork_urls(id)
 
             # assign indices
             if category in ["weekly_chart", "monthly_chart"]:

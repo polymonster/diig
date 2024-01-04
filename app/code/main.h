@@ -25,6 +25,10 @@
 // - store specific category selection. ie redeye ([techno / electro, house / disco])
 // - store field to items
 
+// - parse juno store info
+// - add reg validation
+// - move reg to firebase
+
 // DONE
 // x - set min ios version on pen and put
 // x - in app store prev position in a back view, or move scroll into view

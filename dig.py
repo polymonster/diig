@@ -54,6 +54,15 @@ def parse_body(elem: str):
     return elem[tag_end:]
 
 
+# iteratively parse body to extract an element within a nested section
+def parse_nested_body(elem: str, depth: int):
+    iter = elem
+    for i in range(0, depth):
+        iter = parse_body(iter)
+    end = iter.find("<")
+    return iter[:end]
+
+
 # function to sort release
 def sort_func(kv):
     if kv != None:

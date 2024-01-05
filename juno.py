@@ -69,9 +69,27 @@ def parse_tracks(tracks):
     return (track_names, track_urls)
 
 
-# juno
-def scrape_juno(url):
-    print("scraping: juno", flush=True)
+# main entry for juno scrape
+def scrape(page_count):
+    # weekly chart
+    for i in range(1, 5):
+        scrape_page("https://www.juno.co.uk/minimal-tech-house/charts/bestsellers/this-week/{}".format(i), "weekly_chart")
+
+    # monthly chart
+    for i in range(1, 5):
+        scrape_page("https://www.juno.co.uk/minimal-tech-house/charts/bestsellers/four-weeks/{}".format(i), "monthtly_chart")
+
+    # latest
+    counter = 0
+    for i in range(1, page_count):
+        counter = scrape_page("https://www.juno.co.uk/minimal-tech-house/eight-weeks/{}/?order=date_down".format(i), "latest", counter)
+        if counter == None:
+            break
+
+
+# scape a single page with counter tracking
+def scrape_page(url, category, counter = 0):
+    print("scraping: juno ", url, flush=True)
 
     # try and then continue if the page does not exist
     try:
@@ -89,6 +107,11 @@ def scrape_juno(url):
 
     # separate into items
     releases = dig.parse_div(products[0], 'class="dv-item"')
+
+    # open existing reg
+    reg_filepath = "registry/juno.json"
+    if os.path.exists(reg_filepath):
+        releases_dict = json.loads(open(reg_filepath, "r").read())
 
     for release in releases:
         # parse divs and sections of htmls
@@ -116,8 +139,25 @@ def scrape_juno(url):
         release_dict["artworks"] = parse_artworks(artwork_elem)
         (release_dict["track_names"], release_dict["track_urls"]) = parse_tracks(tracks)
 
+        # chart pos
+        if category in ["weekly_chart", "monthly_chart"]:
+            pos = dig.parse_nested_body(release, 4).strip()
+            release_dict[category] = pos
+        else:
+            release_dict[category] = counter
+
+        # increment counter to track latest indices
+        counter += 1
+
         releases_dict[release_dict["id"]] = release_dict
+
+        # merge into main
+        merge = dict()
+        merge[release_dict["id"]] = release_dict
+        dig.merge_dicts(releases_dict, merge)
 
     # write to file
     release_registry = (json.dumps(releases_dict, indent=4))
-    open("registry/juno.json", "w+").write(release_registry)
+    open(reg_filepath, "w+").write(release_registry)
+
+    return counter

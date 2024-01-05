@@ -112,7 +112,8 @@ if __name__ == '__main__':
     if "-store" in sys.argv:
         store = sys.argv[sys.argv.index("-store") + 1]
 
+    # parse individual stores
     if store == "juno":
-        juno.scrape_juno("https://www.juno.co.uk/minimal-tech-house/charts/bestsellers/this-week/")
+        juno.scrape(100)
     elif store == "redeye":
         redeye.scrape(100, get_urls, test_single, verbose)

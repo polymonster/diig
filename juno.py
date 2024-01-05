@@ -82,7 +82,7 @@ def scrape(page_count):
     # latest
     counter = 0
     for i in range(1, page_count):
-        counter = scrape_page("https://www.juno.co.uk/minimal-tech-house/eight-weeks/{}/?order=date_down".format(i), "latest", counter)
+        counter = scrape_page("https://www.juno.co.uk/minimal-tech-house/eight-weeks/{}/?order=date_down".format(i), "new_releases", counter)
         if counter == None:
             break
 
@@ -142,7 +142,7 @@ def scrape_page(url, category, counter = 0):
         # chart pos
         if category in ["weekly_chart", "monthly_chart"]:
             pos = dig.parse_nested_body(release, 4).strip()
-            release_dict[category] = pos
+            release_dict[category] = int(pos)
         else:
             release_dict[category] = counter
 

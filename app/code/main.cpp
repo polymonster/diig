@@ -360,32 +360,7 @@ pen::texture_creation_params load_texture_from_disk(const Str& filepath)
     s32 w, h, c;
     stbi_uc* rgba = stbi_load(filepath.c_str(), &w, &h, &c, 4);
     
-    if(c == 3)
-    {
-        u8* dst = (u8*)pen::memory_alloc(w * h * 4);
-        u8* src = (u8*)rgba;
-        
-        u32 src_stride = w * c;
-        u32 dst_stride = w * 4;
-        
-        for(u32 y = 0; y < h; ++y)
-        {
-            u8* row_pos_src = src + src_stride * y;
-            u8* row_pos_dst = dst + dst_stride * y;
-            
-            for(u32 x = 0; x < h; x += 3)
-            {
-                row_pos_dst[x*4 + 0] = row_pos_src[x*c + 0];
-                row_pos_dst[x*4 + 1] = row_pos_src[x*c + 1];
-                row_pos_dst[x*4 + 2] = row_pos_src[x*c + 2];
-                row_pos_dst[x*4 + 3] = 255;
-            }
-        }
-        
-        pen::memory_free(rgba);
-        rgba = dst;
-        c = 4;
-    }
+    c = 4;
     
     pen::texture_creation_params tcp;
     tcp.width = w;
@@ -426,13 +401,15 @@ void* registry_loader(void* userdata)
     pen::filesystem_getmtime(reg_path.c_str(), mtime);
     if(mtime != 0)
     {
+        ctx->registry_mutex.lock();
         try {
-            ctx->cached_registry = nlohmann::json::parse(std::ifstream(reg_path.c_str()));
+            ctx->registry = nlohmann::json::parse(std::ifstream(reg_path.c_str()));
             ctx->cache_registry_status = DataStatus::e_ready;
         } 
         catch(...) {
             ctx->cache_registry_status = DataStatus::e_loading;
         }
+        ctx->registry_mutex.unlock();
     }
     
     for(;;)
@@ -440,16 +417,15 @@ void* registry_loader(void* userdata)
         // grab the latest
         ctx->latest_registry_status = DataStatus::e_loading;
         download_and_cache_named("https://raw.githubusercontent.com/polymonster/dig/main/registry/releases.json", "registry.json");
-        ctx->latest_registry = nlohmann::json::parse(std::ifstream(reg_path.c_str()));
+        
+        nlohmann::json reg = nlohmann::json::parse(std::ifstream(reg_path.c_str()));
         ctx->latest_registry_status = DataStatus::e_ready;
         
-        // assing latest as cached (if cache was not present)
-        if(ctx->cache_registry_status != DataStatus::e_ready)
-        {
-            ctx->cached_registry = ctx->latest_registry;
-            ctx->cache_registry_status = DataStatus::e_ready;
-        }
-        
+        ctx->registry_mutex.lock();
+        ctx->registry = reg;
+        ctx->cache_registry_status = DataStatus::e_ready;
+        ctx->registry_mutex.unlock();
+
         while(ctx->latest_registry_status == DataStatus::e_ready)
         {
             // wait for a request
@@ -505,38 +481,23 @@ void* info_loader(void* userdata)
     u32 timestart = pen::get_time_ms();
     bool use_latest = true;
     
-    //
     if(view->reg_timeout > 1000)
     {
         view->data_ctx->latest_registry_status = DataStatus::e_loading;
     }
     
-    while(view->data_ctx->latest_registry != DataStatus::e_ready)
-    {
-        if(pen::get_time_ms() - timestart > view->reg_timeout)
-        {
-            use_latest = false;
-            break;
-        }
-    }
-    
     // grab registry; either latest or cached
     nlohmann::json releases_registry;
     
-    if(use_latest)
+    while(view->data_ctx->cache_registry_status != DataStatus::e_ready)
     {
-        releases_registry = view->data_ctx->latest_registry;
+        // need to wait on cached
+        pen::thread_sleep_ms(16);
     }
-    else
-    {
-        while(view->data_ctx->cache_registry_status != DataStatus::e_ready)
-        {
-            // need to wait on cached
-            pen::thread_sleep_ms(16);
-        }
-        
-        releases_registry = view->data_ctx->cached_registry;
-    }
+    
+    view->data_ctx->registry_mutex.lock();
+    releases_registry = view->data_ctx->registry;
+    view->data_ctx->registry_mutex.unlock();
     
     // grab items for this requested view from the registry
     std::vector<ChartItem> view_chart;
@@ -582,6 +543,7 @@ void* info_loader(void* userdata)
         auto release = releases_registry[entry.index];
         
         // grab tags
+        /*
         if(release.contains("tags"))
         {
             u32 tags = get_tags(release["tags"]);
@@ -590,6 +552,7 @@ void* info_loader(void* userdata)
                 continue;
             }
         }
+        */
         
         // simple info
         view->releases.artist[ri] = release["artist"];

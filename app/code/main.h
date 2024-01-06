@@ -201,8 +201,8 @@ struct soa
 
 struct DataContext
 {
-    nlohmann::json      cached_registry;
-    nlohmann::json      latest_registry;
+    std::mutex          registry_mutex;
+    nlohmann::json      registry;
     nlohmann::json      user_data;
     
     std::atomic<u32>    cache_registry_status = { 0 };

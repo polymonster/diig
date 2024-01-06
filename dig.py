@@ -3,6 +3,7 @@ import sys
 import datetime
 import juno
 import redeye
+import json
 
 
 # member wise merge 2 dicts, second will overwrite dest
@@ -84,7 +85,6 @@ def parse_div(html_str, div_class):
         start = html_str[:first].rfind("<div ")
         stack = 1
         iter_pos = first
-        escape = 5
         while stack > 0:
             open = cgu.us(html_str.find("<div", iter_pos))
             close = html_str.find("</div", iter_pos)
@@ -103,6 +103,47 @@ def parse_div(html_str, div_class):
     return divs
 
 
+from google.oauth2 import service_account
+from google.auth.transport.requests import AuthorizedSession
+
+def firebase_test():
+    # dig-19d4c
+    # https://firestore.googleapis.com/v1/projects/diig/databases/(default)
+
+    # Define the required scopes
+    scopes = [
+        "https://www.googleapis.com/auth/userinfo.email",
+        "https://www.googleapis.com/auth/firebase.database"
+    ]
+
+    # Authenticate a credential with the service account
+    credentials = service_account.Credentials.from_service_account_file(
+        "diig-19d4c-firebase-adminsdk-jyja5-ebcf729661.json", scopes=scopes)
+
+    # Use the credentials object to authenticate a Requests session.
+    authed_session = AuthorizedSession(credentials)
+    response = authed_session.get(
+        "https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app/")
+
+    put_info = {
+        "chris": {
+            "is": "nice",
+            "really": True
+        }
+    }
+
+    response = authed_session.patch(
+        "https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app/users.json", data=json.dumps(put_info))
+
+    # get single
+    response = authed_session.get(
+        'https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app/users.json?orderBy="$key"&equalTo="alex"')
+
+    print(response)
+    print(response.text)
+    pass
+
+
 # main
 if __name__ == '__main__':
     get_urls = "-urls" in sys.argv
@@ -117,3 +158,5 @@ if __name__ == '__main__':
         juno.scrape(100)
     elif store == "redeye":
         redeye.scrape(100, get_urls, test_single, verbose)
+    elif store == "test":
+        firebase_test()

@@ -16,7 +16,7 @@ jobs:
       env:
         SERVICE_ACCOUNT: ${{ secrets.SERVICE_ACCOUNT }}
       run: |
-        python3 dig.py -store juno -key '$SERVICE_ACCOUNT'
+        python3 dig.py -store juno -key '${{ secrets.SERVICE_ACCOUNT }}'
         git config user.name github-actions
         git config user.email github-actions@github.com
         git add .
@@ -35,7 +35,7 @@ jobs:
       env:
         SERVICE_ACCOUNT: ${{ secrets.SERVICE_ACCOUNT }}
       run: |
-        python3 dig.py -urls -store redeye2 -key '$SERVICE_ACCOUNT'
+        python3 dig.py -urls -store redeye2 -key '${{ secrets.SERVICE_ACCOUNT }}'
         git config user.name github-actions
         git config user.email github-actions@github.com
         git add .

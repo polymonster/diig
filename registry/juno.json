@@ -39,9 +39,9 @@
         "juno-weekly_chart_minimal-tech-house": 1,
         "Tech House": "genre_tag",
         "Balearic House": "genre_tag",
-        "juno-monthtly_chart_minimal-tech-house": 16,
+        "juno-monthtly_chart_minimal-tech-house": 15,
         "juno-weekly_chart_deep-house": 4,
-        "juno-monthtly_chart_deep-house": 44
+        "juno-monthtly_chart_deep-house": 41
     },
     "juno-979582-1": {
         "store": "juno",
@@ -191,7 +191,7 @@
         "Downtempo House": "genre_tag",
         "New York House": "genre_tag",
         "juno-monthtly_chart_minimal-tech-house": 9,
-        "juno-weekly_chart_deep-house": 6,
+        "juno-weekly_chart_deep-house": 7,
         "juno-monthtly_chart_deep-house": 31
     },
     "juno-865737-1": {
@@ -245,8 +245,8 @@
         "Breakbeat Techno": "genre_tag",
         "Acid Techno": "genre_tag",
         "juno-monthtly_chart_minimal-tech-house": 32,
-        "juno-weekly_chart_deep-house": 8,
-        "juno-monthtly_chart_deep-house": 5
+        "juno-weekly_chart_deep-house": 9,
+        "juno-monthtly_chart_deep-house": 7
     },
     "juno-971203-1": {
         "store": "juno",
@@ -459,7 +459,7 @@
         "juno-weekly_chart_minimal-tech-house": 12,
         "Minimal": "genre_tag",
         "Dub Techno": "genre_tag",
-        "juno-monthtly_chart_minimal-tech-house": 3,
+        "juno-monthtly_chart_minimal-tech-house": 4,
         "juno-new_releases_minimal-tech-house": 2,
         "juno-weekly_chart_techno-music": 4,
         "juno-monthtly_chart_techno-music": 33,
@@ -494,10 +494,10 @@
             "https://www.juno.co.uk/MP3/SF822640-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF822640-01-02-02.mp3"
         ],
-        "juno-weekly_chart_minimal-tech-house": 13,
+        "juno-weekly_chart_minimal-tech-house": 14,
         "Minimal": "genre_tag",
         "juno-monthtly_chart_minimal-tech-house": 33,
-        "juno-weekly_chart_techno-music": 5,
+        "juno-weekly_chart_techno-music": 6,
         "juno-monthtly_chart_techno-music": 26
     },
     "juno-915111-1": {
@@ -529,12 +529,12 @@
             "https://www.juno.co.uk/MP3/SF915111-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF915111-01-02-02.mp3"
         ],
-        "juno-weekly_chart_minimal-tech-house": 14,
+        "juno-weekly_chart_minimal-tech-house": 15,
         "Dub Techno": "genre_tag",
         "juno-monthtly_chart_minimal-tech-house": 34,
-        "juno-weekly_chart_deep-house": 23,
-        "juno-monthtly_chart_deep-house": 40,
-        "juno-weekly_chart_techno-music": 7,
+        "juno-weekly_chart_deep-house": 24,
+        "juno-monthtly_chart_deep-house": 42,
+        "juno-weekly_chart_techno-music": 8,
         "juno-monthtly_chart_techno-music": 19
     },
     "juno-765371-1": {
@@ -564,13 +564,13 @@
             "https://www.juno.co.uk/MP3/SF765371-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF765371-01-02-02.mp3"
         ],
-        "juno-weekly_chart_minimal-tech-house": 15,
+        "juno-weekly_chart_minimal-tech-house": 16,
         "Tech House": "genre_tag",
         "Minimal": "genre_tag",
         "juno-monthtly_chart_minimal-tech-house": 26,
-        "juno-weekly_chart_deep-house": 24,
+        "juno-weekly_chart_deep-house": 25,
         "juno-monthtly_chart_deep-house": 2,
-        "juno-weekly_chart_techno-music": 8,
+        "juno-weekly_chart_techno-music": 9,
         "juno-monthtly_chart_techno-music": 18
     },
     "juno-967655-1": {
@@ -600,13 +600,13 @@
             "https://www.juno.co.uk/MP3/SF967655-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF967655-01-02-02.mp3"
         ],
-        "juno-weekly_chart_minimal-tech-house": 16,
+        "juno-weekly_chart_minimal-tech-house": 13,
         "Dub Techno": "genre_tag",
         "Chicago House": "genre_tag",
-        "juno-monthtly_chart_minimal-tech-house": 25,
+        "juno-monthtly_chart_minimal-tech-house": 5,
         "juno-new_releases_minimal-tech-house": 3,
-        "juno-weekly_chart_techno-music": 9,
-        "juno-monthtly_chart_techno-music": 6,
+        "juno-weekly_chart_techno-music": 5,
+        "juno-monthtly_chart_techno-music": 34,
         "juno-new_releases_techno-music": 2
     },
     "juno-963402-1": {
@@ -677,7 +677,7 @@
         ],
         "juno-weekly_chart_minimal-tech-house": 18,
         "Dub Techno": "genre_tag",
-        "juno-monthtly_chart_minimal-tech-house": 15,
+        "juno-monthtly_chart_minimal-tech-house": 16,
         "juno-new_releases_minimal-tech-house": 75,
         "juno-weekly_chart_techno-music": 11,
         "juno-monthtly_chart_techno-music": 10,
@@ -777,9 +777,9 @@
         "Breakbeat Techno": "genre_tag",
         "Electro Techno": "genre_tag",
         "juno-monthtly_chart_minimal-tech-house": 26,
-        "juno-new_releases_minimal-tech-house": 7,
+        "juno-new_releases_minimal-tech-house": 8,
         "juno-weekly_chart_techno-music": 14,
-        "juno-monthtly_chart_techno-music": 7,
+        "juno-monthtly_chart_techno-music": 8,
         "juno-new_releases_techno-music": 18
     },
     "juno-63199-1": {
@@ -861,7 +861,7 @@
         "juno-weekly_chart_minimal-tech-house": 22,
         "Leftfield House": "genre_tag",
         "juno-monthtly_chart_minimal-tech-house": 48,
-        "juno-weekly_chart_deep-house": 35,
+        "juno-weekly_chart_deep-house": 36,
         "juno-weekly_chart_techno-music": 17,
         "juno-monthtly_chart_techno-music": 41
     },
@@ -895,8 +895,8 @@
         "juno-weekly_chart_minimal-tech-house": 23,
         "Minimal": "genre_tag",
         "juno-monthtly_chart_minimal-tech-house": 35,
-        "juno-weekly_chart_deep-house": 37,
-        "juno-monthtly_chart_deep-house": 41
+        "juno-weekly_chart_deep-house": 38,
+        "juno-monthtly_chart_deep-house": 43
     },
     "juno-879945-1": {
         "store": "juno",
@@ -993,7 +993,7 @@
         "Detroit House": "genre_tag",
         "Chicago House": "genre_tag",
         "juno-monthtly_chart_minimal-tech-house": 27,
-        "juno-weekly_chart_deep-house": 42,
+        "juno-weekly_chart_deep-house": 43,
         "juno-monthtly_chart_deep-house": 49
     },
     "juno-986267-1": {
@@ -1105,7 +1105,7 @@
             "https://www.juno.co.uk/MP3/SF39488-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF39488-01-02-02.mp3"
         ],
-        "juno-weekly_chart_minimal-tech-house": 29,
+        "juno-weekly_chart_minimal-tech-house": 30,
         "juno-monthtly_chart_minimal-tech-house": 19
     },
     "juno-889798-1": {
@@ -1137,9 +1137,9 @@
             "https://www.juno.co.uk/MP3/SF889798-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF889798-01-02-02.mp3"
         ],
-        "juno-weekly_chart_minimal-tech-house": 30,
+        "juno-weekly_chart_minimal-tech-house": 29,
         "juno-monthtly_chart_minimal-tech-house": 28,
-        "juno-weekly_chart_deep-house": 49,
+        "juno-weekly_chart_deep-house": 51,
         "juno-monthtly_chart_deep-house": 3
     },
     "juno-980090-1": {
@@ -1249,8 +1249,8 @@
         "juno-weekly_chart_minimal-tech-house": 33,
         "Tech House": "genre_tag",
         "Minimal": "genre_tag",
-        "juno-monthtly_chart_minimal-tech-house": 4,
-        "juno-weekly_chart_deep-house": 59,
+        "juno-monthtly_chart_minimal-tech-house": 6,
+        "juno-weekly_chart_deep-house": 61,
         "juno-monthtly_chart_deep-house": 21
     },
     "juno-869220-1": {
@@ -1291,8 +1291,8 @@
         "juno-weekly_chart_minimal-tech-house": 34,
         "Ambient House": "genre_tag",
         "Leftfield House": "genre_tag",
-        "juno-monthtly_chart_minimal-tech-house": 5,
-        "juno-weekly_chart_deep-house": 61,
+        "juno-monthtly_chart_minimal-tech-house": 7,
+        "juno-weekly_chart_deep-house": 63,
         "juno-monthtly_chart_deep-house": 22
     },
     "juno-793545-1": {
@@ -1434,7 +1434,7 @@
         "Tech House": "genre_tag",
         "Breakbeat House": "genre_tag",
         "juno-monthtly_chart_minimal-tech-house": 3,
-        "juno-weekly_chart_deep-house": 62,
+        "juno-weekly_chart_deep-house": 64,
         "juno-monthtly_chart_deep-house": 36
     },
     "juno-851713-1": {
@@ -1478,8 +1478,8 @@
         "Tech House": "genre_tag",
         "90s House": "genre_tag",
         "2000s House": "genre_tag",
-        "juno-monthtly_chart_minimal-tech-house": 6,
-        "juno-weekly_chart_deep-house": 65,
+        "juno-monthtly_chart_minimal-tech-house": 8,
+        "juno-weekly_chart_deep-house": 67,
         "juno-monthtly_chart_deep-house": 23
     },
     "juno-904652-1": {
@@ -1515,7 +1515,7 @@
         "Tech House": "genre_tag",
         "Minimal": "genre_tag",
         "juno-monthtly_chart_minimal-tech-house": 42,
-        "juno-weekly_chart_deep-house": 66
+        "juno-weekly_chart_deep-house": 68
     },
     "juno-634683-1": {
         "store": "juno",
@@ -1543,7 +1543,7 @@
         "juno-weekly_chart_minimal-tech-house": 41,
         "Minimal": "genre_tag",
         "juno-monthtly_chart_minimal-tech-house": 28,
-        "juno-weekly_chart_deep-house": 67
+        "juno-weekly_chart_deep-house": 69
     },
     "juno-704161-1": {
         "store": "juno",
@@ -1655,7 +1655,7 @@
         "Acid Techno": "genre_tag",
         "Electro Techno": "genre_tag",
         "juno-monthtly_chart_minimal-tech-house": 43,
-        "juno-weekly_chart_deep-house": 74,
+        "juno-weekly_chart_deep-house": 76,
         "juno-weekly_chart_techno-music": 35,
         "juno-monthtly_chart_techno-music": 41
     },
@@ -1693,9 +1693,9 @@
         "Future House": "genre_tag",
         "juno-monthtly_chart_minimal-tech-house": 39,
         "juno-new_releases_minimal-tech-house": 77,
-        "juno-weekly_chart_deep-house": 76,
+        "juno-weekly_chart_deep-house": 78,
         "juno-monthtly_chart_deep-house": 18,
-        "juno-new_releases_deep-house": 77
+        "juno-new_releases_deep-house": 78
     },
     "juno-962653-1": {
         "store": "juno",
@@ -1916,7 +1916,7 @@
             "https://www.juno.co.uk/MP3/SF926697-01-01-01.mp3",
             "https://www.juno.co.uk/MP3/SF926697-01-02-01.mp3"
         ],
-        "juno-weekly_chart_minimal-tech-house": 51,
+        "juno-weekly_chart_minimal-tech-house": 52,
         "Ambient Techno": "genre_tag",
         "Dub Techno": "genre_tag",
         "juno-monthtly_chart_minimal-tech-house": 28,
@@ -1950,13 +1950,13 @@
             "https://www.juno.co.uk/MP3/SF848839-01-01-02.mp3",
             "https://www.juno.co.uk/MP3/SF848839-01-02-01.mp3"
         ],
-        "juno-weekly_chart_minimal-tech-house": 52,
+        "juno-weekly_chart_minimal-tech-house": 53,
         "Minimal": "genre_tag",
-        "juno-monthtly_chart_minimal-tech-house": 7,
-        "juno-weekly_chart_deep-house": 91,
+        "juno-monthtly_chart_minimal-tech-house": 9,
+        "juno-weekly_chart_deep-house": 94,
         "juno-monthtly_chart_deep-house": 26,
         "juno-weekly_chart_techno-music": 44,
-        "juno-monthtly_chart_techno-music": 35
+        "juno-monthtly_chart_techno-music": 36
     },
     "juno-947119-1": {
         "store": "juno",
@@ -1987,7 +1987,7 @@
             "https://www.juno.co.uk/MP3/SF947119-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF947119-01-02-02.mp3"
         ],
-        "juno-weekly_chart_minimal-tech-house": 53,
+        "juno-weekly_chart_minimal-tech-house": 54,
         "Minimal": "genre_tag",
         "juno-monthtly_chart_minimal-tech-house": 1,
         "juno-new_releases_minimal-tech-house": 12
@@ -2030,13 +2030,13 @@
             "https://www.juno.co.uk/MP3/SF944632-01-05-02.mp3",
             "https://www.juno.co.uk/MP3/SF944632-01-06-01.mp3"
         ],
-        "juno-weekly_chart_minimal-tech-house": 54,
+        "juno-weekly_chart_minimal-tech-house": 55,
         "Minimal": "genre_tag",
         "2000s House": "genre_tag",
         "Minimal Techno": "genre_tag",
-        "juno-monthtly_chart_minimal-tech-house": 8,
+        "juno-monthtly_chart_minimal-tech-house": 10,
         "juno-weekly_chart_techno-music": 46,
-        "juno-monthtly_chart_techno-music": 37
+        "juno-monthtly_chart_techno-music": 38
     },
     "juno-942578-1": {
         "store": "juno",
@@ -2067,12 +2067,12 @@
             "https://www.juno.co.uk/MP3/SF942578-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF942578-01-02-02.mp3"
         ],
-        "juno-weekly_chart_minimal-tech-house": 55,
+        "juno-weekly_chart_minimal-tech-house": 56,
         "Detroit House": "genre_tag",
         "Chicago House": "genre_tag",
-        "juno-monthtly_chart_minimal-tech-house": 38,
-        "juno-weekly_chart_deep-house": 94,
-        "juno-monthtly_chart_deep-house": 48
+        "juno-monthtly_chart_minimal-tech-house": 39,
+        "juno-weekly_chart_deep-house": 97,
+        "juno-monthtly_chart_deep-house": 0
     },
     "juno-954584-1": {
         "store": "juno",
@@ -2103,7 +2103,7 @@
             "https://www.juno.co.uk/MP3/SF954584-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF954584-01-02-02.mp3"
         ],
-        "juno-weekly_chart_minimal-tech-house": 56,
+        "juno-weekly_chart_minimal-tech-house": 57,
         "Tech House": "genre_tag",
         "Minimal": "genre_tag",
         "Future House": "genre_tag",
@@ -2152,7 +2152,7 @@
             "https://www.juno.co.uk/MP3/SF643740-01-04-02.mp3",
             "https://www.juno.co.uk/MP3/SF643740-01-04-03.mp3"
         ],
-        "juno-weekly_chart_minimal-tech-house": 57,
+        "juno-weekly_chart_minimal-tech-house": 58,
         "Ambient Techno": "genre_tag",
         "Minimal": "genre_tag",
         "Dub Techno": "genre_tag",
@@ -2197,11 +2197,11 @@
             "https://www.juno.co.uk/MP3/SF818533-01-04-01.mp3",
             "https://www.juno.co.uk/MP3/SF818533-01-04-02.mp3"
         ],
-        "juno-weekly_chart_minimal-tech-house": 58,
+        "juno-weekly_chart_minimal-tech-house": 59,
         "Tech House": "genre_tag",
         "Dub Techno": "genre_tag",
         "Minimal Techno": "genre_tag",
-        "juno-weekly_chart_deep-house": 103,
+        "juno-weekly_chart_deep-house": 106,
         "juno-weekly_chart_techno-music": 51
     },
     "juno-818534-1": {
@@ -2233,11 +2233,11 @@
             "https://www.juno.co.uk/MP3/SF818534-01-03-01.mp3",
             "https://www.juno.co.uk/MP3/SF818534-01-04-01.mp3"
         ],
-        "juno-weekly_chart_minimal-tech-house": 59,
+        "juno-weekly_chart_minimal-tech-house": 60,
         "Minimal": "genre_tag",
         "Dub Techno": "genre_tag",
         "juno-monthtly_chart_minimal-tech-house": 2,
-        "juno-weekly_chart_deep-house": 104,
+        "juno-weekly_chart_deep-house": 107,
         "juno-weekly_chart_techno-music": 52,
         "juno-monthtly_chart_techno-music": 42
     },
@@ -2270,13 +2270,13 @@
             "https://www.juno.co.uk/MP3/SF936852-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF936852-01-02-02.mp3"
         ],
-        "juno-weekly_chart_minimal-tech-house": 60,
+        "juno-weekly_chart_minimal-tech-house": 61,
         "Detroit House": "genre_tag",
         "Detroit Techno": "genre_tag",
         "Acid House": "genre_tag",
         "Acid Techno": "genre_tag",
         "juno-monthtly_chart_minimal-tech-house": 46,
-        "juno-weekly_chart_deep-house": 108,
+        "juno-weekly_chart_deep-house": 111,
         "juno-weekly_chart_techno-music": 53,
         "juno-monthtly_chart_techno-music": 45
     },
@@ -2309,10 +2309,10 @@
             "https://www.juno.co.uk/MP3/SF936850-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF936850-01-02-02.mp3"
         ],
-        "juno-weekly_chart_minimal-tech-house": 61,
+        "juno-weekly_chart_minimal-tech-house": 62,
         "Detroit House": "genre_tag",
         "Chicago House": "genre_tag",
-        "juno-weekly_chart_deep-house": 109
+        "juno-weekly_chart_deep-house": 112
     },
     "juno-952973-1": {
         "store": "juno",
@@ -2341,10 +2341,10 @@
             "https://www.juno.co.uk/MP3/SF952973-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF952973-01-02-02.mp3"
         ],
-        "juno-weekly_chart_minimal-tech-house": 62,
+        "juno-weekly_chart_minimal-tech-house": 63,
         "Tech House": "genre_tag",
         "juno-monthtly_chart_minimal-tech-house": 13,
-        "juno-weekly_chart_deep-house": 111,
+        "juno-weekly_chart_deep-house": 114,
         "juno-monthtly_chart_deep-house": 2,
         "juno-weekly_chart_techno-music": 55,
         "juno-monthtly_chart_techno-music": 1
@@ -2376,7 +2376,7 @@
             "https://www.juno.co.uk/MP3/SF852354-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF852354-01-02-02.mp3"
         ],
-        "juno-weekly_chart_minimal-tech-house": 63,
+        "juno-weekly_chart_minimal-tech-house": 64,
         "Minimal": "genre_tag",
         "juno-weekly_chart_techno-music": 56
     },
@@ -2427,7 +2427,7 @@
             "https://www.juno.co.uk/MP3/SF867393-01-04-03.mp3",
             "https://www.juno.co.uk/MP3/SF867393-01-04-04.mp3"
         ],
-        "juno-weekly_chart_minimal-tech-house": 64,
+        "juno-weekly_chart_minimal-tech-house": 65,
         "Breakbeat House": "genre_tag",
         "Future House": "genre_tag",
         "juno-monthtly_chart_minimal-tech-house": 3
@@ -2459,11 +2459,11 @@
             "https://www.juno.co.uk/MP3/SF917076-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF917076-01-02-02.mp3"
         ],
-        "juno-weekly_chart_minimal-tech-house": 65,
+        "juno-weekly_chart_minimal-tech-house": 66,
         "Minimal": "genre_tag",
         "juno-monthtly_chart_minimal-tech-house": 29,
-        "juno-weekly_chart_techno-music": 62,
-        "juno-monthtly_chart_techno-music": 12
+        "juno-weekly_chart_techno-music": 61,
+        "juno-monthtly_chart_techno-music": 13
     },
     "juno-896659-1": {
         "store": "juno",
@@ -2494,11 +2494,11 @@
             "https://www.juno.co.uk/MP3/SF896659-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF896659-01-02-02.mp3"
         ],
-        "juno-weekly_chart_minimal-tech-house": 66,
+        "juno-weekly_chart_minimal-tech-house": 67,
         "Tech House": "genre_tag",
         "Minimal": "genre_tag",
         "juno-monthtly_chart_minimal-tech-house": 47,
-        "juno-weekly_chart_deep-house": 121
+        "juno-weekly_chart_deep-house": 124
     },
     "juno-852553-1": {
         "store": "juno",
@@ -2541,11 +2541,11 @@
             "https://www.juno.co.uk/MP3/SF852553-01-04-02.mp3",
             "https://www.juno.co.uk/MP3/SF852553-01-04-03.mp3"
         ],
-        "juno-weekly_chart_minimal-tech-house": 67,
+        "juno-weekly_chart_minimal-tech-house": 68,
         "Experimental Techno": "genre_tag",
         "Breakbeat House": "genre_tag",
         "Breakbeat Techno": "genre_tag",
-        "juno-monthtly_chart_minimal-tech-house": 9
+        "juno-monthtly_chart_minimal-tech-house": 11
     },
     "juno-906165-1": {
         "store": "juno",
@@ -2580,14 +2580,14 @@
             "https://www.juno.co.uk/MP3/SF906165-01-04-01.mp3",
             "https://www.juno.co.uk/MP3/SF906165-01-04-02.mp3"
         ],
-        "juno-weekly_chart_minimal-tech-house": 68,
+        "juno-weekly_chart_minimal-tech-house": 69,
         "Detroit House": "genre_tag",
         "Tech House": "genre_tag",
         "Minimal": "genre_tag",
         "juno-monthtly_chart_minimal-tech-house": 14,
-        "juno-weekly_chart_deep-house": 126,
+        "juno-weekly_chart_deep-house": 129,
         "juno-monthtly_chart_deep-house": 3,
-        "juno-weekly_chart_techno-music": 63,
+        "juno-weekly_chart_techno-music": 62,
         "juno-monthtly_chart_techno-music": 2
     },
     "juno-906662-1": {
@@ -2619,10 +2619,10 @@
             "https://www.juno.co.uk/MP3/SF906662-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF906662-01-02-02.mp3"
         ],
-        "juno-weekly_chart_minimal-tech-house": 69,
+        "juno-weekly_chart_minimal-tech-house": 70,
         "Dub Techno": "genre_tag",
         "juno-monthtly_chart_minimal-tech-house": 48,
-        "juno-weekly_chart_techno-music": 64,
+        "juno-weekly_chart_techno-music": 63,
         "juno-monthtly_chart_techno-music": 48
     },
     "juno-471578-1": {
@@ -2650,14 +2650,14 @@
             "https://www.juno.co.uk/MP3/SF471578-01-01-01.mp3",
             "https://www.juno.co.uk/MP3/SF471578-01-02-01.mp3"
         ],
-        "juno-weekly_chart_minimal-tech-house": 70,
+        "juno-weekly_chart_minimal-tech-house": 71,
         "Minimal": "genre_tag",
         "90s House": "genre_tag",
         "Minimal Techno": "genre_tag",
         "juno-monthtly_chart_minimal-tech-house": 41,
-        "juno-weekly_chart_deep-house": 128,
+        "juno-weekly_chart_deep-house": 131,
         "juno-monthtly_chart_deep-house": 19,
-        "juno-weekly_chart_techno-music": 67,
+        "juno-weekly_chart_techno-music": 66,
         "juno-monthtly_chart_techno-music": 30
     },
     "juno-938129-1": {
@@ -2689,7 +2689,7 @@
             "https://www.juno.co.uk/MP3/SF938129-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF938129-01-02-02.mp3"
         ],
-        "juno-weekly_chart_minimal-tech-house": 71,
+        "juno-weekly_chart_minimal-tech-house": 72,
         "Minimal": "genre_tag"
     },
     "juno-727379-1": {
@@ -2717,7 +2717,7 @@
             "https://www.juno.co.uk/MP3/SF727379-01-01-01.mp3",
             "https://www.juno.co.uk/MP3/SF727379-01-02-01.mp3"
         ],
-        "juno-weekly_chart_minimal-tech-house": 72,
+        "juno-weekly_chart_minimal-tech-house": 73,
         "Afro House": "genre_tag",
         "Tribal House": "genre_tag",
         "New York House": "genre_tag",
@@ -2752,9 +2752,9 @@
             "https://www.juno.co.uk/MP3/SF928402-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF928402-01-02-02.mp3"
         ],
-        "juno-weekly_chart_minimal-tech-house": 73,
+        "juno-weekly_chart_minimal-tech-house": 74,
         "Minimal": "genre_tag",
-        "juno-weekly_chart_deep-house": 134
+        "juno-weekly_chart_deep-house": 136
     },
     "juno-977001-1": {
         "store": "juno",
@@ -2811,12 +2811,12 @@
             "https://www.juno.co.uk/MP3/SF977001-01-04-04.mp3",
             "https://www.juno.co.uk/MP3/SF977001-01-04-05.mp3"
         ],
-        "juno-weekly_chart_minimal-tech-house": 74,
+        "juno-weekly_chart_minimal-tech-house": 75,
         "IDM": "genre_tag",
         "Ambient House": "genre_tag",
         "Downtempo House": "genre_tag",
         "juno-new_releases_minimal-tech-house": 251,
-        "juno-weekly_chart_techno-music": 73,
+        "juno-weekly_chart_techno-music": 72,
         "juno-new_releases_techno-music": 386
     },
     "juno-977642-1": {
@@ -2848,12 +2848,12 @@
             "https://www.juno.co.uk/MP3/SF977642-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF977642-01-02-02.mp3"
         ],
-        "juno-weekly_chart_minimal-tech-house": 75,
+        "juno-weekly_chart_minimal-tech-house": 76,
         "Minimal": "genre_tag",
         "Minimal Techno": "genre_tag",
         "Electro Techno": "genre_tag",
         "juno-new_releases_minimal-tech-house": 164,
-        "juno-weekly_chart_techno-music": 75,
+        "juno-weekly_chart_techno-music": 74,
         "juno-new_releases_techno-music": 254
     },
     "juno-960222-1": {
@@ -2879,7 +2879,7 @@
         "track_urls": [
             "https://www.juno.co.uk/MP3/SF960222-01-01-01.mp3"
         ],
-        "juno-weekly_chart_minimal-tech-house": 76,
+        "juno-weekly_chart_minimal-tech-house": 77,
         "Minimal": "genre_tag",
         "French House": "genre_tag",
         "juno-monthtly_chart_minimal-tech-house": 15
@@ -2909,11 +2909,11 @@
             "https://www.juno.co.uk/MP3/SF883380-01-01-01.mp3",
             "https://www.juno.co.uk/MP3/SF883380-01-02-01.mp3"
         ],
-        "juno-weekly_chart_minimal-tech-house": 77,
+        "juno-weekly_chart_minimal-tech-house": 78,
         "Tech House": "genre_tag",
         "Minimal": "genre_tag",
         "UK Garage": "genre_tag",
-        "juno-weekly_chart_deep-house": 142
+        "juno-weekly_chart_deep-house": 143
     },
     "juno-953360-1": {
         "store": "juno",
@@ -2944,7 +2944,7 @@
             "https://www.juno.co.uk/MP3/SF953360-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF953360-01-02-02.mp3"
         ],
-        "juno-weekly_chart_minimal-tech-house": 78,
+        "juno-weekly_chart_minimal-tech-house": 79,
         "Tech House": "genre_tag",
         "juno-monthtly_chart_minimal-tech-house": 4,
         "juno-new_releases_minimal-tech-house": 165
@@ -2974,7 +2974,7 @@
             "https://www.juno.co.uk/MP3/SF941523-01-01-01.mp3",
             "https://www.juno.co.uk/MP3/SF941523-01-02-01.mp3"
         ],
-        "juno-weekly_chart_minimal-tech-house": 79,
+        "juno-weekly_chart_minimal-tech-house": 80,
         "Disco House": "genre_tag",
         "juno-monthtly_chart_minimal-tech-house": 4,
         "juno-weekly_chart_deep-house": 145
@@ -3022,7 +3022,7 @@
             "https://www.juno.co.uk/MP3/SF978381-01-06-01.mp3",
             "https://www.juno.co.uk/MP3/SF978381-01-06-02.mp3"
         ],
-        "juno-weekly_chart_minimal-tech-house": 80,
+        "juno-weekly_chart_minimal-tech-house": 81,
         "Tech House": "genre_tag",
         "90s House": "genre_tag",
         "juno-monthtly_chart_minimal-tech-house": 0,
@@ -3053,12 +3053,12 @@
             "https://www.juno.co.uk/MP3/SF952920-01-01-01.mp3",
             "https://www.juno.co.uk/MP3/SF952920-01-02-01.mp3"
         ],
-        "juno-weekly_chart_minimal-tech-house": 81,
+        "juno-weekly_chart_minimal-tech-house": 82,
         "Minimal": "genre_tag",
         "Minimal Techno": "genre_tag",
         "juno-monthtly_chart_minimal-tech-house": 29,
-        "juno-new_releases_minimal-tech-house": 114,
-        "juno-weekly_chart_techno-music": 81,
+        "juno-new_releases_minimal-tech-house": 115,
+        "juno-weekly_chart_techno-music": 80,
         "juno-monthtly_chart_techno-music": 22,
         "juno-new_releases_techno-music": 193
     },
@@ -3091,7 +3091,7 @@
             "https://www.juno.co.uk/MP3/SF965372-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF965372-01-02-02.mp3"
         ],
-        "juno-weekly_chart_minimal-tech-house": 82,
+        "juno-weekly_chart_minimal-tech-house": 83,
         "Tech House": "genre_tag",
         "Minimal": "genre_tag",
         "juno-monthtly_chart_minimal-tech-house": 7,
@@ -3126,14 +3126,14 @@
             "https://www.juno.co.uk/MP3/SF969855-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF969855-01-02-02.mp3"
         ],
-        "juno-weekly_chart_minimal-tech-house": 83,
+        "juno-weekly_chart_minimal-tech-house": 84,
         "Chicago House": "genre_tag",
         "juno-monthtly_chart_minimal-tech-house": 30,
         "juno-new_releases_minimal-tech-house": 79,
         "juno-weekly_chart_deep-house": 152,
-        "juno-monthtly_chart_deep-house": 4,
+        "juno-monthtly_chart_deep-house": 5,
         "juno-new_releases_deep-house": 83,
-        "juno-weekly_chart_techno-music": 83,
+        "juno-weekly_chart_techno-music": 82,
         "juno-monthtly_chart_techno-music": 23,
         "juno-new_releases_techno-music": 133
     },
@@ -3164,11 +3164,11 @@
             "https://www.juno.co.uk/MP3/SF971536-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF971536-01-02-02.mp3"
         ],
-        "juno-weekly_chart_minimal-tech-house": 84,
+        "juno-weekly_chart_minimal-tech-house": 85,
         "Tech House": "genre_tag",
         "Minimal": "genre_tag",
         "juno-monthtly_chart_minimal-tech-house": 23,
-        "juno-new_releases_minimal-tech-house": 115
+        "juno-new_releases_minimal-tech-house": 116
     },
     "juno-970411-1": {
         "store": "juno",
@@ -3199,12 +3199,12 @@
             "https://www.juno.co.uk/MP3/SF970411-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF970411-01-02-02.mp3"
         ],
-        "juno-weekly_chart_minimal-tech-house": 85,
+        "juno-weekly_chart_minimal-tech-house": 86,
         "Dub Techno": "genre_tag",
         "Ambient House": "genre_tag",
         "Acid House": "genre_tag",
         "juno-monthtly_chart_minimal-tech-house": 5,
-        "juno-new_releases_minimal-tech-house": 116,
+        "juno-new_releases_minimal-tech-house": 117,
         "juno-weekly_chart_deep-house": 154,
         "juno-monthtly_chart_deep-house": 39,
         "juno-new_releases_deep-house": 134
@@ -3238,12 +3238,12 @@
             "https://www.juno.co.uk/MP3/SF963445-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF963445-01-02-02.mp3"
         ],
-        "juno-weekly_chart_minimal-tech-house": 86,
+        "juno-weekly_chart_minimal-tech-house": 87,
         "Tech House": "genre_tag",
         "Experimental Techno": "genre_tag",
         "UK Garage": "genre_tag",
         "juno-monthtly_chart_minimal-tech-house": 6,
-        "juno-weekly_chart_techno-music": 85,
+        "juno-weekly_chart_techno-music": 84,
         "juno-monthtly_chart_techno-music": 43
     },
     "juno-968396-1": {
@@ -3275,7 +3275,7 @@
             "https://www.juno.co.uk/MP3/SF968396-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF968396-01-02-02.mp3"
         ],
-        "juno-weekly_chart_minimal-tech-house": 87,
+        "juno-weekly_chart_minimal-tech-house": 88,
         "Acid House": "genre_tag",
         "Acid Techno": "genre_tag",
         "juno-monthtly_chart_minimal-tech-house": 10,
@@ -3320,13 +3320,13 @@
             "https://www.juno.co.uk/MP3/SF966670-01-04-01.mp3",
             "https://www.juno.co.uk/MP3/SF966670-01-04-02.mp3"
         ],
-        "juno-weekly_chart_minimal-tech-house": 88,
+        "juno-weekly_chart_minimal-tech-house": 89,
         "90s House": "genre_tag",
         "Detroit Techno": "genre_tag",
         "Electro Techno": "genre_tag",
         "juno-monthtly_chart_minimal-tech-house": 1,
         "juno-new_releases_minimal-tech-house": 237,
-        "juno-weekly_chart_techno-music": 88,
+        "juno-weekly_chart_techno-music": 87,
         "juno-monthtly_chart_techno-music": 1,
         "juno-new_releases_techno-music": 348
     },
@@ -3359,12 +3359,12 @@
             "https://www.juno.co.uk/MP3/SF974748-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF974748-01-02-02.mp3"
         ],
-        "juno-weekly_chart_minimal-tech-house": 89,
+        "juno-weekly_chart_minimal-tech-house": 90,
         "Tech House": "genre_tag",
         "juno-monthtly_chart_minimal-tech-house": 29,
         "juno-new_releases_minimal-tech-house": 24,
         "juno-weekly_chart_deep-house": 161,
-        "juno-monthtly_chart_deep-house": 29,
+        "juno-monthtly_chart_deep-house": 30,
         "juno-new_releases_deep-house": 23
     },
     "juno-981319-1": {
@@ -3390,9 +3390,9 @@
         "track_urls": [
             "https://www.juno.co.uk/MP3/SF981319-01-01-01.mp3"
         ],
-        "juno-weekly_chart_minimal-tech-house": 90,
-        "juno-monthtly_chart_minimal-tech-house": 10,
-        "juno-new_releases_minimal-tech-house": 117
+        "juno-weekly_chart_minimal-tech-house": 51,
+        "juno-monthtly_chart_minimal-tech-house": 38,
+        "juno-new_releases_minimal-tech-house": 114
     },
     "juno-971438-1": {
         "store": "juno",
@@ -3428,7 +3428,7 @@
         "juno-weekly_chart_minimal-tech-house": 91,
         "Tech House": "genre_tag",
         "Minimal Techno": "genre_tag",
-        "juno-monthtly_chart_minimal-tech-house": 11,
+        "juno-monthtly_chart_minimal-tech-house": 12,
         "juno-new_releases_minimal-tech-house": 198,
         "juno-weekly_chart_deep-house": 162,
         "juno-monthtly_chart_deep-house": 28,
@@ -3585,7 +3585,7 @@
         "Electro Techno": "genre_tag",
         "juno-monthtly_chart_minimal-tech-house": 11,
         "juno-new_releases_minimal-tech-house": 238,
-        "juno-weekly_chart_techno-music": 91,
+        "juno-weekly_chart_techno-music": 90,
         "juno-monthtly_chart_techno-music": 7,
         "juno-new_releases_techno-music": 349
     },
@@ -3631,9 +3631,9 @@
         "Minimal": "genre_tag",
         "Minimal Techno": "genre_tag",
         "Electro Techno": "genre_tag",
-        "juno-monthtly_chart_minimal-tech-house": 39,
+        "juno-monthtly_chart_minimal-tech-house": 40,
         "juno-new_releases_minimal-tech-house": 239,
-        "juno-weekly_chart_techno-music": 94,
+        "juno-weekly_chart_techno-music": 93,
         "juno-monthtly_chart_techno-music": 27,
         "juno-new_releases_techno-music": 350
     },
@@ -3669,7 +3669,7 @@
         "juno-monthtly_chart_minimal-tech-house": 35,
         "juno-new_releases_minimal-tech-house": 81,
         "juno-weekly_chart_deep-house": 169,
-        "juno-monthtly_chart_deep-house": 12,
+        "juno-monthtly_chart_deep-house": 13,
         "juno-new_releases_deep-house": 89
     },
     "juno-980361-1": {
@@ -3739,7 +3739,7 @@
         "Electro Techno": "genre_tag",
         "juno-monthtly_chart_minimal-tech-house": 7,
         "juno-new_releases_minimal-tech-house": 52,
-        "juno-weekly_chart_techno-music": 95,
+        "juno-weekly_chart_techno-music": 94,
         "juno-monthtly_chart_techno-music": 44,
         "juno-new_releases_techno-music": 77
     },
@@ -3768,7 +3768,7 @@
             "https://www.juno.co.uk/MP3/SF882350-01-01-01.mp3",
             "https://www.juno.co.uk/MP3/SF882350-01-02-01.mp3"
         ],
-        "juno-weekly_chart_minimal-tech-house": 100,
+        "juno-weekly_chart_minimal-tech-house": 104,
         "Electro Techno": "genre_tag",
         "juno-weekly_chart_techno-music": 101
     },
@@ -3799,11 +3799,11 @@
             "https://www.juno.co.uk/MP3/SF948660-01-01-02.mp3",
             "https://www.juno.co.uk/MP3/SF948660-01-02-01.mp3"
         ],
-        "juno-weekly_chart_minimal-tech-house": 101,
+        "juno-weekly_chart_minimal-tech-house": 103,
         "Disco House": "genre_tag",
         "Acid House": "genre_tag",
         "Chicago House": "genre_tag",
-        "juno-weekly_chart_deep-house": 174
+        "juno-weekly_chart_deep-house": 175
     },
     "juno-988671-1": {
         "store": "juno",
@@ -3830,12 +3830,12 @@
             "https://www.juno.co.uk/MP3/SF988671-01-01-01.mp3",
             "https://www.juno.co.uk/MP3/SF988671-01-02-01.mp3"
         ],
-        "juno-weekly_chart_minimal-tech-house": 102,
+        "juno-weekly_chart_minimal-tech-house": 101,
         "Balearic House": "genre_tag",
         "juno-monthtly_chart_minimal-tech-house": 5,
         "juno-new_releases_minimal-tech-house": 13,
-        "juno-weekly_chart_deep-house": 175,
-        "juno-new_releases_deep-house": 10
+        "juno-weekly_chart_deep-house": 174,
+        "juno-new_releases_deep-house": 9
     },
     "juno-980358-1": {
         "store": "juno",
@@ -3862,7 +3862,7 @@
             "https://www.juno.co.uk/MP3/SF980358-01-01-01.mp3",
             "https://www.juno.co.uk/MP3/SF980358-01-02-01.mp3"
         ],
-        "juno-weekly_chart_minimal-tech-house": 103,
+        "juno-weekly_chart_minimal-tech-house": 102,
         "Tech House": "genre_tag",
         "juno-monthtly_chart_minimal-tech-house": 17,
         "juno-new_releases_minimal-tech-house": 53
@@ -3892,10 +3892,10 @@
             "https://www.juno.co.uk/MP3/SF870701-01-01-01.mp3",
             "https://www.juno.co.uk/MP3/SF870701-01-02-01.mp3"
         ],
-        "juno-weekly_chart_minimal-tech-house": 104,
+        "juno-weekly_chart_minimal-tech-house": 100,
         "Acid Techno": "genre_tag",
         "Electro Techno": "genre_tag",
-        "juno-weekly_chart_techno-music": 104
+        "juno-weekly_chart_techno-music": 98
     },
     "juno-927536-1": {
         "store": "juno",
@@ -3931,7 +3931,7 @@
         "Classic House": "genre_tag",
         "2000s House": "genre_tag",
         "Electro Techno": "genre_tag",
-        "juno-weekly_chart_deep-house": 180
+        "juno-weekly_chart_deep-house": 184
     },
     "juno-924391-1": {
         "store": "juno",
@@ -3962,7 +3962,7 @@
         ],
         "juno-weekly_chart_minimal-tech-house": 106,
         "Ambient House": "genre_tag",
-        "juno-weekly_chart_deep-house": 186
+        "juno-weekly_chart_deep-house": 190
     },
     "juno-960987-1": {
         "store": "juno",
@@ -3995,7 +3995,7 @@
         "Tech House": "genre_tag",
         "Minimal": "genre_tag",
         "Acid House": "genre_tag",
-        "juno-weekly_chart_deep-house": 187
+        "juno-weekly_chart_deep-house": 191
     },
     "juno-967955-1": {
         "store": "juno",
@@ -4033,7 +4033,7 @@
         "juno-monthtly_chart_minimal-tech-house": 30,
         "juno-new_releases_minimal-tech-house": 118,
         "juno-weekly_chart_techno-music": 110,
-        "juno-monthtly_chart_techno-music": 14,
+        "juno-monthtly_chart_techno-music": 15,
         "juno-new_releases_techno-music": 194
     },
     "juno-821979-1": {
@@ -4114,7 +4114,7 @@
         "juno-weekly_chart_minimal-tech-house": 110,
         "Detroit House": "genre_tag",
         "Detroit Techno": "genre_tag",
-        "juno-weekly_chart_deep-house": 191,
+        "juno-weekly_chart_deep-house": 195,
         "juno-weekly_chart_techno-music": 113
     },
     "juno-507099-1": {
@@ -4147,7 +4147,7 @@
         "juno-weekly_chart_minimal-tech-house": 111,
         "Detroit House": "genre_tag",
         "Detroit Techno": "genre_tag",
-        "juno-weekly_chart_deep-house": 193
+        "juno-weekly_chart_deep-house": 197
     },
     "juno-965514-1": {
         "store": "juno",
@@ -4382,8 +4382,8 @@
         ],
         "juno-weekly_chart_minimal-tech-house": 118,
         "Tech House": "genre_tag",
-        "juno-monthtly_chart_minimal-tech-house": 12,
-        "juno-monthtly_chart_deep-house": 31
+        "juno-monthtly_chart_minimal-tech-house": 13,
+        "juno-monthtly_chart_deep-house": 32
     },
     "juno-955005-1": {
         "store": "juno",
@@ -4583,7 +4583,7 @@
         ],
         "juno-weekly_chart_minimal-tech-house": 124,
         "Electro Techno": "genre_tag",
-        "juno-weekly_chart_techno-music": 140
+        "juno-weekly_chart_techno-music": 139
     },
     "juno-871656-1": {
         "store": "juno",
@@ -4612,7 +4612,7 @@
         ],
         "juno-weekly_chart_minimal-tech-house": 125,
         "Dub Techno": "genre_tag",
-        "juno-weekly_chart_techno-music": 141
+        "juno-weekly_chart_techno-music": 140
     },
     "juno-872396-1": {
         "store": "juno",
@@ -4818,7 +4818,7 @@
         "juno-weekly_chart_minimal-tech-house": 131,
         "Minimal": "genre_tag",
         "Leftfield House": "genre_tag",
-        "juno-weekly_chart_techno-music": 155
+        "juno-weekly_chart_techno-music": 154
     },
     "juno-792617-1": {
         "store": "juno",
@@ -4917,7 +4917,7 @@
         "Breakbeat House": "genre_tag",
         "Leftfield House": "genre_tag",
         "Acid House": "genre_tag",
-        "juno-weekly_chart_techno-music": 159
+        "juno-weekly_chart_techno-music": 158
     },
     "juno-937536-1": {
         "store": "juno",
@@ -4973,7 +4973,7 @@
         "Breakbeat Techno": "genre_tag",
         "80s House": "genre_tag",
         "Electro Techno": "genre_tag",
-        "juno-weekly_chart_techno-music": 161
+        "juno-weekly_chart_techno-music": 160
     },
     "juno-887203-1": {
         "store": "juno",
@@ -5005,7 +5005,7 @@
         "juno-weekly_chart_minimal-tech-house": 136,
         "Tech House": "genre_tag",
         "Breakbeat Techno": "genre_tag",
-        "juno-monthtly_chart_minimal-tech-house": 40
+        "juno-monthtly_chart_minimal-tech-house": 41
     },
     "juno-934223-1": {
         "store": "juno",
@@ -5074,7 +5074,7 @@
         ],
         "juno-weekly_chart_minimal-tech-house": 138,
         "Detroit Techno": "genre_tag",
-        "juno-weekly_chart_techno-music": 167
+        "juno-weekly_chart_techno-music": 166
     },
     "juno-934405-1": {
         "store": "juno",
@@ -5103,7 +5103,7 @@
         ],
         "juno-weekly_chart_minimal-tech-house": 139,
         "Ambient Techno": "genre_tag",
-        "juno-weekly_chart_techno-music": 168
+        "juno-weekly_chart_techno-music": 167
     },
     "juno-846066-1": {
         "store": "juno",
@@ -5168,7 +5168,7 @@
         "Minimal Techno": "genre_tag",
         "Acid Techno": "genre_tag",
         "juno-monthtly_chart_minimal-tech-house": 9,
-        "juno-weekly_chart_techno-music": 173,
+        "juno-weekly_chart_techno-music": 172,
         "juno-monthtly_chart_techno-music": 1
     },
     "juno-849179-1": {
@@ -5234,7 +5234,7 @@
         "Experimental Techno": "genre_tag",
         "Leftfield House": "genre_tag",
         "Minimal Techno": "genre_tag",
-        "juno-weekly_chart_techno-music": 175
+        "juno-weekly_chart_techno-music": 174
     },
     "juno-853057-1": {
         "store": "juno",
@@ -5273,7 +5273,7 @@
         "Japanese House": "genre_tag",
         "Tech House": "genre_tag",
         "Minimal": "genre_tag",
-        "juno-weekly_chart_techno-music": 178
+        "juno-weekly_chart_techno-music": 177
     },
     "juno-853154-1": {
         "store": "juno",
@@ -5305,7 +5305,7 @@
         "juno-weekly_chart_minimal-tech-house": 145,
         "Dub Techno": "genre_tag",
         "juno-monthtly_chart_minimal-tech-house": 10,
-        "juno-weekly_chart_techno-music": 180,
+        "juno-weekly_chart_techno-music": 179,
         "juno-monthtly_chart_techno-music": 3
     },
     "juno-853999-1": {
@@ -5461,7 +5461,7 @@
         ],
         "juno-weekly_chart_minimal-tech-house": 149,
         "Tech House": "genre_tag",
-        "juno-monthtly_chart_minimal-tech-house": 41
+        "juno-monthtly_chart_minimal-tech-house": 42
     },
     "juno-865253-1": {
         "store": "juno",
@@ -5655,7 +5655,7 @@
         ],
         "juno-weekly_chart_minimal-tech-house": 155,
         "Dub Techno": "genre_tag",
-        "juno-weekly_chart_techno-music": 191
+        "juno-weekly_chart_techno-music": 190
     },
     "juno-876493-1": {
         "store": "juno",
@@ -5724,7 +5724,7 @@
         ],
         "juno-weekly_chart_minimal-tech-house": 157,
         "Detroit House": "genre_tag",
-        "juno-weekly_chart_techno-music": 192
+        "juno-weekly_chart_techno-music": 191
     },
     "juno-879703-1": {
         "store": "juno",
@@ -6258,8 +6258,8 @@
         "Dub Techno": "genre_tag",
         "90s House": "genre_tag",
         "Breakbeat Techno": "genre_tag",
-        "juno-monthtly_chart_minimal-tech-house": 13,
-        "juno-monthtly_chart_techno-music": 45
+        "juno-monthtly_chart_minimal-tech-house": 14,
+        "juno-monthtly_chart_techno-music": 46
     },
     "juno-889418-1": {
         "store": "juno",
@@ -7402,7 +7402,7 @@
         "Leftfield House": "genre_tag",
         "juno-new_releases_minimal-tech-house": 54,
         "juno-monthtly_chart_techno-music": 24,
-        "juno-new_releases_techno-music": 80
+        "juno-new_releases_techno-music": 79
     },
     "juno-981485-1": {
         "store": "juno",
@@ -7697,7 +7697,7 @@
         "Chicago House": "genre_tag",
         "juno-new_releases_minimal-tech-house": 99,
         "juno-monthtly_chart_deep-house": 22,
-        "juno-new_releases_deep-house": 111
+        "juno-new_releases_deep-house": 112
     },
     "juno-980360-1": {
         "store": "juno",
@@ -8037,9 +8037,9 @@
         ],
         "juno-monthtly_chart_minimal-tech-house": 22,
         "Tech House": "genre_tag",
-        "juno-new_releases_minimal-tech-house": 129,
+        "juno-new_releases_minimal-tech-house": 130,
         "juno-monthtly_chart_deep-house": 14,
-        "juno-new_releases_deep-house": 144
+        "juno-new_releases_deep-house": 145
     },
     "juno-792424-1": {
         "store": "juno",
@@ -8277,7 +8277,7 @@
             "https://www.juno.co.uk/MP3/SF942295-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF942295-01-02-02.mp3"
         ],
-        "juno-monthtly_chart_minimal-tech-house": 42,
+        "juno-monthtly_chart_minimal-tech-house": 43,
         "Acid House": "genre_tag",
         "Breakbeat Techno": "genre_tag",
         "Acid Techno": "genre_tag"
@@ -8306,12 +8306,12 @@
             "https://www.juno.co.uk/MP3/SF982244-01-01-01.mp3",
             "https://www.juno.co.uk/MP3/SF982244-01-02-01.mp3"
         ],
-        "juno-monthtly_chart_minimal-tech-house": 43,
+        "juno-monthtly_chart_minimal-tech-house": 44,
         "Latin House": "genre_tag",
         "Tech House": "genre_tag",
         "juno-new_releases_minimal-tech-house": 83,
-        "juno-monthtly_chart_deep-house": 7,
-        "juno-new_releases_deep-house": 94
+        "juno-monthtly_chart_deep-house": 8,
+        "juno-new_releases_deep-house": 95
     },
     "juno-950792-1": {
         "store": "juno",
@@ -8339,7 +8339,7 @@
             "https://www.juno.co.uk/MP3/SF950792-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF950792-01-02-02.mp3"
         ],
-        "juno-monthtly_chart_minimal-tech-house": 44,
+        "juno-monthtly_chart_minimal-tech-house": 45,
         "Dub Techno": "genre_tag",
         "juno-new_releases_minimal-tech-house": 85
     },
@@ -8371,10 +8371,10 @@
             "https://www.juno.co.uk/MP3/SF960453-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF960453-01-02-02.mp3"
         ],
-        "juno-monthtly_chart_minimal-tech-house": 45,
+        "juno-monthtly_chart_minimal-tech-house": 46,
         "Tech House": "genre_tag",
         "juno-new_releases_minimal-tech-house": 170,
-        "juno-monthtly_chart_deep-house": 8,
+        "juno-monthtly_chart_deep-house": 9,
         "juno-new_releases_deep-house": 190
     },
     "juno-964237-1": {
@@ -8405,7 +8405,7 @@
             "https://www.juno.co.uk/MP3/SF964237-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF964237-01-02-02.mp3"
         ],
-        "juno-monthtly_chart_minimal-tech-house": 46,
+        "juno-monthtly_chart_minimal-tech-house": 47,
         "Minimal": "genre_tag",
         "Electro Techno": "genre_tag",
         "juno-new_releases_minimal-tech-house": 123
@@ -8434,7 +8434,7 @@
             "https://www.juno.co.uk/MP3/SF951154-01-01-01.mp3",
             "https://www.juno.co.uk/MP3/SF951154-01-02-01.mp3"
         ],
-        "juno-monthtly_chart_minimal-tech-house": 47,
+        "juno-monthtly_chart_minimal-tech-house": 48,
         "Balearic House": "genre_tag"
     },
     "juno-978531-1": {
@@ -8465,11 +8465,11 @@
             "https://www.juno.co.uk/MP3/SF978531-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF978531-01-02-02.mp3"
         ],
-        "juno-monthtly_chart_minimal-tech-house": 48,
+        "juno-monthtly_chart_minimal-tech-house": 49,
         "Tech House": "genre_tag",
         "French House": "genre_tag",
         "juno-new_releases_minimal-tech-house": 34,
-        "juno-monthtly_chart_deep-house": 10,
+        "juno-monthtly_chart_deep-house": 11,
         "juno-new_releases_deep-house": 30
     },
     "juno-981317-1": {
@@ -8568,7 +8568,7 @@
             "https://www.juno.co.uk/MP3/SF981317-01-03-12.mp3",
             "https://www.juno.co.uk/MP3/SF981317-01-03-13.mp3"
         ],
-        "juno-monthtly_chart_minimal-tech-house": 49,
+        "juno-monthtly_chart_minimal-tech-house": 0,
         "Tech House": "genre_tag",
         "Electro Techno": "genre_tag",
         "juno-new_releases_minimal-tech-house": 254,
@@ -8603,10 +8603,10 @@
             "https://www.juno.co.uk/MP3/SF976523-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF976523-01-02-02.mp3"
         ],
-        "juno-monthtly_chart_minimal-tech-house": 0,
+        "juno-monthtly_chart_minimal-tech-house": 1,
         "juno-new_releases_minimal-tech-house": 98,
         "juno-monthtly_chart_deep-house": 16,
-        "juno-new_releases_deep-house": 110
+        "juno-new_releases_deep-house": 111
     },
     "juno-985778-1": {
         "store": "juno",
@@ -8636,7 +8636,7 @@
             "https://www.juno.co.uk/MP3/SF985778-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF985778-01-02-02.mp3"
         ],
-        "juno-monthtly_chart_minimal-tech-house": 1,
+        "juno-monthtly_chart_minimal-tech-house": 2,
         "Tech House": "genre_tag",
         "juno-new_releases_minimal-tech-house": 42
     },
@@ -8666,7 +8666,7 @@
             "https://www.juno.co.uk/MP3/SF984605-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF984605-01-02-02.mp3"
         ],
-        "juno-monthtly_chart_minimal-tech-house": 2,
+        "juno-monthtly_chart_minimal-tech-house": 3,
         "Minimal": "genre_tag",
         "juno-new_releases_minimal-tech-house": 71
     },
@@ -8698,7 +8698,7 @@
             "https://www.juno.co.uk/MP3/SF954184-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF954184-01-02-02.mp3"
         ],
-        "juno-monthtly_chart_minimal-tech-house": 14,
+        "juno-monthtly_chart_minimal-tech-house": 15,
         "Minimal": "genre_tag",
         "Minimal Techno": "genre_tag"
     },
@@ -8736,7 +8736,7 @@
             "https://www.juno.co.uk/MP3/SF976077-01-04-01.mp3",
             "https://www.juno.co.uk/MP3/SF976077-01-04-02.mp3"
         ],
-        "juno-monthtly_chart_minimal-tech-house": 15,
+        "juno-monthtly_chart_minimal-tech-house": 16,
         "Tech House": "genre_tag",
         "Acid House": "genre_tag"
     },
@@ -8768,7 +8768,7 @@
             "https://www.juno.co.uk/MP3/SF978659-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF978659-01-02-02.mp3"
         ],
-        "juno-monthtly_chart_minimal-tech-house": 16,
+        "juno-monthtly_chart_minimal-tech-house": 17,
         "Tech House": "genre_tag",
         "juno-new_releases_minimal-tech-house": 168
     },
@@ -8800,12 +8800,12 @@
             "https://www.juno.co.uk/MP3/SF985754-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF985754-01-02-02.mp3"
         ],
-        "juno-monthtly_chart_minimal-tech-house": 17,
+        "juno-monthtly_chart_minimal-tech-house": 18,
         "Tech House": "genre_tag",
         "Minimal": "genre_tag",
         "Breakbeat House": "genre_tag",
         "juno-new_releases_minimal-tech-house": 27,
-        "juno-monthtly_chart_techno-music": 47,
+        "juno-monthtly_chart_techno-music": 48,
         "juno-new_releases_techno-music": 35
     },
     "juno-970510-1": {
@@ -8836,11 +8836,11 @@
             "https://www.juno.co.uk/MP3/SF970510-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF970510-01-02-02.mp3"
         ],
-        "juno-monthtly_chart_minimal-tech-house": 18,
+        "juno-monthtly_chart_minimal-tech-house": 19,
         "Tech House": "genre_tag",
         "Minimal": "genre_tag",
         "Minimal Techno": "genre_tag",
-        "juno-monthtly_chart_deep-house": 37
+        "juno-monthtly_chart_deep-house": 38
     },
     "juno-971032-1": {
         "store": "juno",
@@ -8868,7 +8868,7 @@
             "https://www.juno.co.uk/MP3/SF971032-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF971032-01-02-02.mp3"
         ],
-        "juno-monthtly_chart_minimal-tech-house": 19,
+        "juno-monthtly_chart_minimal-tech-house": 20,
         "Tech House": "genre_tag",
         "Dub Techno": "genre_tag"
     },
@@ -8900,9 +8900,9 @@
             "https://www.juno.co.uk/MP3/SF968509-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF968509-01-02-02.mp3"
         ],
-        "juno-monthtly_chart_minimal-tech-house": 20,
+        "juno-monthtly_chart_minimal-tech-house": 21,
         "Tech House": "genre_tag",
-        "juno-monthtly_chart_deep-house": 38
+        "juno-monthtly_chart_deep-house": 39
     },
     "juno-975258-1": {
         "store": "juno",
@@ -8938,7 +8938,7 @@
             "https://www.juno.co.uk/MP3/SF975258-01-03-02.mp3",
             "https://www.juno.co.uk/MP3/SF975258-01-04-01.mp3"
         ],
-        "juno-monthtly_chart_minimal-tech-house": 21,
+        "juno-monthtly_chart_minimal-tech-house": 22,
         "Minimal": "genre_tag",
         "Balearic House": "genre_tag",
         "Downtempo House": "genre_tag"
@@ -8971,12 +8971,12 @@
             "https://www.juno.co.uk/MP3/SF313721-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF313721-01-02-02.mp3"
         ],
-        "juno-monthtly_chart_minimal-tech-house": 22,
+        "juno-monthtly_chart_minimal-tech-house": 23,
         "90s House": "genre_tag",
         "Breakbeat House": "genre_tag",
         "Acid House": "genre_tag",
         "Acid Techno": "genre_tag",
-        "juno-monthtly_chart_techno-music": 4
+        "juno-monthtly_chart_techno-music": 6
     },
     "juno-972316-1": {
         "store": "juno",
@@ -9006,10 +9006,10 @@
             "https://www.juno.co.uk/MP3/SF972316-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF972316-01-02-02.mp3"
         ],
-        "juno-monthtly_chart_minimal-tech-house": 23,
+        "juno-monthtly_chart_minimal-tech-house": 24,
         "Tech House": "genre_tag",
         "Minimal": "genre_tag",
-        "juno-new_releases_minimal-tech-house": 141
+        "juno-new_releases_minimal-tech-house": 142
     },
     "juno-975047-1": {
         "store": "juno",
@@ -9035,7 +9035,7 @@
             "https://www.juno.co.uk/MP3/SF975047-01-01-01.mp3",
             "https://www.juno.co.uk/MP3/SF975047-01-02-01.mp3"
         ],
-        "juno-monthtly_chart_minimal-tech-house": 24,
+        "juno-monthtly_chart_minimal-tech-house": 25,
         "Latin House": "genre_tag",
         "Tech House": "genre_tag"
     },
@@ -9211,7 +9211,7 @@
         "juno-monthtly_chart_minimal-tech-house": 38,
         "Ambient House": "genre_tag",
         "Breakbeat House": "genre_tag",
-        "juno-monthtly_chart_techno-music": 18
+        "juno-monthtly_chart_techno-music": 19
     },
     "juno-974053-1": {
         "store": "juno",
@@ -9245,7 +9245,7 @@
         "Ambient Techno": "genre_tag",
         "Experimental Techno": "genre_tag",
         "Minimal Techno": "genre_tag",
-        "juno-monthtly_chart_techno-music": 21
+        "juno-monthtly_chart_techno-music": 22
     },
     "juno-980860-1": {
         "store": "juno",
@@ -9312,7 +9312,7 @@
         "juno-monthtly_chart_minimal-tech-house": 41,
         "juno-new_releases_minimal-tech-house": 58,
         "juno-monthtly_chart_techno-music": 30,
-        "juno-new_releases_techno-music": 87
+        "juno-new_releases_techno-music": 88
     },
     "juno-948732-1": {
         "store": "juno",
@@ -9373,7 +9373,7 @@
         "juno-monthtly_chart_minimal-tech-house": 43,
         "Tech House": "genre_tag",
         "Electro Techno": "genre_tag",
-        "juno-new_releases_minimal-tech-house": 135
+        "juno-new_releases_minimal-tech-house": 136
     },
     "juno-980364-1": {
         "store": "juno",
@@ -9473,7 +9473,7 @@
         "juno-monthtly_chart_minimal-tech-house": 46,
         "Ambient House": "genre_tag",
         "Breakbeat House": "genre_tag",
-        "juno-new_releases_minimal-tech-house": 153
+        "juno-new_releases_minimal-tech-house": 154
     },
     "juno-970649-1": {
         "store": "juno",
@@ -9505,7 +9505,7 @@
         ],
         "juno-monthtly_chart_minimal-tech-house": 47,
         "Acid House": "genre_tag",
-        "juno-new_releases_minimal-tech-house": 154,
+        "juno-new_releases_minimal-tech-house": 155,
         "juno-monthtly_chart_techno-music": 40,
         "juno-new_releases_techno-music": 236
     },
@@ -10000,8 +10000,8 @@
         "juno-monthtly_chart_minimal-tech-house": 28,
         "Minimal": "genre_tag",
         "Dub Techno": "genre_tag",
-        "juno-new_releases_minimal-tech-house": 134,
-        "juno-new_releases_deep-house": 150,
+        "juno-new_releases_minimal-tech-house": 135,
+        "juno-new_releases_deep-house": 151,
         "juno-monthtly_chart_techno-music": 27,
         "juno-new_releases_techno-music": 216
     },
@@ -10068,8 +10068,8 @@
         ],
         "juno-monthtly_chart_minimal-tech-house": 30,
         "Tech House": "genre_tag",
-        "juno-new_releases_minimal-tech-house": 138,
-        "juno-new_releases_deep-house": 153
+        "juno-new_releases_minimal-tech-house": 139,
+        "juno-new_releases_deep-house": 154
     },
     "juno-938503-1": {
         "store": "juno",
@@ -10163,7 +10163,7 @@
         ],
         "juno-monthtly_chart_minimal-tech-house": 33,
         "Tech House": "genre_tag",
-        "juno-new_releases_minimal-tech-house": 146
+        "juno-new_releases_minimal-tech-house": 147
     },
     "juno-973646-1": {
         "store": "juno",
@@ -10365,8 +10365,8 @@
         ],
         "juno-monthtly_chart_minimal-tech-house": 39,
         "Minimal": "genre_tag",
-        "juno-new_releases_minimal-tech-house": 156,
-        "juno-new_releases_deep-house": 174
+        "juno-new_releases_minimal-tech-house": 157,
+        "juno-new_releases_deep-house": 175
     },
     "juno-970622-1": {
         "store": "juno",
@@ -10529,7 +10529,7 @@
             "https://www.juno.co.uk/MP3/SF980471-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF980471-01-02-02.mp3"
         ],
-        "juno-new_releases_minimal-tech-house": 8,
+        "juno-new_releases_minimal-tech-house": 7,
         "Tech House": "genre_tag"
     },
     "juno-950726-1": {
@@ -11466,7 +11466,7 @@
         "juno-new_releases_minimal-tech-house": 59,
         "Breakbeat Techno": "genre_tag",
         "Electro Techno": "genre_tag",
-        "juno-new_releases_techno-music": 90
+        "juno-new_releases_techno-music": 91
     },
     "juno-960794-1": {
         "store": "juno",
@@ -11534,7 +11534,7 @@
         ],
         "juno-new_releases_minimal-tech-house": 63,
         "Tech House": "genre_tag",
-        "juno-new_releases_techno-music": 108
+        "juno-new_releases_techno-music": 109
     },
     "juno-983936-1": {
         "store": "juno",
@@ -12598,9 +12598,9 @@
             "https://www.juno.co.uk/MP3/SF948568-01-01-02.mp3",
             "https://www.juno.co.uk/MP3/SF948568-01-02-01.mp3"
         ],
-        "juno-new_releases_minimal-tech-house": 128,
+        "juno-new_releases_minimal-tech-house": 129,
         "Tech House": "genre_tag",
-        "juno-new_releases_deep-house": 143
+        "juno-new_releases_deep-house": 144
     },
     "juno-979496-1": {
         "store": "juno",
@@ -12630,9 +12630,9 @@
             "https://www.juno.co.uk/MP3/SF979496-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF979496-01-02-02.mp3"
         ],
-        "juno-new_releases_minimal-tech-house": 130,
+        "juno-new_releases_minimal-tech-house": 131,
         "Tech House": "genre_tag",
-        "juno-new_releases_deep-house": 148
+        "juno-new_releases_deep-house": 149
     },
     "juno-958644-1": {
         "store": "juno",
@@ -12661,7 +12661,7 @@
             "https://www.juno.co.uk/MP3/SF958644-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF958644-01-02-02.mp3"
         ],
-        "juno-new_releases_minimal-tech-house": 131,
+        "juno-new_releases_minimal-tech-house": 132,
         "Minimal": "genre_tag",
         "Minimal Techno": "genre_tag",
         "juno-new_releases_techno-music": 211
@@ -12694,8 +12694,8 @@
             "https://www.juno.co.uk/MP3/SF977543-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF977543-01-02-02.mp3"
         ],
-        "juno-new_releases_minimal-tech-house": 132,
-        "juno-new_releases_deep-house": 149
+        "juno-new_releases_minimal-tech-house": 133,
+        "juno-new_releases_deep-house": 150
     },
     "juno-981782-1": {
         "store": "juno",
@@ -12723,7 +12723,7 @@
             "https://www.juno.co.uk/MP3/SF981782-01-01-02.mp3",
             "https://www.juno.co.uk/MP3/SF981782-01-02-01.mp3"
         ],
-        "juno-new_releases_minimal-tech-house": 133,
+        "juno-new_releases_minimal-tech-house": 134,
         "Electro Techno": "genre_tag",
         "juno-new_releases_techno-music": 215
     },
@@ -12756,8 +12756,8 @@
             "https://www.juno.co.uk/MP3/SF986759-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF986759-01-02-02.mp3"
         ],
-        "juno-new_releases_minimal-tech-house": 136,
-        "juno-new_releases_deep-house": 152
+        "juno-new_releases_minimal-tech-house": 137,
+        "juno-new_releases_deep-house": 153
     },
     "juno-969590-1": {
         "store": "juno",
@@ -12787,7 +12787,7 @@
             "https://www.juno.co.uk/MP3/SF969590-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF969590-01-02-02.mp3"
         ],
-        "juno-new_releases_minimal-tech-house": 137,
+        "juno-new_releases_minimal-tech-house": 138,
         "Tech House": "genre_tag",
         "Breakbeat House": "genre_tag",
         "juno-new_releases_techno-music": 217
@@ -12817,10 +12817,10 @@
             "https://www.juno.co.uk/MP3/SF957323-01-01-01.mp3",
             "https://www.juno.co.uk/MP3/SF957323-01-02-01.mp3"
         ],
-        "juno-new_releases_minimal-tech-house": 139,
+        "juno-new_releases_minimal-tech-house": 140,
         "Balearic House": "genre_tag",
         "Ambient House": "genre_tag",
-        "juno-new_releases_deep-house": 155
+        "juno-new_releases_deep-house": 156
     },
     "juno-957324-1": {
         "store": "juno",
@@ -12847,9 +12847,9 @@
             "https://www.juno.co.uk/MP3/SF957324-01-01-01.mp3",
             "https://www.juno.co.uk/MP3/SF957324-01-02-01.mp3"
         ],
-        "juno-new_releases_minimal-tech-house": 140,
+        "juno-new_releases_minimal-tech-house": 141,
         "Downtempo House": "genre_tag",
-        "juno-new_releases_deep-house": 156
+        "juno-new_releases_deep-house": 157
     },
     "juno-971693-1": {
         "store": "juno",
@@ -12879,7 +12879,7 @@
             "https://www.juno.co.uk/MP3/SF971693-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF971693-01-02-02.mp3"
         ],
-        "juno-new_releases_minimal-tech-house": 142,
+        "juno-new_releases_minimal-tech-house": 143,
         "Tech House": "genre_tag",
         "Minimal": "genre_tag",
         "juno-new_releases_techno-music": 224
@@ -12913,9 +12913,9 @@
             "https://www.juno.co.uk/MP3/SF983739-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF983739-01-02-02.mp3"
         ],
-        "juno-new_releases_minimal-tech-house": 143,
+        "juno-new_releases_minimal-tech-house": 144,
         "New York House": "genre_tag",
-        "juno-new_releases_deep-house": 157
+        "juno-new_releases_deep-house": 158
     },
     "juno-983848-1": {
         "store": "juno",
@@ -12945,10 +12945,10 @@
             "https://www.juno.co.uk/MP3/SF983848-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF983848-01-02-02.mp3"
         ],
-        "juno-new_releases_minimal-tech-house": 144,
+        "juno-new_releases_minimal-tech-house": 145,
         "Tech House": "genre_tag",
         "Minimal": "genre_tag",
-        "juno-new_releases_deep-house": 158
+        "juno-new_releases_deep-house": 159
     },
     "juno-983849-1": {
         "store": "juno",
@@ -12976,8 +12976,8 @@
             "https://www.juno.co.uk/MP3/SF983849-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF983849-01-02-02.mp3"
         ],
-        "juno-new_releases_minimal-tech-house": 145,
-        "juno-new_releases_deep-house": 159,
+        "juno-new_releases_minimal-tech-house": 146,
+        "juno-new_releases_deep-house": 160,
         "juno-new_releases_techno-music": 225
     },
     "juno-979459-1": {
@@ -13008,7 +13008,7 @@
             "https://www.juno.co.uk/MP3/SF979459-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF979459-01-02-02.mp3"
         ],
-        "juno-new_releases_minimal-tech-house": 147,
+        "juno-new_releases_minimal-tech-house": 148,
         "Tech House": "genre_tag",
         "Minimal": "genre_tag",
         "Dub Techno": "genre_tag",
@@ -13043,7 +13043,7 @@
             "https://www.juno.co.uk/MP3/SF967962-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF967962-01-02-02.mp3"
         ],
-        "juno-new_releases_minimal-tech-house": 148,
+        "juno-new_releases_minimal-tech-house": 149,
         "Acid House": "genre_tag",
         "Acid Techno": "genre_tag",
         "Electro Techno": "genre_tag",
@@ -13078,7 +13078,7 @@
             "https://www.juno.co.uk/MP3/SF977504-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF977504-01-02-02.mp3"
         ],
-        "juno-new_releases_minimal-tech-house": 149,
+        "juno-new_releases_minimal-tech-house": 150,
         "Tech House": "genre_tag",
         "Minimal": "genre_tag"
     },
@@ -13113,7 +13113,7 @@
             "https://www.juno.co.uk/MP3/SF971011-01-03-01.mp3",
             "https://www.juno.co.uk/MP3/SF971011-01-04-01.mp3"
         ],
-        "juno-new_releases_minimal-tech-house": 150,
+        "juno-new_releases_minimal-tech-house": 151,
         "Minimal": "genre_tag"
     },
     "juno-974657-1": {
@@ -13144,7 +13144,7 @@
             "https://www.juno.co.uk/MP3/SF974657-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF974657-01-02-02.mp3"
         ],
-        "juno-new_releases_minimal-tech-house": 151,
+        "juno-new_releases_minimal-tech-house": 152,
         "Tech House": "genre_tag"
     },
     "juno-974664-1": {
@@ -13176,7 +13176,7 @@
             "https://www.juno.co.uk/MP3/SF974664-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF974664-01-02-02.mp3"
         ],
-        "juno-new_releases_minimal-tech-house": 152,
+        "juno-new_releases_minimal-tech-house": 153,
         "Electro Techno": "genre_tag",
         "juno-new_releases_techno-music": 235
     },
@@ -13204,7 +13204,7 @@
             "https://www.juno.co.uk/MP3/SF982886-01-01-01.mp3",
             "https://www.juno.co.uk/MP3/SF982886-01-02-01.mp3"
         ],
-        "juno-new_releases_minimal-tech-house": 155
+        "juno-new_releases_minimal-tech-house": 156
     },
     "juno-981054-1": {
         "store": "juno",
@@ -13234,7 +13234,7 @@
             "https://www.juno.co.uk/MP3/SF981054-01-01-03.mp3",
             "https://www.juno.co.uk/MP3/SF981054-01-02-01.mp3"
         ],
-        "juno-new_releases_minimal-tech-house": 157,
+        "juno-new_releases_minimal-tech-house": 158,
         "90s House": "genre_tag",
         "juno-new_releases_techno-music": 242
     },
@@ -13263,9 +13263,9 @@
             "https://www.juno.co.uk/MP3/SF981579-01-01-01.mp3",
             "https://www.juno.co.uk/MP3/SF981579-01-02-01.mp3"
         ],
-        "juno-new_releases_minimal-tech-house": 158,
+        "juno-new_releases_minimal-tech-house": 159,
         "Minimal Techno": "genre_tag",
-        "juno-new_releases_deep-house": 176
+        "juno-new_releases_deep-house": 177
     },
     "juno-979213-1": {
         "store": "juno",
@@ -13293,7 +13293,7 @@
             "https://www.juno.co.uk/MP3/SF979213-01-01-02.mp3",
             "https://www.juno.co.uk/MP3/SF979213-01-02-01.mp3"
         ],
-        "juno-new_releases_minimal-tech-house": 159,
+        "juno-new_releases_minimal-tech-house": 160,
         "Minimal": "genre_tag",
         "Experimental Techno": "genre_tag",
         "Leftfield House": "genre_tag"
@@ -13325,9 +13325,9 @@
             "https://www.juno.co.uk/MP3/SF979566-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF979566-01-02-02.mp3"
         ],
-        "juno-new_releases_minimal-tech-house": 160,
+        "juno-new_releases_minimal-tech-house": 128,
         "Tech House": "genre_tag",
-        "juno-new_releases_deep-house": 177
+        "juno-new_releases_deep-house": 142
     },
     "juno-982430-1": {
         "store": "juno",
@@ -16170,7 +16170,7 @@
             "https://www.juno.co.uk/MP3/SF968367-01-01-01.mp3",
             "https://www.juno.co.uk/MP3/SF968367-01-02-01.mp3"
         ],
-        "juno-weekly_chart_deep-house": 5,
+        "juno-weekly_chart_deep-house": 6,
         "Disco House": "genre_tag",
         "Balearic House": "genre_tag",
         "juno-monthtly_chart_deep-house": 26
@@ -16200,7 +16200,7 @@
             "https://www.juno.co.uk/MP3/SF982088-01-01-01.mp3",
             "https://www.juno.co.uk/MP3/SF982088-01-02-01.mp3"
         ],
-        "juno-weekly_chart_deep-house": 7,
+        "juno-weekly_chart_deep-house": 5,
         "Nu Disco": "genre_tag",
         "Brazilian Disco": "genre_tag",
         "juno-monthtly_chart_deep-house": 2,
@@ -16233,7 +16233,7 @@
             "https://www.juno.co.uk/MP3/SF977729-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF977729-01-02-02.mp3"
         ],
-        "juno-weekly_chart_deep-house": 9,
+        "juno-weekly_chart_deep-house": 10,
         "Disco House": "genre_tag",
         "Soulful House": "genre_tag",
         "juno-monthtly_chart_deep-house": 11,
@@ -16264,7 +16264,7 @@
             "https://www.juno.co.uk/MP3/SF970196-01-01-01.mp3",
             "https://www.juno.co.uk/MP3/SF970196-01-02-01.mp3"
         ],
-        "juno-weekly_chart_deep-house": 10,
+        "juno-weekly_chart_deep-house": 8,
         "Jazzy House": "genre_tag",
         "juno-monthtly_chart_deep-house": 32,
         "juno-new_releases_deep-house": 127
@@ -16397,7 +16397,7 @@
         "Disco House": "genre_tag",
         "Indian": "genre_tag",
         "Balearic House": "genre_tag",
-        "juno-monthtly_chart_deep-house": 14
+        "juno-monthtly_chart_deep-house": 13
     },
     "juno-979645-1": {
         "store": "juno",
@@ -16568,7 +16568,7 @@
             "https://www.juno.co.uk/MP3/SF953150-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF953150-01-02-02.mp3"
         ],
-        "juno-weekly_chart_deep-house": 22,
+        "juno-weekly_chart_deep-house": 23,
         "Chicago House": "genre_tag",
         "Electro Techno": "genre_tag",
         "juno-monthtly_chart_deep-house": 33,
@@ -16603,7 +16603,7 @@
             "https://www.juno.co.uk/MP3/SF947089-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF947089-01-02-02.mp3"
         ],
-        "juno-weekly_chart_deep-house": 25,
+        "juno-weekly_chart_deep-house": 26,
         "Jazzy House": "genre_tag",
         "Soulful House": "genre_tag",
         "juno-monthtly_chart_deep-house": 47
@@ -16639,7 +16639,7 @@
             "https://www.juno.co.uk/MP3/SF968021-01-02-02.mp3",
             "https://www.juno.co.uk/MP3/SF968021-01-02-03.mp3"
         ],
-        "juno-weekly_chart_deep-house": 26,
+        "juno-weekly_chart_deep-house": 27,
         "Detroit House": "genre_tag",
         "juno-monthtly_chart_deep-house": 46
     },
@@ -16668,8 +16668,8 @@
             "https://www.juno.co.uk/MP3/SF970816-01-01-01.mp3",
             "https://www.juno.co.uk/MP3/SF970816-01-02-01.mp3"
         ],
-        "juno-weekly_chart_deep-house": 27,
-        "juno-monthtly_chart_deep-house": 22
+        "juno-weekly_chart_deep-house": 22,
+        "juno-monthtly_chart_deep-house": 21
     },
     "juno-970602-1": {
         "store": "juno",
@@ -16913,7 +16913,7 @@
             "https://www.juno.co.uk/MP3/SF862119-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF862119-01-02-02.mp3"
         ],
-        "juno-weekly_chart_deep-house": 36,
+        "juno-weekly_chart_deep-house": 37,
         "Disco House": "genre_tag",
         "juno-monthtly_chart_deep-house": 22
     },
@@ -16944,11 +16944,11 @@
             "https://www.juno.co.uk/MP3/SF792620-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF792620-01-02-02.mp3"
         ],
-        "juno-weekly_chart_deep-house": 38,
+        "juno-weekly_chart_deep-house": 39,
         "Electro Techno": "genre_tag",
         "juno-monthtly_chart_deep-house": 18,
         "juno-weekly_chart_techno-music": 19,
-        "juno-monthtly_chart_techno-music": 34
+        "juno-monthtly_chart_techno-music": 35
     },
     "juno-911575-1": {
         "store": "juno",
@@ -16979,9 +16979,9 @@
             "https://www.juno.co.uk/MP3/SF911575-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF911575-01-02-02.mp3"
         ],
-        "juno-weekly_chart_deep-house": 39,
+        "juno-weekly_chart_deep-house": 40,
         "Breakbeat House": "genre_tag",
-        "juno-monthtly_chart_deep-house": 42
+        "juno-monthtly_chart_deep-house": 44
     },
     "juno-886978-1": {
         "store": "juno",
@@ -17016,7 +17016,7 @@
             "https://www.juno.co.uk/MP3/SF886978-01-02-02.mp3",
             "https://www.juno.co.uk/MP3/SF886978-01-02-03.mp3"
         ],
-        "juno-weekly_chart_deep-house": 40,
+        "juno-weekly_chart_deep-house": 41,
         "Disco House": "genre_tag",
         "Jazzy House": "genre_tag",
         "juno-monthtly_chart_deep-house": 19
@@ -17050,10 +17050,10 @@
             "https://www.juno.co.uk/MP3/SF895678-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF895678-01-02-02.mp3"
         ],
-        "juno-weekly_chart_deep-house": 41,
+        "juno-weekly_chart_deep-house": 42,
         "Jazzy House": "genre_tag",
         "Soulful House": "genre_tag",
-        "juno-monthtly_chart_deep-house": 43
+        "juno-monthtly_chart_deep-house": 45
     },
     "juno-955355-1": {
         "store": "juno",
@@ -17082,7 +17082,7 @@
             "https://www.juno.co.uk/MP3/SF955355-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF955355-01-02-02.mp3"
         ],
-        "juno-weekly_chart_deep-house": 43,
+        "juno-weekly_chart_deep-house": 44,
         "Disco House": "genre_tag",
         "Jazzy House": "genre_tag",
         "Tribal House": "genre_tag",
@@ -17117,10 +17117,10 @@
             "https://www.juno.co.uk/MP3/SF587173-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF587173-01-02-02.mp3"
         ],
-        "juno-weekly_chart_deep-house": 44,
+        "juno-weekly_chart_deep-house": 45,
         "Jazzy House": "genre_tag",
         "Soulful House": "genre_tag",
-        "juno-monthtly_chart_deep-house": 44
+        "juno-monthtly_chart_deep-house": 46
     },
     "juno-971179-1": {
         "store": "juno",
@@ -17151,7 +17151,7 @@
             "https://www.juno.co.uk/MP3/SF971179-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF971179-01-02-02.mp3"
         ],
-        "juno-weekly_chart_deep-house": 45,
+        "juno-weekly_chart_deep-house": 46,
         "Disco House": "genre_tag",
         "Tech House": "genre_tag",
         "juno-monthtly_chart_deep-house": 17,
@@ -17180,7 +17180,7 @@
         "track_urls": [
             "https://www.juno.co.uk/MP3/SF987278-01-01-01.mp3"
         ],
-        "juno-weekly_chart_deep-house": 46,
+        "juno-weekly_chart_deep-house": 47,
         "Jazzy House": "genre_tag",
         "Ambient House": "genre_tag",
         "Classic House": "genre_tag",
@@ -17221,7 +17221,7 @@
             "https://www.juno.co.uk/MP3/SF971790-01-02-02.mp3",
             "https://www.juno.co.uk/MP3/SF971790-01-02-03.mp3"
         ],
-        "juno-weekly_chart_deep-house": 47,
+        "juno-weekly_chart_deep-house": 48,
         "Jazzy House": "genre_tag",
         "Soulful House": "genre_tag",
         "juno-monthtly_chart_deep-house": 23
@@ -17255,7 +17255,7 @@
             "https://www.juno.co.uk/MP3/SF979384-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF979384-01-02-02.mp3"
         ],
-        "juno-weekly_chart_deep-house": 48,
+        "juno-weekly_chart_deep-house": 49,
         "Tribal House": "genre_tag",
         "Electro Techno": "genre_tag",
         "juno-monthtly_chart_deep-house": 34,
@@ -17289,7 +17289,7 @@
             "https://www.juno.co.uk/MP3/SF946931-01-01-01.mp3",
             "https://www.juno.co.uk/MP3/SF946931-01-02-01.mp3"
         ],
-        "juno-weekly_chart_deep-house": 50,
+        "juno-weekly_chart_deep-house": 52,
         "Latin disco": "genre_tag",
         "Disco House": "genre_tag",
         "Jazz Funk Disco": "genre_tag",
@@ -17325,7 +17325,7 @@
             "https://www.juno.co.uk/MP3/SF826587-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF826587-01-02-02.mp3"
         ],
-        "juno-weekly_chart_deep-house": 51,
+        "juno-weekly_chart_deep-house": 50,
         "Japanese House": "genre_tag",
         "Jazzy House": "genre_tag",
         "Soulful House": "genre_tag",
@@ -17357,7 +17357,7 @@
             "https://www.juno.co.uk/MP3/SF978769-01-01-01.mp3",
             "https://www.juno.co.uk/MP3/SF978769-01-02-01.mp3"
         ],
-        "juno-weekly_chart_deep-house": 52,
+        "juno-weekly_chart_deep-house": 53,
         "Jazzy House": "genre_tag",
         "Soulful House": "genre_tag",
         "Chicago House": "genre_tag",
@@ -17389,7 +17389,7 @@
             "https://www.juno.co.uk/MP3/SF371108-01-01-01.mp3",
             "https://www.juno.co.uk/MP3/SF371108-01-02-01.mp3"
         ],
-        "juno-weekly_chart_deep-house": 53,
+        "juno-weekly_chart_deep-house": 55,
         "90s House": "genre_tag",
         "Chicago House": "genre_tag",
         "juno-monthtly_chart_deep-house": 20
@@ -17435,9 +17435,9 @@
             "https://www.juno.co.uk/MP3/SF948657-01-04-02.mp3",
             "https://www.juno.co.uk/MP3/SF948657-01-04-03.mp3"
         ],
-        "juno-weekly_chart_deep-house": 54,
+        "juno-weekly_chart_deep-house": 56,
         "Jazzy House": "genre_tag",
-        "juno-monthtly_chart_deep-house": 6,
+        "juno-monthtly_chart_deep-house": 8,
         "juno-new_releases_deep-house": 281
     },
     "juno-969158-1": {
@@ -17477,7 +17477,7 @@
             "https://www.juno.co.uk/MP3/SF969158-01-04-01.mp3",
             "https://www.juno.co.uk/MP3/SF969158-01-04-02.mp3"
         ],
-        "juno-weekly_chart_deep-house": 55,
+        "juno-weekly_chart_deep-house": 57,
         "Breakbeat House": "genre_tag",
         "New York House": "genre_tag"
     },
@@ -17510,11 +17510,11 @@
             "https://www.juno.co.uk/MP3/SF981325-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF981325-01-02-02.mp3"
         ],
-        "juno-weekly_chart_deep-house": 56,
+        "juno-weekly_chart_deep-house": 58,
         "Balearic House": "genre_tag",
         "Italo House": "genre_tag",
-        "juno-monthtly_chart_deep-house": 41,
-        "juno-new_releases_deep-house": 74
+        "juno-monthtly_chart_deep-house": 42,
+        "juno-new_releases_deep-house": 75
     },
     "juno-816563-1": {
         "store": "juno",
@@ -17545,11 +17545,11 @@
             "https://www.juno.co.uk/MP3/SF816563-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF816563-01-02-02.mp3"
         ],
-        "juno-weekly_chart_deep-house": 57,
+        "juno-weekly_chart_deep-house": 59,
         "Tech House": "genre_tag",
         "Dub Techno": "genre_tag",
         "Breakbeat House": "genre_tag",
-        "juno-monthtly_chart_deep-house": 45
+        "juno-monthtly_chart_deep-house": 47
     },
     "juno-895864-1": {
         "store": "juno",
@@ -17588,7 +17588,7 @@
             "https://www.juno.co.uk/MP3/SF895864-01-04-01.mp3",
             "https://www.juno.co.uk/MP3/SF895864-01-04-02.mp3"
         ],
-        "juno-weekly_chart_deep-house": 58,
+        "juno-weekly_chart_deep-house": 60,
         "Breakbeat House": "genre_tag",
         "New York House": "genre_tag",
         "juno-monthtly_chart_deep-house": 23
@@ -17626,7 +17626,7 @@
             "https://www.juno.co.uk/MP3/SF866481-01-02-02.mp3",
             "https://www.juno.co.uk/MP3/SF866481-01-02-03.mp3"
         ],
-        "juno-weekly_chart_deep-house": 60,
+        "juno-weekly_chart_deep-house": 62,
         "Tech House": "genre_tag",
         "juno-monthtly_chart_deep-house": 24
     },
@@ -17659,7 +17659,7 @@
             "https://www.juno.co.uk/MP3/SF920135-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF920135-01-02-02.mp3"
         ],
-        "juno-weekly_chart_deep-house": 63,
+        "juno-weekly_chart_deep-house": 65,
         "Disco House": "genre_tag"
     },
     "juno-898144-1": {
@@ -17687,11 +17687,11 @@
             "https://www.juno.co.uk/MP3/SF898144-01-01-01.mp3",
             "https://www.juno.co.uk/MP3/SF898144-01-02-01.mp3"
         ],
-        "juno-weekly_chart_deep-house": 64,
+        "juno-weekly_chart_deep-house": 66,
         "Nu Disco": "genre_tag",
         "Balearic House": "genre_tag",
         "Acid House": "genre_tag",
-        "juno-monthtly_chart_deep-house": 46
+        "juno-monthtly_chart_deep-house": 48
     },
     "juno-682634-1": {
         "store": "juno",
@@ -17720,7 +17720,7 @@
             "https://www.juno.co.uk/MP3/SF682634-01-01-02.mp3",
             "https://www.juno.co.uk/MP3/SF682634-01-02-01.mp3"
         ],
-        "juno-weekly_chart_deep-house": 68,
+        "juno-weekly_chart_deep-house": 70,
         "Jazzy House": "genre_tag",
         "Tech House": "genre_tag",
         "2000s House": "genre_tag",
@@ -17751,7 +17751,7 @@
             "https://www.juno.co.uk/MP3/SF918191-01-01-01.mp3",
             "https://www.juno.co.uk/MP3/SF918191-01-02-01.mp3"
         ],
-        "juno-weekly_chart_deep-house": 69,
+        "juno-weekly_chart_deep-house": 71,
         "Disco House": "genre_tag",
         "Soul Disco": "genre_tag",
         "Rock Disco": "genre_tag",
@@ -17782,7 +17782,7 @@
             "https://www.juno.co.uk/MP3/SF978757-01-01-01.mp3",
             "https://www.juno.co.uk/MP3/SF978757-01-02-01.mp3"
         ],
-        "juno-weekly_chart_deep-house": 70,
+        "juno-weekly_chart_deep-house": 72,
         "Soulful House": "genre_tag",
         "Chicago House": "genre_tag",
         "juno-monthtly_chart_deep-house": 25,
@@ -17837,7 +17837,7 @@
             "https://www.juno.co.uk/MP3/SF839322-01-02-06.mp3",
             "https://www.juno.co.uk/MP3/SF839322-01-02-07.mp3"
         ],
-        "juno-weekly_chart_deep-house": 71,
+        "juno-weekly_chart_deep-house": 73,
         "Experimental Techno": "genre_tag",
         "Leftfield House": "genre_tag",
         "juno-monthtly_chart_deep-house": 0,
@@ -17873,11 +17873,11 @@
             "https://www.juno.co.uk/MP3/SF426855-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF426855-01-02-02.mp3"
         ],
-        "juno-weekly_chart_deep-house": 72,
+        "juno-weekly_chart_deep-house": 74,
         "Disco House": "genre_tag",
         "Hi-NRG": "genre_tag",
         "Cosmic Disco": "genre_tag",
-        "juno-monthtly_chart_deep-house": 47
+        "juno-monthtly_chart_deep-house": 49
     },
     "juno-959268-1": {
         "store": "juno",
@@ -17912,13 +17912,13 @@
             "https://www.juno.co.uk/MP3/SF959268-01-02-02.mp3",
             "https://www.juno.co.uk/MP3/SF959268-01-02-03.mp3"
         ],
-        "juno-weekly_chart_deep-house": 73,
+        "juno-weekly_chart_deep-house": 75,
         "UK Garage": "genre_tag",
         "Speed Garage": "genre_tag",
         "Bassline": "genre_tag",
         "2 Step Garage": "genre_tag",
         "juno-monthtly_chart_deep-house": 17,
-        "juno-new_releases_deep-house": 75
+        "juno-new_releases_deep-house": 76
     },
     "juno-977438-1": {
         "store": "juno",
@@ -17949,11 +17949,11 @@
             "https://www.juno.co.uk/MP3/SF977438-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF977438-01-02-02.mp3"
         ],
-        "juno-weekly_chart_deep-house": 75,
+        "juno-weekly_chart_deep-house": 77,
         "Jazzy House": "genre_tag",
         "Chicago House": "genre_tag",
         "juno-monthtly_chart_deep-house": 34,
-        "juno-new_releases_deep-house": 76
+        "juno-new_releases_deep-house": 77
     },
     "juno-982188-1": {
         "store": "juno",
@@ -17984,11 +17984,11 @@
             "https://www.juno.co.uk/MP3/SF982188-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF982188-01-02-02.mp3"
         ],
-        "juno-weekly_chart_deep-house": 77,
+        "juno-weekly_chart_deep-house": 54,
         "Soulful House": "genre_tag",
         "Classic House": "genre_tag",
         "New York House": "genre_tag",
-        "juno-monthtly_chart_deep-house": 7,
+        "juno-monthtly_chart_deep-house": 4,
         "juno-new_releases_deep-house": 130
     },
     "juno-966834-1": {
@@ -18020,10 +18020,10 @@
             "https://www.juno.co.uk/MP3/SF966834-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF966834-01-02-02.mp3"
         ],
-        "juno-weekly_chart_deep-house": 78,
+        "juno-weekly_chart_deep-house": 79,
         "Tech House": "genre_tag",
         "UK Garage": "genre_tag",
-        "juno-monthtly_chart_deep-house": 42
+        "juno-monthtly_chart_deep-house": 43
     },
     "juno-973748-1": {
         "store": "juno",
@@ -18052,7 +18052,7 @@
             "https://www.juno.co.uk/MP3/SF973748-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF973748-01-02-02.mp3"
         ],
-        "juno-weekly_chart_deep-house": 79,
+        "juno-weekly_chart_deep-house": 80,
         "Latin House": "genre_tag",
         "Jazzy House": "genre_tag",
         "Tribal House": "genre_tag",
@@ -18088,7 +18088,7 @@
             "https://www.juno.co.uk/MP3/SF981119-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF981119-01-02-02.mp3"
         ],
-        "juno-weekly_chart_deep-house": 80,
+        "juno-weekly_chart_deep-house": 81,
         "Disco House": "genre_tag",
         "Tech House": "genre_tag",
         "Electro Techno": "genre_tag",
@@ -18124,7 +18124,7 @@
             "https://www.juno.co.uk/MP3/SF985511-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF985511-01-02-02.mp3"
         ],
-        "juno-weekly_chart_deep-house": 81,
+        "juno-weekly_chart_deep-house": 82,
         "Detroit House": "genre_tag",
         "juno-new_releases_deep-house": 4
     },
@@ -18157,7 +18157,7 @@
             "https://www.juno.co.uk/MP3/SF969559-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF969559-01-02-02.mp3"
         ],
-        "juno-weekly_chart_deep-house": 82,
+        "juno-weekly_chart_deep-house": 83,
         "New Jersey House": "genre_tag",
         "Classic House": "genre_tag",
         "90s House": "genre_tag",
@@ -18193,7 +18193,7 @@
             "https://www.juno.co.uk/MP3/SF982397-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF982397-01-02-02.mp3"
         ],
-        "juno-weekly_chart_deep-house": 83,
+        "juno-weekly_chart_deep-house": 84,
         "Disco House": "genre_tag",
         "juno-monthtly_chart_deep-house": 12,
         "juno-new_releases_deep-house": 79
@@ -18223,9 +18223,9 @@
             "https://www.juno.co.uk/MP3/SF972702-01-01-01.mp3",
             "https://www.juno.co.uk/MP3/SF972702-01-02-01.mp3"
         ],
-        "juno-weekly_chart_deep-house": 84,
+        "juno-weekly_chart_deep-house": 86,
         "Disco House": "genre_tag",
-        "juno-monthtly_chart_deep-house": 43
+        "juno-monthtly_chart_deep-house": 44
     },
     "juno-979030-1": {
         "store": "juno",
@@ -18292,7 +18292,7 @@
             "https://www.juno.co.uk/MP3/SF979030-01-02-08.mp3",
             "https://www.juno.co.uk/MP3/SF979030-01-02-09.mp3"
         ],
-        "juno-weekly_chart_deep-house": 85,
+        "juno-weekly_chart_deep-house": 87,
         "Jazzy House": "genre_tag",
         "Experimental Techno": "genre_tag",
         "Leftfield House": "genre_tag",
@@ -18329,7 +18329,7 @@
             "https://www.juno.co.uk/MP3/SF950719-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF950719-01-02-02.mp3"
         ],
-        "juno-weekly_chart_deep-house": 86,
+        "juno-weekly_chart_deep-house": 85,
         "Balearic House": "genre_tag",
         "juno-monthtly_chart_deep-house": 18,
         "juno-new_releases_deep-house": 21
@@ -18363,7 +18363,7 @@
             "https://www.juno.co.uk/MP3/SF899687-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF899687-01-02-02.mp3"
         ],
-        "juno-weekly_chart_deep-house": 87,
+        "juno-weekly_chart_deep-house": 35,
         "Jazzy House": "genre_tag",
         "Soulful House": "genre_tag"
     },
@@ -18501,12 +18501,12 @@
             "https://www.juno.co.uk/MP3/SF822773-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF822773-01-02-02.mp3"
         ],
-        "juno-weekly_chart_deep-house": 92,
+        "juno-weekly_chart_deep-house": 95,
         "Ambient Techno": "genre_tag",
         "Dub Techno": "genre_tag",
         "juno-monthtly_chart_deep-house": 27,
         "juno-weekly_chart_techno-music": 45,
-        "juno-monthtly_chart_techno-music": 36
+        "juno-monthtly_chart_techno-music": 37
     },
     "juno-966261-1": {
         "store": "juno",
@@ -18539,7 +18539,7 @@
             "https://www.juno.co.uk/MP3/SF966261-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF966261-01-02-02.mp3"
         ],
-        "juno-weekly_chart_deep-house": 93,
+        "juno-weekly_chart_deep-house": 96,
         "Ambient House": "genre_tag",
         "Experimental Techno": "genre_tag",
         "Experimental Ambient": "genre_tag"
@@ -18569,7 +18569,7 @@
             "https://www.juno.co.uk/MP3/SF965738-01-01-01.mp3",
             "https://www.juno.co.uk/MP3/SF965738-01-02-01.mp3"
         ],
-        "juno-weekly_chart_deep-house": 95,
+        "juno-weekly_chart_deep-house": 98,
         "juno-monthtly_chart_deep-house": 25
     },
     "juno-984966-1": {
@@ -18601,9 +18601,9 @@
             "https://www.juno.co.uk/MP3/SF984966-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF984966-01-02-02.mp3"
         ],
-        "juno-weekly_chart_deep-house": 96,
+        "juno-weekly_chart_deep-house": 99,
         "Disco House": "genre_tag",
-        "juno-monthtly_chart_deep-house": 27,
+        "juno-monthtly_chart_deep-house": 28,
         "juno-new_releases_deep-house": 184
     },
     "juno-981462-1": {
@@ -18635,9 +18635,9 @@
             "https://www.juno.co.uk/MP3/SF981462-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF981462-01-02-02.mp3"
         ],
-        "juno-weekly_chart_deep-house": 97,
+        "juno-weekly_chart_deep-house": 100,
         "Detroit House": "genre_tag",
-        "juno-monthtly_chart_deep-house": 13,
+        "juno-monthtly_chart_deep-house": 14,
         "juno-new_releases_deep-house": 80
     },
     "juno-946981-1": {
@@ -18669,9 +18669,9 @@
             "https://www.juno.co.uk/MP3/SF946981-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF946981-01-02-02.mp3"
         ],
-        "juno-weekly_chart_deep-house": 98,
+        "juno-weekly_chart_deep-house": 101,
         "Jazzy House": "genre_tag",
-        "juno-monthtly_chart_deep-house": 8
+        "juno-monthtly_chart_deep-house": 9
     },
     "juno-948543-1": {
         "store": "juno",
@@ -18704,7 +18704,7 @@
             "https://www.juno.co.uk/MP3/SF948543-01-02-02.mp3",
             "https://www.juno.co.uk/MP3/SF948543-01-02-03.mp3"
         ],
-        "juno-weekly_chart_deep-house": 99,
+        "juno-weekly_chart_deep-house": 102,
         "Disco House": "genre_tag",
         "juno-monthtly_chart_deep-house": 37
     },
@@ -18733,9 +18733,9 @@
             "https://www.juno.co.uk/MP3/SF871529-01-01-01.mp3",
             "https://www.juno.co.uk/MP3/SF871529-01-02-01.mp3"
         ],
-        "juno-weekly_chart_deep-house": 100,
+        "juno-weekly_chart_deep-house": 103,
         "Soulful House": "genre_tag",
-        "juno-monthtly_chart_deep-house": 28
+        "juno-monthtly_chart_deep-house": 29
     },
     "juno-872189-1": {
         "store": "juno",
@@ -18762,7 +18762,7 @@
             "https://www.juno.co.uk/MP3/SF872189-01-01-01.mp3",
             "https://www.juno.co.uk/MP3/SF872189-01-02-01.mp3"
         ],
-        "juno-weekly_chart_deep-house": 101,
+        "juno-weekly_chart_deep-house": 104,
         "Acid House": "genre_tag"
     },
     "juno-817976-1": {
@@ -18794,7 +18794,7 @@
             "https://www.juno.co.uk/MP3/SF817976-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF817976-01-02-02.mp3"
         ],
-        "juno-weekly_chart_deep-house": 102,
+        "juno-weekly_chart_deep-house": 105,
         "Balearic House": "genre_tag",
         "Downtempo House": "genre_tag",
         "juno-monthtly_chart_deep-house": 26
@@ -18826,7 +18826,7 @@
             "https://www.juno.co.uk/MP3/SF558026-01-01-02.mp3",
             "https://www.juno.co.uk/MP3/SF558026-01-02-01.mp3"
         ],
-        "juno-weekly_chart_deep-house": 105,
+        "juno-weekly_chart_deep-house": 108,
         "Ambient House": "genre_tag",
         "Downtempo House": "genre_tag",
         "Leftfield House": "genre_tag"
@@ -18880,7 +18880,7 @@
             "https://www.juno.co.uk/MP3/SF664125-01-04-02.mp3",
             "https://www.juno.co.uk/MP3/SF664125-01-04-03.mp3"
         ],
-        "juno-weekly_chart_deep-house": 106,
+        "juno-weekly_chart_deep-house": 109,
         "juno-monthtly_chart_deep-house": 1
     },
     "juno-805453-1": {
@@ -18912,7 +18912,7 @@
             "https://www.juno.co.uk/MP3/SF805453-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF805453-01-02-02.mp3"
         ],
-        "juno-weekly_chart_deep-house": 107,
+        "juno-weekly_chart_deep-house": 110,
         "Jazzy House": "genre_tag",
         "Detroit House": "genre_tag",
         "Soulful House": "genre_tag"
@@ -18946,7 +18946,7 @@
             "https://www.juno.co.uk/MP3/SF896745-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF896745-01-02-02.mp3"
         ],
-        "juno-weekly_chart_deep-house": 110,
+        "juno-weekly_chart_deep-house": 113,
         "Jazzy House": "genre_tag"
     },
     "juno-862582-1": {
@@ -18980,7 +18980,7 @@
             "https://www.juno.co.uk/MP3/SF862582-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF862582-01-02-02.mp3"
         ],
-        "juno-weekly_chart_deep-house": 112,
+        "juno-weekly_chart_deep-house": 115,
         "Dub Techno": "genre_tag"
     },
     "juno-786004-1": {
@@ -19020,7 +19020,7 @@
             "https://www.juno.co.uk/MP3/SF786004-01-04-01.mp3",
             "https://www.juno.co.uk/MP3/SF786004-01-04-02.mp3"
         ],
-        "juno-weekly_chart_deep-house": 113,
+        "juno-weekly_chart_deep-house": 116,
         "Dub Techno": "genre_tag",
         "Minimal Techno": "genre_tag",
         "Acid Techno": "genre_tag",
@@ -19052,7 +19052,7 @@
             "https://www.juno.co.uk/MP3/SF792019-01-01-01.mp3",
             "https://www.juno.co.uk/MP3/SF792019-01-02-01.mp3"
         ],
-        "juno-weekly_chart_deep-house": 114,
+        "juno-weekly_chart_deep-house": 117,
         "Disco House": "genre_tag"
     },
     "juno-877873-1": {
@@ -19080,7 +19080,7 @@
             "https://www.juno.co.uk/MP3/SF877873-01-01-01.mp3",
             "https://www.juno.co.uk/MP3/SF877873-01-02-01.mp3"
         ],
-        "juno-weekly_chart_deep-house": 115,
+        "juno-weekly_chart_deep-house": 118,
         "Jazzy House": "genre_tag",
         "Detroit House": "genre_tag"
     },
@@ -19113,11 +19113,11 @@
             "https://www.juno.co.uk/MP3/SF878454-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF878454-01-02-02.mp3"
         ],
-        "juno-weekly_chart_deep-house": 116,
+        "juno-weekly_chart_deep-house": 119,
         "Disco House": "genre_tag",
         "Nu Disco": "genre_tag",
         "Electro Techno": "genre_tag",
-        "juno-monthtly_chart_deep-house": 49
+        "juno-monthtly_chart_deep-house": 1
     },
     "juno-909800-1": {
         "store": "juno",
@@ -19154,7 +19154,7 @@
             "https://www.juno.co.uk/MP3/SF909800-01-04-01.mp3",
             "https://www.juno.co.uk/MP3/SF909800-01-04-02.mp3"
         ],
-        "juno-weekly_chart_deep-house": 117,
+        "juno-weekly_chart_deep-house": 120,
         "Japanese House": "genre_tag",
         "Experimental Techno": "genre_tag",
         "Ambient Downtempo": "genre_tag"
@@ -19196,7 +19196,7 @@
             "https://www.juno.co.uk/MP3/SF887225-01-04-01.mp3",
             "https://www.juno.co.uk/MP3/SF887225-01-04-02.mp3"
         ],
-        "juno-weekly_chart_deep-house": 118,
+        "juno-weekly_chart_deep-house": 121,
         "Soulful House": "genre_tag",
         "Chicago House": "genre_tag",
         "New York House": "genre_tag"
@@ -19226,7 +19226,7 @@
             "https://www.juno.co.uk/MP3/SF887290-01-01-01.mp3",
             "https://www.juno.co.uk/MP3/SF887290-01-02-01.mp3"
         ],
-        "juno-weekly_chart_deep-house": 119,
+        "juno-weekly_chart_deep-house": 122,
         "French House": "genre_tag"
     },
     "juno-912247-1": {
@@ -19254,7 +19254,7 @@
             "https://www.juno.co.uk/MP3/SF912247-01-01-01.mp3",
             "https://www.juno.co.uk/MP3/SF912247-01-02-01.mp3"
         ],
-        "juno-weekly_chart_deep-house": 120,
+        "juno-weekly_chart_deep-house": 123,
         "Jazzy House": "genre_tag"
     },
     "juno-898139-1": {
@@ -19286,7 +19286,7 @@
             "https://www.juno.co.uk/MP3/SF898139-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF898139-01-02-02.mp3"
         ],
-        "juno-weekly_chart_deep-house": 122,
+        "juno-weekly_chart_deep-house": 125,
         "Balearic House": "genre_tag"
     },
     "juno-900051-1": {
@@ -19316,10 +19316,10 @@
             "https://www.juno.co.uk/MP3/SF900051-01-01-02.mp3",
             "https://www.juno.co.uk/MP3/SF900051-01-02-01.mp3"
         ],
-        "juno-weekly_chart_deep-house": 123,
+        "juno-weekly_chart_deep-house": 126,
         "Jazzy House": "genre_tag",
         "Ambient House": "genre_tag",
-        "juno-monthtly_chart_deep-house": 9
+        "juno-monthtly_chart_deep-house": 10
     },
     "juno-900736-1": {
         "store": "juno",
@@ -19352,7 +19352,7 @@
             "https://www.juno.co.uk/MP3/SF900736-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF900736-01-02-02.mp3"
         ],
-        "juno-weekly_chart_deep-house": 124,
+        "juno-weekly_chart_deep-house": 127,
         "Afrobeat": "genre_tag",
         "Afro House": "genre_tag",
         "Breakbeat House": "genre_tag"
@@ -19386,7 +19386,7 @@
             "https://www.juno.co.uk/MP3/SF901099-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF901099-01-02-02.mp3"
         ],
-        "juno-weekly_chart_deep-house": 125,
+        "juno-weekly_chart_deep-house": 128,
         "Disco House": "genre_tag",
         "Disco Funk": "genre_tag"
     },
@@ -19413,7 +19413,7 @@
         "track_urls": [
             "https://www.juno.co.uk/MP3/SF833356-01-01-01.mp3"
         ],
-        "juno-weekly_chart_deep-house": 127,
+        "juno-weekly_chart_deep-house": 130,
         "Downtempo House": "genre_tag"
     },
     "juno-706328-1": {
@@ -19445,7 +19445,7 @@
             "https://www.juno.co.uk/MP3/SF706328-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF706328-01-02-02.mp3"
         ],
-        "juno-weekly_chart_deep-house": 129,
+        "juno-weekly_chart_deep-house": 132,
         "Balearic House": "genre_tag"
     },
     "juno-736922-1": {
@@ -19477,7 +19477,7 @@
             "https://www.juno.co.uk/MP3/SF736922-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF736922-01-02-02.mp3"
         ],
-        "juno-weekly_chart_deep-house": 130,
+        "juno-weekly_chart_deep-house": 133,
         "French House": "genre_tag",
         "Chicago House": "genre_tag"
     },
@@ -19506,7 +19506,7 @@
             "https://www.juno.co.uk/MP3/SF739390-01-01-01.mp3",
             "https://www.juno.co.uk/MP3/SF739390-01-02-01.mp3"
         ],
-        "juno-weekly_chart_deep-house": 131,
+        "juno-weekly_chart_deep-house": 134,
         "New Jersey House": "genre_tag",
         "Soulful House": "genre_tag",
         "Classic House": "genre_tag",
@@ -19537,7 +19537,7 @@
             "https://www.juno.co.uk/MP3/SF754977-01-01-01.mp3",
             "https://www.juno.co.uk/MP3/SF754977-01-02-01.mp3"
         ],
-        "juno-weekly_chart_deep-house": 132,
+        "juno-weekly_chart_deep-house": 135,
         "Detroit House": "genre_tag",
         "juno-new_releases_deep-house": 185
     },
@@ -19570,7 +19570,7 @@
             "https://www.juno.co.uk/MP3/SF927348-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF927348-01-02-02.mp3"
         ],
-        "juno-weekly_chart_deep-house": 133,
+        "juno-weekly_chart_deep-house": 91,
         "Jazzy House": "genre_tag",
         "Ambient House": "genre_tag"
     },
@@ -19599,7 +19599,7 @@
             "https://www.juno.co.uk/MP3/SF929829-01-01-01.mp3",
             "https://www.juno.co.uk/MP3/SF929829-01-02-01.mp3"
         ],
-        "juno-weekly_chart_deep-house": 135,
+        "juno-weekly_chart_deep-house": 137,
         "Classic House": "genre_tag",
         "2000s House": "genre_tag"
     },
@@ -19665,7 +19665,7 @@
             "https://www.juno.co.uk/MP3/SF924924-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF924924-01-02-02.mp3"
         ],
-        "juno-weekly_chart_deep-house": 137,
+        "juno-weekly_chart_deep-house": 138,
         "Disco House": "genre_tag",
         "Balearic House": "genre_tag"
     },
@@ -19696,11 +19696,11 @@
             "https://www.juno.co.uk/MP3/SF974630-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF974630-01-02-02.mp3"
         ],
-        "juno-weekly_chart_deep-house": 138,
+        "juno-weekly_chart_deep-house": 139,
         "Afro House": "genre_tag",
         "Detroit House": "genre_tag",
         "Tribal House": "genre_tag",
-        "juno-monthtly_chart_deep-house": 0,
+        "juno-monthtly_chart_deep-house": 2,
         "juno-new_releases_deep-house": 133
     },
     "juno-952680-1": {
@@ -19732,7 +19732,7 @@
             "https://www.juno.co.uk/MP3/SF952680-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF952680-01-02-02.mp3"
         ],
-        "juno-weekly_chart_deep-house": 139,
+        "juno-weekly_chart_deep-house": 140,
         "Disco House": "genre_tag",
         "Afro House": "genre_tag",
         "Jazzy House": "genre_tag"
@@ -19766,7 +19766,7 @@
             "https://www.juno.co.uk/MP3/SF918920-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF918920-01-02-02.mp3"
         ],
-        "juno-weekly_chart_deep-house": 140,
+        "juno-weekly_chart_deep-house": 141,
         "Balearic Disco": "genre_tag",
         "Balearic House": "genre_tag",
         "French House": "genre_tag"
@@ -19800,7 +19800,7 @@
             "https://www.juno.co.uk/MP3/SF963120-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF963120-01-02-02.mp3"
         ],
-        "juno-weekly_chart_deep-house": 141,
+        "juno-weekly_chart_deep-house": 142,
         "Jazzy House": "genre_tag",
         "Soulful House": "genre_tag"
     },
@@ -19851,9 +19851,9 @@
             "https://www.juno.co.uk/MP3/SF933760-01-02-06.mp3",
             "https://www.juno.co.uk/MP3/SF933760-01-02-07.mp3"
         ],
-        "juno-weekly_chart_deep-house": 143,
+        "juno-weekly_chart_deep-house": 93,
         "Future House": "genre_tag",
-        "juno-monthtly_chart_deep-house": 1
+        "juno-monthtly_chart_deep-house": 27
     },
     "juno-969514-1": {
         "store": "juno",
@@ -20131,7 +20131,7 @@
         "90s House": "genre_tag",
         "Acid House": "genre_tag",
         "New York House": "genre_tag",
-        "juno-monthtly_chart_deep-house": 2,
+        "juno-monthtly_chart_deep-house": 3,
         "juno-new_releases_deep-house": 84
     },
     "juno-956259-1": {
@@ -20350,7 +20350,7 @@
         ],
         "juno-weekly_chart_deep-house": 160,
         "Future House": "genre_tag",
-        "juno-monthtly_chart_deep-house": 10,
+        "juno-monthtly_chart_deep-house": 11,
         "juno-new_releases_deep-house": 186
     },
     "juno-985653-1": {
@@ -20393,7 +20393,7 @@
         "juno-weekly_chart_deep-house": 163,
         "Jazzy House": "genre_tag",
         "Breakbeat House": "genre_tag",
-        "juno-monthtly_chart_deep-house": 3,
+        "juno-monthtly_chart_deep-house": 4,
         "juno-new_releases_deep-house": 269
     },
     "juno-982860-1": {
@@ -20468,7 +20468,7 @@
         "Jazzy House": "genre_tag",
         "Soulful House": "genre_tag",
         "Chicago House": "genre_tag",
-        "juno-monthtly_chart_deep-house": 4,
+        "juno-monthtly_chart_deep-house": 5,
         "juno-new_releases_deep-house": 87
     },
     "juno-967817-1": {
@@ -20548,7 +20548,7 @@
         "juno-weekly_chart_deep-house": 167,
         "Jazzy House": "genre_tag",
         "Detroit House": "genre_tag",
-        "juno-monthtly_chart_deep-house": 11,
+        "juno-monthtly_chart_deep-house": 12,
         "juno-new_releases_deep-house": 88
     },
     "juno-980325-1": {
@@ -20669,11 +20669,11 @@
             "https://www.juno.co.uk/MP3/SF985766-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF985766-01-02-02.mp3"
         ],
-        "juno-weekly_chart_deep-house": 171,
+        "juno-weekly_chart_deep-house": 176,
         "Tech House": "genre_tag",
         "Minimal": "genre_tag",
-        "juno-monthtly_chart_deep-house": 29,
-        "juno-new_releases_deep-house": 9
+        "juno-monthtly_chart_deep-house": 30,
+        "juno-new_releases_deep-house": 10
     },
     "juno-929196-1": {
         "store": "juno",
@@ -20700,7 +20700,7 @@
             "https://www.juno.co.uk/MP3/SF929196-01-01-01.mp3",
             "https://www.juno.co.uk/MP3/SF929196-01-02-01.mp3"
         ],
-        "juno-weekly_chart_deep-house": 172,
+        "juno-weekly_chart_deep-house": 177,
         "Disco House": "genre_tag"
     },
     "juno-813778-1": {
@@ -20732,7 +20732,7 @@
             "https://www.juno.co.uk/MP3/SF813778-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF813778-01-02-02.mp3"
         ],
-        "juno-weekly_chart_deep-house": 173,
+        "juno-weekly_chart_deep-house": 92,
         "Ambient House": "genre_tag"
     },
     "juno-971782-1": {
@@ -20764,12 +20764,12 @@
             "https://www.juno.co.uk/MP3/SF971782-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF971782-01-02-02.mp3"
         ],
-        "juno-weekly_chart_deep-house": 176,
+        "juno-weekly_chart_deep-house": 172,
         "New Jersey House": "genre_tag",
         "Classic House": "genre_tag",
         "90s House": "genre_tag",
         "New York House": "genre_tag",
-        "juno-monthtly_chart_deep-house": 30
+        "juno-monthtly_chart_deep-house": 29
     },
     "juno-722485-1": {
         "store": "juno",
@@ -20796,7 +20796,7 @@
             "https://www.juno.co.uk/MP3/SF722485-01-01-01.mp3",
             "https://www.juno.co.uk/MP3/SF722485-01-02-01.mp3"
         ],
-        "juno-weekly_chart_deep-house": 177,
+        "juno-weekly_chart_deep-house": 173,
         "Dub": "genre_tag",
         "Leftfield House": "genre_tag"
     },
@@ -20857,7 +20857,7 @@
             "https://www.juno.co.uk/MP3/SF983323-01-01-01.mp3",
             "https://www.juno.co.uk/MP3/SF983323-01-02-01.mp3"
         ],
-        "juno-weekly_chart_deep-house": 179,
+        "juno-weekly_chart_deep-house": 171,
         "juno-monthtly_chart_deep-house": 40,
         "juno-new_releases_deep-house": 90
     },
@@ -20890,7 +20890,7 @@
             "https://www.juno.co.uk/MP3/SF858287-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF858287-01-02-02.mp3"
         ],
-        "juno-weekly_chart_deep-house": 181,
+        "juno-weekly_chart_deep-house": 185,
         "Jazzy House": "genre_tag",
         "Tech House": "genre_tag",
         "French House": "genre_tag"
@@ -20928,7 +20928,7 @@
             "https://www.juno.co.uk/MP3/SF858310-01-02-02.mp3",
             "https://www.juno.co.uk/MP3/SF858310-01-02-03.mp3"
         ],
-        "juno-weekly_chart_deep-house": 182,
+        "juno-weekly_chart_deep-house": 186,
         "Soulful House": "genre_tag"
     },
     "juno-858944-1": {
@@ -20960,7 +20960,7 @@
             "https://www.juno.co.uk/MP3/SF858944-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF858944-01-02-02.mp3"
         ],
-        "juno-weekly_chart_deep-house": 183,
+        "juno-weekly_chart_deep-house": 187,
         "Detroit House": "genre_tag"
     },
     "juno-920899-1": {
@@ -21008,7 +21008,7 @@
             "https://www.juno.co.uk/MP3/SF920899-01-04-02.mp3",
             "https://www.juno.co.uk/MP3/SF920899-01-04-03.mp3"
         ],
-        "juno-weekly_chart_deep-house": 184,
+        "juno-weekly_chart_deep-house": 188,
         "Balearic House": "genre_tag",
         "Classic House": "genre_tag",
         "90s House": "genre_tag",
@@ -21039,7 +21039,7 @@
             "https://www.juno.co.uk/MP3/SF746718-01-01-01.mp3",
             "https://www.juno.co.uk/MP3/SF746718-01-02-01.mp3"
         ],
-        "juno-weekly_chart_deep-house": 185,
+        "juno-weekly_chart_deep-house": 189,
         "Chicago House": "genre_tag"
     },
     "juno-392768-1": {
@@ -21067,7 +21067,7 @@
             "https://www.juno.co.uk/MP3/SF392768-01-01-01.mp3",
             "https://www.juno.co.uk/MP3/SF392768-01-02-01.mp3"
         ],
-        "juno-weekly_chart_deep-house": 188,
+        "juno-weekly_chart_deep-house": 192,
         "Dub Techno": "genre_tag",
         "Detroit Techno": "genre_tag",
         "juno-weekly_chart_techno-music": 111
@@ -21101,7 +21101,7 @@
             "https://www.juno.co.uk/MP3/SF822413-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF822413-01-02-02.mp3"
         ],
-        "juno-weekly_chart_deep-house": 189,
+        "juno-weekly_chart_deep-house": 193,
         "Minimal": "genre_tag",
         "Leftfield House": "genre_tag"
     },
@@ -21132,7 +21132,7 @@
             "https://www.juno.co.uk/MP3/SF389479-01-01-02.mp3",
             "https://www.juno.co.uk/MP3/SF389479-01-02-01.mp3"
         ],
-        "juno-weekly_chart_deep-house": 190,
+        "juno-weekly_chart_deep-house": 194,
         "Detroit House": "genre_tag",
         "Detroit Techno": "genre_tag",
         "Acid House": "genre_tag",
@@ -21180,7 +21180,7 @@
             "https://www.juno.co.uk/MP3/SF547750-01-01-09.mp3",
             "https://www.juno.co.uk/MP3/SF547750-01-01-10.mp3"
         ],
-        "juno-weekly_chart_deep-house": 192,
+        "juno-weekly_chart_deep-house": 196,
         "Disco House": "genre_tag",
         "Leftfield Disco": "genre_tag"
     },
@@ -21217,7 +21217,7 @@
             "https://www.juno.co.uk/MP3/SF178525-01-04-01.mp3",
             "https://www.juno.co.uk/MP3/SF178525-01-04-02.mp3"
         ],
-        "juno-weekly_chart_deep-house": 194,
+        "juno-weekly_chart_deep-house": 198,
         "Detroit House": "genre_tag",
         "Detroit Techno": "genre_tag"
     },
@@ -21248,7 +21248,7 @@
             "https://www.juno.co.uk/MP3/SF959760-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF959760-01-02-02.mp3"
         ],
-        "juno-weekly_chart_deep-house": 195,
+        "juno-weekly_chart_deep-house": 199,
         "Tech House": "genre_tag"
     },
     "juno-958386-1": {
@@ -21280,7 +21280,7 @@
             "https://www.juno.co.uk/MP3/SF958386-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF958386-01-02-02.mp3"
         ],
-        "juno-weekly_chart_deep-house": 196,
+        "juno-weekly_chart_deep-house": 200,
         "Breakbeat House": "genre_tag",
         "Acid House": "genre_tag",
         "Electro Techno": "genre_tag"
@@ -21467,10 +21467,10 @@
             "https://www.juno.co.uk/MP3/SF982607-01-02-02.mp3",
             "https://www.juno.co.uk/MP3/SF982607-01-02-03.mp3"
         ],
-        "juno-monthtly_chart_deep-house": 21,
+        "juno-monthtly_chart_deep-house": 22,
         "Jazzy House": "genre_tag",
         "Soulful House": "genre_tag",
-        "juno-new_releases_deep-house": 92
+        "juno-new_releases_deep-house": 93
     },
     "juno-982127-1": {
         "store": "juno",
@@ -21680,7 +21680,7 @@
         "Detroit House": "genre_tag",
         "Acid House": "genre_tag",
         "US Garage": "genre_tag",
-        "juno-new_releases_deep-house": 91
+        "juno-new_releases_deep-house": 92
     },
     "juno-958198-1": {
         "store": "juno",
@@ -21786,7 +21786,7 @@
             "https://www.juno.co.uk/MP3/SF971151-01-04-02.mp3",
             "https://www.juno.co.uk/MP3/SF971151-01-04-03.mp3"
         ],
-        "juno-monthtly_chart_deep-house": 13,
+        "juno-monthtly_chart_deep-house": 14,
         "Disco Funk": "genre_tag",
         "Balearic House": "genre_tag",
         "90s House": "genre_tag",
@@ -21823,11 +21823,11 @@
             "https://www.juno.co.uk/MP3/SF978962-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF978962-01-02-02.mp3"
         ],
-        "juno-monthtly_chart_deep-house": 14,
+        "juno-monthtly_chart_deep-house": 15,
         "Disco House": "genre_tag",
         "Balearic Disco": "genre_tag",
         "Italian": "genre_tag",
-        "juno-new_releases_deep-house": 107
+        "juno-new_releases_deep-house": 108
     },
     "juno-981496-1": {
         "store": "juno",
@@ -21857,9 +21857,9 @@
             "https://www.juno.co.uk/MP3/SF981496-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF981496-01-02-02.mp3"
         ],
-        "juno-monthtly_chart_deep-house": 15,
+        "juno-monthtly_chart_deep-house": 6,
         "US Garage": "genre_tag",
-        "juno-new_releases_deep-house": 112
+        "juno-new_releases_deep-house": 105
     },
     "juno-977025-1": {
         "store": "juno",
@@ -22651,7 +22651,7 @@
         "juno-monthtly_chart_deep-house": 18,
         "Afro House": "genre_tag",
         "Tribal House": "genre_tag",
-        "juno-new_releases_deep-house": 169
+        "juno-new_releases_deep-house": 170
     },
     "juno-984620-1": {
         "store": "juno",
@@ -22709,7 +22709,7 @@
             "https://www.juno.co.uk/MP3/SF776062-01-01-01.mp3",
             "https://www.juno.co.uk/MP3/SF776062-01-02-01.mp3"
         ],
-        "juno-monthtly_chart_deep-house": 30,
+        "juno-monthtly_chart_deep-house": 31,
         "Disco House": "genre_tag"
     },
     "juno-938830-1": {
@@ -22742,7 +22742,7 @@
             "https://www.juno.co.uk/MP3/SF938830-01-02-02.mp3",
             "https://www.juno.co.uk/MP3/SF938830-01-02-03.mp3"
         ],
-        "juno-monthtly_chart_deep-house": 31,
+        "juno-monthtly_chart_deep-house": 32,
         "Jazzy House": "genre_tag",
         "Detroit House": "genre_tag",
         "UK Garage": "genre_tag",
@@ -22776,7 +22776,7 @@
             "https://www.juno.co.uk/MP3/SF976822-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF976822-01-02-02.mp3"
         ],
-        "juno-monthtly_chart_deep-house": 32,
+        "juno-monthtly_chart_deep-house": 33,
         "Balearic House": "genre_tag",
         "Downtempo House": "genre_tag",
         "New York House": "genre_tag"
@@ -22813,7 +22813,7 @@
             "https://www.juno.co.uk/MP3/SF977652-01-02-02.mp3",
             "https://www.juno.co.uk/MP3/SF977652-01-02-03.mp3"
         ],
-        "juno-monthtly_chart_deep-house": 33,
+        "juno-monthtly_chart_deep-house": 34,
         "Tech House": "genre_tag",
         "French House": "genre_tag",
         "UK Garage": "genre_tag",
@@ -22843,7 +22843,7 @@
             "https://www.juno.co.uk/MP3/SF970212-01-01-01.mp3",
             "https://www.juno.co.uk/MP3/SF970212-01-02-01.mp3"
         ],
-        "juno-monthtly_chart_deep-house": 34,
+        "juno-monthtly_chart_deep-house": 35,
         "Disco Funk": "genre_tag",
         "Space Disco": "genre_tag",
         "Jazz Funk": "genre_tag",
@@ -22877,7 +22877,7 @@
             "https://www.juno.co.uk/MP3/SF981623-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF981623-01-02-02.mp3"
         ],
-        "juno-monthtly_chart_deep-house": 35,
+        "juno-monthtly_chart_deep-house": 36,
         "New Jersey House": "genre_tag",
         "Classic House": "genre_tag",
         "90s House": "genre_tag",
@@ -22913,7 +22913,7 @@
             "https://www.juno.co.uk/MP3/SF983433-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF983433-01-02-02.mp3"
         ],
-        "juno-monthtly_chart_deep-house": 36,
+        "juno-monthtly_chart_deep-house": 37,
         "juno-new_releases_deep-house": 104
     },
     "juno-971585-1": {
@@ -22944,7 +22944,7 @@
             "https://www.juno.co.uk/MP3/SF971585-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF971585-01-02-02.mp3"
         ],
-        "juno-monthtly_chart_deep-house": 37,
+        "juno-monthtly_chart_deep-house": 39,
         "Nu Disco": "genre_tag",
         "Pop Disco": "genre_tag"
     },
@@ -22970,7 +22970,7 @@
         "track_urls": [
             "https://www.juno.co.uk/MP3/SF762760-01-01-01.mp3"
         ],
-        "juno-monthtly_chart_deep-house": 39,
+        "juno-monthtly_chart_deep-house": 41,
         "Tech House": "genre_tag"
     },
     "juno-932727-1": {
@@ -22999,7 +22999,7 @@
             "https://www.juno.co.uk/MP3/SF932727-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF932727-01-02-02.mp3"
         ],
-        "juno-monthtly_chart_deep-house": 5,
+        "juno-monthtly_chart_deep-house": 6,
         "Jazzy House": "genre_tag",
         "French House": "genre_tag"
     },
@@ -23045,7 +23045,7 @@
             "https://www.juno.co.uk/MP3/SF863687-01-04-01.mp3",
             "https://www.juno.co.uk/MP3/SF863687-01-04-02.mp3"
         ],
-        "juno-monthtly_chart_deep-house": 6
+        "juno-monthtly_chart_deep-house": 7
     },
     "juno-980823-1": {
         "store": "juno",
@@ -23075,7 +23075,7 @@
             "https://www.juno.co.uk/MP3/SF980823-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF980823-01-02-02.mp3"
         ],
-        "juno-monthtly_chart_deep-house": 9,
+        "juno-monthtly_chart_deep-house": 10,
         "Downtempo House": "genre_tag",
         "juno-new_releases_deep-house": 193
     },
@@ -23105,7 +23105,7 @@
             "https://www.juno.co.uk/MP3/SF389711-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF389711-01-02-02.mp3"
         ],
-        "juno-monthtly_chart_deep-house": 11,
+        "juno-monthtly_chart_deep-house": 40,
         "Classic House": "genre_tag",
         "Downtempo House": "genre_tag",
         "2000s House": "genre_tag",
@@ -23147,7 +23147,7 @@
         "Tech House": "genre_tag",
         "Acid House": "genre_tag",
         "Acid Techno": "genre_tag",
-        "juno-new_releases_deep-house": 105
+        "juno-new_releases_deep-house": 106
     },
     "juno-910211-1": {
         "store": "juno",
@@ -23326,7 +23326,7 @@
             "https://www.juno.co.uk/MP3/SF571936-01-02-04.mp3",
             "https://www.juno.co.uk/MP3/SF571936-01-02-05.mp3"
         ],
-        "juno-monthtly_chart_deep-house": 32,
+        "juno-monthtly_chart_deep-house": 33,
         "Jazzy House": "genre_tag",
         "Downtempo House": "genre_tag"
     },
@@ -23354,7 +23354,7 @@
             "https://www.juno.co.uk/MP3/SF751946-01-01-01.mp3",
             "https://www.juno.co.uk/MP3/SF751946-01-02-01.mp3"
         ],
-        "juno-monthtly_chart_deep-house": 33,
+        "juno-monthtly_chart_deep-house": 34,
         "Disco House": "genre_tag",
         "Soul Disco": "genre_tag",
         "Soulful House": "genre_tag"
@@ -23391,7 +23391,7 @@
             "https://www.juno.co.uk/MP3/SF936779-01-02-02.mp3",
             "https://www.juno.co.uk/MP3/SF936779-01-02-03.mp3"
         ],
-        "juno-monthtly_chart_deep-house": 34,
+        "juno-monthtly_chart_deep-house": 35,
         "Balearic House": "genre_tag",
         "Italo House": "genre_tag"
     },
@@ -23423,7 +23423,7 @@
             "https://www.juno.co.uk/MP3/SF958193-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF958193-01-02-02.mp3"
         ],
-        "juno-monthtly_chart_deep-house": 35,
+        "juno-monthtly_chart_deep-house": 36,
         "Tribal House": "genre_tag",
         "Chicago House": "genre_tag",
         "juno-new_releases_deep-house": 234
@@ -23454,7 +23454,7 @@
             "https://www.juno.co.uk/MP3/SF959320-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF959320-01-02-02.mp3"
         ],
-        "juno-monthtly_chart_deep-house": 36,
+        "juno-monthtly_chart_deep-house": 37,
         "Jazzy House": "genre_tag",
         "Tech House": "genre_tag",
         "Soulful Garage": "genre_tag",
@@ -23488,7 +23488,7 @@
             "https://www.juno.co.uk/MP3/SF982432-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF982432-01-02-02.mp3"
         ],
-        "juno-monthtly_chart_deep-house": 39,
+        "juno-monthtly_chart_deep-house": 40,
         "Disco House": "genre_tag",
         "Italo Disco": "genre_tag",
         "Italo House": "genre_tag",
@@ -23522,7 +23522,7 @@
             "https://www.juno.co.uk/MP3/SF981135-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF981135-01-02-02.mp3"
         ],
-        "juno-monthtly_chart_deep-house": 40,
+        "juno-monthtly_chart_deep-house": 41,
         "juno-new_releases_deep-house": 27
     },
     "juno-965794-1": {
@@ -23553,7 +23553,7 @@
             "https://www.juno.co.uk/MP3/SF965794-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF965794-01-02-02.mp3"
         ],
-        "juno-monthtly_chart_deep-house": 41,
+        "juno-monthtly_chart_deep-house": 42,
         "Afro House": "genre_tag",
         "Soulful House": "genre_tag",
         "Tribal House": "genre_tag"
@@ -23582,7 +23582,7 @@
             "https://www.juno.co.uk/MP3/SF32844-01-01-01.mp3",
             "https://www.juno.co.uk/MP3/SF32844-01-02-01.mp3"
         ],
-        "juno-monthtly_chart_deep-house": 42,
+        "juno-monthtly_chart_deep-house": 43,
         "Classic House": "genre_tag",
         "80s House": "genre_tag",
         "Chicago House": "genre_tag"
@@ -23611,7 +23611,7 @@
             "https://www.juno.co.uk/MP3/SF69546-01-01-01.mp3",
             "https://www.juno.co.uk/MP3/SF69546-01-02-01.mp3"
         ],
-        "juno-monthtly_chart_deep-house": 43
+        "juno-monthtly_chart_deep-house": 44
     },
     "juno-942442-1": {
         "store": "juno",
@@ -23635,7 +23635,7 @@
         "track_urls": [
             "https://www.juno.co.uk/MP3/SF942442-01-01-01.mp3"
         ],
-        "juno-monthtly_chart_deep-house": 44,
+        "juno-monthtly_chart_deep-house": 45,
         "Detroit House": "genre_tag"
     },
     "juno-973605-1": {
@@ -23668,11 +23668,11 @@
             "https://www.juno.co.uk/MP3/SF973605-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF973605-01-02-02.mp3"
         ],
-        "juno-monthtly_chart_deep-house": 45,
+        "juno-monthtly_chart_deep-house": 46,
         "Nu Disco": "genre_tag",
         "Balearic House": "genre_tag",
         "Breakbeat House": "genre_tag",
-        "juno-new_releases_deep-house": 168
+        "juno-new_releases_deep-house": 169
     },
     "juno-978065-1": {
         "store": "juno",
@@ -23704,7 +23704,7 @@
             "https://www.juno.co.uk/MP3/SF978065-01-02-02.mp3",
             "https://www.juno.co.uk/MP3/SF978065-01-02-03.mp3"
         ],
-        "juno-monthtly_chart_deep-house": 46,
+        "juno-monthtly_chart_deep-house": 47,
         "Disco House": "genre_tag",
         "juno-new_releases_deep-house": 253
     },
@@ -23736,12 +23736,12 @@
             "https://www.juno.co.uk/MP3/SF977441-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF977441-01-02-02.mp3"
         ],
-        "juno-monthtly_chart_deep-house": 47,
+        "juno-monthtly_chart_deep-house": 48,
         "90s House": "genre_tag",
         "Ghetto House": "genre_tag",
         "Chicago House": "genre_tag",
         "juno-new_releases_deep-house": 41,
-        "juno-monthtly_chart_techno-music": 5,
+        "juno-monthtly_chart_techno-music": 7,
         "juno-new_releases_techno-music": 65
     },
     "juno-974751-1": {
@@ -23768,7 +23768,7 @@
             "https://www.juno.co.uk/MP3/SF974751-01-01-01.mp3",
             "https://www.juno.co.uk/MP3/SF974751-01-02-01.mp3"
         ],
-        "juno-monthtly_chart_deep-house": 48,
+        "juno-monthtly_chart_deep-house": 49,
         "Jazz Funk Disco": "genre_tag",
         "Space Disco": "genre_tag",
         "New York House": "genre_tag"
@@ -24730,7 +24730,7 @@
         "90s House": "genre_tag",
         "Italo House": "genre_tag",
         "Acid House": "genre_tag",
-        "juno-new_releases_techno-music": 107
+        "juno-new_releases_techno-music": 108
     },
     "juno-985583-1": {
         "store": "juno",
@@ -24919,7 +24919,7 @@
             "https://www.juno.co.uk/MP3/SF982270-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF982270-01-02-02.mp3"
         ],
-        "juno-new_releases_deep-house": 78,
+        "juno-new_releases_deep-house": 74,
         "Balearic House": "genre_tag",
         "Acid House": "genre_tag",
         "juno-new_releases_techno-music": 129
@@ -24985,7 +24985,7 @@
             "https://www.juno.co.uk/MP3/SF983230-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF983230-01-02-02.mp3"
         ],
-        "juno-new_releases_deep-house": 93,
+        "juno-new_releases_deep-house": 94,
         "Balearic House": "genre_tag",
         "Ambient House": "genre_tag",
         "Breakbeat House": "genre_tag"
@@ -25004,7 +25004,8 @@
             "https://imagescdn.juno.co.uk/full/CS983830-01A-BIG.jpg"
         ],
         "store_tags": {
-            "out_of_stock": false
+            "out_of_stock": false,
+            "has_charted": true
         },
         "track_names": [
             "Soccio Mode (5:38)",
@@ -25020,9 +25021,10 @@
             "https://www.juno.co.uk/MP3/SF983830-01-02-02.mp3",
             "https://www.juno.co.uk/MP3/SF983830-01-02-03.mp3"
         ],
-        "juno-new_releases_deep-house": 95,
+        "juno-new_releases_deep-house": 91,
         "Detroit House": "genre_tag",
-        "Soulful House": "genre_tag"
+        "Soulful House": "genre_tag",
+        "juno-weekly_chart_deep-house": 181
     },
     "juno-982213-1": {
         "store": "juno",
@@ -25123,7 +25125,7 @@
             "https://www.juno.co.uk/MP3/SF981122-01-02-02.mp3",
             "https://www.juno.co.uk/MP3/SF981122-01-02-03.mp3"
         ],
-        "juno-new_releases_deep-house": 106
+        "juno-new_releases_deep-house": 107
     },
     "juno-973654-1": {
         "store": "juno",
@@ -25157,7 +25159,7 @@
             "https://www.juno.co.uk/MP3/SF973654-01-02-02.mp3",
             "https://www.juno.co.uk/MP3/SF973654-01-02-03.mp3"
         ],
-        "juno-new_releases_deep-house": 108,
+        "juno-new_releases_deep-house": 109,
         "Ambient Techno": "genre_tag",
         "Ambient House": "genre_tag",
         "juno-new_releases_techno-music": 161
@@ -25189,7 +25191,7 @@
             "https://www.juno.co.uk/MP3/SF965601-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF965601-01-02-02.mp3"
         ],
-        "juno-new_releases_deep-house": 109,
+        "juno-new_releases_deep-house": 110,
         "Breakbeat House": "genre_tag"
     },
     "juno-963682-1": {
@@ -25624,7 +25626,7 @@
             "https://www.juno.co.uk/MP3/SF962096-01-02-02.mp3",
             "https://www.juno.co.uk/MP3/SF962096-01-02-03.mp3"
         ],
-        "juno-new_releases_deep-house": 142,
+        "juno-new_releases_deep-house": 143,
         "Disco House": "genre_tag",
         "Jazzy House": "genre_tag",
         "Balearic House": "genre_tag"
@@ -25655,7 +25657,7 @@
             "https://www.juno.co.uk/MP3/SF964365-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF964365-01-02-02.mp3"
         ],
-        "juno-new_releases_deep-house": 145,
+        "juno-new_releases_deep-house": 146,
         "Detroit House": "genre_tag",
         "90s House": "genre_tag",
         "Chicago House": "genre_tag"
@@ -25686,7 +25688,7 @@
             "https://www.juno.co.uk/MP3/SF968471-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF968471-01-02-02.mp3"
         ],
-        "juno-new_releases_deep-house": 146,
+        "juno-new_releases_deep-house": 147,
         "Tech House": "genre_tag",
         "Minimal": "genre_tag"
     },
@@ -25718,7 +25720,7 @@
             "https://www.juno.co.uk/MP3/SF979495-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF979495-01-02-02.mp3"
         ],
-        "juno-new_releases_deep-house": 147
+        "juno-new_releases_deep-house": 148
     },
     "juno-983899-1": {
         "store": "juno",
@@ -25748,7 +25750,7 @@
             "https://www.juno.co.uk/MP3/SF983899-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF983899-01-02-02.mp3"
         ],
-        "juno-new_releases_deep-house": 151,
+        "juno-new_releases_deep-house": 152,
         "Tech House": "genre_tag"
     },
     "juno-976663-1": {
@@ -25783,7 +25785,7 @@
             "https://www.juno.co.uk/MP3/SF976663-01-02-02.mp3",
             "https://www.juno.co.uk/MP3/SF976663-01-02-03.mp3"
         ],
-        "juno-new_releases_deep-house": 154,
+        "juno-new_releases_deep-house": 155,
         "Ambient House": "genre_tag",
         "Soulful House": "genre_tag",
         "Future House": "genre_tag"
@@ -25816,7 +25818,7 @@
             "https://www.juno.co.uk/MP3/SF975604-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF975604-01-02-02.mp3"
         ],
-        "juno-new_releases_deep-house": 160,
+        "juno-new_releases_deep-house": 161,
         "Tech House": "genre_tag",
         "Balearic House": "genre_tag"
     },
@@ -25845,7 +25847,7 @@
             "https://www.juno.co.uk/MP3/SF981805-01-01-01.mp3",
             "https://www.juno.co.uk/MP3/SF981805-01-02-01.mp3"
         ],
-        "juno-new_releases_deep-house": 161,
+        "juno-new_releases_deep-house": 162,
         "Jazzy House": "genre_tag"
     },
     "juno-982739-1": {
@@ -25876,7 +25878,7 @@
             "https://www.juno.co.uk/MP3/SF982739-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF982739-01-02-02.mp3"
         ],
-        "juno-new_releases_deep-house": 162,
+        "juno-new_releases_deep-house": 163,
         "Experimental Techno": "genre_tag",
         "Leftfield House": "genre_tag",
         "Breakbeat Techno": "genre_tag"
@@ -25909,7 +25911,7 @@
             "https://www.juno.co.uk/MP3/SF982733-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF982733-01-02-02.mp3"
         ],
-        "juno-new_releases_deep-house": 163,
+        "juno-new_releases_deep-house": 164,
         "Minimal Techno": "genre_tag",
         "Acid Techno": "genre_tag",
         "Electro Techno": "genre_tag"
@@ -25944,7 +25946,7 @@
             "https://www.juno.co.uk/MP3/SF971516-01-02-02.mp3",
             "https://www.juno.co.uk/MP3/SF971516-01-02-03.mp3"
         ],
-        "juno-new_releases_deep-house": 164,
+        "juno-new_releases_deep-house": 165,
         "Acid House": "genre_tag"
     },
     "juno-970218-1": {
@@ -25971,7 +25973,7 @@
         "track_urls": [
             "https://www.juno.co.uk/MP3/SF970218-01-02-01.mp3"
         ],
-        "juno-new_releases_deep-house": 165,
+        "juno-new_releases_deep-house": 166,
         "Disco House": "genre_tag"
     },
     "juno-970224-1": {
@@ -26003,7 +26005,7 @@
             "https://www.juno.co.uk/MP3/SF970224-01-03-01.mp3",
             "https://www.juno.co.uk/MP3/SF970224-01-04-01.mp3"
         ],
-        "juno-new_releases_deep-house": 166,
+        "juno-new_releases_deep-house": 167,
         "Disco House": "genre_tag",
         "Cosmic Disco": "genre_tag"
     },
@@ -26036,7 +26038,7 @@
             "https://www.juno.co.uk/MP3/SF982728-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF982728-01-02-02.mp3"
         ],
-        "juno-new_releases_deep-house": 167,
+        "juno-new_releases_deep-house": 168,
         "Tech House": "genre_tag",
         "Electro Techno": "genre_tag"
     },
@@ -26072,7 +26074,7 @@
             "https://www.juno.co.uk/MP3/SF980172-01-02-02.mp3",
             "https://www.juno.co.uk/MP3/SF980172-01-02-03.mp3"
         ],
-        "juno-new_releases_deep-house": 170,
+        "juno-new_releases_deep-house": 171,
         "Breakbeat House": "genre_tag"
     },
     "juno-982816-1": {
@@ -26099,7 +26101,7 @@
             "https://www.juno.co.uk/MP3/SF982816-01-01-01.mp3",
             "https://www.juno.co.uk/MP3/SF982816-01-02-01.mp3"
         ],
-        "juno-new_releases_deep-house": 171,
+        "juno-new_releases_deep-house": 172,
         "Experimental Techno": "genre_tag",
         "Leftfield House": "genre_tag"
     },
@@ -26133,7 +26135,7 @@
             "https://www.juno.co.uk/MP3/SF979199-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF979199-01-02-02.mp3"
         ],
-        "juno-new_releases_deep-house": 172,
+        "juno-new_releases_deep-house": 173,
         "Disco House": "genre_tag",
         "Pop Disco": "genre_tag"
     },
@@ -26165,7 +26167,7 @@
             "https://www.juno.co.uk/MP3/SF979883-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF979883-01-02-02.mp3"
         ],
-        "juno-new_releases_deep-house": 173
+        "juno-new_releases_deep-house": 174
     },
     "juno-980886-1": {
         "store": "juno",
@@ -26191,7 +26193,7 @@
             "https://www.juno.co.uk/MP3/SF980886-01-01-01.mp3",
             "https://www.juno.co.uk/MP3/SF980886-01-02-01.mp3"
         ],
-        "juno-new_releases_deep-house": 175,
+        "juno-new_releases_deep-house": 176,
         "Acid House": "genre_tag"
     },
     "juno-978423-1": {
@@ -29242,7 +29244,7 @@
             "https://www.juno.co.uk/MP3/SF805242-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF805242-01-02-02.mp3"
         ],
-        "juno-weekly_chart_techno-music": 6,
+        "juno-weekly_chart_techno-music": 7,
         "juno-monthtly_chart_techno-music": 14
     },
     "juno-974850-1": {
@@ -29341,7 +29343,7 @@
             "https://www.juno.co.uk/MP3/SF518524-01-02-02.mp3"
         ],
         "juno-weekly_chart_techno-music": 16,
-        "juno-monthtly_chart_techno-music": 8
+        "juno-monthtly_chart_techno-music": 9
     },
     "juno-861368-1": {
         "store": "juno",
@@ -29550,7 +29552,7 @@
             "https://www.juno.co.uk/MP3/SF898373-01-02-02.mp3"
         ],
         "juno-weekly_chart_techno-music": 29,
-        "juno-monthtly_chart_techno-music": 9
+        "juno-monthtly_chart_techno-music": 10
     },
     "juno-820577-1": {
         "store": "juno",
@@ -29580,7 +29582,7 @@
             "https://www.juno.co.uk/MP3/SF820577-01-02-02.mp3"
         ],
         "juno-weekly_chart_techno-music": 30,
-        "juno-monthtly_chart_techno-music": 10
+        "juno-monthtly_chart_techno-music": 11
     },
     "juno-832250-1": {
         "store": "juno",
@@ -29783,9 +29785,9 @@
             "https://www.juno.co.uk/MP3/SF985354-01-01-01.mp3",
             "https://www.juno.co.uk/MP3/SF985354-01-02-01.mp3"
         ],
-        "juno-weekly_chart_techno-music": 41,
+        "juno-weekly_chart_techno-music": 42,
         "juno-monthtly_chart_techno-music": 9,
-        "juno-new_releases_techno-music": 130
+        "juno-new_releases_techno-music": 131
     },
     "juno-979965-1": {
         "store": "juno",
@@ -29816,9 +29818,9 @@
             "https://www.juno.co.uk/MP3/SF979965-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF979965-01-02-02.mp3"
         ],
-        "juno-weekly_chart_techno-music": 42,
+        "juno-weekly_chart_techno-music": 41,
         "juno-monthtly_chart_techno-music": 39,
-        "juno-new_releases_techno-music": 131
+        "juno-new_releases_techno-music": 130
     },
     "juno-945732-1": {
         "store": "juno",
@@ -29890,7 +29892,7 @@
             "https://www.juno.co.uk/MP3/SF871572-01-04-02.mp3"
         ],
         "juno-weekly_chart_techno-music": 49,
-        "juno-monthtly_chart_techno-music": 11,
+        "juno-monthtly_chart_techno-music": 12,
         "juno-new_releases_techno-music": 345
     },
     "juno-931616-1": {
@@ -30009,8 +30011,8 @@
             "https://www.juno.co.uk/MP3/SF875957-01-02-04.mp3",
             "https://www.juno.co.uk/MP3/SF875957-01-02-05.mp3"
         ],
-        "juno-weekly_chart_techno-music": 59,
-        "juno-monthtly_chart_techno-music": 11
+        "juno-weekly_chart_techno-music": 104,
+        "juno-monthtly_chart_techno-music": 14
     },
     "juno-882687-1": {
         "store": "juno",
@@ -30063,7 +30065,7 @@
             "https://www.juno.co.uk/MP3/SF882687-01-04-03.mp3",
             "https://www.juno.co.uk/MP3/SF882687-01-04-04.mp3"
         ],
-        "juno-weekly_chart_techno-music": 60,
+        "juno-weekly_chart_techno-music": 59,
         "juno-monthtly_chart_techno-music": 47
     },
     "juno-913963-1": {
@@ -30093,8 +30095,8 @@
             "https://www.juno.co.uk/MP3/SF913963-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF913963-01-02-02.mp3"
         ],
-        "juno-weekly_chart_techno-music": 61,
-        "juno-monthtly_chart_techno-music": 38
+        "juno-weekly_chart_techno-music": 60,
+        "juno-monthtly_chart_techno-music": 39
     },
     "juno-828063-1": {
         "store": "juno",
@@ -30129,7 +30131,7 @@
             "https://www.juno.co.uk/MP3/SF828063-01-02-02.mp3",
             "https://www.juno.co.uk/MP3/SF828063-01-02-03.mp3"
         ],
-        "juno-weekly_chart_techno-music": 65,
+        "juno-weekly_chart_techno-music": 64,
         "juno-monthtly_chart_techno-music": 49
     },
     "juno-828175-1": {
@@ -30177,8 +30179,8 @@
             "https://www.juno.co.uk/MP3/SF828175-01-04-02.mp3",
             "https://www.juno.co.uk/MP3/SF828175-01-04-03.mp3"
         ],
-        "juno-weekly_chart_techno-music": 66,
-        "juno-monthtly_chart_techno-music": 39
+        "juno-weekly_chart_techno-music": 65,
+        "juno-monthtly_chart_techno-music": 40
     },
     "juno-640934-1": {
         "store": "juno",
@@ -30215,7 +30217,7 @@
             "https://www.juno.co.uk/MP3/SF640934-01-02-03.mp3",
             "https://www.juno.co.uk/MP3/SF640934-01-02-04.mp3"
         ],
-        "juno-weekly_chart_techno-music": 68,
+        "juno-weekly_chart_techno-music": 67,
         "juno-monthtly_chart_techno-music": 13,
         "juno-new_releases_techno-music": 359
     },
@@ -30248,7 +30250,7 @@
             "https://www.juno.co.uk/MP3/SF699616-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF699616-01-02-02.mp3"
         ],
-        "juno-weekly_chart_techno-music": 69,
+        "juno-weekly_chart_techno-music": 68,
         "juno-monthtly_chart_techno-music": 3
     },
     "juno-929245-1": {
@@ -30276,7 +30278,7 @@
             "https://www.juno.co.uk/MP3/SF929245-01-01-01.mp3",
             "https://www.juno.co.uk/MP3/SF929245-01-02-01.mp3"
         ],
-        "juno-weekly_chart_techno-music": 70
+        "juno-weekly_chart_techno-music": 69
     },
     "juno-929571-1": {
         "store": "juno",
@@ -30321,7 +30323,7 @@
             "https://www.juno.co.uk/MP3/SF929571-01-07-02.mp3",
             "https://www.juno.co.uk/MP3/SF929571-01-08-01.mp3"
         ],
-        "juno-weekly_chart_techno-music": 71,
+        "juno-weekly_chart_techno-music": 70,
         "juno-monthtly_chart_techno-music": 21
     },
     "juno-964865-1": {
@@ -30349,7 +30351,7 @@
             "https://www.juno.co.uk/MP3/SF964865-01-01-01.mp3",
             "https://www.juno.co.uk/MP3/SF964865-01-02-01.mp3"
         ],
-        "juno-weekly_chart_techno-music": 72,
+        "juno-weekly_chart_techno-music": 71,
         "juno-monthtly_chart_techno-music": 12,
         "juno-new_releases_techno-music": 75
     },
@@ -30380,7 +30382,7 @@
             "https://www.juno.co.uk/MP3/SF958580-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF958580-01-02-02.mp3"
         ],
-        "juno-weekly_chart_techno-music": 74
+        "juno-weekly_chart_techno-music": 73
     },
     "juno-942831-1": {
         "store": "juno",
@@ -30411,8 +30413,8 @@
             "https://www.juno.co.uk/MP3/SF942831-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF942831-01-02-02.mp3"
         ],
-        "juno-weekly_chart_techno-music": 76,
-        "juno-monthtly_chart_techno-music": 40,
+        "juno-weekly_chart_techno-music": 75,
+        "juno-monthtly_chart_techno-music": 41,
         "juno-new_releases_techno-music": 255
     },
     "juno-982512-1": {
@@ -30444,7 +30446,7 @@
             "https://www.juno.co.uk/MP3/SF982512-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF982512-01-02-02.mp3"
         ],
-        "juno-weekly_chart_techno-music": 77,
+        "juno-weekly_chart_techno-music": 76,
         "juno-monthtly_chart_techno-music": 4,
         "juno-new_releases_techno-music": 76
     },
@@ -30493,7 +30495,7 @@
             "https://www.juno.co.uk/MP3/SF928966-01-04-01.mp3",
             "https://www.juno.co.uk/MP3/SF928966-01-04-02.mp3"
         ],
-        "juno-weekly_chart_techno-music": 78,
+        "juno-weekly_chart_techno-music": 77,
         "Ambient Techno": "genre_tag",
         "Experimental Techno": "genre_tag",
         "Minimal Techno": "genre_tag",
@@ -30528,7 +30530,7 @@
             "https://www.juno.co.uk/MP3/SF976650-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF976650-01-02-02.mp3"
         ],
-        "juno-weekly_chart_techno-music": 79,
+        "juno-weekly_chart_techno-music": 78,
         "juno-monthtly_chart_techno-music": 45,
         "juno-new_releases_techno-music": 132
     },
@@ -30559,7 +30561,7 @@
             "https://www.juno.co.uk/MP3/SF978243-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF978243-01-02-02.mp3"
         ],
-        "juno-weekly_chart_techno-music": 80,
+        "juno-weekly_chart_techno-music": 79,
         "juno-monthtly_chart_techno-music": 31
     },
     "juno-989528-1": {
@@ -30595,7 +30597,7 @@
             "https://www.juno.co.uk/MP3/SF989528-01-02-02.mp3",
             "https://www.juno.co.uk/MP3/SF989528-01-02-03.mp3"
         ],
-        "juno-weekly_chart_techno-music": 82,
+        "juno-weekly_chart_techno-music": 81,
         "juno-new_releases_techno-music": 7
     },
     "juno-970154-1": {
@@ -30623,7 +30625,7 @@
             "https://www.juno.co.uk/MP3/SF970154-01-01-01.mp3",
             "https://www.juno.co.uk/MP3/SF970154-01-02-01.mp3"
         ],
-        "juno-weekly_chart_techno-music": 84,
+        "juno-weekly_chart_techno-music": 83,
         "juno-monthtly_chart_techno-music": 26
     },
     "juno-975655-1": {
@@ -30653,7 +30655,7 @@
             "https://www.juno.co.uk/MP3/SF975655-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF975655-01-02-02.mp3"
         ],
-        "juno-weekly_chart_techno-music": 86
+        "juno-weekly_chart_techno-music": 85
     },
     "juno-971867-1": {
         "store": "juno",
@@ -30691,10 +30693,10 @@
             "https://www.juno.co.uk/MP3/SF971867-01-01-03.mp3",
             "https://www.juno.co.uk/MP3/SF971867-01-04-01.mp3"
         ],
-        "juno-weekly_chart_techno-music": 87,
+        "juno-weekly_chart_techno-music": 86,
         "Classic House": "genre_tag",
         "90s House": "genre_tag",
-        "juno-monthtly_chart_techno-music": 12
+        "juno-monthtly_chart_techno-music": 11
     },
     "juno-979267-1": {
         "store": "juno",
@@ -30725,7 +30727,7 @@
             "https://www.juno.co.uk/MP3/SF979267-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF979267-01-02-02.mp3"
         ],
-        "juno-weekly_chart_techno-music": 89,
+        "juno-weekly_chart_techno-music": 88,
         "juno-new_releases_techno-music": 20
     },
     "juno-982815-1": {
@@ -30757,8 +30759,8 @@
             "https://www.juno.co.uk/MP3/SF982815-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF982815-01-02-02.mp3"
         ],
-        "juno-weekly_chart_techno-music": 90,
-        "juno-monthtly_chart_techno-music": 13,
+        "juno-weekly_chart_techno-music": 89,
+        "juno-monthtly_chart_techno-music": 12,
         "juno-new_releases_techno-music": 135
     },
     "juno-975120-1": {
@@ -30808,7 +30810,7 @@
             "https://www.juno.co.uk/MP3/SF975120-01-04-03.mp3",
             "https://www.juno.co.uk/MP3/SF975120-01-04-04.mp3"
         ],
-        "juno-weekly_chart_techno-music": 92
+        "juno-weekly_chart_techno-music": 91
     },
     "juno-987477-1": {
         "store": "juno",
@@ -30843,7 +30845,7 @@
             "https://www.juno.co.uk/MP3/SF987477-01-01-05.mp3",
             "https://www.juno.co.uk/MP3/SF987477-01-01-06.mp3"
         ],
-        "juno-weekly_chart_techno-music": 93,
+        "juno-weekly_chart_techno-music": 92,
         "juno-monthtly_chart_techno-music": 5,
         "juno-new_releases_techno-music": 360
     },
@@ -30872,7 +30874,7 @@
             "https://www.juno.co.uk/MP3/SF989516-01-01-01.mp3",
             "https://www.juno.co.uk/MP3/SF989516-01-02-01.mp3"
         ],
-        "juno-weekly_chart_techno-music": 96,
+        "juno-weekly_chart_techno-music": 95,
         "juno-new_releases_techno-music": 9
     },
     "juno-987485-1": {
@@ -30920,8 +30922,8 @@
             "https://www.juno.co.uk/MP3/SF987485-01-04-02.mp3",
             "https://www.juno.co.uk/MP3/SF987485-01-04-03.mp3"
         ],
-        "juno-weekly_chart_techno-music": 97,
-        "juno-monthtly_chart_techno-music": 14,
+        "juno-weekly_chart_techno-music": 96,
+        "juno-monthtly_chart_techno-music": 13,
         "juno-new_releases_techno-music": 361
     },
     "juno-991624-1": {
@@ -30943,7 +30945,7 @@
         },
         "track_names": [],
         "track_urls": [],
-        "juno-weekly_chart_techno-music": 98
+        "juno-weekly_chart_techno-music": 97
     },
     "juno-981166-1": {
         "store": "juno",
@@ -30974,8 +30976,8 @@
             "https://www.juno.co.uk/MP3/SF981166-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF981166-01-02-02.mp3"
         ],
-        "juno-weekly_chart_techno-music": 99,
-        "juno-monthtly_chart_techno-music": 41,
+        "juno-weekly_chart_techno-music": 102,
+        "juno-monthtly_chart_techno-music": 42,
         "juno-new_releases_techno-music": 136
     },
     "juno-770456-1": {
@@ -31011,8 +31013,8 @@
             "https://www.juno.co.uk/MP3/SF770456-01-02-02.mp3",
             "https://www.juno.co.uk/MP3/SF770456-01-02-03.mp3"
         ],
-        "juno-weekly_chart_techno-music": 100,
-        "juno-monthtly_chart_techno-music": 13
+        "juno-weekly_chart_techno-music": 103,
+        "juno-monthtly_chart_techno-music": 14
     },
     "juno-979016-1": {
         "store": "juno",
@@ -31045,7 +31047,7 @@
             "https://www.juno.co.uk/MP3/SF979016-01-02-02.mp3",
             "https://www.juno.co.uk/MP3/SF979016-01-02-03.mp3"
         ],
-        "juno-weekly_chart_techno-music": 102,
+        "juno-weekly_chart_techno-music": 99,
         "juno-monthtly_chart_techno-music": 32,
         "juno-new_releases_techno-music": 299
     },
@@ -31074,7 +31076,7 @@
             "https://www.juno.co.uk/MP3/SF948688-01-01-01.mp3",
             "https://www.juno.co.uk/MP3/SF948688-01-02-01.mp3"
         ],
-        "juno-weekly_chart_techno-music": 103,
+        "juno-weekly_chart_techno-music": 100,
         "juno-monthtly_chart_techno-music": 6
     },
     "juno-912160-1": {
@@ -31679,7 +31681,7 @@
             "https://www.juno.co.uk/MP3/SF924208-01-02-02.mp3"
         ],
         "juno-weekly_chart_techno-music": 128,
-        "juno-monthtly_chart_techno-music": 42
+        "juno-monthtly_chart_techno-music": 43
     },
     "juno-584555-1": {
         "store": "juno",
@@ -31804,7 +31806,7 @@
             "https://www.juno.co.uk/MP3/SF939551-01-02-01.mp3"
         ],
         "juno-weekly_chart_techno-music": 134,
-        "juno-monthtly_chart_techno-music": 43
+        "juno-monthtly_chart_techno-music": 44
     },
     "juno-979947-1": {
         "store": "juno",
@@ -31912,7 +31914,7 @@
             "https://www.juno.co.uk/MP3/SF870416-01-06-01.mp3",
             "https://www.juno.co.uk/MP3/SF870416-01-06-02.mp3"
         ],
-        "juno-weekly_chart_techno-music": 139
+        "juno-weekly_chart_techno-music": 138
     },
     "juno-80176-1": {
         "store": "juno",
@@ -31939,7 +31941,7 @@
             "https://www.juno.co.uk/MP3/SF80176-01-01-01.mp3",
             "https://www.juno.co.uk/MP3/SF80176-01-02-01.mp3"
         ],
-        "juno-weekly_chart_techno-music": 142,
+        "juno-weekly_chart_techno-music": 141,
         "Detroit Techno": "genre_tag",
         "80s House": "genre_tag"
     },
@@ -31972,7 +31974,7 @@
             "https://www.juno.co.uk/MP3/SF817716-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF817716-01-02-02.mp3"
         ],
-        "juno-weekly_chart_techno-music": 143
+        "juno-weekly_chart_techno-music": 142
     },
     "juno-817718-1": {
         "store": "juno",
@@ -32003,7 +32005,7 @@
             "https://www.juno.co.uk/MP3/SF817718-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF817718-01-02-02.mp3"
         ],
-        "juno-weekly_chart_techno-music": 144
+        "juno-weekly_chart_techno-music": 143
     },
     "juno-817740-1": {
         "store": "juno",
@@ -32050,7 +32052,7 @@
             "https://www.juno.co.uk/MP3/SF817740-01-04-02.mp3",
             "https://www.juno.co.uk/MP3/SF817740-01-04-03.mp3"
         ],
-        "juno-weekly_chart_techno-music": 145
+        "juno-weekly_chart_techno-music": 144
     },
     "juno-819042-1": {
         "store": "juno",
@@ -32113,7 +32115,7 @@
             "https://www.juno.co.uk/MP3/SF819042-01-06-01.mp3",
             "https://www.juno.co.uk/MP3/SF819042-01-06-02.mp3"
         ],
-        "juno-weekly_chart_techno-music": 146
+        "juno-weekly_chart_techno-music": 145
     },
     "juno-808484-1": {
         "store": "juno",
@@ -32144,7 +32146,7 @@
             "https://www.juno.co.uk/MP3/SF808484-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF808484-01-02-02.mp3"
         ],
-        "juno-weekly_chart_techno-music": 147
+        "juno-weekly_chart_techno-music": 146
     },
     "juno-808562-1": {
         "store": "juno",
@@ -32173,7 +32175,7 @@
             "https://www.juno.co.uk/MP3/SF808562-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF808562-01-02-02.mp3"
         ],
-        "juno-weekly_chart_techno-music": 148
+        "juno-weekly_chart_techno-music": 147
     },
     "juno-808732-1": {
         "store": "juno",
@@ -32206,7 +32208,7 @@
             "https://www.juno.co.uk/MP3/SF808732-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF808732-01-02-02.mp3"
         ],
-        "juno-weekly_chart_techno-music": 149
+        "juno-weekly_chart_techno-music": 148
     },
     "juno-809528-1": {
         "store": "juno",
@@ -32239,7 +32241,7 @@
             "https://www.juno.co.uk/MP3/SF809528-01-02-02.mp3",
             "https://www.juno.co.uk/MP3/SF809528-01-02-03.mp3"
         ],
-        "juno-weekly_chart_techno-music": 150,
+        "juno-weekly_chart_techno-music": 149,
         "Ambient House": "genre_tag"
     },
     "juno-810450-1": {
@@ -32271,7 +32273,7 @@
             "https://www.juno.co.uk/MP3/SF810450-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF810450-01-02-02.mp3"
         ],
-        "juno-weekly_chart_techno-music": 151
+        "juno-weekly_chart_techno-music": 150
     },
     "juno-811964-1": {
         "store": "juno",
@@ -32300,7 +32302,7 @@
             "https://www.juno.co.uk/MP3/SF811964-01-01-02.mp3",
             "https://www.juno.co.uk/MP3/SF811964-01-02-01.mp3"
         ],
-        "juno-weekly_chart_techno-music": 152,
+        "juno-weekly_chart_techno-music": 151,
         "Experimental Techno": "genre_tag",
         "Acid Techno": "genre_tag",
         "juno-monthtly_chart_techno-music": 49
@@ -32342,7 +32344,7 @@
             "https://www.juno.co.uk/MP3/SF493206-01-04-01.mp3",
             "https://www.juno.co.uk/MP3/SF493206-01-04-02.mp3"
         ],
-        "juno-weekly_chart_techno-music": 153,
+        "juno-weekly_chart_techno-music": 152,
         "Detroit House": "genre_tag",
         "juno-monthtly_chart_techno-music": 0
     },
@@ -32383,7 +32385,7 @@
             "https://www.juno.co.uk/MP3/SF493208-01-03-02.mp3",
             "https://www.juno.co.uk/MP3/SF493208-01-04-01.mp3"
         ],
-        "juno-weekly_chart_techno-music": 154,
+        "juno-weekly_chart_techno-music": 153,
         "Detroit House": "genre_tag"
     },
     "juno-800236-1": {
@@ -32417,7 +32419,7 @@
             "https://www.juno.co.uk/MP3/SF800236-01-02-02.mp3",
             "https://www.juno.co.uk/MP3/SF800236-01-02-03.mp3"
         ],
-        "juno-weekly_chart_techno-music": 156
+        "juno-weekly_chart_techno-music": 155
     },
     "juno-801378-1": {
         "store": "juno",
@@ -32448,8 +32450,8 @@
             "https://www.juno.co.uk/MP3/SF801378-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF801378-01-02-02.mp3"
         ],
-        "juno-weekly_chart_techno-music": 157,
-        "juno-monthtly_chart_techno-music": 15
+        "juno-weekly_chart_techno-music": 156,
+        "juno-monthtly_chart_techno-music": 16
     },
     "juno-814721-1": {
         "store": "juno",
@@ -32484,7 +32486,7 @@
             "https://www.juno.co.uk/MP3/SF814721-01-02-02.mp3",
             "https://www.juno.co.uk/MP3/SF814721-01-02-03.mp3"
         ],
-        "juno-weekly_chart_techno-music": 158
+        "juno-weekly_chart_techno-music": 157
     },
     "juno-936737-1": {
         "store": "juno",
@@ -32515,7 +32517,7 @@
             "https://www.juno.co.uk/MP3/SF936737-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF936737-01-02-02.mp3"
         ],
-        "juno-weekly_chart_techno-music": 160
+        "juno-weekly_chart_techno-music": 159
     },
     "juno-931982-1": {
         "store": "juno",
@@ -32548,7 +32550,7 @@
             "https://www.juno.co.uk/MP3/SF931982-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF931982-01-02-02.mp3"
         ],
-        "juno-weekly_chart_techno-music": 162
+        "juno-weekly_chart_techno-music": 161
     },
     "juno-922964-1": {
         "store": "juno",
@@ -32583,7 +32585,7 @@
             "https://www.juno.co.uk/MP3/SF922964-01-03-02.mp3",
             "https://www.juno.co.uk/MP3/SF922964-01-04-01.mp3"
         ],
-        "juno-weekly_chart_techno-music": 163
+        "juno-weekly_chart_techno-music": 162
     },
     "juno-928748-1": {
         "store": "juno",
@@ -32614,7 +32616,7 @@
             "https://www.juno.co.uk/MP3/SF928748-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF928748-01-02-02.mp3"
         ],
-        "juno-weekly_chart_techno-music": 164
+        "juno-weekly_chart_techno-music": 163
     },
     "juno-935996-1": {
         "store": "juno",
@@ -32643,7 +32645,7 @@
             "https://www.juno.co.uk/MP3/SF935996-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF935996-01-02-02.mp3"
         ],
-        "juno-weekly_chart_techno-music": 165
+        "juno-weekly_chart_techno-music": 164
     },
     "juno-972516-1": {
         "store": "juno",
@@ -32670,7 +32672,7 @@
             "https://www.juno.co.uk/MP3/SF972516-01-01-01.mp3",
             "https://www.juno.co.uk/MP3/SF972516-01-02-01.mp3"
         ],
-        "juno-weekly_chart_techno-music": 166
+        "juno-weekly_chart_techno-music": 165
     },
     "juno-934508-1": {
         "store": "juno",
@@ -32703,7 +32705,7 @@
             "https://www.juno.co.uk/MP3/SF934508-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF934508-01-02-02.mp3"
         ],
-        "juno-weekly_chart_techno-music": 169
+        "juno-weekly_chart_techno-music": 168
     },
     "juno-263158-1": {
         "store": "juno",
@@ -32730,7 +32732,7 @@
             "https://www.juno.co.uk/MP3/SF263158-01-01-01.mp3",
             "https://www.juno.co.uk/MP3/SF263158-01-02-01.mp3"
         ],
-        "juno-weekly_chart_techno-music": 170,
+        "juno-weekly_chart_techno-music": 169,
         "Disco Not Disco": "genre_tag",
         "Cosmic Disco": "genre_tag"
     },
@@ -32767,7 +32769,7 @@
             "https://www.juno.co.uk/MP3/SF798999-01-02-02.mp3",
             "https://www.juno.co.uk/MP3/SF798999-01-02-03.mp3"
         ],
-        "juno-weekly_chart_techno-music": 171
+        "juno-weekly_chart_techno-music": 170
     },
     "juno-845260-1": {
         "store": "juno",
@@ -32798,7 +32800,7 @@
             "https://www.juno.co.uk/MP3/SF845260-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF845260-01-02-02.mp3"
         ],
-        "juno-weekly_chart_techno-music": 172
+        "juno-weekly_chart_techno-music": 171
     },
     "juno-731562-1": {
         "store": "juno",
@@ -32839,7 +32841,7 @@
             "https://www.juno.co.uk/MP3/SF731562-01-04-01.mp3",
             "https://www.juno.co.uk/MP3/SF731562-01-04-02.mp3"
         ],
-        "juno-weekly_chart_techno-music": 174,
+        "juno-weekly_chart_techno-music": 173,
         "Balearic House": "genre_tag",
         "Experimental Techno": "genre_tag",
         "Minimal Techno": "genre_tag",
@@ -32884,7 +32886,7 @@
             "https://www.juno.co.uk/MP3/SF850832-01-04-01.mp3",
             "https://www.juno.co.uk/MP3/SF850832-01-04-02.mp3"
         ],
-        "juno-weekly_chart_techno-music": 176
+        "juno-weekly_chart_techno-music": 175
     },
     "juno-851086-1": {
         "store": "juno",
@@ -32915,7 +32917,7 @@
             "https://www.juno.co.uk/MP3/SF851086-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF851086-01-02-02.mp3"
         ],
-        "juno-weekly_chart_techno-music": 177
+        "juno-weekly_chart_techno-music": 176
     },
     "juno-853064-1": {
         "store": "juno",
@@ -32958,7 +32960,7 @@
             "https://www.juno.co.uk/MP3/SF853064-01-04-02.mp3",
             "https://www.juno.co.uk/MP3/SF853064-01-04-03.mp3"
         ],
-        "juno-weekly_chart_techno-music": 179
+        "juno-weekly_chart_techno-music": 178
     },
     "juno-861996-1": {
         "store": "juno",
@@ -32989,7 +32991,7 @@
             "https://www.juno.co.uk/MP3/SF861996-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF861996-01-02-02.mp3"
         ],
-        "juno-weekly_chart_techno-music": 181
+        "juno-weekly_chart_techno-music": 180
     },
     "juno-862606-1": {
         "store": "juno",
@@ -33022,7 +33024,7 @@
             "https://www.juno.co.uk/MP3/SF862606-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF862606-01-02-02.mp3"
         ],
-        "juno-weekly_chart_techno-music": 182,
+        "juno-weekly_chart_techno-music": 181,
         "Ambient Techno": "genre_tag",
         "juno-monthtly_chart_techno-music": 4
     },
@@ -33051,7 +33053,7 @@
             "https://www.juno.co.uk/MP3/SF866194-01-01-01.mp3",
             "https://www.juno.co.uk/MP3/SF866194-01-02-01.mp3"
         ],
-        "juno-weekly_chart_techno-music": 183
+        "juno-weekly_chart_techno-music": 182
     },
     "juno-866549-1": {
         "store": "juno",
@@ -33082,7 +33084,7 @@
             "https://www.juno.co.uk/MP3/SF866549-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF866549-01-02-02.mp3"
         ],
-        "juno-weekly_chart_techno-music": 184
+        "juno-weekly_chart_techno-music": 183
     },
     "juno-867059-1": {
         "store": "juno",
@@ -33137,7 +33139,7 @@
             "https://www.juno.co.uk/MP3/SF867059-01-04-03.mp3",
             "https://www.juno.co.uk/MP3/SF867059-01-04-04.mp3"
         ],
-        "juno-weekly_chart_techno-music": 185
+        "juno-weekly_chart_techno-music": 184
     },
     "juno-867096-1": {
         "store": "juno",
@@ -33164,7 +33166,7 @@
             "https://www.juno.co.uk/MP3/SF867096-01-01-01.mp3",
             "https://www.juno.co.uk/MP3/SF867096-01-02-01.mp3"
         ],
-        "juno-weekly_chart_techno-music": 186
+        "juno-weekly_chart_techno-music": 185
     },
     "juno-868183-1": {
         "store": "juno",
@@ -33207,7 +33209,7 @@
             "https://www.juno.co.uk/MP3/SF868183-01-06-01.mp3",
             "https://www.juno.co.uk/MP3/SF868183-01-06-02.mp3"
         ],
-        "juno-weekly_chart_techno-music": 187
+        "juno-weekly_chart_techno-music": 186
     },
     "juno-868366-1": {
         "store": "juno",
@@ -33240,7 +33242,7 @@
             "https://www.juno.co.uk/MP3/SF868366-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF868366-01-02-02.mp3"
         ],
-        "juno-weekly_chart_techno-music": 188
+        "juno-weekly_chart_techno-music": 187
     },
     "juno-870092-1": {
         "store": "juno",
@@ -33283,7 +33285,7 @@
             "https://www.juno.co.uk/MP3/SF870092-01-04-01.mp3",
             "https://www.juno.co.uk/MP3/SF870092-01-04-02.mp3"
         ],
-        "juno-weekly_chart_techno-music": 189
+        "juno-weekly_chart_techno-music": 188
     },
     "juno-791118-1": {
         "store": "juno",
@@ -33324,7 +33326,7 @@
             "https://www.juno.co.uk/MP3/SF791118-01-02-03.mp3",
             "https://www.juno.co.uk/MP3/SF791118-01-02-04.mp3"
         ],
-        "juno-weekly_chart_techno-music": 190
+        "juno-weekly_chart_techno-music": 189
     },
     "juno-840624-1": {
         "store": "juno",
@@ -33355,7 +33357,7 @@
             "https://www.juno.co.uk/MP3/SF840624-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF840624-01-02-02.mp3"
         ],
-        "juno-weekly_chart_techno-music": 193
+        "juno-weekly_chart_techno-music": 192
     },
     "juno-878714-1": {
         "store": "juno",
@@ -33392,7 +33394,7 @@
             "https://www.juno.co.uk/MP3/SF878714-01-02-03.mp3",
             "https://www.juno.co.uk/MP3/SF878714-01-02-04.mp3"
         ],
-        "juno-weekly_chart_techno-music": 194
+        "juno-weekly_chart_techno-music": 193
     },
     "juno-880106-1": {
         "store": "juno",
@@ -33421,7 +33423,7 @@
             "https://www.juno.co.uk/MP3/SF880106-01-01-02.mp3",
             "https://www.juno.co.uk/MP3/SF880106-01-02-01.mp3"
         ],
-        "juno-weekly_chart_techno-music": 195
+        "juno-weekly_chart_techno-music": 194
     },
     "juno-880412-1": {
         "store": "juno",
@@ -33452,7 +33454,7 @@
             "https://www.juno.co.uk/MP3/SF880412-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF880412-01-02-02.mp3"
         ],
-        "juno-weekly_chart_techno-music": 196
+        "juno-weekly_chart_techno-music": 195
     },
     "juno-881883-1": {
         "store": "juno",
@@ -33491,7 +33493,7 @@
             "https://www.juno.co.uk/MP3/SF881883-01-04-01.mp3",
             "https://www.juno.co.uk/MP3/SF881883-01-04-02.mp3"
         ],
-        "juno-weekly_chart_techno-music": 197
+        "juno-weekly_chart_techno-music": 196
     },
     "juno-907902-1": {
         "store": "juno",
@@ -33520,7 +33522,7 @@
             "https://www.juno.co.uk/MP3/SF907902-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF907902-01-02-02.mp3"
         ],
-        "juno-weekly_chart_techno-music": 198
+        "juno-weekly_chart_techno-music": 197
     },
     "juno-908127-1": {
         "store": "juno",
@@ -33553,7 +33555,7 @@
             "https://www.juno.co.uk/MP3/SF908127-01-02-02.mp3",
             "https://www.juno.co.uk/MP3/SF908127-01-02-03.mp3"
         ],
-        "juno-weekly_chart_techno-music": 199,
+        "juno-weekly_chart_techno-music": 198,
         "Experimental Techno": "genre_tag",
         "Electro Techno": "genre_tag"
     },
@@ -33582,7 +33584,7 @@
             "https://www.juno.co.uk/MP3/SF908232-01-01-01.mp3",
             "https://www.juno.co.uk/MP3/SF908232-01-02-01.mp3"
         ],
-        "juno-weekly_chart_techno-music": 200
+        "juno-weekly_chart_techno-music": 199
     },
     "juno-979205-1": {
         "store": "juno",
@@ -33700,7 +33702,7 @@
             "https://www.juno.co.uk/MP3/SF964866-01-02-01.mp3"
         ],
         "juno-monthtly_chart_techno-music": 46,
-        "juno-new_releases_techno-music": 79
+        "juno-new_releases_techno-music": 85
     },
     "juno-974562-1": {
         "store": "juno",
@@ -33786,7 +33788,7 @@
             "https://www.juno.co.uk/MP3/SF979209-01-02-02.mp3"
         ],
         "juno-monthtly_chart_techno-music": 16,
-        "juno-new_releases_techno-music": 82
+        "juno-new_releases_techno-music": 81
     },
     "juno-976042-1": {
         "store": "juno",
@@ -33974,7 +33976,7 @@
             "https://www.juno.co.uk/MP3/SF921768-01-02-02.mp3",
             "https://www.juno.co.uk/MP3/SF921768-01-02-03.mp3"
         ],
-        "juno-monthtly_chart_techno-music": 44
+        "juno-monthtly_chart_techno-music": 45
     },
     "juno-924038-1": {
         "store": "juno",
@@ -34012,7 +34014,7 @@
             "https://www.juno.co.uk/MP3/SF924038-01-04-01.mp3",
             "https://www.juno.co.uk/MP3/SF924038-01-04-02.mp3"
         ],
-        "juno-monthtly_chart_techno-music": 46
+        "juno-monthtly_chart_techno-music": 47
     },
     "juno-981803-1": {
         "store": "juno",
@@ -34040,10 +34042,10 @@
             "https://www.juno.co.uk/MP3/SF981803-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF981803-01-02-02.mp3"
         ],
-        "juno-monthtly_chart_techno-music": 48,
+        "juno-monthtly_chart_techno-music": 49,
         "Experimental Techno": "genre_tag",
         "Electro Techno": "genre_tag",
-        "juno-new_releases_techno-music": 84
+        "juno-new_releases_techno-music": 83
     },
     "juno-981861-1": {
         "store": "juno",
@@ -34073,7 +34075,7 @@
             "https://www.juno.co.uk/MP3/SF981861-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF981861-01-02-02.mp3"
         ],
-        "juno-monthtly_chart_techno-music": 49,
+        "juno-monthtly_chart_techno-music": 1,
         "juno-new_releases_techno-music": 154
     },
     "juno-980979-1": {
@@ -34104,8 +34106,8 @@
             "https://www.juno.co.uk/MP3/SF980979-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF980979-01-02-02.mp3"
         ],
-        "juno-monthtly_chart_techno-music": 0,
-        "juno-new_releases_techno-music": 86
+        "juno-monthtly_chart_techno-music": 2,
+        "juno-new_releases_techno-music": 87
     },
     "juno-986429-1": {
         "store": "juno",
@@ -34135,7 +34137,7 @@
             "https://www.juno.co.uk/MP3/SF986429-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF986429-01-02-02.mp3"
         ],
-        "juno-monthtly_chart_techno-music": 1,
+        "juno-monthtly_chart_techno-music": 3,
         "juno-new_releases_techno-music": 156
     },
     "juno-958954-1": {
@@ -34174,7 +34176,7 @@
             "https://www.juno.co.uk/MP3/SF958954-01-04-01.mp3",
             "https://www.juno.co.uk/MP3/SF958954-01-04-02.mp3"
         ],
-        "juno-monthtly_chart_techno-music": 2,
+        "juno-monthtly_chart_techno-music": 4,
         "juno-new_releases_techno-music": 394
     },
     "juno-62025-1": {
@@ -34203,7 +34205,7 @@
             "https://www.juno.co.uk/MP3/SF62025-01-01-02.mp3",
             "https://www.juno.co.uk/MP3/SF62025-01-02-01.mp3"
         ],
-        "juno-monthtly_chart_techno-music": 3
+        "juno-monthtly_chart_techno-music": 5
     },
     "juno-672458-1": {
         "store": "juno",
@@ -34233,7 +34235,7 @@
             "https://www.juno.co.uk/MP3/SF672458-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF672458-01-02-02.mp3"
         ],
-        "juno-monthtly_chart_techno-music": 16
+        "juno-monthtly_chart_techno-music": 17
     },
     "juno-934033-1": {
         "store": "juno",
@@ -34263,7 +34265,7 @@
             "https://www.juno.co.uk/MP3/SF934033-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF934033-01-02-02.mp3"
         ],
-        "juno-monthtly_chart_techno-music": 17
+        "juno-monthtly_chart_techno-music": 18
     },
     "juno-977056-1": {
         "store": "juno",
@@ -34293,7 +34295,7 @@
             "https://www.juno.co.uk/MP3/SF977056-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF977056-01-02-02.mp3"
         ],
-        "juno-monthtly_chart_techno-music": 19,
+        "juno-monthtly_chart_techno-music": 20,
         "juno-new_releases_techno-music": 41
     },
     "juno-979266-1": {
@@ -34324,8 +34326,8 @@
             "https://www.juno.co.uk/MP3/SF979266-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF979266-01-02-02.mp3"
         ],
-        "juno-monthtly_chart_techno-music": 20,
-        "juno-new_releases_techno-music": 83
+        "juno-monthtly_chart_techno-music": 21,
+        "juno-new_releases_techno-music": 82
     },
     "juno-970882-1": {
         "store": "juno",
@@ -34355,7 +34357,7 @@
             "https://www.juno.co.uk/MP3/SF970882-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF970882-01-02-02.mp3"
         ],
-        "juno-monthtly_chart_techno-music": 22,
+        "juno-monthtly_chart_techno-music": 23,
         "juno-new_releases_techno-music": 204
     },
     "juno-977667-1": {
@@ -34382,7 +34384,7 @@
             "https://www.juno.co.uk/MP3/SF977667-01-01-01.mp3",
             "https://www.juno.co.uk/MP3/SF977667-01-02-01.mp3"
         ],
-        "juno-monthtly_chart_techno-music": 23,
+        "juno-monthtly_chart_techno-music": 24,
         "juno-new_releases_techno-music": 305
     },
     "juno-982417-1": {
@@ -34423,7 +34425,7 @@
             "https://www.juno.co.uk/MP3/SF982417-01-04-01.mp3",
             "https://www.juno.co.uk/MP3/SF982417-01-04-02.mp3"
         ],
-        "juno-monthtly_chart_techno-music": 24,
+        "juno-monthtly_chart_techno-music": 25,
         "juno-new_releases_techno-music": 391
     },
     "juno-983176-1": {
@@ -34454,7 +34456,7 @@
             "https://www.juno.co.uk/MP3/SF983176-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF983176-01-02-02.mp3"
         ],
-        "juno-monthtly_chart_techno-music": 25,
+        "juno-monthtly_chart_techno-music": 26,
         "juno-new_releases_techno-music": 151
     },
     "juno-981320-1": {
@@ -34481,8 +34483,8 @@
             "https://www.juno.co.uk/MP3/SF981320-01-01-01.mp3",
             "https://www.juno.co.uk/MP3/SF981320-01-02-01.mp3"
         ],
-        "juno-monthtly_chart_techno-music": 26,
-        "juno-new_releases_techno-music": 207
+        "juno-monthtly_chart_techno-music": 0,
+        "juno-new_releases_techno-music": 206
     },
     "juno-812537-1": {
         "store": "juno",
@@ -37551,7 +37553,7 @@
             "https://www.juno.co.uk/MP3/SF979204-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF979204-01-02-02.mp3"
         ],
-        "juno-new_releases_techno-music": 81
+        "juno-new_releases_techno-music": 80
     },
     "juno-970351-1": {
         "store": "juno",
@@ -37582,7 +37584,7 @@
             "https://www.juno.co.uk/MP3/SF970351-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF970351-01-02-02.mp3"
         ],
-        "juno-new_releases_techno-music": 85
+        "juno-new_releases_techno-music": 86
     },
     "juno-986931-1": {
         "store": "juno",
@@ -37613,7 +37615,7 @@
             "https://www.juno.co.uk/MP3/SF986931-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF986931-01-02-02.mp3"
         ],
-        "juno-new_releases_techno-music": 88
+        "juno-new_releases_techno-music": 89
     },
     "juno-977568-1": {
         "store": "juno",
@@ -37641,7 +37643,7 @@
             "https://www.juno.co.uk/MP3/SF977568-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF977568-01-02-02.mp3"
         ],
-        "juno-new_releases_techno-music": 89
+        "juno-new_releases_techno-music": 90
     },
     "juno-983718-1": {
         "store": "juno",
@@ -37671,7 +37673,7 @@
             "https://www.juno.co.uk/MP3/SF983718-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF983718-01-02-02.mp3"
         ],
-        "juno-new_releases_techno-music": 91
+        "juno-new_releases_techno-music": 92
     },
     "juno-983719-1": {
         "store": "juno",
@@ -37703,7 +37705,7 @@
             "https://www.juno.co.uk/MP3/SF983719-01-02-02.mp3",
             "https://www.juno.co.uk/MP3/SF983719-01-02-03.mp3"
         ],
-        "juno-new_releases_techno-music": 92
+        "juno-new_releases_techno-music": 93
     },
     "juno-986987-1": {
         "store": "juno",
@@ -37736,7 +37738,7 @@
             "https://www.juno.co.uk/MP3/SF986987-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF986987-01-02-02.mp3"
         ],
-        "juno-new_releases_techno-music": 93
+        "juno-new_releases_techno-music": 94
     },
     "juno-987004-1": {
         "store": "juno",
@@ -37763,7 +37765,7 @@
             "https://www.juno.co.uk/MP3/SF987004-01-01-01.mp3",
             "https://www.juno.co.uk/MP3/SF987004-01-02-01.mp3"
         ],
-        "juno-new_releases_techno-music": 94
+        "juno-new_releases_techno-music": 95
     },
     "juno-984519-1": {
         "store": "juno",
@@ -37800,7 +37802,7 @@
             "https://www.juno.co.uk/MP3/SF984519-01-02-02.mp3",
             "https://www.juno.co.uk/MP3/SF984519-01-02-03.mp3"
         ],
-        "juno-new_releases_techno-music": 95
+        "juno-new_releases_techno-music": 96
     },
     "juno-986996-1": {
         "store": "juno",
@@ -37831,7 +37833,7 @@
             "https://www.juno.co.uk/MP3/SF986996-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF986996-01-02-02.mp3"
         ],
-        "juno-new_releases_techno-music": 96
+        "juno-new_releases_techno-music": 97
     },
     "juno-984468-1": {
         "store": "juno",
@@ -37864,7 +37866,7 @@
             "https://www.juno.co.uk/MP3/SF984468-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF984468-01-02-02.mp3"
         ],
-        "juno-new_releases_techno-music": 97
+        "juno-new_releases_techno-music": 98
     },
     "juno-984554-1": {
         "store": "juno",
@@ -37895,7 +37897,7 @@
             "https://www.juno.co.uk/MP3/SF984554-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF984554-01-02-02.mp3"
         ],
-        "juno-new_releases_techno-music": 98
+        "juno-new_releases_techno-music": 99
     },
     "juno-983171-1": {
         "store": "juno",
@@ -37925,7 +37927,7 @@
             "https://www.juno.co.uk/MP3/SF983171-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF983171-01-02-02.mp3"
         ],
-        "juno-new_releases_techno-music": 99,
+        "juno-new_releases_techno-music": 100,
         "Tech House": "genre_tag",
         "Acid House": "genre_tag"
     },
@@ -37958,7 +37960,7 @@
             "https://www.juno.co.uk/MP3/SF960792-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF960792-01-02-02.mp3"
         ],
-        "juno-new_releases_techno-music": 100
+        "juno-new_releases_techno-music": 101
     },
     "juno-983842-1": {
         "store": "juno",
@@ -37989,7 +37991,7 @@
             "https://www.juno.co.uk/MP3/SF983842-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF983842-01-02-02.mp3"
         ],
-        "juno-new_releases_techno-music": 101
+        "juno-new_releases_techno-music": 102
     },
     "juno-959745-1": {
         "store": "juno",
@@ -38024,7 +38026,7 @@
             "https://www.juno.co.uk/MP3/SF959745-01-02-02.mp3",
             "https://www.juno.co.uk/MP3/SF959745-01-02-03.mp3"
         ],
-        "juno-new_releases_techno-music": 102
+        "juno-new_releases_techno-music": 103
     },
     "juno-983339-1": {
         "store": "juno",
@@ -38054,7 +38056,7 @@
             "https://www.juno.co.uk/MP3/SF983339-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF983339-01-02-02.mp3"
         ],
-        "juno-new_releases_techno-music": 103
+        "juno-new_releases_techno-music": 104
     },
     "juno-982098-1": {
         "store": "juno",
@@ -38085,7 +38087,7 @@
             "https://www.juno.co.uk/MP3/SF982098-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF982098-01-02-02.mp3"
         ],
-        "juno-new_releases_techno-music": 104
+        "juno-new_releases_techno-music": 105
     },
     "juno-984200-1": {
         "store": "juno",
@@ -38116,7 +38118,7 @@
             "https://www.juno.co.uk/MP3/SF984200-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF984200-01-02-02.mp3"
         ],
-        "juno-new_releases_techno-music": 105
+        "juno-new_releases_techno-music": 106
     },
     "juno-988845-1": {
         "store": "juno",
@@ -38144,7 +38146,7 @@
             "https://www.juno.co.uk/MP3/SF988845-01-01-02.mp3",
             "https://www.juno.co.uk/MP3/SF988845-01-02-01.mp3"
         ],
-        "juno-new_releases_techno-music": 106
+        "juno-new_releases_techno-music": 107
     },
     "juno-982802-1": {
         "store": "juno",
@@ -38175,7 +38177,7 @@
             "https://www.juno.co.uk/MP3/SF982802-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF982802-01-02-02.mp3"
         ],
-        "juno-new_releases_techno-music": 109
+        "juno-new_releases_techno-music": 110
     },
     "juno-982813-1": {
         "store": "juno",
@@ -38206,7 +38208,7 @@
             "https://www.juno.co.uk/MP3/SF982813-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF982813-01-02-02.mp3"
         ],
-        "juno-new_releases_techno-music": 110
+        "juno-new_releases_techno-music": 84
     },
     "juno-987282-1": {
         "store": "juno",
@@ -39707,7 +39709,7 @@
             "https://www.juno.co.uk/MP3/SF982523-01-02-01.mp3",
             "https://www.juno.co.uk/MP3/SF982523-01-02-02.mp3"
         ],
-        "juno-new_releases_techno-music": 206
+        "juno-new_releases_techno-music": 207
     },
     "juno-981321-1": {
         "store": "juno",
@@ -45179,5 +45181,213 @@
             "https://www.juno.co.uk/MP3/SF971014-01-04-04.mp3"
         ],
         "juno-new_releases_techno-music": 435
+    },
+    "juno-946309-1": {
+        "store": "juno",
+        "id": "946309-1",
+        "link": "https://www.juno.co.uk/products/delfonics-berlin-reworks-vinyl/946309-01/",
+        "artist": "DELFONIC",
+        "title": "Delfonic's Berlin Reworks",
+        "label": "Gamm",
+        "cat": "GAMM 177",
+        "artworks": [
+            "https://imagescdn.juno.co.uk/150/CS946309-01A.jpg",
+            "https://imagescdn.juno.co.uk/300/CS946309-01A-MED.jpg",
+            "https://imagescdn.juno.co.uk/full/CS946309-01A-BIG.jpg"
+        ],
+        "store_tags": {
+            "has_charted": true,
+            "out_of_stock": false
+        },
+        "track_names": [
+            "Black Gammon (Delfonic rework) (5:56)",
+            "Warm Spring (Delfonic rework) (6:06)",
+            "Yes I Do (Delfonic rework) (5:22)",
+            "Your Life Is A Party (Delfonic rework) (7:20)"
+        ],
+        "track_urls": [
+            "https://www.juno.co.uk/MP3/SF946309-01-01-01.mp3",
+            "https://www.juno.co.uk/MP3/SF946309-01-01-02.mp3",
+            "https://www.juno.co.uk/MP3/SF946309-01-02-01.mp3",
+            "https://www.juno.co.uk/MP3/SF946309-01-02-02.mp3"
+        ],
+        "juno-weekly_chart_deep-house": 179,
+        "Disco House": "genre_tag",
+        "Jazzy House": "genre_tag"
+    },
+    "juno-872457-1": {
+        "store": "juno",
+        "id": "872457-1",
+        "link": "https://www.juno.co.uk/products/dr-packer-tinted-love-sampler-vol-1-vinyl/872457-01/",
+        "artist": "DR PACKER",
+        "title": "Tinted Love Sampler Vol 1",
+        "label": "Tinted",
+        "cat": "TINTV 004",
+        "artworks": [
+            "https://imagescdn.juno.co.uk/150/CS872457-01A.jpg",
+            "https://imagescdn.juno.co.uk/300/CS872457-01A-MED.jpg",
+            "https://imagescdn.juno.co.uk/full/CS872457-01A-BIG.jpg"
+        ],
+        "store_tags": {
+            "has_charted": true,
+            "out_of_stock": false
+        },
+        "track_names": [
+            "Russell Small & DNO - \"Strawberry Letter 23\" (Dr Packer remix) (6:30)",
+            "Dan Savidge & Byron Stingily - \"Summer Nights\" (Dr Packer 'Retro House' Re-Vibe) (6:55)",
+            "De Funk Vs Supafly - \"Pleasure Love\" (Dr Packer Disco dub mix) (6:57)",
+            "Siedah Garrett - \"Do You Want It Right Now?\" (Dr Packer 90s dubstrumental edit) (6:26)"
+        ],
+        "track_urls": [
+            "https://www.juno.co.uk/MP3/SF872457-01-01-01.mp3",
+            "https://www.juno.co.uk/MP3/SF872457-01-01-02.mp3",
+            "https://www.juno.co.uk/MP3/SF872457-01-02-01.mp3",
+            "https://www.juno.co.uk/MP3/SF872457-01-02-02.mp3"
+        ],
+        "juno-weekly_chart_deep-house": 180,
+        "Disco House": "genre_tag",
+        "Soulful House": "genre_tag"
+    },
+    "juno-911238-1": {
+        "store": "juno",
+        "id": "911238-1",
+        "link": "https://www.juno.co.uk/products/fred-again-actual-life-april-14-december-17-vinyl/911238-01/",
+        "artist": "FRED AGAIN",
+        "title": "Actual Life: April 14 - December 17 2020 (reissue)",
+        "label": "East West",
+        "cat": "019029 6227905",
+        "artworks": [
+            "https://imagescdn.juno.co.uk/150/CS911238-01A.jpg",
+            "https://imagescdn.juno.co.uk/300/CS911238-01A-MED.jpg",
+            "https://imagescdn.juno.co.uk/full/CS911238-01A-BIG.jpg"
+        ],
+        "store_tags": {
+            "has_charted": true,
+            "out_of_stock": false
+        },
+        "track_names": [
+            "April 14th 2020 (0:45)",
+            "Kyle (I Found You) (3:02)",
+            "Dermot (See Yourself In My Eyes) (2:31)",
+            "Yasminah (See Your Face Again) (4:20)",
+            "Hackney (interlude) (3:00)",
+            "Julia (Deep Diving) (1:48)",
+            "Adam (interlude) (1:20)",
+            "Me (Heavy) (3:26)",
+            "Big Hen (Steal My Joy) (4:04)",
+            "Marnie (Wish I Had U) (3:25)",
+            "Sabrina (I Am A Party) (3:17)",
+            "Lydia (Please Make It Better) (3:02)",
+            "Carlos (Make It Thru) (3:06)",
+            "Angie (interlude) (3:04)",
+            "Angie (I've Been Lost) (2:16)",
+            "December 17th 2020 (2:44)",
+            "Marea (We've Lost Dancing) (2:44)"
+        ],
+        "track_urls": [
+            "https://www.juno.co.uk/MP3/SF911238-01-01-01.mp3",
+            "https://www.juno.co.uk/MP3/SF911238-01-01-02.mp3",
+            "https://www.juno.co.uk/MP3/SF911238-01-01-03.mp3",
+            "https://www.juno.co.uk/MP3/SF911238-01-01-04.mp3",
+            "https://www.juno.co.uk/MP3/SF911238-01-01-05.mp3",
+            "https://www.juno.co.uk/MP3/SF911238-01-01-06.mp3",
+            "https://www.juno.co.uk/MP3/SF911238-01-01-07.mp3",
+            "https://www.juno.co.uk/MP3/SF911238-01-01-08.mp3",
+            "https://www.juno.co.uk/MP3/SF911238-01-01-09.mp3",
+            "https://www.juno.co.uk/MP3/SF911238-01-02-01.mp3",
+            "https://www.juno.co.uk/MP3/SF911238-01-02-02.mp3",
+            "https://www.juno.co.uk/MP3/SF911238-01-02-03.mp3",
+            "https://www.juno.co.uk/MP3/SF911238-01-02-04.mp3",
+            "https://www.juno.co.uk/MP3/SF911238-01-02-05.mp3",
+            "https://www.juno.co.uk/MP3/SF911238-01-02-06.mp3",
+            "https://www.juno.co.uk/MP3/SF911238-01-02-07.mp3",
+            "https://www.juno.co.uk/MP3/SF911238-01-02-08.mp3"
+        ],
+        "juno-weekly_chart_deep-house": 182,
+        "Future House": "genre_tag",
+        "juno-monthtly_chart_deep-house": 31
+    },
+    "juno-895600-1": {
+        "store": "juno",
+        "id": "895600-1",
+        "link": "https://www.juno.co.uk/products/sun-rhythms-dj-merci-ground-plane-dobro-007-vinyl/895600-01/",
+        "artist": "SUN RHYTHMS",
+        "title": "DJ MERCI",
+        "label": "GROUND PLANE AERIAL",
+        "cat": "DBRO 007",
+        "artworks": [
+            "https://imagescdn.juno.co.uk/150/CS895600-01A.jpg",
+            "https://imagescdn.juno.co.uk/300/CS895600-01A-MED.jpg",
+            "https://imagescdn.juno.co.uk/full/CS895600-01A-BIG.jpg"
+        ],
+        "store_tags": {
+            "has_charted": true,
+            "out_of_stock": false
+        },
+        "track_names": [
+            "Sun Rhythms - \"Flowers Festival\" (4:18)",
+            "Dj Merci - \"Timelapse\" (6:40)",
+            "Ground Plane Aerial - \"Transition SP\" (6:11)",
+            "VIGI - \"I Am You\" (5:06)",
+            "Monny Me - \"The Name Of The Game\" (5:35)",
+            "Ugly Frankie - \"Free Alcohol Shit\" (4:32)"
+        ],
+        "track_urls": [
+            "https://www.juno.co.uk/MP3/SF895600-01-01-01.mp3",
+            "https://www.juno.co.uk/MP3/SF895600-01-01-02.mp3",
+            "https://www.juno.co.uk/MP3/SF895600-01-01-03.mp3",
+            "https://www.juno.co.uk/MP3/SF895600-01-02-01.mp3",
+            "https://www.juno.co.uk/MP3/SF895600-01-02-02.mp3",
+            "https://www.juno.co.uk/MP3/SF895600-01-02-03.mp3"
+        ],
+        "juno-weekly_chart_deep-house": 183,
+        "Disco House": "genre_tag"
+    },
+    "juno-908236-1": {
+        "store": "juno",
+        "id": "908236-1",
+        "link": "https://www.juno.co.uk/products/anoesis-supercade-vinyl/908236-01/",
+        "artist": "ANOESIS",
+        "title": "Supercade",
+        "label": "Cosmic Soup",
+        "cat": "COS 003",
+        "artworks": [
+            "https://imagescdn.juno.co.uk/150/CS908236-01A.jpg",
+            "https://imagescdn.juno.co.uk/300/CS908236-01A-MED.jpg",
+            "https://imagescdn.juno.co.uk/full/CS908236-01A-BIG.jpg"
+        ],
+        "store_tags": {
+            "has_charted": true,
+            "out_of_stock": false
+        },
+        "track_names": [
+            "Moving Jumping (7:10)",
+            "El (6:59)",
+            "Deonn (5:02)",
+            "Honeysuckle (4:27)",
+            "Elevated (6:42)",
+            "Blue Venus (6:16)",
+            "Miss You (5:53)",
+            "Sooth 2 (1:59)",
+            "Water Puppets (4:39)",
+            "Black Sand (4:21)",
+            "Time (4:48)"
+        ],
+        "track_urls": [
+            "https://www.juno.co.uk/MP3/SF908236-01-01-01.mp3",
+            "https://www.juno.co.uk/MP3/SF908236-01-01-02.mp3",
+            "https://www.juno.co.uk/MP3/SF908236-01-02-01.mp3",
+            "https://www.juno.co.uk/MP3/SF908236-01-02-02.mp3",
+            "https://www.juno.co.uk/MP3/SF908236-01-02-03.mp3",
+            "https://www.juno.co.uk/MP3/SF908236-01-03-01.mp3",
+            "https://www.juno.co.uk/MP3/SF908236-01-03-02.mp3",
+            "https://www.juno.co.uk/MP3/SF908236-01-03-03.mp3",
+            "https://www.juno.co.uk/MP3/SF908236-01-04-01.mp3",
+            "https://www.juno.co.uk/MP3/SF908236-01-04-02.mp3",
+            "https://www.juno.co.uk/MP3/SF908236-01-04-03.mp3"
+        ],
+        "juno-weekly_chart_techno-music": 200,
+        "Breakbeat House": "genre_tag",
+        "Leftfield House": "genre_tag"
     }
 }

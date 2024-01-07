@@ -1,0 +1,42 @@
+name: scrape
+on:
+  schedule:
+    - cron: "0 0 * * *"
+  workflow_dispatch:
+jobs:
+  scrape-juno:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: install_deps
+      run: |
+        python3 -m pip install --upgrade pip
+        python3 -m pip install --upgrade google-auth
+    - name: scrape_and_commit
+      run: |
+        python3 dig.py -urls -store juno
+        git config user.name github-actions
+        git config user.email github-actions@github.com
+        git add .
+        git commit -m "- update juno releases"
+        git pull
+        git push origin HEAD:main
+        git push origin HEAD:main
+  scrape-redeye:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: install_deps
+      run: |
+        python3 -m pip install --upgrade pip
+        python3 -m pip install --upgrade google-auth
+    - name: scrape_and_commit
+      run: |
+        python3 dig.py -urls -store redeye2
+        git config user.name github-actions
+        git config user.email github-actions@github.com
+        git add .
+        git commit -m "- update redeye releases"
+        git pull
+        git push origin HEAD:main
+        git push origin HEAD:main

@@ -5,6 +5,8 @@ import juno
 import redeye
 import json
 
+from google.oauth2 import service_account
+from google.auth.transport.requests import AuthorizedSession
 
 # member wise merge 2 dicts, second will overwrite dest
 def merge_dicts(dest, second):
@@ -134,9 +136,7 @@ def parse_class(html_str, html_class, ty):
     return outputs
 
 
-from google.oauth2 import service_account
-from google.auth.transport.requests import AuthorizedSession
-
+# testing
 def firebase_test():
     # dig-19d4c
     # https://firestore.googleapis.com/v1/projects/diig/databases/(default)
@@ -184,8 +184,34 @@ def patch_releases(entries: str):
     assert(response.status_code == 200)
 
 
+# clear the releases (emergecy only!)
+def clear_releases():
+    scopes = [
+        "https://www.googleapis.com/auth/userinfo.email",
+        "https://www.googleapis.com/auth/firebase.database"
+    ]
+
+    credentials = service_account.Credentials.from_service_account_file(
+        "diig-19d4c-firebase-adminsdk-jyja5-ebcf729661.json", scopes=scopes)
+
+    authed_session = AuthorizedSession(credentials)
+    response = authed_session.get(
+        "https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app/")
+    assert(response.status_code == 200)
+
+    releases = dict()
+    releases = json.dumps(releases)
+    response = authed_session.put(
+        "https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app/releases.json", releases)
+    assert(response.status_code == 200)
+
+
 # main
 if __name__ == '__main__':
+    if "-clear" in sys.argv:
+        clear_releases()
+        exit(0)
+
     get_urls = "-urls" in sys.argv
     test_single = "-test_single" in sys.argv
     verbose = "-verbose" in sys.argv
@@ -198,5 +224,7 @@ if __name__ == '__main__':
         juno.scrape(100)
     elif store == "redeye":
         redeye.scrape(100, get_urls, test_single, verbose)
+    elif store == "redeye2":
+        redeye.scrape2(100, get_urls, verbose)
     elif store == "test":
         firebase_test()

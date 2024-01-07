@@ -14,7 +14,7 @@ jobs:
         python3 -m pip install --upgrade google-auth
     - name: scrape_and_commit
       run: |
-        python3 dig.py -urls -store juno
+        python3 dig.py -store juno -key ${{secrets.SERVICE_ACCOUNT}}
         git config user.name github-actions
         git config user.email github-actions@github.com
         git add .
@@ -32,7 +32,7 @@ jobs:
         python3 -m pip install --upgrade google-auth
     - name: scrape_and_commit
       run: |
-        python3 dig.py -urls -store redeye2
+        python3 dig.py -urls -store redeye2 -key ${{secrets.SERVICE_ACCOUNT}}
         git config user.name github-actions
         git config user.email github-actions@github.com
         git add .

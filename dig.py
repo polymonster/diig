@@ -184,40 +184,23 @@ def patch_releases(entries: str):
     assert(response.status_code == 200)
 
 
-# clear the releases (emergecy only!)
-def clear_releases():
-    scopes = [
-        "https://www.googleapis.com/auth/userinfo.email",
-        "https://www.googleapis.com/auth/firebase.database"
-    ]
-
-    credentials = service_account.Credentials.from_service_account_file(
-        "diig-19d4c-firebase-adminsdk-jyja5-ebcf729661.json", scopes=scopes)
-
-    authed_session = AuthorizedSession(credentials)
-    response = authed_session.get(
-        "https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app/")
-    assert(response.status_code == 200)
-
-    releases = dict()
-    releases = json.dumps(releases)
-    response = authed_session.put(
-        "https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app/releases.json", releases)
-    assert(response.status_code == 200)
-
-
 # main
 if __name__ == '__main__':
-    if "-clear" in sys.argv:
-        clear_releases()
-        exit(0)
-
+    # grab single flags
     get_urls = "-urls" in sys.argv
     test_single = "-test_single" in sys.argv
     verbose = "-verbose" in sys.argv
+
+    # select store
     store = "redeye"
     if "-store" in sys.argv:
         store = sys.argv[sys.argv.index("-store") + 1]
+
+    # stash service key for firebase writes
+    if "-key" in sys.argv:
+        key = sys.argv[sys.argv.index("-key") + 1]
+        open("diig-19d4c-firebase-adminsdk-jyja5-ebcf729661.json", "w").write(key)
+        exit(0)
 
     # parse individual stores
     if store == "juno":

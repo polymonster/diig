@@ -200,7 +200,6 @@ if __name__ == '__main__':
     if "-key" in sys.argv:
         key = sys.argv[sys.argv.index("-key") + 1]
         open("diig-19d4c-firebase-adminsdk-jyja5-ebcf729661.json", "w").write(key)
-        exit(0)
 
     # parse individual stores
     if store == "juno":

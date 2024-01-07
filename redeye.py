@@ -248,6 +248,7 @@ def scrape_page(url, category, section, get_urls, verbose, counter = 0):
         dig.merge_dicts(release_dict, parse_redeye_artist(artist_elem))
         id = release_dict["id"]
         release_dict["store_tags"] = dict()
+        key = "{}-{}".format("redeye", release_dict["id"])
 
         # add store tags
         if grid_elem.find("price preorder") != -1:
@@ -270,12 +271,12 @@ def scrape_page(url, category, section, get_urls, verbose, counter = 0):
             # check if we already have urls and skip them
             has_artworks = False
             has_tracks = False
-            if id in releases_dict:
-                if "track_urls" in releases_dict[id]:
-                    if len(releases_dict[id]["track_urls"]) > 0:
+            if key in releases_dict:
+                if "track_urls" in releases_dict[key]:
+                    if len(releases_dict[key]["track_urls"]) > 0:
                         has_tracks = True
-                if "artworks" in releases_dict[id]:
-                    if len(releases_dict[id]["artworks"]) > 0:
+                if "artworks" in releases_dict[key]:
+                    if len(releases_dict[key]["artworks"]) > 0:
                         has_artworks = True
 
             if not has_tracks:
@@ -299,7 +300,6 @@ def scrape_page(url, category, section, get_urls, verbose, counter = 0):
 
         # merge into main
         merge = dict()
-        key = "{}-{}".format("redeye", release_dict["id"])
         merge[key] = release_dict
         dig.merge_dicts(releases_dict, merge)
 

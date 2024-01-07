@@ -103,6 +103,37 @@ def parse_div(html_str, div_class):
     return divs
 
 
+# parse entireity of a div section
+def parse_class(html_str, html_class, ty):
+    outputs = []
+    while True:
+        first = html_str.find(html_class)
+        open_len = len("<{} ".format(ty))
+        close_len = len("</{}>".format(ty))
+        # no more left
+        if first == -1:
+            break
+        start = html_str[:first].rfind("<{} ".format(ty))
+        stack = 1
+        iter_pos = first
+        while stack > 0:
+            open = cgu.us(html_str.find("<{}".format(ty), iter_pos))
+            close = html_str.find("</{}".format(ty), iter_pos)
+            if close != -1 and open < close:
+                stack += 1
+                iter_pos = open + open_len
+            elif close != -1:
+                stack -= 1
+                iter_pos = close + close_len
+
+        outputs.append(html_str[start:iter_pos])
+
+        # iterate
+        html_str = html_str[iter_pos:]
+
+    return outputs
+
+
 from google.oauth2 import service_account
 from google.auth.transport.requests import AuthorizedSession
 
@@ -125,23 +156,32 @@ def firebase_test():
     response = authed_session.get(
         "https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app/")
 
-    put_info = {
-        "chris": {
-            "is": "nice",
-            "really": True
-        }
-    }
-
-    response = authed_session.patch(
-        "https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app/users.json", data=json.dumps(put_info))
-
     # get single
     response = authed_session.get(
-        'https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app/users.json?orderBy="$key"&equalTo="alex"')
+        'https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app/releases.json?orderBy="weekly_chart_deep-house"&startAt=0&endAt=100&print=pretty')
 
-    print(response)
     print(response.text)
     pass
+
+
+# write entire registry contents
+def patch_releases(entries: str):
+    scopes = [
+        "https://www.googleapis.com/auth/userinfo.email",
+        "https://www.googleapis.com/auth/firebase.database"
+    ]
+
+    credentials = service_account.Credentials.from_service_account_file(
+        "diig-19d4c-firebase-adminsdk-jyja5-ebcf729661.json", scopes=scopes)
+
+    authed_session = AuthorizedSession(credentials)
+    response = authed_session.get(
+        "https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app/")
+    assert(response.status_code == 200)
+
+    response = authed_session.patch(
+        "https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app/releases.json", entries)
+    assert(response.status_code == 200)
 
 
 # main

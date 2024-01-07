@@ -21,7 +21,7 @@ jobs:
         git config user.email github-actions@github.com
         git add .
         git commit -m "- update juno releases"
-        git pull
+        git pull --ff-only
         git push origin HEAD:main
   scrape-redeye:
     runs-on: ubuntu-latest
@@ -40,5 +40,5 @@ jobs:
         git config user.email github-actions@github.com
         git add .
         git commit -m "- update redeye releases"
-        git pull
+        git pull --ff-only
         git push origin HEAD:main

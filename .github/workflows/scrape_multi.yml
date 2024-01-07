@@ -23,7 +23,6 @@ jobs:
         git commit -m "- update juno releases"
         git pull
         git push origin HEAD:main
-        git push origin HEAD:main
   scrape-redeye:
     runs-on: ubuntu-latest
     steps:
@@ -42,5 +41,4 @@ jobs:
         git add .
         git commit -m "- update redeye releases"
         git pull
-        git push origin HEAD:main
         git push origin HEAD:main

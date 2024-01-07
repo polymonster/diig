@@ -7,6 +7,7 @@ jobs:
   scrape-juno:
     runs-on: ubuntu-latest
     steps:
+    - name: secret
       env:
         SERVICE_ACCOUNT: ${{ secrets.SERVICE_ACCOUNT }}
     - uses: actions/checkout@v3
@@ -27,6 +28,7 @@ jobs:
   scrape-redeye:
     runs-on: ubuntu-latest
     steps:
+    - name: secret
       env:
         SERVICE_ACCOUNT: ${{ secrets.SERVICE_ACCOUNT }}
     - uses: actions/checkout@v3

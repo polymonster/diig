@@ -1,8 +1,14 @@
 # Dig
 
-Dig is a record digging app that provides a high performance audio player and ergonomic user interface to make digging through record snippits rapid, responsive and enjoyable. It provides a record store agnostic audio player with a familiar social media infinite scrolling interface to allow users to dig for new releases and provide click through links to stores to buy. Feeds and snippits are cached which also enables offline browsing.
+Dig is a record digging app that provides a high performance audio player and ergonomic user interface to make digging through record snippits rapid, responsive and enjoyable.
 
-<img src="https://github.com/polymonster/dig/raw/main/media/dig.gif" align=”center”/>
+It provides a record store agnostic audio player with a familiar social media infinite scrolling interface to allow users to dig for new releases and provide click through links to stores to buy. Feeds and snippits are cached which also enables offline browsing.
+
+The aim is to be extendible so more record stores, sections and views can be added from different sources. The current scope of the sites and sections that are being monitored is opinionated and targetted to a small group of friends, but the overal goal os to allow community contribution and expand the project.
+
+<p align="center">
+    <img src="https://github.com/polymonster/dig/raw/main/media/dig.gif"/>
+</p>
 
 ## Schemas
 
@@ -83,3 +89,22 @@ Data is uploaded and synchronised to firebase with data publicly readable. For a
 ```text
 curl https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app/releases.json
 ```
+
+## App
+
+The dig app curently runs natively on iOS, it is implemented using C++, Objective-C and ImGui via my cross platform game engine [pmtech](https://github.com/polymonster/pmtech). You can find more info in that repository on how to build, add pmbuild to your path then:
+
+```text
+git submodule update --init --recursive // fetch submodules pmtech, pmbuild
+cd app
+pmbuild ios
+pmbuild make ios dig
+```
+
+The app will be soon be available via `TestFlight` if you want to be invited to the Nightly build pleas open an issue.
+
+## Contribution / Sponsorship
+
+Contributions and requests are welcome. If you have requests for features and stores to scrape you can raise an issue. Better still if you can implement your own then go right ahead, make a fork and then a pull request we can start from there.
+
+If you like this project and are interested in helping it expand further, sponsorship will help with the cost of developer fees and hosting fees for the cloud infrastructure. Currently the costs are low and the project is open source but expansion may require inccruing some costs.

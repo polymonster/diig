@@ -1,0 +1,52 @@
+{
+    "juno": {
+        "sections": [
+            "minimal-tech-house",
+            "deep-house",
+            "techno-music"
+        ],
+        "section_display_names": [
+            "Minimal / Tech House",
+            "Deep House",
+            "Techno"
+        ],
+        "views": {
+            "weekly_chart": {
+                "url": "https://www.juno.co.uk/${{section}}/charts/bestsellers/this-week/${{page}}?show_out_of_stock=1",
+                "page_count": 5
+            },
+            "monthly_chart": {
+                "url": "https://www.juno.co.uk/${{section}}/charts/bestsellers/four-weeks/${{page}}?show_out_of_stock=1",
+                "page_count": 5
+            },
+            "new_releases": {
+                "url": "https://www.juno.co.uk/${{section}}/eight-weeks/${{page}}?order=date_down&show_out_of_stock=1",
+                "page_count": 100
+            }
+        }
+    },
+    "redeye": {
+        "sections": [
+            "techno-electro",
+            "house-disco"
+        ],
+        "section_display_names": [
+            "Techno / Electro",
+            "House / Disco"
+        ],
+        "views": {
+            "weekly_chart": {
+                "url": "https://www.redeyerecords.co.uk/${{section}}/weekly-chart",
+                "page_count": null
+            },
+            "monthly_chart": {
+                "url": "https://www.redeyerecords.co.uk/${{section}}/monthly-chart",
+                "page_count": null
+            },
+            "new_releases": {
+                "url": "https://www.redeyerecords.co.uk/${{section}}/new-releases/page-${{page}}",
+                "page_count": 100
+            }
+        }
+    }
+}

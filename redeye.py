@@ -361,7 +361,7 @@ def reformat_v2():
 
 
 # scrape redeyerecords.co.uk
-def scrape(page_count, get_urls=True, test_single=False, verbose=False):
+def scrape_legacy(page_count, get_urls=True, test_single=False, verbose=False):
     print("scraping: redeye", flush=True)
 
     x = lambda a : a + 10

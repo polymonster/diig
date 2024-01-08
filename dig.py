@@ -184,6 +184,38 @@ def patch_releases(entries: str):
     assert(response.status_code == 200)
 
 
+# scrape a store based on rules defined in stores.json config
+def scrape_store(stores, store_name, page_function):
+    if store_name in stores:
+        # collapse store
+        store = stores[store_name]
+        # validate
+        if "sections" not in store:
+            print('error: "sections" missing from store config')
+            exit(1)
+        if "views" not in store:
+            print('error: "views" missing from store config')
+            exit(1)
+        # iterate per section, per view
+        for section in store["sections"]:
+            for view in store["views"]:
+                view_dict = store["views"][view]
+                page_count = view_dict["page_count"]
+                counter = 0
+                print("scraping: {} / {}".format(section, view))
+                for i in range(1, page_count):
+                    view_url = view_dict["url"]
+                    page_url = view_url.replace("${{section}}", section).replace("${{page}}", str(i))
+                    counter = page_function(
+                        page_url,
+                        view,
+                        section,
+                        counter
+                    )
+    else:
+        print("error: unknown store {}".format(store_name))
+        exit(1)
+
 # main
 if __name__ == '__main__':
     # grab single flags
@@ -201,12 +233,15 @@ if __name__ == '__main__':
         key = sys.argv[sys.argv.index("-key") + 1]
         open("diig-19d4c-firebase-adminsdk-jyja5-ebcf729661.json", "w").write(key)
 
+    # read store config
+    stores = json.loads(open("stores.json", "r").read())
+
     # parse individual stores
     if store == "juno":
-        juno.scrape(100)
+        scrape_store(stores, "juno", juno.scrape_page)
     elif store == "redeye":
-        redeye.scrape(100, get_urls, test_single, verbose)
+        redeye.scrape_legacy(100, get_urls, test_single, verbose)
     elif store == "redeye2":
-        redeye.scrape2(100, get_urls, verbose)
+        redeye.scrape(100, get_urls, verbose)
     elif store == "test":
         firebase_test()

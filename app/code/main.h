@@ -5,6 +5,7 @@
 
 // - placeholder artwork image
 // - drag reload spinner
+
 // - text, sizes and spacing tweaks
 // - colour and accent tweaks
 
@@ -18,18 +19,21 @@
 // - refactor user data into a single dict and move to context
 
 // - side swipe still isnt perfect
-// - vertical swip still sometimes feel sticky
+// - vertical swipe still sometimes feel sticky
 
 // - add a registry version field
 // - implement label link?
 // - store specific category selection. ie redeye ([techno / electro, house / disco])
 // - store field to items
 
-// - parse juno store info
 // - add reg validation
-// - move reg to firebase
+// - add store config and use to populate local registry
+// - move away from legacy registry
+// - reset chart positions in the new scrape jobs
 
 // DONE
+// x - move reg to firebase
+// x - parse juno store info
 // x - set min ios version on pen and put
 // x - in app store prev position in a back view, or move scroll into view
 // x - move item cache to cached/tmp

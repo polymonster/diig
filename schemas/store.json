@@ -1,0 +1,22 @@
+{
+    "sections": [
+        "string list - Sections names to parse from the website, these strings will appear in the website urls",
+    ],
+    "section_display_names": [
+        "string list - Display names for the sections for rendering within the app"
+    ],
+    "views": {
+        "weekly_chart": {
+            "url": "https://www.recordstore.co.uk/${{section}}/weekly-chart",
+            "page_count": null
+        },
+        "monthly_chart": {
+            "url": "https://www.recordstore.co.uk/${{section}}/monthly-chart",
+            "page_count": null
+        },
+        "new_releases": {
+            "url": "https://www.recordstore.co.uk/${{section}}/new-releases/page-${{page}}",
+            "page_count": 100
+        }
+    }
+}

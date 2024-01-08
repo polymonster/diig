@@ -22,10 +22,6 @@
         "has_charted": true,
         "preorder": true
     },
-    "tags": {
-        "techno": true,
-        "electro": true,
-        "house": true,
-        "disco": true
-    }
+    "<store>-<section>-<view>": "int - position in a view for particular store and section",
+    "Example Genre": "Genre Tag"
 }

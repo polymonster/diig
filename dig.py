@@ -1,9 +1,9 @@
 import cgu
 import sys
 import datetime
-import juno
 import redeye
 import json
+import os
 
 from google.oauth2 import service_account
 from google.auth.transport.requests import AuthorizedSession
@@ -136,23 +136,25 @@ def parse_class(html_str, html_class, ty):
     return outputs
 
 
-# testing
-def firebase_test():
-    # dig-19d4c
-    # https://firestore.googleapis.com/v1/projects/diig/databases/(default)
-
-    # Define the required scopes
+# creates an authorised session to write entires to firebase
+def auth_session():
     scopes = [
         "https://www.googleapis.com/auth/userinfo.email",
         "https://www.googleapis.com/auth/firebase.database"
     ]
 
-    # Authenticate a credential with the service account
     credentials = service_account.Credentials.from_service_account_file(
         "diig-19d4c-firebase-adminsdk-jyja5-ebcf729661.json", scopes=scopes)
 
-    # Use the credentials object to authenticate a Requests session.
-    authed_session = AuthorizedSession(credentials)
+    return AuthorizedSession(credentials)
+
+
+# testing
+def firebase_test():
+    # dig-19d4c
+    # https://firestore.googleapis.com/v1/projects/diig/databases/(default)
+
+    authed_session = auth_session()
     response = authed_session.get(
         "https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app/")
 
@@ -166,26 +168,48 @@ def firebase_test():
 
 # write entire registry contents
 def patch_releases(entries: str):
-    scopes = [
-        "https://www.googleapis.com/auth/userinfo.email",
-        "https://www.googleapis.com/auth/firebase.database"
-    ]
-
-    credentials = service_account.Credentials.from_service_account_file(
-        "diig-19d4c-firebase-adminsdk-jyja5-ebcf729661.json", scopes=scopes)
-
-    authed_session = AuthorizedSession(credentials)
-    response = authed_session.get(
-        "https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app/")
-    assert(response.status_code == 200)
-
+    authed_session = auth_session()
     response = authed_session.patch(
         "https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app/releases.json", entries)
     assert(response.status_code == 200)
+    if response.status_code == 200:
+        print("successfully patched releases")
+    else:
+        print("error: patching releases")
+
+
+# update store config to firebase, basically copies the stores.json local file to firebase
+def update_stores():
+    authed_session = auth_session()
+    store_config = open("stores.json", "r").read()
+    response = authed_session.patch(
+        "https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app/stores.json", store_config)
+    assert(response.status_code == 200)
+    if response.status_code == 200:
+        print("successfully updated stores")
+    else:
+        print("error: updating stores")
+
+
+# clears the chart position and section position tracker, that will be re-populated during the next scrape
+# allows old items to fall out of a view
+def clear_tracker_keys(store, view_tracker_keys):
+    # open store registry and remove the keys
+    reg_filepath = f"registry/{store}.json"
+    if os.path.exists(reg_filepath):
+        releases_dict = json.loads(open(reg_filepath, "r").read())
+        for release in releases_dict:
+            for key in view_tracker_keys:
+                if key in release:
+                    del release[key]
+    # write the registry back
+    release_registry = (json.dumps(releases_dict, indent=4))
+    open(reg_filepath, "w+").write(release_registry)
 
 
 # scrape a store based on rules defined in stores.json config
-def scrape_store(stores, store_name, page_function):
+def scrape_store(stores, store_name):
+    page_function = getattr(__import__(store_name), "scrape_page")
     if store_name in stores:
         # collapse store
         store = stores[store_name]
@@ -196,6 +220,12 @@ def scrape_store(stores, store_name, page_function):
         if "views" not in store:
             print('error: "views" missing from store config')
             exit(1)
+        # clear view position trackers
+        view_tracker_keys = []
+        for section in store["sections"]:
+            for view in store["views"]:
+                view_tracker_keys.append(f"{store_name}-{section}_{view}")
+        clear_tracker_keys(store_name, view_tracker_keys)
         # iterate per section, per view
         for section in store["sections"]:
             for view in store["views"]:
@@ -203,7 +233,7 @@ def scrape_store(stores, store_name, page_function):
                 page_count = view_dict["page_count"]
                 counter = 0
                 print("scraping: {} / {}".format(section, view))
-                for i in range(1, page_count):
+                for i in range(1, 1+page_count):
                     view_url = view_dict["url"]
                     page_url = view_url.replace("${{section}}", section).replace("${{page}}", str(i))
                     counter = page_function(
@@ -216,32 +246,28 @@ def scrape_store(stores, store_name, page_function):
         print("error: unknown store {}".format(store_name))
         exit(1)
 
+
 # main
 if __name__ == '__main__':
-    # grab single flags
-    get_urls = "-urls" in sys.argv
-    test_single = "-test_single" in sys.argv
-    verbose = "-verbose" in sys.argv
-
-    # select store
-    store = "redeye"
-    if "-store" in sys.argv:
-        store = sys.argv[sys.argv.index("-store") + 1]
-
     # stash service key for firebase writes
     if "-key" in sys.argv:
         key = sys.argv[sys.argv.index("-key") + 1]
         open("diig-19d4c-firebase-adminsdk-jyja5-ebcf729661.json", "w").write(key)
 
-    # read store config
-    stores = json.loads(open("stores.json", "r").read())
-
-    # parse individual stores
-    if store == "juno":
-        scrape_store(stores, "juno", juno.scrape_page)
-    elif store == "redeye":
+    if "-store" in sys.argv:
+        # read store config
+        stores = json.loads(open("stores.json", "r").read())
+        # store name
+        store = sys.argv[sys.argv.index("-store") + 1]
+        # scrape
+        scrape_store(stores, store)
+    elif "-update-stores" in sys.argv:
+        # updates the store config into firebase
+        update_stores()
+    else:
+        # grab single flags
+        get_urls = "-urls" in sys.argv
+        test_single = "-test_single" in sys.argv
+        verbose = "-verbose" in sys.argv
+        # scrape legacy
         redeye.scrape_legacy(100, get_urls, test_single, verbose)
-    elif store == "redeye2":
-        redeye.scrape(100, get_urls, verbose)
-    elif store == "test":
-        firebase_test()

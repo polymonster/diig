@@ -32,6 +32,8 @@
 // - reset chart positions in the new scrape jobs
 
 // DONE
+// x - move red eye to new scrape job
+// x - sync store config to cloud
 // x - move reg to firebase
 // x - parse juno store info
 // x - set min ios version on pen and put

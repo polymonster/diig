@@ -69,58 +69,8 @@ def parse_tracks(tracks):
     return (track_names, track_urls)
 
 
-# main entry for juno scrape
-def scrape(page_count):
-    # scrape section
-    sections = [
-        "minimal-tech-house",
-        "deep-house",
-        "techno-music"
-    ]
-    for section in sections:
-        scrape_section(page_count, section)
-
-    # patch database
-    reg_filepath = "registry/juno.json"
-    if os.path.exists(reg_filepath):
-        releases_str = open(reg_filepath, "r").read()
-        dig.patch_releases(releases_str)
-
-
-# scrape a website section (category) such as minimal-tech-house or deep-house
-# gather the weekly and monthly chart, and the last eight weeks latest releases
-def scrape_section(page_count, section_name):
-    # weekly chart
-    for i in range(1, min(5, page_count)):
-        scrape_page(
-            "https://www.juno.co.uk/{}/charts/bestsellers/this-week/{}?show_out_of_stock=1".format(section_name, i),
-            "weekly_chart",
-            section_name
-        )
-
-    # monthly chart
-    for i in range(1, min(5, page_count)):
-        scrape_page(
-            "https://www.juno.co.uk/{}/charts/bestsellers/four-weeks/{}?show_out_of_stock=1".format(section_name, i),
-            "monthtly_chart",
-            section_name
-        )
-
-    # latest
-    counter = 0
-    for i in range(1, page_count):
-        counter = scrape_page(
-            "https://www.juno.co.uk/{}/eight-weeks/{}?order=date_down&show_out_of_stock=1".format(section_name, i),
-            "new_releases",
-            section_name,
-            counter
-        )
-        if counter == None:
-            break
-
-
 # scape a single page with counter tracking
-def scrape_page(url, category, section, counter = 0):
+def scrape_page(url, store, category, section, counter = 0):
     print("scraping: juno ", url, flush=True)
 
     # try and then continue if the page does not exist
@@ -141,7 +91,7 @@ def scrape_page(url, category, section, counter = 0):
     releases = dig.parse_div(products[0], 'class="dv-item"')
 
     # open existing reg
-    reg_filepath = "registry/juno.json"
+    reg_filepath = f"registry/{store}.json"
     if os.path.exists(reg_filepath):
         releases_dict = json.loads(open(reg_filepath, "r").read())
 
@@ -182,7 +132,7 @@ def scrape_page(url, category, section, counter = 0):
 
         # extract values from the html sections
         release_dict = dict()
-        release_dict["store"] = "juno"
+        release_dict["store"] = f"{store}"
         release_dict["id"] = parse_id(id_elem)
         release_dict["link"] = parse_link(link_elem)
         release_dict["artist"] = dig.parse_body(artist_elem)
@@ -192,24 +142,23 @@ def scrape_page(url, category, section, counter = 0):
         release_dict["artworks"] = parse_artworks(artwork_elem)
         release_dict["store_tags"] = store_tags
         (release_dict["track_names"], release_dict["track_urls"]) = parse_tracks(tracks)
+        key = "{}-{}".format(store, release_dict["id"])
 
         # assign pos per section
-        release_dict["juno-{}_{}".format(category, section)] = int(pos)
+        release_dict[f"{store}-{category}_{section}".format(category, section)] = int(pos)
 
         # increment counter to track indices
         counter += 1
 
         # genre tags are just loose in the object so they can be queried
-        genre_tags = dict()
         tags_span = dig.parse_class(release, 'class="juno-tags-tag"', "span")
         for tag_span in tags_span:
             tag_str = dig.parse_nested_body(tag_span, 2).strip()
             release_dict[tag_str] = "genre_tag"
 
         # merge into main
-        unique_id = "juno-" + release_dict["id"]
         merge = dict()
-        merge[unique_id] = release_dict
+        merge[key] = release_dict
         dig.merge_dicts(releases_dict, merge)
 
     # write to file

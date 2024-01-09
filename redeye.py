@@ -158,8 +158,8 @@ def parse_redeye_grid_elems(html_str):
     return releases_html
 
 
-# scrape an individual page for a category (weekly chart, new releases) and section (techno-electro etc)
-def scrape_page(url, store, category, section, counter = 0):
+# scrape an individual page for a view (weekly chart, new releases) and section (techno-electro etc)
+def scrape_page(url, store, view, section, counter = 0):
     print(f"scraping page: {url}", flush=True)
 
     # grab var args
@@ -238,14 +238,14 @@ def scrape_page(url, store, category, section, counter = 0):
                 release_dict["artworks"] = get_redeye_artwork_urls(id)
 
         # get indices
-        if category in ["weekly_chart", "monthly_chart"]:
+        if view in ["weekly_chart", "monthly_chart"]:
             pos = grid_elems.index(grid_elem)
             release_dict["store_tags"]["has_charted"] = True
         else:
             pos = counter
 
         # assign pos per section
-        release_dict[f"{store}-{category}_{section}"] = int(pos)
+        release_dict[f"{store}-{section}-{view}"] = int(pos)
 
         # increment counter
         counter += 1

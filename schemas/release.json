@@ -5,7 +5,7 @@
     "title": "string - the releases title name",
     "label": "string - name of the label",
     "label_link": "string - url link to the store specific page for the label",
-    "cat": "string - the catalog number for the label of the release",
+    "cat": "string - the catalogue number for the label of the release",
     "artworks": [
         "string list - 3 artwork sizes: [small, medium, large]"
     ],
@@ -22,6 +22,6 @@
         "has_charted": true,
         "preorder": true
     },
-    "<store>-<section>-<view>": "int - position in a view for particular store and section",
+    "{store}-{section}-{view}": "int - position in a view for particular store and section",
     "Example Genre": "Genre Tag"
 }

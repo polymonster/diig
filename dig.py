@@ -194,11 +194,13 @@ def update_stores():
 # clears the chart position and section position tracker, that will be re-populated during the next scrape
 # allows old items to fall out of a view
 def clear_tracker_keys(store, view_tracker_keys):
+    print(f"clear: {len(view_tracker_keys)} tracker flags for {store}")
     # open store registry and remove the keys
     reg_filepath = f"registry/{store}.json"
     if os.path.exists(reg_filepath):
         releases_dict = json.loads(open(reg_filepath, "r").read())
         for release in releases_dict:
+            release = releases_dict[release]
             for key in view_tracker_keys:
                 if key in release:
                     del release[key]
@@ -220,12 +222,14 @@ def scrape_store(stores, store_name):
         if "views" not in store:
             print('error: "views" missing from store config')
             exit(1)
-        # clear view position trackers
-        view_tracker_keys = []
-        for section in store["sections"]:
-            for view in store["views"]:
-                view_tracker_keys.append(f"{store_name}-{section}_{view}")
-        clear_tracker_keys(store_name, view_tracker_keys)
+        # clear trackers
+        if "-clear-trackers" in sys.argv:
+            # clear view position trackers
+            view_tracker_keys = []
+            for section in store["sections"]:
+                for view in store["views"]:
+                    view_tracker_keys.append(f"{store_name}-{section}-{view}")
+            clear_tracker_keys(store_name, view_tracker_keys)
         # iterate per section, per view
         for section in store["sections"]:
             for view in store["views"]:
@@ -238,6 +242,7 @@ def scrape_store(stores, store_name):
                     page_url = view_url.replace("${{section}}", section).replace("${{page}}", str(i))
                     counter = page_function(
                         page_url,
+                        store_name,
                         view,
                         section,
                         counter

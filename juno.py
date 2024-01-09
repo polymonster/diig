@@ -70,7 +70,7 @@ def parse_tracks(tracks):
 
 
 # scape a single page with counter tracking
-def scrape_page(url, store, category, section, counter = 0):
+def scrape_page(url, store, view, section, counter = 0):
     print("scraping: juno ", url, flush=True)
 
     # try and then continue if the page does not exist
@@ -113,7 +113,7 @@ def scrape_page(url, store, category, section, counter = 0):
         store_tags = dict()
 
         # chart pos
-        if category in ["weekly_chart", "monthly_chart"]:
+        if view in ["weekly_chart", "monthly_chart"]:
             # chart pos are listed
             pos = dig.parse_nested_body(release, 4).strip()
             store_tags["has_charted"] = True
@@ -142,23 +142,24 @@ def scrape_page(url, store, category, section, counter = 0):
         release_dict["artworks"] = parse_artworks(artwork_elem)
         release_dict["store_tags"] = store_tags
         (release_dict["track_names"], release_dict["track_urls"]) = parse_tracks(tracks)
-        key = "{}-{}".format(store, release_dict["id"])
 
         # assign pos per section
-        release_dict[f"{store}-{category}_{section}".format(category, section)] = int(pos)
+        release_dict[f"{store}-{section}-{view}"] = int(pos)
 
         # increment counter to track indices
         counter += 1
 
         # genre tags are just loose in the object so they can be queried
+        genre_tags = dict()
         tags_span = dig.parse_class(release, 'class="juno-tags-tag"', "span")
         for tag_span in tags_span:
             tag_str = dig.parse_nested_body(tag_span, 2).strip()
             release_dict[tag_str] = "genre_tag"
 
         # merge into main
+        unique_id = f"{store}-" + release_dict["id"]
         merge = dict()
-        merge[key] = release_dict
+        merge[unique_id] = release_dict
         dig.merge_dicts(releases_dict, merge)
 
     # write to file

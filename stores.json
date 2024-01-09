@@ -37,11 +37,11 @@
         "views": {
             "weekly_chart": {
                 "url": "https://www.redeyerecords.co.uk/${{section}}/weekly-chart",
-                "page_count": null
+                "page_count": 1
             },
             "monthly_chart": {
                 "url": "https://www.redeyerecords.co.uk/${{section}}/monthly-chart",
-                "page_count": null
+                "page_count": 1
             },
             "new_releases": {
                 "url": "https://www.redeyerecords.co.uk/${{section}}/new-releases/page-${{page}}",

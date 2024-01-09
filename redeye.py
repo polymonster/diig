@@ -4,6 +4,7 @@ import cgu
 import os
 import json
 import datetime
+import sys
 
 # etxract the release id number from a red eye records release
 def parse_redeye_release_id(elem: str):
@@ -157,62 +158,13 @@ def parse_redeye_grid_elems(html_str):
     return releases_html
 
 
-# main entry for redeye scrape
-def scrape2(page_count, get_urls, verbose):
-    # scrape section
-    sections = [
-        "techno-electro",
-        "house-disco"
-    ]
-    for section in sections:
-        scrape_section(page_count, section, get_urls, verbose)
-
-    # patch database
-    reg_filepath = "registry/redeye.json"
-    if os.path.exists(reg_filepath):
-        releases_str = open(reg_filepath, "r").read()
-        dig.patch_releases(releases_str)
-
-
-# scrape a website section (category) such as minimal-tech-house or deep-house
-# gather the weekly and monthly chart, and the last eight weeks latest releases
-def scrape_section(page_count, section_name, get_urls, verbose):
-    # weekly chart
-    scrape_page(
-        "https://www.redeyerecords.co.uk/{}/weekly-chart".format(section_name),
-        "weekly_chart",
-        section_name,
-        get_urls,
-        verbose
-    )
-
-    # monthly chart
-    scrape_page(
-        "https://www.redeyerecords.co.uk/{}/monthly-chart".format(section_name),
-        "monthtly_chart",
-        section_name,
-        get_urls,
-        verbose
-    )
-
-    # latest
-    counter = 0
-    for i in range(1, page_count):
-        counter = scrape_page(
-            "https://www.redeyerecords.co.uk/{}/new-releases/page-{}".format(section_name, i),
-            "new_releases",
-            section_name,
-            get_urls,
-            verbose,
-            counter
-        )
-        if counter == None:
-            break
-
-
 # scrape an individual page for a category (weekly chart, new releases) and section (techno-electro etc)
-def scrape_page(url, category, section, get_urls, verbose, counter = 0):
+def scrape_page(url, store, category, section, counter = 0):
     print(f"scraping page: {url}", flush=True)
+
+    # grab var args
+    verbose = "verbose" in sys.argv
+    get_urls = "-urls" in sys.argv
 
     # try and then continue if the page does not exist
     try:
@@ -225,7 +177,7 @@ def scrape_page(url, category, section, get_urls, verbose, counter = 0):
     releases_dict = dict()
 
     # load existing registry to speed things up
-    reg_filepath = "registry/redeye.json"
+    reg_filepath = f"registry/{store}.json"
     if os.path.exists(reg_filepath):
         releases_dict = json.loads(open(reg_filepath, "r").read())
 
@@ -240,7 +192,7 @@ def scrape_page(url, category, section, get_urls, verbose, counter = 0):
         (_, link_elem) = dig.find_parse_elem(grid_elem, 0, '<a class="link"', "</a>")
 
         release_dict = dict()
-        release_dict["store"] = "redeye"
+        release_dict["store"] = f"{store}"
         release_dict["id"] = parse_redeye_release_id(id_elem)
         release_dict["track_names"] = parse_redeye_track_names(tracks_elem)
         release_dict["link"] = parse_redeye_release_link(link_elem)
@@ -248,7 +200,7 @@ def scrape_page(url, category, section, get_urls, verbose, counter = 0):
         dig.merge_dicts(release_dict, parse_redeye_artist(artist_elem))
         id = release_dict["id"]
         release_dict["store_tags"] = dict()
-        key = "{}-{}".format("redeye", release_dict["id"])
+        key = "{}-{}".format(store, release_dict["id"])
 
         # add store tags
         if grid_elem.find("price preorder") != -1:
@@ -293,7 +245,7 @@ def scrape_page(url, category, section, get_urls, verbose, counter = 0):
             pos = counter
 
         # assign pos per section
-        release_dict["redeye-{}_{}".format(category, section)] = int(pos)
+        release_dict[f"{store}-{category}_{section}"] = int(pos)
 
         # increment counter
         counter += 1

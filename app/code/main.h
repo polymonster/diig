@@ -1,12 +1,12 @@
 // TASKS
 // - improve visuals for loading in progress items
-// - improve lenient button
-// - fix ratio / scaling of sizes for lenient button
-
 // - placeholder artwork image
 // - drag reload spinner
 
+// - improve lenient button
 // - text, sizes and spacing tweaks
+// - buttons should be activated on tap
+// - fix ratio / scaling of sizes for lenient button
 // - colour and accent tweaks
 
 // - thread to free up space
@@ -21,17 +21,18 @@
 // - side swipe still isnt perfect
 // - vertical swipe still sometimes feel sticky
 
-// - add a registry version field
 // - implement label link?
-// - store specific category selection. ie redeye ([techno / electro, house / disco])
-// - store field to items
 
 // - add reg validation
 // - add store config and use to populate local registry
 // - move away from legacy registry
-// - reset chart positions in the new scrape jobs
+// - store specific category selection. ie redeye ([techno / electro, house / disco])
+// - switch service account file
 
 // DONE
+// x - add store field to items
+// x - add a registry version field
+// x - reset chart positions in the new scrape jobs
 // x - move red eye to new scrape job
 // x - sync store config to cloud
 // x - move reg to firebase
@@ -93,26 +94,6 @@ namespace EntryFlags
     };
 };
 
-namespace Tags
-{
-    enum Tag
-    {
-        techno = 1<<0,
-        electro = 1<<1,
-        house = 1<<2,
-        disco = 1<<3,
-        all = 0xffffffff
-    };
-
-    const c8* names[] = {
-        "techno",
-        "electro",
-        "house",
-        "disco"
-    };
-}
-typedef u32 Tags_t;
-
 namespace StoreTags
 {
     enum StoreTags
@@ -139,34 +120,22 @@ namespace StoreTags
 }
 typedef u32 StoreTags_t;
 
-namespace View
+namespace Page
 {
-    enum View
+    enum Page
     {
-        latest,
-        weekly_chart,
-        monthly_chart,
+        feed,
         likes,
         settings
     };
 
     const c8* display_names[] = {
-        "Latest",
-        "Weekly Chart",
-        "Monthly Chart",
+        "Feed"
         "Likes"
         "Settings"
     };
-
-    const c8* lookup_names[] = {
-        "new_releases",
-        "weekly_chart",
-        "monthly_chart",
-        "likes",
-        "settings"
-    };
 }
-typedef u32 View_t;
+typedef u32 Page_t;
 
 namespace DataStatus
 {
@@ -174,7 +143,8 @@ namespace DataStatus
     {
         e_not_initialised,
         e_loading,
-        e_ready
+        e_ready,
+        e_not_available
     };
 }
 typedef u32 DataStatus_t;
@@ -205,16 +175,27 @@ struct soa
     std::atomic<size_t>                     soa_size = {0};
 };
 
+struct AsyncDict
+{
+    std::mutex                  mutex;
+    nlohmann::json              dict;
+    std::atomic<DataStatus_t>   status = { DataStatus::e_not_initialised };
+};
+
 struct DataContext
 {
+    // TODO: legacy
     std::mutex          registry_mutex;
     nlohmann::json      registry;
     nlohmann::json      user_data;
-    
     std::atomic<u32>    cache_registry_status = { 0 };
     std::atomic<u32>    latest_registry_status = { 0 };
     std::atomic<u32>    user_data_status = { 0 };
     
+    //
+    AsyncDict           stores;
+
+    // cache info
     std::atomic<u32>    cached_release_folders = { 0 };
     std::atomic<size_t> cached_release_bytes = { 0 };
 };
@@ -223,12 +204,13 @@ struct ReleasesView
 {
     soa                 releases = {};
     DataContext*        data_ctx = nullptr;
-    View_t              view = View::latest;
-    Tags_t              tags = Tags::all;
+    Str                 store = "";
+    std::vector<Str>    sections = {};
+    Str                 view_name = "";
+    Page_t              page = Page::feed;
     std::atomic<u32>    terminate = { 0 };
     std::atomic<u32>    threads_terminated = { 0 };
     u32                 top_pos = 0;
-    u32                 reg_timeout = 1000;
     vec2f               scroll = vec2f(0.0f, 0.0f);
 };
 
@@ -240,8 +222,8 @@ struct ChartItem
 
 struct AppContext
 {
-    s32                     w, h;
-    f32                     status_bar_height;
+    s32                     w, h = 0;
+    f32                     status_bar_height = 0.0f;
     f32                     releases_scroll_maxy = 0.0f;
     void*                   releases_window = nullptr;
     Str                     play_track_filepath = "";
@@ -251,12 +233,17 @@ struct AppContext
     bool                    scroll_lock_x = false;
     bool                    side_drag = false;
     vec2f                   scroll_delta = vec2f::zero();
+    bool                    touch_down = false;
     s32                     top = -1;
     Str                     open_url_request = "";
     u32                     open_url_counter = 0;
     ReleasesView*           view = nullptr;
     ReleasesView*           back_view = nullptr;
     ReleasesView*           reload_view = nullptr;
+    nlohmann::json          stores = {};
+    Str                     selected_store = "redeye";
+    Str                     selected_view = "new_releases";
+    std::vector<Str>        selected_sections = {};
     DataContext             data_ctx = {};
     std::set<ReleasesView*> background_views = {};
 };

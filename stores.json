@@ -11,17 +11,20 @@
             "Techno"
         ],
         "views": {
+            "new_releases": {
+                "url": "https://www.juno.co.uk/${{section}}/eight-weeks/${{page}}?order=date_down&show_out_of_stock=1",
+                "page_count": 100,
+                "display_name": "Latest"
+            },
             "weekly_chart": {
                 "url": "https://www.juno.co.uk/${{section}}/charts/bestsellers/this-week/${{page}}?show_out_of_stock=1",
-                "page_count": 5
+                "page_count": 5,
+                "display_name": "Weekly Chart"
             },
             "monthly_chart": {
                 "url": "https://www.juno.co.uk/${{section}}/charts/bestsellers/four-weeks/${{page}}?show_out_of_stock=1",
-                "page_count": 5
-            },
-            "new_releases": {
-                "url": "https://www.juno.co.uk/${{section}}/eight-weeks/${{page}}?order=date_down&show_out_of_stock=1",
-                "page_count": 100
+                "page_count": 5,
+                "display_name": "Monthly Chart"
             }
         }
     },
@@ -35,17 +38,20 @@
             "House / Disco"
         ],
         "views": {
+            "new_releases": {
+                "url": "https://www.redeyerecords.co.uk/${{section}}/new-releases/page-${{page}}",
+                "page_count": 100,
+                "display_name": "Latest"
+            },
             "weekly_chart": {
                 "url": "https://www.redeyerecords.co.uk/${{section}}/weekly-chart",
-                "page_count": 1
+                "page_count": 1,
+                "display_name": "Weekly Chart"
             },
             "monthly_chart": {
                 "url": "https://www.redeyerecords.co.uk/${{section}}/monthly-chart",
-                "page_count": 1
-            },
-            "new_releases": {
-                "url": "https://www.redeyerecords.co.uk/${{section}}/new-releases/page-${{page}}",
-                "page_count": 100
+                "page_count": 1,
+                "display_name": "Monthly Chart"
             }
         }
     }

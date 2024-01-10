@@ -209,6 +209,14 @@ def clear_tracker_keys(store, view_tracker_keys):
     open(reg_filepath, "w+").write(release_registry)
 
 
+# patch store releases
+def patch_store(store):
+    reg_filepath = f"registry/{store}.json"
+    if os.path.exists(reg_filepath):
+        releases_str = open(reg_filepath, "r").read()
+        patch_releases(releases_str)
+
+
 # scrape a store based on rules defined in stores.json config
 def scrape_store(stores, store_name):
     page_function = getattr(__import__(store_name), "scrape_page")
@@ -264,8 +272,11 @@ if __name__ == '__main__':
         stores = json.loads(open("stores.json", "r").read())
         # store name
         store = sys.argv[sys.argv.index("-store") + 1]
-        # scrape
-        scrape_store(stores, store)
+        if not "-patch-only" in sys.argv:
+            # scrape
+            scrape_store(stores, store)
+        # patch
+        patch_store(store)
     elif "-update-stores" in sys.argv:
         # updates the store config into firebase
         update_stores()

@@ -4,7 +4,7 @@ Dig is a record digging app that provides a high performance audio player and er
 
 It provides a record store agnostic audio player with a familiar social media infinite scrolling interface to allow users to dig for new releases and provide click through links to stores to buy. Feeds and snippets are cached which also enables offline browsing.
 
-The aim is to be extensible so more record stores, sections and views can be added from different sources. The current scope of the sites and sections that are being monitored is opinionated and targeted to a small group of friends, but the overall goal is to allow community contribution and expand the project.
+The aim is to be extensible so more record stores, genre sections and views can be added from different sources. The current scope of the sites and sections that are being monitored is opinionated and targeted to a small group of friends, but the overall goal is to allow community contribution and expand the project.
 
 <p align="center">
     <img src="https://github.com/polymonster/dig/raw/main/media/dig.gif"/>
@@ -92,14 +92,25 @@ curl https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app/releases.
 
 ## App
 
-The dig app currently runs natively on iOS, it is implemented using C++, Objective-C and ImGui via my cross platform game engine [pmtech](https://github.com/polymonster/pmtech). You can find more info in that repository on how to build, add pmbuild to your path then:
+The dig app currently runs natively on iOS, it is implemented using C++, Objective-C and ImGui via my cross platform game engine [pmtech](https://github.com/polymonster/pmtech). You can find more info in that repository on how to build in more detail but for a quick start you can use:
 
 ```text
 git submodule update --init --recursive // fetch submodules pmtech, pmbuild
 cd app
-pmbuild ios
-pmbuild make ios dig
+pmtech/pmbuild ios
 ```
+
+An Xcode project will be generated into the `app/build/ios` folder. From there you can use Xcode to build. If you wish to build from the commandline you can use:
+
+```text
+pmtech/pmbuild make ios dig
+```
+
+The project is also buildable and runnable on macOS, just switch `ios` to `mac` in the build commands.
+
+## Future Platforms
+
+Android, Windows and Linux can all be added in future, although currently the aim is for a mobile app so iOS and Android will be priority.
 
 The app will soon be available via `TestFlight` if you want to be invited to the Nightly build please open an issue.
 

@@ -1,9 +1,9 @@
 // TASKS
-// - switch service account file
-
-// - improve visuals for loading in progress items
-// - placeholder artwork image
 // - drag reload spinner
+// - placeholder artwork image
+// - improve visuals for loading in progress items
+
+// - store specific category selection. ie redeye ([techno / electro, house / disco])
 
 // - buttons should be activated on tap
 // - haptic click on like
@@ -11,10 +11,12 @@
 // - colour and accent tweaks
 // - implement label link (on tap)
 
-// - add info to MPNowPlacyingCenter
 // - add support for background audio sesion
+// - add info to MPNowPlacyingCenter
 // - add support for prev / next on backgrounded app
 // - add autoplay support
+
+// - move scrapers to sub folder
 
 // - refactor user data into a single dict and move to context
 // - user store prev position, prev mode etc
@@ -31,9 +33,9 @@
 // - vertical swipe still sometimes feel sticky
 
 // - add reg validation
-// - store specific category selection. ie redeye ([techno / electro, house / disco])
 
 // DONE
+// x - switch service account file
 // x - fix ratio for lenient button
 // x - text, sizes and spacing tweaks
 // x - improve lenient button

@@ -1,35 +1,44 @@
 // TASKS
+// - switch service account file
+
 // - improve visuals for loading in progress items
 // - placeholder artwork image
 // - drag reload spinner
 
-// - improve lenient button
-// - text, sizes and spacing tweaks
 // - buttons should be activated on tap
-// - fix ratio / scaling of sizes for lenient button
+// - haptic click on like
+// - ensure scaling of lenient button is correct on other devices
 // - colour and accent tweaks
+// - implement label link (on tap)
+
+// - add info to MPNowPlacyingCenter
+// - add support for background audio sesion
+// - add support for prev / next on backgrounded app
+// - add autoplay support
+
+// - refactor user data into a single dict and move to context
+// - user store prev position, prev mode etc
+// - serialise prev position and prev mode?
+// - user fav store
+// - user fav genres
 
 // - thread to free up space
 // - function to delete files
 // - img and audio file cache management
 // - add clear cache and cache options
 
-// - user store prev position, prev mode etc
-// - serialise prev position and prev mode?
-// - refactor user data into a single dict and move to context
-
 // - side swipe still isnt perfect
 // - vertical swipe still sometimes feel sticky
 
-// - implement label link?
-
 // - add reg validation
-// - add store config and use to populate local registry
-// - move away from legacy registry
 // - store specific category selection. ie redeye ([techno / electro, house / disco])
-// - switch service account file
 
 // DONE
+// x - fix ratio for lenient button
+// x - text, sizes and spacing tweaks
+// x - improve lenient button
+// x - move away from legacy registry
+// x - add store config and use to populate local registry
 // x - add store field to items
 // x - add a registry version field
 // x - reset chart positions in the new scrape jobs

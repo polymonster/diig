@@ -8,6 +8,9 @@ import os
 from google.oauth2 import service_account
 from google.auth.transport.requests import AuthorizedSession
 
+# global key for this session, not functional but saves passing through
+global auth_key
+
 # member wise merge 2 dicts, second will overwrite dest
 def merge_dicts(dest, second):
     for k, v in second.items():
@@ -143,8 +146,16 @@ def auth_session():
         "https://www.googleapis.com/auth/firebase.database"
     ]
 
-    credentials = service_account.Credentials.from_service_account_file(
-        "diig-19d4c-firebase-adminsdk-jyja5-ebcf729661.json", scopes=scopes)
+    if auth_key:
+        credentials = service_account.Credentials.from_service_account_info(
+            auth_key,
+            scopes=scopes
+        )
+    else:
+        print("from file")
+        credentials = service_account.Credentials.from_service_account_file(
+            "diig-19d4c-firebase-adminsdk-jyja5-ebcf729661.json", scopes=scopes
+        )
 
     return AuthorizedSession(credentials)
 
@@ -260,12 +271,27 @@ def scrape_store(stores, store_name):
         exit(1)
 
 
+# test
+def test():
+    authed_session = auth_session()
+    response = authed_session.patch(
+        "https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app/test.json", '{"test": false}')
+    print(response)
+    assert(response.status_code == 200)
+
+
 # main
 if __name__ == '__main__':
-    # stash service key for firebase writes
+    # service key for firebase writes
     if "-key" in sys.argv:
-        key = sys.argv[sys.argv.index("-key") + 1]
-        open("diig-19d4c-firebase-adminsdk-jyja5-ebcf729661.json", "w").write(key)
+        auth_key = json.loads(sys.argv[sys.argv.index("-key") + 1])
+    else:
+        auth_key = json.loads(open("diig-auth.json").read())
+
+    # for scratch code
+    if "-test":
+        test()
+        exit(0)
 
     if "-store" in sys.argv:
         # read store config

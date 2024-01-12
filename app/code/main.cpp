@@ -1088,10 +1088,6 @@ namespace
         else
         {
             // likes page
-            ImGui::SetWindowFontScale(k_text_size_h2);
-            ImGui::Dummy(ImVec2(k_indent1, 0.0f));
-            ImGui::SameLine();
-            ImGui::Text("%s", "Likes");
             ImGui::SetWindowFontScale(k_text_size_body);
         }
         
@@ -1160,10 +1156,8 @@ namespace
         
         if(ctx.view->page == Page::likes || ctx.view->page == Page::settings)
         {
-            ImGui::Text("%s", ICON_FA_CHEVRON_LEFT);
-            
-            static bool back_debounce = false;
-            if(lenient_button_click(64.0f, back_debounce, true))
+            ImGui::Text("%s %s", ICON_FA_CHEVRON_LEFT, ctx.view->page == Page::likes ? "Likes" : "Settings");
+            if(ImGui::IsItemClicked())
             {
                 ctx.view = ctx.back_view;
             }

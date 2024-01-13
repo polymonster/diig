@@ -11,6 +11,7 @@
 #include "data_struct.h"
 #include "main.h"
 #include "audio/audio.h"
+#include "imgui_ext.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb/stb_image.h"
@@ -913,12 +914,17 @@ namespace
             ImGui::SetWindowFontScale(2.0f);
             
             // small padding
-            ImGui::Dummy(ImVec2(0.0f, ImGui::GetFontSize() * 0.75f));
+            f32 ss = ImGui::GetFontSize() * 2.0f;
+            ImGui::Dummy(ImVec2(0.0f, ImGui::GetFontSize()));
             
             // spinner
-            auto ww = ImGui::GetWindowSize().x;
-            ImGui::SetCursorPosX((ww * 0.5f));
-            ImGui::Text("%s", ICON_FA_SPINNER);
+            static f32 rot = 0.0f;
+            auto x = ImGui::GetWindowSize().x * 0.5f;
+            auto y = ImGui::GetCursorPos().y;
+            ImGui::ImageRotated(IMG(ctx.spinner_texture), ImVec2(x, y), ImVec2(ss, ss), rot);
+            rot += 1.0f/60.0f;
+            
+            ImGui::Dummy(ImVec2(0.0f, ss));
             ImGui::SetWindowFontScale(1.0f);
         }
         
@@ -1973,8 +1979,23 @@ namespace
         cs.num_colour_targets = 1;
         clear_screen = pen::renderer_create_clear_state(cs);
         
+        // imgui style
         // white
         ImGui::StyleColorsLight();
+        
+        // screen ratio based spacing and indents
+        ImGui::GetStyle().IndentSpacing = ctx.w * (ImGui::GetStyle().IndentSpacing / k_promax_11_w);
+        ImGui::GetStyle().ItemSpacing = ImVec2(
+                ctx.w * (ImGui::GetStyle().ItemSpacing.x / k_promax_11_w),
+                ctx.h * (ImGui::GetStyle().ItemSpacing.y / k_promax_11_h)
+        );
+        ImGui::GetStyle().ItemInnerSpacing = ImVec2(
+                ctx.w * (ImGui::GetStyle().ItemInnerSpacing.x / k_promax_11_w),
+                ctx.h * (ImGui::GetStyle().ItemInnerSpacing.y / k_promax_11_h)
+        );
+        
+        // spinner
+        ctx.spinner_texture = put::load_texture("data/images/spinner.dds");
 
         pen_main_loop(user_update);
         return PEN_THREAD_OK;

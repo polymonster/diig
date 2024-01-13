@@ -42,6 +42,26 @@ import "pmtech/tools/pmbuild_ext/pmbuild_init.jsn"
             ]
         }
 
+        texturec: {
+            args: [
+                "-f %{input_file}"
+                "%{export_args}"
+                "-o %{output_file}"
+            ]
+            files: [
+                ["assets/images", "${data_dir}/images"]
+            ]
+            excludes: [
+                "export.jsn"
+                "*.txt"
+                "*.DS_Store"
+                "*.dds"
+                "*.pmv"
+            ]
+            change_ext: ".dds"
+            dependencies: true
+        }
+
 		pmbuild_config: {
             pmbuild_cmd: "${pmbuild_dir}/pmbuild"
             destination: "${data_dir}"

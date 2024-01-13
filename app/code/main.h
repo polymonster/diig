@@ -1,14 +1,11 @@
 // TASKS
-// - fix ci
+// - store specific feed population
+// - store specific category selection. ie redeye ([techno / electro, house / disco])
 
-// - drag reload spinner
 // - placeholder artwork image
 // - improve visuals for loading in progress items
 
-// - store specific category selection. ie redeye ([techno / electro, house / disco])
-
 // - haptic click on like
-// - ensure scaling of lenient button is correct on other devices
 // - colour and accent tweaks
 // - implement label link (on tap)
 
@@ -35,7 +32,12 @@
 
 // - add reg validation
 
+// REGRESS
+
 // DONE
+// x - drag reload spinner
+// x - fix ci
+// x - ensure scaling of lenient button is correct on other devices
 // x - buttons should be activated on tap
 // x - switch service account file
 // x - fix ratio for lenient button
@@ -233,6 +235,24 @@ struct ChartItem
     u32         pos;
 };
 
+struct Store
+{
+    Str              name;
+    std::vector<Str> view_search_names;
+    std::vector<Str> view_display_names;
+    std::vector<Str> section_search_names;
+    std::vector<Str> sections_display_names;
+    std::vector<u32> selected_sections;
+    u32              selected_view;
+};
+
+struct StoreView
+{
+    Str                 name;
+    Str                 selected_view;
+    std::vector<Str>    selected_sections;
+};
+
 struct AppContext
 {
     s32                     w, h = 0;
@@ -260,10 +280,12 @@ struct AppContext
     std::vector<Str>        selected_sections = {};
     DataContext             data_ctx = {};
     std::set<ReleasesView*> background_views = {};
+    u32                     spinner_texture = 0;
 };
 
 // magic number constants
 constexpr f32 k_promax_11_w = 1125.0f; // ratios were tuned from pixels sizes on iphone11 pro max
+constexpr f32 k_promax_11_h = 2436.0f;
 constexpr f32 k_drag_threshold = 0.1f;
 constexpr f32 k_inertia = 0.96f;
 constexpr f32 k_inertia_cutoff = 3.33f;

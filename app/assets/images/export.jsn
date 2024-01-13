@@ -1,0 +1,7 @@
+{
+    texturec:
+    {
+        "-t": "RGBA8",
+        "--mips": true
+    }
+}

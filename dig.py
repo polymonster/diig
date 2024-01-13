@@ -288,11 +288,6 @@ if __name__ == '__main__':
     else:
         auth_key = json.loads(open("diig-auth.json").read())
 
-    # for scratch code
-    if "-test":
-        test()
-        exit(0)
-
     if "-store" in sys.argv:
         # read store config
         stores = json.loads(open("stores.json", "r").read())

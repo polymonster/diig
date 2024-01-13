@@ -1,11 +1,12 @@
 // TASKS
+// - fix ci
+
 // - drag reload spinner
 // - placeholder artwork image
 // - improve visuals for loading in progress items
 
 // - store specific category selection. ie redeye ([techno / electro, house / disco])
 
-// - buttons should be activated on tap
 // - haptic click on like
 // - ensure scaling of lenient button is correct on other devices
 // - colour and accent tweaks
@@ -35,6 +36,7 @@
 // - add reg validation
 
 // DONE
+// x - buttons should be activated on tap
 // x - switch service account file
 // x - fix ratio for lenient button
 // x - text, sizes and spacing tweaks
@@ -245,6 +247,7 @@ struct AppContext
     bool                    side_drag = false;
     vec2f                   scroll_delta = vec2f::zero();
     bool                    touch_down = false;
+    vec2f                   tap_pos = vec2f(FLT_MAX, FLT_MAX);
     s32                     top = -1;
     Str                     open_url_request = "";
     u32                     open_url_counter = 0;
@@ -260,6 +263,7 @@ struct AppContext
 };
 
 // magic number constants
+constexpr f32 k_promax_11_w = 1125.0f; // ratios were tuned from pixels sizes on iphone11 pro max
 constexpr f32 k_drag_threshold = 0.1f;
 constexpr f32 k_inertia = 0.96f;
 constexpr f32 k_inertia_cutoff = 3.33f;
@@ -273,3 +277,5 @@ constexpr f32 k_text_size_h3 = 1.25f;
 constexpr f32 k_text_size_body = 1.0f;
 constexpr f32 k_text_size_track = 0.75f;
 constexpr f32 k_text_size_dots = 0.8f;
+constexpr f32 k_release_button_tap_radius_ratio = 64.0f / k_promax_11_w;
+constexpr f32 k_page_button_press_radius_ratio = 86.0f / k_promax_11_w;

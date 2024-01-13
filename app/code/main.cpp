@@ -1095,6 +1095,24 @@ namespace
         cleanup_views();
     }
 
+    bool lenient_button_tap(f32 padding)
+    {
+        ImVec2 bbmin = ImGui::GetItemRectMin();
+        ImVec2 bbmax = ImGui::GetItemRectMax();
+        
+        vec2f vbmin = vec2f(bbmin.x, bbmin.y);
+        vec2f vbmax = vec2f(bbmax.x, bbmax.y);
+        vec2f mid = vbmin + ((vbmax - vbmin) * 0.5f);
+        
+        f32 d = dist(vec2f(ctx.tap_pos.x, ctx.tap_pos.y), mid);
+        if(d < padding)
+        {
+            return true;
+        }
+        
+        return false;
+    }
+    
     bool lenient_button_click(f32 padding, bool& debounce, bool debug = false)
     {
         auto& ms = pen::input_get_mouse_state();
@@ -1173,8 +1191,10 @@ namespace
         ImGui::SetCursorPosX(ctx.w - offset * 3.0f);
         ImGui::Text("%s", ctx.view->page == Page::likes ? ICON_FA_HEART : ICON_FA_HEART_O);
         
+        f32 rad = ctx.w * k_page_button_press_radius_ratio;
+        
         static bool heart_debounce = false;
-        if(lenient_button_click(64.0f, heart_debounce, true))
+        if(lenient_button_click(rad, heart_debounce, true))
         {
             change_view(Page::likes);
         }
@@ -1186,7 +1206,7 @@ namespace
         ImGui::Text("%s", ICON_FA_ELLIPSIS_H);
         
         static bool ellipsis_debounce = false;
-        if(lenient_button_click(64.0f, ellipsis_debounce, true))
+        if(lenient_button_click(rad, ellipsis_debounce, true))
         {
             change_view(Page::settings);
         }
@@ -1423,20 +1443,23 @@ namespace
                 ImGui::SetCursorPosX(ww * 0.5f);
                 ImGui::Text("%s", ICON_FA_TIMES_CIRCLE);
             }
+            
+            // likes / buy
             ImGui::SetWindowFontScale(k_text_size_body);
             
             ImGui::Spacing();
             ImGui::Indent();
             
             ImGui::SetWindowFontScale(k_text_size_h2);
-                        
+                    
+            f32 rad = ctx.w * k_release_button_tap_radius_ratio;
+            
             ImGui::PushID("like");
-            static bool debounce = false;
             if(releases.flags[r] & EntryFlags::liked)
             {
                 ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(225.0f/255.0f, 48.0f/255.0f, 108.0f/255.0f, 1.0f));
                 ImGui::Text("%s", ICON_FA_HEART);
-                if(lenient_button_click(64.0f, debounce, r==0) && !ctx.scroll_lock_x && !ctx.scroll_lock_y)
+                if(lenient_button_tap(rad))
                 {
                     remove_like(releases.id[r]);
                     releases.flags[r] &= ~EntryFlags::liked;
@@ -1446,12 +1469,13 @@ namespace
             else
             {
                 ImGui::Text("%s", ICON_FA_HEART_O);
-                if(lenient_button_click(64.0f, debounce, r==0) && !ctx.scroll_lock_x && !ctx.scroll_lock_y)
+                if(lenient_button_tap(rad))
                 {
                     add_like(releases.id[r]);
                     releases.flags[r] |= EntryFlags::liked;
                 }
             }
+            f32 indent_x = ImGui::GetItemRectMin().x;
             ImGui::PopID();
             
             ImGui::SameLine();
@@ -1459,69 +1483,46 @@ namespace
             
             ImGui::SameLine();
             ImGui::PushID("buy");
-            if(releases.store_tags[r] & StoreTags::preorder)
-            {
+            if(releases.store_tags[r] & StoreTags::preorder) {
                 ImGui::Text("%s", ICON_FA_CALENDAR_PLUS_O);
             }
-            else
-            {
+            else {
                 ImGui::Text("%s", ICON_FA_CART_PLUS);
             }
             
-            if(lenient_button_click(64.0f, debounce, r==0) && !ctx.scroll_lock_x && !ctx.scroll_lock_y)
-            {
+            if(lenient_button_tap(rad)) {
                 ctx.open_url_request = releases.link[r];
             }
             ImGui::PopID();
             
-            if(releases.store_tags[r] & StoreTags::out_of_stock)
-            {
+            if(releases.store_tags[r] & StoreTags::out_of_stock) {
                 ImGui::SameLine();
                 ImGui::Text("%s", ICON_FA_EXCLAMATION);
             }
             
-            // TODO: align right
-            ImGui::SameLine();
-            ImGui::Spacing();
-            
+            // mini hype icons
             ImGui::SetWindowFontScale(k_text_size_body);
-            
-            f32 tw = ImGui::CalcTextSize(ICON_FA_FIRE).x;
-            
-            u32 mini_icons = 0;
-            if(releases.store_tags[r] & StoreTags::has_charted)
-            {
-                mini_icons++;
+        
+            Str hype_icons = "";
+            if(releases.store_tags[r] & StoreTags::has_charted) {
+                hype_icons.append(ICON_FA_FIRE);
             }
             
-            if(!(releases.store_tags[r] & StoreTags::out_of_stock))
-            {
-                if(releases.store_tags[r] & StoreTags::has_been_out_of_stock)
-                {
-                    mini_icons++;
+            if(!(releases.store_tags[r] & StoreTags::out_of_stock)) {
+                if(releases.store_tags[r] & StoreTags::has_been_out_of_stock) {
+                    if(!hype_icons.empty()) {
+                        hype_icons.append(" ");
+                    }
+                    hype_icons.append(ICON_FA_EXCLAMATION);
                 }
             }
             
-            if(mini_icons > 0)
-            {
-                ImGui::SameLine();
-                ImGui::SetCursorPosX(ctx.w - tw * mini_icons);
-            }
+            ImGui::SameLine();
+            f32 tw = ImGui::CalcTextSize(hype_icons.c_str()).x;
+            auto ww = ImGui::GetWindowSize().x;
+            ImGui::SetCursorPosX(ww - tw - indent_x);
             
-            if(releases.store_tags[r] & StoreTags::has_charted)
-            {
-                ImGui::SameLine();
-                ImGui::Text("%s", ICON_FA_FIRE);
-            }
-            
-            if(!(releases.store_tags[r] & StoreTags::out_of_stock))
-            {
-                if(releases.store_tags[r] & StoreTags::has_been_out_of_stock)
-                {
-                    ImGui::SameLine();
-                    ImGui::Text("%s", ICON_FA_EXCLAMATION);
-                }
-            }
+            ImGui::Text("%s", hype_icons.c_str());
             
             // release info
             ImGui::TextWrapped("%s", artist.c_str());
@@ -1720,6 +1721,30 @@ namespace
         }
     }
 
+    void apply_taps()
+    {
+        constexpr u32 k_tap_threshold_ms = 500;
+        static u32 s_tap_timer = k_tap_threshold_ms;
+        
+        // rest tap pos
+        ctx.tap_pos = vec2f(FLT_MAX);
+        
+        if(pen::input_is_mouse_down(PEN_MOUSE_L))
+        {
+            s_tap_timer -= 16;
+        }
+        else
+        {
+            if(s_tap_timer < k_tap_threshold_ms)
+            {
+                auto ms = pen::input_get_mouse_state();
+                ctx.tap_pos = vec2f(ms.x, ms.y);
+            }
+            
+            s_tap_timer = k_tap_threshold_ms;
+        }
+    }
+
     void apply_drags()
     {
         f32 w = ctx.w;
@@ -1855,6 +1880,7 @@ namespace
 
     void main_update()
     {
+        apply_taps();
         apply_drags();
         apply_clicks();
         audio_player();

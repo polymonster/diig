@@ -832,20 +832,7 @@ namespace
         return view;
     }
 
-    void change_store_view(Page_t page, const StoreView& store_view)
-    {
-        // first we add the current view into background views
-        if(ctx.view && ctx.view->page == Page::feed)
-        {
-            ctx.back_view = ctx.view;
-            ctx.background_views.insert(ctx.view);
-        }
-            
-        // kick off a new view
-        ctx.view = new_view(page, store_view);
-    }
-
-    void change_store_view(Page_t page, const Store& store)
+    StoreView store_view_from_store(Page_t page, const Store& store)
     {
         StoreView view;
         
@@ -863,8 +850,34 @@ namespace
             }
         }
         
+        return view;
+    }
+
+    ReleasesView* reload_view()
+    {
+        if(ctx.view)
+        {
+            auto store_view = store_view_from_store(ctx.view->page, ctx.store);
+            return new_view(ctx.view->page, store_view);
+        }
+        
+        return nullptr;
+    }
+
+    void change_store_view(Page_t page, const Store& store)
+    {
+        StoreView view = store_view_from_store(page, store);
+
         if(!view.store_name.empty() && !view.selected_view.empty() && view.selected_sections.size() > 0) {
-            change_store_view(page, view);
+            // first we add the current view into background views
+            if(ctx.view && ctx.view->page == Page::feed)
+            {
+                ctx.back_view = ctx.view;
+                ctx.background_views.insert(ctx.view);
+            }
+                
+            // kick off a new view
+            ctx.view = new_view(page, view);
         }
     }
 
@@ -989,8 +1002,7 @@ namespace
                 {
                     if(ctx.reload_view == nullptr && ctx.view->page != Page::likes)
                     {
-                        // spawn reload view
-                        ctx.reload_view = new_view(ctx.view->page, ctx.store.store_view);
+                        ctx.reload_view = reload_view();
                         debounce = true; // wait for debounce;
                     }
                 }
@@ -1758,8 +1770,6 @@ namespace
                 }
                 else {
                     releases.flags[i] &= ~EntryFlags::cache_url_requested;
-                    
-                    // TODO: art preloads
                 }
             }
         }

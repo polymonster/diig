@@ -192,6 +192,7 @@ def patch_releases(entries: str):
 # update store config to firebase, basically copies the stores.json local file to firebase
 def update_stores():
     authed_session = auth_session()
+    # update stores
     store_config = open("stores.json", "r").read()
     response = authed_session.patch(
         "https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app/stores.json", store_config)
@@ -200,6 +201,33 @@ def update_stores():
         print("successfully updated stores")
     else:
         print("error: updating stores")
+
+    # fetch rules + add store indices
+    rules = authed_session.get("https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app/.settings/rules.json")
+    rules = json.loads(rules.text)
+
+    release_indexes = rules["rules"]["releases"][".indexOn"]
+    store_config = json.loads(store_config)
+    for store_name in store_config:
+        store = store_config[store_name]
+        for section in store["sections"]:
+            for view in store["views"]:
+                index = f"{store_name}-{section}-{view}"
+                if index not in release_indexes:
+                    release_indexes.append(index)
+                    print(f"added new search index: {index}")
+
+    # patch rules
+    rules_str = json.dumps(rules, indent=4)
+    response = authed_session.put(
+        "https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app/.settings/rules.json", rules_str)
+    print(response.status_code)
+    assert(response.status_code == 200)
+    if response.status_code == 200:
+        print("successfully updated search indices")
+    else:
+        print("error: updating search indices")
+
 
 
 # clears the chart position and section position tracker, that will be re-populated during the next scrape

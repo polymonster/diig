@@ -1,6 +1,6 @@
 // TASKS
-// - store specific feed population
 // - store specific category selection. ie redeye ([techno / electro, house / disco])
+// - update store scpedific section display
 
 // - placeholder artwork image
 // - improve visuals for loading in progress items
@@ -37,6 +37,7 @@
 // REGRESS
 
 // DONE
+// x - store specific feed population
 // x - drag reload spinner
 // x - fix ci
 // x - ensure scaling of lenient button is correct on other devices

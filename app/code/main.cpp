@@ -1055,19 +1055,11 @@ namespace
             }
             ImGui::SetNextWindowPos(store_menu_pos);
             
-            if(ImGui::BeginPopup("Store Select"))
-            {
-                for(auto& item : ctx.stores.items())
-                {
+            if(ImGui::BeginPopup("Store Select")) {
+                for(auto& item : ctx.stores.items()) {
                     const c8* store_name = item.key().c_str();
-                    if(ImGui::MenuItem(item.key().c_str()))
-                    {
-                        ctx.store.name = store_name;
-                        
-                        //ctx.store.selected_view_index = 1;
-                        //ctx.store.selected_sections_mask = 0xff;
-                        
-                        change_store(store_name);
+                    if(ImGui::MenuItem(item.key().c_str())) {
+                        ctx.store = change_store(store_name);
                     }
                 }
                 ImGui::EndPopup();

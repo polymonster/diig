@@ -1529,6 +1529,7 @@ namespace
                 ImGui::Text("%s", ICON_FA_HEART);
                 if(lenient_button_tap(rad))
                 {
+                    pen::os_haptic_selection_feedback();
                     remove_like(releases.id[r]);
                     releases.flags[r] &= ~EntryFlags::liked;
                 }
@@ -1539,6 +1540,7 @@ namespace
                 ImGui::Text("%s", ICON_FA_HEART_O);
                 if(lenient_button_tap(rad))
                 {
+                    pen::os_haptic_selection_feedback();
                     add_like(releases.id[r]);
                     releases.flags[r] |= EntryFlags::liked;
                 }

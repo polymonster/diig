@@ -4,6 +4,7 @@
 
 // - placeholder artwork image
 // - improve visuals for loading in progress items
+// - improve feedback for loading failures (not spinning endlessly)
 
 // - haptic click on like
 // - colour and accent tweaks
@@ -31,6 +32,7 @@
 // - vertical swipe still sometimes feel sticky
 
 // - add reg validation
+// - add support to update rules from scraper
 
 // REGRESS
 
@@ -200,29 +202,28 @@ struct AsyncDict
 struct DataContext
 {
     // TODO: legacy
-    std::mutex          registry_mutex;
-    nlohmann::json      registry;
     nlohmann::json      user_data;
-    std::atomic<u32>    cache_registry_status = { 0 };
-    std::atomic<u32>    latest_registry_status = { 0 };
     std::atomic<u32>    user_data_status = { 0 };
     
     //
     AsyncDict           stores;
-
-    // cache info
     std::atomic<u32>    cached_release_folders = { 0 };
     std::atomic<size_t> cached_release_bytes = { 0 };
+};
+
+struct StoreView
+{
+    Str                 store_name = "";
+    Str                 selected_view = "";
+    std::vector<Str>    selected_sections = {};
 };
 
 struct ReleasesView
 {
     soa                 releases = {};
     DataContext*        data_ctx = nullptr;
-    Str                 store = "";
-    std::vector<Str>    sections = {};
-    Str                 view_name = "";
     Page_t              page = Page::feed;
+    StoreView           store_view = {};
     std::atomic<u32>    terminate = { 0 };
     std::atomic<u32>    threads_terminated = { 0 };
     u32                 top_pos = 0;
@@ -242,15 +243,9 @@ struct Store
     std::vector<Str> view_display_names;
     std::vector<Str> section_search_names;
     std::vector<Str> sections_display_names;
-    std::vector<u32> selected_sections;
-    u32              selected_view;
-};
-
-struct StoreView
-{
-    Str                 name;
-    Str                 selected_view;
-    std::vector<Str>    selected_sections;
+    u32              selected_view_index = 1;
+    u32              selected_sections_mask = 0xff;
+    StoreView        store_view = {};
 };
 
 struct AppContext
@@ -271,13 +266,12 @@ struct AppContext
     s32                     top = -1;
     Str                     open_url_request = "";
     u32                     open_url_counter = 0;
+    nlohmann::json          stores = {};
+    Store                   store = {};
+    Store                   store_view = {};
     ReleasesView*           view = nullptr;
     ReleasesView*           back_view = nullptr;
     ReleasesView*           reload_view = nullptr;
-    nlohmann::json          stores = {};
-    Str                     selected_store = "redeye";
-    Str                     selected_view = "new_releases";
-    std::vector<Str>        selected_sections = {};
     DataContext             data_ctx = {};
     std::set<ReleasesView*> background_views = {};
     u32                     spinner_texture = 0;

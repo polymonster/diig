@@ -363,13 +363,23 @@ pen::texture_creation_params load_texture_from_disk(const Str& filepath)
 bool fetch_json_cache(const c8* url, const c8* cache_filename, AsyncDict& async_dict)
 {
     pen::scope_timer(cache_filename, true);
-    auto stores = curl::download(url);
-    if(stores.data)
+    auto j = curl::download(url);
+    if(j.data)
     {
         async_dict.mutex.lock();
         try {
-            async_dict.dict = nlohmann::json::parse((const c8*)stores.data);
+            async_dict.dict = nlohmann::json::parse((const c8*)j.data);
             async_dict.status = DataStatus::e_ready;
+            
+            // check for firebase errors
+            if(async_dict.dict.size() == 1) {
+                for(auto& item : async_dict.dict.items()) {
+                    if(item.key() == "error") {
+                        PEN_LOG("error: %s", async_dict.dict.dump(4).c_str());
+                        async_dict.status = DataStatus::e_not_initialised;
+                    }
+                }
+            }
         }
         catch(...) {
             async_dict.status = DataStatus::e_not_initialised;
@@ -381,9 +391,9 @@ bool fetch_json_cache(const c8* url, const c8* cache_filename, AsyncDict& async_
     if(async_dict.status == DataStatus::e_ready)
     {
         // cache async
-        std::thread cache_thread([stores, filepath]() {
+        std::thread cache_thread([j, filepath]() {
             FILE* fp = fopen(filepath.c_str(), "wb");
-            fwrite(stores.data, stores.size, 1, fp);
+            fwrite(j.data, j.size, 1, fp);
             fclose(fp);
         });
         cache_thread.detach();
@@ -400,6 +410,18 @@ bool fetch_json_cache(const c8* url, const c8* cache_filename, AsyncDict& async_
             try {
                 async_dict.dict = nlohmann::json::parse(std::ifstream(filepath.c_str()));
                 async_dict.status = DataStatus::e_ready;
+                
+                // check for firebase errors
+                if(async_dict.dict.size() == 1) {
+                    for(auto& item : async_dict.dict.items()) {
+                        if(item.key() == "error") {
+                            PEN_LOG("cached error: %s", async_dict.dict.dump(4).c_str());
+                            async_dict.status = DataStatus::e_not_initialised;
+                        }
+                    }
+                }
+                
+                async_dict.status = DataStatus::e_not_available;
             } catch (...) {
                 async_dict.status = DataStatus::e_not_available;
             }
@@ -464,25 +486,55 @@ void* info_loader(void* userdata)
 {
     // get view from userdata
     ReleasesView* view = (ReleasesView*)userdata;
+    auto& store_view = view->store_view;
     
-    // ?orderBy=\"redeye-techno-electro-new_releases\""
-    
-    AsyncDict async_registry;
-    fetch_json_cache(
-        "https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app/releases.json",
-        "redeye-techno-electro-new_releases.json",
-        async_registry
-    );
-    
-    if(async_registry.status != DataStatus::e_ready)
-    {
-        PEN_LOG("error: fetching reg");
-        return nullptr;
-    }
-    
-    nlohmann::json releases_registry = async_registry.dict;
-    std::string view_name = "redeye-techno-electro-" + std::string(view->view_name.c_str());
+    nlohmann::json releases_registry;
     std::vector<ChartItem> view_chart;
+    
+    for(auto& section : store_view.selected_sections) {
+        // index is concantonated store-section-view.json
+        Str index_on = "";
+        index_on.appendf(
+            "%s-%s-%s",
+            store_view.store_name.c_str(),
+            section.c_str(),
+            store_view.selected_view.c_str()
+        );
+        
+        // cache file is the index name saved as json
+        Str cache_file = index_on;
+        cache_file.append(".json");
+        
+        // ordered search
+        Str search_url = "https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app/releases.json";
+        search_url.appendf("?orderBy=\"%s\"&startAt=0", index_on.c_str());
+        
+        AsyncDict async_registry;
+        fetch_json_cache(
+            search_url.c_str(),
+            cache_file.c_str(),
+            async_registry
+        );
+        
+        // TODO: handle total failure case
+        if(async_registry.status != DataStatus::e_ready)
+        {
+            PEN_LOG("error: fetching %s", index_on.c_str());
+            return nullptr;
+        }
+        
+        // add stored?
+        for(auto& item : async_registry.dict.items())
+        {
+            auto val = item.value();
+            view_chart.push_back({
+                item.key(),
+                val[index_on.c_str()]
+            });
+        }
+        
+        releases_registry.merge_patch(async_registry.dict);
+    }
     
     if(view->page == Page::likes)
     {
@@ -494,21 +546,6 @@ void* info_loader(void* userdata)
                 view_chart.push_back({
                     id,
                     0
-                });
-            }
-        }
-    }
-    else
-    {
-        // populate view
-        for(auto& item : releases_registry.items())
-        {
-            auto val = item.value();
-            if(val.contains(view_name))
-            {
-                view_chart.push_back({
-                    item.key(),
-                    val[view_name]
                 });
             }
         }
@@ -779,13 +816,13 @@ namespace
     u32         clear_screen;
     AppContext  ctx;
 
-    ReleasesView* new_view(Page_t page, Str view_name)
+    ReleasesView* new_view(Page_t page, StoreView store_view)
     {
         ReleasesView* view = new ReleasesView;
         view->data_ctx = &ctx.data_ctx;
         view->page = page;
         view->scroll = vec2f(0.0f, ctx.w);
-        view->view_name = view_name;
+        view->store_view = store_view;
         
         // workers per view
         pen::thread_create(info_loader, 10 * 1024 * 1024, view, pen::e_thread_start_flags::detached);
@@ -795,26 +832,79 @@ namespace
         return view;
     }
 
-    void change_view(Page_t page, Str view_name = "")
+    void change_store_view(Page_t page, const StoreView& store_view)
     {
-        // prevent entering same page twice
-        /*
-        if(ctx.view) {
-            if(ctx.view->page == page) {
-                return;
-            }
-        }
-        */
-        
         // first we add the current view into background views
-        if(ctx.view && ctx.view->page < Page::likes)
+        if(ctx.view && ctx.view->page == Page::feed)
         {
             ctx.back_view = ctx.view;
             ctx.background_views.insert(ctx.view);
         }
             
         // kick off a new view
-        ctx.view = new_view(page, view_name);
+        ctx.view = new_view(page, store_view);
+    }
+
+    void change_store_view(Page_t page, const Store& store)
+    {
+        StoreView view;
+        
+        view.store_name = store.name;
+        
+        // view
+        if(store.selected_view_index < store.view_search_names.size()) {
+            view.selected_view = store.view_search_names[store.selected_view_index];
+        }
+
+        // sections
+        for(u32 i = 0; i < store.section_search_names.size(); ++i) {
+            if(store.selected_sections_mask & (1<<i)) {
+                view.selected_sections.push_back(store.section_search_names[i]);
+            }
+        }
+        
+        if(!view.store_name.empty() && !view.selected_view.empty() && view.selected_sections.size() > 0) {
+            change_store_view(page, view);
+        }
+    }
+
+    Store change_store(const Str& store_name)
+    {
+        Store output = {};
+        if(ctx.stores.contains(store_name.c_str()))
+        {
+            auto& store = ctx.stores[store_name.c_str()];
+            auto& views = store["views"];
+            auto& section_search_names = store["sections"];
+            auto& section_display_names = store["section_display_names"];
+            
+            for(auto& view : views.items())
+            {
+                output.view_search_names.push_back(view.key());
+                
+                std::string dn = view.value()["display_name"];
+                output.view_display_names.push_back(dn.c_str());
+            }
+            
+            for(auto& section : section_display_names)
+            {
+                std::string n = section;
+                output.sections_display_names.push_back(n.c_str());
+            }
+            
+            for(auto& section : section_search_names)
+            {
+                std::string n = section;
+                output.section_search_names.push_back(n.c_str());
+            }
+            
+            output.name = store_name;
+            
+            // now change the store feed
+            change_store_view(Page::feed, output);
+        }
+        
+        return output;
     }
 
     void cleanup_views()
@@ -839,9 +929,8 @@ namespace
                             }
                             else
                             {
-                                // TODO: free
                                 // texture preloaded from disk
-                                // free(releases.artwork_tcp[i].data);
+                                free(releases.artwork_tcp[i].data);
                             }
                             memset(&releases.artwork_tcp, 0x0, sizeof(texture_creation_params));
                             releases.flags[i] &= ~EntryFlags::artwork_loaded;
@@ -901,7 +990,7 @@ namespace
                     if(ctx.reload_view == nullptr && ctx.view->page != Page::likes)
                     {
                         // spawn reload view
-                        ctx.reload_view = new_view(ctx.view->page, ctx.view->view_name);
+                        ctx.reload_view = new_view(ctx.view->page, ctx.store.store_view);
                         debounce = true; // wait for debounce;
                     }
                 }
@@ -915,7 +1004,7 @@ namespace
             
             // small padding
             f32 ss = ImGui::GetFontSize() * 2.0f;
-            ImGui::Dummy(ImVec2(0.0f, ImGui::GetFontSize()));
+            ImGui::Dummy(ImVec2(0.0f, ss));
             
             // spinner
             static f32 rot = 0.0f;
@@ -941,27 +1030,13 @@ namespace
         }
     }
 
-    void view_menu()
+    void store_menu()
     {
-        // initialise store info
-        if(ctx.stores.size() > 0)
-        {
-            // initialise at store 0
-            if(ctx.selected_store.empty())
-            {
-                for(auto& item : ctx.stores.items())
-                {
-                    ctx.selected_store = item.key().c_str();
-                    break;
-                }
-            }
-            
-            // initialise view at 0
-            
-            // initialise section to all sections
+        // early out until stores are loaded
+        if(ctx.store.name.empty()) {
+            return;
         }
         
-        // view info
         Page_t cur_page = ctx.view->page;
         if(cur_page != Page::likes)
         {
@@ -971,7 +1046,7 @@ namespace
             
             // store select
             ImGui::SameLine();
-            ImGui::Text("%s:", ctx.selected_store.c_str());
+            ImGui::Text("%s:", ctx.store.name.c_str());
             ImVec2 store_menu_pos = ImGui::GetItemRectMin();
             store_menu_pos.y = ImGui::GetItemRectMax().y;
             
@@ -987,109 +1062,104 @@ namespace
                     const c8* store_name = item.key().c_str();
                     if(ImGui::MenuItem(item.key().c_str()))
                     {
-                        // TODO: function change_store
-                        ctx.selected_store = store_name;
+                        ctx.store.name = store_name;
+                        
+                        //ctx.store.selected_view_index = 1;
+                        //ctx.store.selected_sections_mask = 0xff;
+                        
+                        change_store(store_name);
                     }
                 }
                 ImGui::EndPopup();
             }
-            
-            // view select
-            if(ctx.stores.contains(ctx.selected_store.c_str()))
-            {
-                auto store = ctx.stores[ctx.selected_store.c_str()];
-                
-                if(store.contains("views") && store["views"].contains(ctx.selected_view.c_str()))
-                {
-                    auto views = store["views"];
-                    
-                    // selected view display name
-                    std::string sn = views[ctx.selected_view.c_str()]["display_name"];
-                    ImGui::SameLine();
-                    ImGui::Text("%s", sn.c_str());
-                    ImVec2 view_menu_pos = ImGui::GetItemRectMin();
-                    view_menu_pos.y = ImGui::GetItemRectMax().y;
-                    
-                    //
-                    if(ImGui::IsItemClicked()) {
-                        ImGui::OpenPopup("View Select");
-                    }
-                    
-                    ImGui::SetNextWindowPos(view_menu_pos);
-                    if(ImGui::BeginPopup("View Select"))
-                    {
-                        for(auto& item : views.items())
-                        {
-                            std::string dn = item.value()["display_name"];
-                            if(ImGui::MenuItem(dn.c_str()))
-                            {
-                                ctx.selected_view = item.key().c_str();
-                                change_view(Page::feed, ctx.selected_view);
-                            }
-                        }
-                        ImGui::EndPopup();
-                    }
-                }
-            }
-            
-            /*
-            ImGui::SameLine();
-            ImGui::Text("%s", k_modes[cur_view]);
-            ImVec2 view_menu_pos = ImGui::GetItemRectMin();
-            view_menu_pos.y = ImGui::GetItemRectMax().y;
-            
-            //
-            if(ImGui::IsItemClicked()) {
-                ImGui::OpenPopup("View Select");
-            }
-            
-            ImGui::SetNextWindowPos(view_menu_pos);
-            if(ImGui::BeginPopup("View Select"))
-            {
-                if(ImGui::MenuItem("Latest"))
-                {
-                    change_view(View::latest, ctx.view->tags);
-                }
-                if(ImGui::MenuItem("Weekly Chart"))
-                {
-                    change_view(View::weekly_chart, ctx.view->tags);
-                }
-                if(ImGui::MenuItem("Monthly Chart"))
-                {
-                    change_view(View::monthly_chart, ctx.view->tags);
-                }
-                ImGui::EndPopup();
-            }
-            */
-            
-            ImGui::SetWindowFontScale(k_text_size_body);
-            
-            // tags
-            /*
-            ImGui::Dummy(ImVec2(k_indent1, 0.0f));
-            ImGui::SameLine();
-                    
-            ImGui::Text("%s", get_tags_str(ctx.view->tags).c_str());
-            ImVec2 tag_menu_pos = ImGui::GetItemRectMin();
-            tag_menu_pos.y = ImGui::GetItemRectMax().y;
-            
-            if(ImGui::IsItemClicked()) {
-                ImGui::OpenPopup("Tag Select");
-            }
-            
-            ImGui::SetNextWindowPos(tag_menu_pos);
-            if(ImGui::BeginPopup("Tag Select"))
-            {
+        }
+    }
+
+    void view_menu()
+    {
+        // view info
+        Page_t cur_page = ctx.view->page;
+        if(cur_page == Page::feed)
+        {
+            auto& store = ctx.store;
+            if(!store.name.empty()) {
+                // view name
                 ImGui::SetWindowFontScale(k_text_size_h2);
-                u32 new_tags = tag_menu(ctx.view->tags);
-                if(new_tags != cur_tags)
-                {
-                    change_view(ctx.view->view, new_tags);
+                ImGui::SameLine();
+                ImGui::Text("%s", store.view_display_names[store.selected_view_index].c_str());
+                ImVec2 view_menu_pos = ImGui::GetItemRectMin();
+                view_menu_pos.y = ImGui::GetItemRectMax().y;
+                if(ImGui::IsItemClicked()) {
+                    ImGui::OpenPopup("View Select");
                 }
-                ImGui::EndPopup();
+                
+                // view menu
+                ImGui::SetNextWindowPos(view_menu_pos);
+                if(ImGui::BeginPopup("View Select")) {
+                    for(u32 v = 0; v < store.view_display_names.size(); ++v) {
+                        if(ImGui::MenuItem(store.view_display_names[v].c_str())) {
+                            store.selected_view_index = v;
+                            store.store_view.selected_view = store.view_search_names[v];
+                            
+                            change_store_view(Page::feed, store);
+                        }
+                    }
+                    ImGui::EndPopup();
+                }
+                
+                // create a string by concatonating sections
+                Str sections_string = "";
+                for(u32 section = 0; section < store.sections_display_names.size(); ++section) {
+                    if(!sections_string.empty()) {
+                        sections_string.append(" / ");
+                    }
+                    sections_string.append(store.sections_display_names[section].c_str());
+                }
+                
+                // section name
+                ImGui::Dummy(ImVec2(k_indent1, 0.0f));
+                ImGui::SameLine();
+                
+                ImGui::SetWindowFontScale(k_text_size_body);
+                ImGui::Text("%s", sections_string.c_str());
+                ImVec2 section_menu_pos = ImGui::GetItemRectMin();
+                section_menu_pos.y = ImGui::GetItemRectMax().y;
+                if(ImGui::IsItemClicked()) {
+                    ImGui::OpenPopup("Section Select");
+                }
+                
+                // section menu
+                ImGui::SetNextWindowPos(section_menu_pos);
+                if(ImGui::BeginPopup("Section Select")) {
+                    ImGui::SetWindowFontScale(k_text_size_h2);
+                    for(u32 v = 0; v < store.sections_display_names.size(); ++v) {
+                        Str menu_item_str = "";
+                        u32 store_bit = (1<<v);
+                        
+                        // check mark
+                        if(store.selected_sections_mask & store_bit) {
+                            menu_item_str.append(ICON_FA_CHECK_SQUARE);
+                            menu_item_str.append(" ");
+                        }
+                        
+                        // menu item
+                        menu_item_str.append(store.sections_display_names[v].c_str());
+                        if(ImGui::MenuItem(menu_item_str.c_str())) {
+                            if(store.selected_sections_mask & store_bit) {
+                                store.selected_sections_mask &= ~store_bit;
+                            }
+                            else {
+                                store.selected_sections_mask |= store_bit;
+                            }
+                            
+                            change_store_view(Page::feed, store);
+                        }
+                    }
+                    ImGui::EndPopup();
+                }
+                
                 ImGui::SetWindowFontScale(k_text_size_body);
             }
-            */
         }
         else
         {
@@ -1202,7 +1272,7 @@ namespace
         static bool heart_debounce = false;
         if(lenient_button_click(rad, heart_debounce, true))
         {
-            change_view(Page::likes);
+            //change_view(Page::likes);
         }
         
         ImGui::SameLine();
@@ -1214,7 +1284,7 @@ namespace
         static bool ellipsis_debounce = false;
         if(lenient_button_click(rad, ellipsis_debounce, true))
         {
-            change_view(Page::settings);
+            //change_view(Page::settings);
         }
         
         ImGui::SetWindowFontScale(k_text_size_body);
@@ -1863,6 +1933,7 @@ namespace
         }
         else
         {
+            store_menu();
             view_menu();
             view_reload();
             release_feed();
@@ -1894,11 +1965,8 @@ namespace
         issue_open_url_requests();
     }
 
-    loop_t user_update()
+    void setup_stores()
     {
-        pen::timer_start(frame_timer);
-        pen::renderer_new_frame();
-        
         // grab stores
         if(ctx.stores.empty())
         {
@@ -1907,15 +1975,34 @@ namespace
             ctx.data_ctx.stores.mutex.unlock();
         }
         
+        // initialise store
+        if(ctx.stores.size() > 0) {
+            if(ctx.store.name.empty()) {
+                ctx.store = change_store("redeye");
+            }
+        }
+    }
+
+    loop_t user_update()
+    {
+        pen::timer_start(frame_timer);
+        pen::renderer_new_frame();
+        
         // clear backbuffer
         pen::renderer_set_targets(PEN_BACK_BUFFER_COLOUR, PEN_BACK_BUFFER_DEPTH);
         pen::renderer_clear(clear_screen);
 
         put::dev_ui::new_frame();
         
+        // after boot, we might need to wait for a small time until stores have downloaded and synced
+        setup_stores();
+        
         // main code entry
-        main_window();
-        main_update();
+        if(ctx.view)
+        {
+            main_window();
+            main_update();
+        }
         
         // present
         put::dev_ui::render();
@@ -1962,9 +2049,6 @@ namespace
         pen::thread_create(registry_loader, 10 * 1024 * 1024, &ctx.data_ctx, pen::e_thread_start_flags::detached);
         pen::thread_create(user_data_thread, 10 * 1024 * 1024, ctx.view, pen::e_thread_start_flags::detached);
 
-        // enter initial view, the inputs can be serialised
-        change_view(Page::feed, ctx.selected_view);
-
         // timer
         frame_timer = pen::timer_create();
         pen::timer_start(frame_timer);
@@ -1980,8 +2064,7 @@ namespace
         clear_screen = pen::renderer_create_clear_state(cs);
         
         // imgui style
-        // white
-        ImGui::StyleColorsLight();
+        ImGui::StyleColorsLight(); // white
         
         // screen ratio based spacing and indents
         ImGui::GetStyle().IndentSpacing = ctx.w * (ImGui::GetStyle().IndentSpacing / k_promax_11_w);

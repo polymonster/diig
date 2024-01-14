@@ -8,7 +8,6 @@
 // - colour and accent tweaks
 // - implement label link (on tap)
 
-// - add support for background audio sesion
 // - add info to MPNowPlacyingCenter
 // - add support for prev / next on backgrounded app
 // - add autoplay support
@@ -33,6 +32,7 @@
 // REGRESS
 
 // DONE
+// x - add support for background audio sesion
 // x - haptic click on like
 // x - add support to update rules from scraper
 // x - store specific category selection. ie redeye ([techno / electro, house / disco])

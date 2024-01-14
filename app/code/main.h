@@ -1,5 +1,8 @@
 // TASKS
 
+// - re-instate likes
+// - re-instate settings
+
 // - placeholder artwork image
 // - improve visuals for loading in progress items
 // - improve feedback for loading failures (not spinning endlessly)
@@ -10,8 +13,10 @@
 
 // - add info to MPNowPlacyingCenter
 // - add support for prev / next on backgrounded app
+// - add support for playing while locked
 // - add autoplay support
 
+// - user authentication + cloud saves
 // - refactor user data into a single dict and move to context
 // - user store prev position, prev mode etc
 // - serialise prev position and prev mode?
@@ -23,11 +28,11 @@
 // - img and audio file cache management
 // - add clear cache and cache options
 
-// - side swipe still isnt perfect
-// - vertical swipe still sometimes feel sticky
-
 // - move scrapers to sub folder
 // - add reg validation
+
+// - side swipe still isnt perfect
+// - vertical swipe still sometimes feel sticky
 
 // REGRESS
 

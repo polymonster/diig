@@ -1,12 +1,10 @@
 // TASKS
-// - store specific category selection. ie redeye ([techno / electro, house / disco])
-// - update store scpedific section display
 
 // - placeholder artwork image
 // - improve visuals for loading in progress items
 // - improve feedback for loading failures (not spinning endlessly)
+// - relay info if there are no results
 
-// - haptic click on like
 // - colour and accent tweaks
 // - implement label link (on tap)
 
@@ -14,8 +12,6 @@
 // - add info to MPNowPlacyingCenter
 // - add support for prev / next on backgrounded app
 // - add autoplay support
-
-// - move scrapers to sub folder
 
 // - refactor user data into a single dict and move to context
 // - user store prev position, prev mode etc
@@ -31,12 +27,16 @@
 // - side swipe still isnt perfect
 // - vertical swipe still sometimes feel sticky
 
+// - move scrapers to sub folder
 // - add reg validation
-// - add support to update rules from scraper
 
 // REGRESS
 
 // DONE
+// x - haptic click on like
+// x - add support to update rules from scraper
+// x - store specific category selection. ie redeye ([techno / electro, house / disco])
+// x - update store scpedific section display
 // x - store specific feed population
 // x - drag reload spinner
 // x - fix ci

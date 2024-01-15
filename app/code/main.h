@@ -3,8 +3,6 @@
 // - re-instate likes
 // - re-instate settings
 
-// - placeholder artwork image
-// - improve visuals for loading in progress items
 // - improve feedback for loading failures (not spinning endlessly)
 // - relay info if there are no results
 
@@ -37,6 +35,8 @@
 // REGRESS
 
 // DONE
+// x - placeholder artwork image
+// x - improve visuals for loading in progress items
 // x - add support for background audio sesion
 // x - haptic click on like
 // x - add support to update rules from scraper
@@ -167,7 +167,8 @@ namespace DataStatus
         e_not_initialised,
         e_loading,
         e_ready,
-        e_not_available
+        e_not_available,
+        e_no_entries
     };
 }
 typedef u32 DataStatus_t;
@@ -229,6 +230,7 @@ struct ReleasesView
     soa                 releases = {};
     DataContext*        data_ctx = nullptr;
     Page_t              page = Page::feed;
+    DataStatus_t        status = DataStatus::e_not_initialised;
     StoreView           store_view = {};
     std::atomic<u32>    terminate = { 0 };
     std::atomic<u32>    threads_terminated = { 0 };
@@ -258,6 +260,7 @@ struct AppContext
 {
     s32                     w, h = 0;
     f32                     status_bar_height = 0.0f;
+    f32                     dt;
     f32                     releases_scroll_maxy = 0.0f;
     void*                   releases_window = nullptr;
     Str                     play_track_filepath = "";
@@ -281,6 +284,9 @@ struct AppContext
     DataContext             data_ctx = {};
     std::set<ReleasesView*> background_views = {};
     u32                     spinner_texture = 0;
+    u32                     white_label_texture = 0;
+    u32                     loading_dots = 0;
+    f32                     loading_rot = 0.0f;
 };
 
 // magic number constants

@@ -405,6 +405,8 @@ bool fetch_json_cache(const c8* url, const c8* cache_filename, AsyncDict& async_
         pen::filesystem_getmtime(filepath.c_str(), mtime);
         if(mtime > 0)
         {
+            PEN_LOG("fallback to cache: %s", filepath.c_str());
+            
             // ensures it's valid
             async_dict.mutex.lock();
             try {
@@ -420,8 +422,6 @@ bool fetch_json_cache(const c8* url, const c8* cache_filename, AsyncDict& async_
                         }
                     }
                 }
-                
-                async_dict.status = DataStatus::e_not_available;
             } catch (...) {
                 async_dict.status = DataStatus::e_not_available;
             }
@@ -429,6 +429,7 @@ bool fetch_json_cache(const c8* url, const c8* cache_filename, AsyncDict& async_
         }
         else
         {
+            PEN_LOG("no cache for: %s", filepath.c_str());
             async_dict.status = DataStatus::e_not_available;
         }
     }
@@ -441,7 +442,11 @@ void* registry_loader(void* userdata)
     DataContext* ctx = (DataContext*)userdata;
     
     // fetch stores
-    fetch_json_cache("https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app/stores.json", "stores.json", ctx->stores);
+    fetch_json_cache(
+        "https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app/stores.json?&timeout=5s",
+        "stores.json",
+        ctx->stores
+    );
     
     return nullptr;
 };
@@ -491,6 +496,9 @@ void* info_loader(void* userdata)
     nlohmann::json releases_registry;
     std::vector<ChartItem> view_chart;
     
+    // track added items to avoid duplicates that appear in multiple genre sections
+    std::map<std::string, size_t> added_map;
+    
     for(auto& section : store_view.selected_sections) {
         // index is concantonated store-section-view.json
         Str index_on = "";
@@ -507,7 +515,7 @@ void* info_loader(void* userdata)
         
         // ordered search
         Str search_url = "https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app/releases.json";
-        search_url.appendf("?orderBy=\"%s\"&startAt=0", index_on.c_str());
+        search_url.appendf("?orderBy=\"%s\"&startAt=0&timeout=10s", index_on.c_str());
         
         AsyncDict async_registry;
         fetch_json_cache(
@@ -520,6 +528,8 @@ void* info_loader(void* userdata)
         if(async_registry.status != DataStatus::e_ready)
         {
             PEN_LOG("error: fetching %s", index_on.c_str());
+            view->status = DataStatus::e_not_available;
+            view->threads_terminated++;
             return nullptr;
         }
         
@@ -527,10 +537,24 @@ void* info_loader(void* userdata)
         for(auto& item : async_registry.dict.items())
         {
             auto val = item.value();
-            view_chart.push_back({
-                item.key(),
-                val[index_on.c_str()]
-            });
+            
+            if(added_map.find(item.key()) != added_map.end()) {
+                // if already in map, update using the min chart pos
+                auto vp = added_map[item.key()];
+                view_chart[vp].pos = std::min<u32>((u32)val[index_on.c_str()], (u32)view_chart[vp].pos);
+            }
+            else {
+                // add new entry to view_chart
+                added_map.insert({
+                    item.key(),
+                    view_chart.size()
+                });
+                
+                view_chart.push_back({
+                    item.key(),
+                    val[index_on.c_str()]
+                });
+            }
         }
         
         releases_registry.merge_patch(async_registry.dict);
@@ -549,6 +573,13 @@ void* info_loader(void* userdata)
                 });
             }
         }
+    }
+    
+    if(view_chart.empty())
+    {
+        view->status = DataStatus::e_not_available;
+        view->threads_terminated++;
+        return nullptr;
     }
     
     // sort the items
@@ -1019,12 +1050,10 @@ namespace
             ImGui::Dummy(ImVec2(0.0f, ss));
             
             // spinner
-            static f32 rot = 0.0f;
             auto x = ImGui::GetWindowSize().x * 0.5f;
             auto y = ImGui::GetCursorPos().y;
-            ImGui::ImageRotated(IMG(ctx.spinner_texture), ImVec2(x, y), ImVec2(ss, ss), rot);
-            rot += 1.0f/60.0f;
-            
+            ImGui::ImageRotated(IMG(ctx.spinner_texture), ImVec2(x, y), ImVec2(ss, ss), ctx.loading_rot);
+
             ImGui::Dummy(ImVec2(0.0f, ss));
             ImGui::SetWindowFontScale(1.0f);
         }
@@ -1357,13 +1386,21 @@ namespace
             // ..
             f32 scaled_vel = ctx.scroll_delta.x;
             
-            // images
+            // images or placeholder
+            u32 tex = ctx.white_label_texture;
+            f32 texh = w;
+            
             if(releases.artwork_texture[r])
             {
-                f32 h = (f32)w * ((f32)releases.artwork_tcp[r].height / (f32)releases.artwork_tcp[r].width);
+                tex = releases.artwork_texture[r];
+                texh = (f32)w * ((f32)releases.artwork_tcp[r].height / (f32)releases.artwork_tcp[r].width);
+            }
+            
+            if(tex)
+            {
                 f32 spacing = 20.0f;
                                 
-                ImGui::BeginChildEx("rel", r+1, ImVec2((f32)w, h + 10.0f), false, 0);
+                ImGui::BeginChildEx("rel", r+1, ImVec2((f32)w, texh + 10.0f), false, 0);
                 ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(spacing, 0.0));
                 
                 u32 num_images = std::max<u32>(1, releases.track_url_count[r]);
@@ -1377,7 +1414,7 @@ namespace
                         ImGui::SameLine();
                     }
                     
-                    ImGui::Image(IMG(releases.artwork_texture[r]), ImVec2((f32)w, h));
+                    ImGui::Image(IMG(tex), ImVec2((f32)w, texh));
                     
                     if(ImGui::IsItemHovered() && pen::input_is_mouse_down(PEN_MOUSE_L))
                     {
@@ -1518,10 +1555,25 @@ namespace
             }
             else
             {
-                // no audio
                 auto ww = ImGui::GetWindowSize().x;
-                ImGui::SetCursorPosX(ww * 0.5f);
-                ImGui::Text("%s", ICON_FA_TIMES_CIRCLE);
+                
+                if(releases.track_url_count[r] == 0)
+                {
+                    // no audio
+                    ImGui::SetCursorPosX(ww * 0.5f);
+                    ImGui::Text("%s", ICON_FA_TIMES_CIRCLE);
+                }
+                else
+                {
+                    f32 tw = ImGui::CalcTextSize("....").x;
+                    ImGui::SetCursorPosX((ww - tw) * 0.5f);
+                    
+                    Str dd = ".";
+                    for(u32 d = 0; d < ctx.loading_dots; ++d) {
+                        dd.append(".");
+                    }
+                    ImGui::Text("%s", dd.c_str());
+                }
             }
             
             // likes / buy
@@ -1987,8 +2039,28 @@ namespace
         }
     }
 
+    void update_loading_anims()
+    {
+        // loading dots
+        static f32 track_load_dots = 0.0f;
+        track_load_dots += ctx.dt;
+        if(track_load_dots > 1.0f) {
+            track_load_dots -= 1.0f;
+            ctx.loading_dots = (ctx.loading_dots + 1) % 4;
+        }
+        
+        // loading spinner rotation
+        ctx.loading_rot += ctx.dt;
+        if(ctx.loading_rot > 2.0f * M_PI) {
+            ctx.loading_rot = 0.0f;
+        }
+    }
+
     loop_t user_update()
     {
+        ctx.dt = 1.0f / (f32)pen::timer_elapsed_ms(frame_timer);
+        update_loading_anims();
+        
         pen::timer_start(frame_timer);
         pen::renderer_new_frame();
         
@@ -2083,6 +2155,9 @@ namespace
         
         // spinner
         ctx.spinner_texture = put::load_texture("data/images/spinner.dds");
+        
+        // white label
+        ctx.white_label_texture = put::load_texture("data/images/white_label.dds");
 
         pen_main_loop(user_update);
         return PEN_THREAD_OK;

@@ -369,26 +369,26 @@ bool fetch_json_cache(const c8* url, const c8* cache_filename, AsyncDict& async_
         async_dict.mutex.lock();
         try {
             async_dict.dict = nlohmann::json::parse((const c8*)j.data);
-            async_dict.status = DataStatus::e_ready;
+            async_dict.status = Status::e_ready;
             
             // check for firebase errors
             if(async_dict.dict.size() == 1) {
                 for(auto& item : async_dict.dict.items()) {
                     if(item.key() == "error") {
                         PEN_LOG("error: %s", async_dict.dict.dump(4).c_str());
-                        async_dict.status = DataStatus::e_not_initialised;
+                        async_dict.status = Status::e_not_initialised;
                     }
                 }
             }
         }
         catch(...) {
-            async_dict.status = DataStatus::e_not_initialised;
+            async_dict.status = Status::e_not_initialised;
         }
         async_dict.mutex.unlock();
     }
     
     Str filepath = get_persistent_filepath(cache_filename, true);
-    if(async_dict.status == DataStatus::e_ready)
+    if(async_dict.status == Status::e_ready)
     {
         // cache async
         std::thread cache_thread([j, filepath]() {
@@ -411,30 +411,30 @@ bool fetch_json_cache(const c8* url, const c8* cache_filename, AsyncDict& async_
             async_dict.mutex.lock();
             try {
                 async_dict.dict = nlohmann::json::parse(std::ifstream(filepath.c_str()));
-                async_dict.status = DataStatus::e_ready;
+                async_dict.status = Status::e_ready;
                 
                 // check for firebase errors
                 if(async_dict.dict.size() == 1) {
                     for(auto& item : async_dict.dict.items()) {
                         if(item.key() == "error") {
                             PEN_LOG("cached error: %s", async_dict.dict.dump(4).c_str());
-                            async_dict.status = DataStatus::e_not_initialised;
+                            async_dict.status = Status::e_not_initialised;
                         }
                     }
                 }
             } catch (...) {
-                async_dict.status = DataStatus::e_not_available;
+                async_dict.status = Status::e_not_available;
             }
             async_dict.mutex.unlock();
         }
         else
         {
             PEN_LOG("no cache for: %s", filepath.c_str());
-            async_dict.status = DataStatus::e_not_available;
+            async_dict.status = Status::e_not_available;
         }
     }
     
-    return async_dict.status == DataStatus::e_ready;
+    return async_dict.status == Status::e_ready;
 }
 
 void* registry_loader(void* userdata)
@@ -525,10 +525,10 @@ void* info_loader(void* userdata)
         );
         
         // TODO: handle total failure case
-        if(async_registry.status != DataStatus::e_ready)
+        if(async_registry.status != Status::e_ready)
         {
             PEN_LOG("error: fetching %s", index_on.c_str());
-            view->status = DataStatus::e_not_available;
+            view->status = Status::e_not_available;
             view->threads_terminated++;
             return nullptr;
         }
@@ -577,7 +577,7 @@ void* info_loader(void* userdata)
     
     if(view_chart.empty())
     {
-        view->status = DataStatus::e_not_available;
+        view->status = Status::e_not_available;
         view->threads_terminated++;
         return nullptr;
     }
@@ -656,7 +656,7 @@ void* info_loader(void* userdata)
         // check likes
         if(has_like(view->releases.id[ri]))
         {
-            view->releases.flags[ri] |= EntryFlags::liked;
+            view->releases.flags[ri] |= EntityFlags::liked;
         }
         
         // store tags
@@ -739,7 +739,7 @@ void* data_cacher(void* userdata)
         // waits on info loader thread
         for(size_t i = 0; i < view->releases.available_entries; ++i)
         {
-            if(!(view->releases.flags[i] & EntryFlags::cache_url_requested)) {
+            if(!(view->releases.flags[i] & EntityFlags::cache_url_requested)) {
                 continue;
             }
             
@@ -749,12 +749,12 @@ void* data_cacher(void* userdata)
                 if(view->releases.artwork_filepath[i].empty())
                 {
                     view->releases.artwork_filepath[i] = download_and_cache(view->releases.artwork_url[i], view->releases.id[i]);
-                    view->releases.flags[i] |= EntryFlags::artwork_cached;
+                    view->releases.flags[i] |= EntityFlags::artwork_cached;
                 }
             }
             
             // cache tracks
-            if(!(view->releases.flags[i] & EntryFlags::tracks_cached))
+            if(!(view->releases.flags[i] & EntityFlags::tracks_cached))
             {
                 if(view->releases.track_url_count[i] > 0 && view->releases.track_filepaths[i] == nullptr)
                 {
@@ -768,7 +768,7 @@ void* data_cacher(void* userdata)
                     }
                     
                     std::atomic_thread_fence(std::memory_order_release);
-                    view->releases.flags[i] |= EntryFlags::tracks_cached;
+                    view->releases.flags[i] |= EntityFlags::tracks_cached;
                     view->releases.track_filepath_count[i] = view->releases.track_url_count[i];
                 }
             }
@@ -798,14 +798,14 @@ void* data_loader(void* userdata)
             // load art if cached and not loaded
             std::atomic_thread_fence(std::memory_order_acquire);
             
-            if((view->releases.flags[i] & EntryFlags::artwork_cached) &&
-               !(view->releases.flags[i] & EntryFlags::artwork_loaded) &&
-               (view->releases.flags[i] & EntryFlags::artwork_requested))
+            if((view->releases.flags[i] & EntityFlags::artwork_cached) &&
+               !(view->releases.flags[i] & EntityFlags::artwork_loaded) &&
+               (view->releases.flags[i] & EntityFlags::artwork_requested))
             {
                 view->releases.artwork_tcp[i] = load_texture_from_disk(view->releases.artwork_filepath[i]);
                 
                 std::atomic_thread_fence(std::memory_order_release);
-                view->releases.flags[i] |= EntryFlags::artwork_loaded;
+                view->releases.flags[i] |= EntityFlags::artwork_loaded;
             }
         }
         
@@ -965,7 +965,7 @@ namespace
                     auto& releases = view->releases;
                     for(size_t i = 0; i < releases.available_entries; ++i) {
                         // unload textures
-                        if (releases.flags[i] & EntryFlags::artwork_loaded) {
+                        if (releases.flags[i] & EntityFlags::artwork_loaded) {
                             if(releases.artwork_texture[i] != 0) {
                                 // textures themseleves
                                 pen::renderer_release_texture(releases.artwork_texture[i]);
@@ -977,8 +977,8 @@ namespace
                                 free(releases.artwork_tcp[i].data);
                             }
                             memset(&releases.artwork_tcp, 0x0, sizeof(texture_creation_params));
-                            releases.flags[i] &= ~EntryFlags::artwork_loaded;
-                            releases.flags[i] &= ~EntryFlags::artwork_requested;
+                            releases.flags[i] &= ~EntityFlags::artwork_loaded;
+                            releases.flags[i] &= ~EntityFlags::artwork_requested;
                         }
                         
                         // unload strings
@@ -1345,18 +1345,21 @@ namespace
             auto title = releases.title[r];
             auto artist = releases.artist[r];
             
-            // apply loads
-            std::atomic_thread_fence(std::memory_order_acquire);
-            if(releases.flags[r] & EntryFlags::artwork_loaded)
+            // track the start y pos of the item
+            f32 starty = ImGui::GetCursorPos().y;
+            f32 scrolly = ImGui::GetScrollY();
+            
+            // skip items off the bottom
+            if(starty - scrolly > h * 10.0f) {
+                break;
+            }
+            
+            // skip items we have passed with a dummy
+            if(releases.sizey[r] > 0.0f)
             {
-                if(releases.artwork_texture[r] == 0)
-                {
-                    if(releases.artwork_tcp[r].data)
-                    {
-                        releases.artwork_texture[r] = pen::renderer_create_texture(releases.artwork_tcp[r]);
-                        pen::memory_free(releases.artwork_tcp[r].data); // data is copied for the render thread. safe to delete
-                        releases.artwork_tcp[r].data = nullptr;
-                    }
+                if(starty + releases.sizey[r] - scrolly < 0.0f) {
+                    ImGui::Dummy(ImVec2(0.0f, releases.sizey[r]));
+                    continue;
                 }
             }
             
@@ -1422,28 +1425,28 @@ namespace
                         {
                             if(abs(ctx.scroll_delta.x) > k_drag_threshold && ctx.side_drag)
                             {
-                                releases.flags[r] |= EntryFlags::dragging;
+                                releases.flags[r] |= EntityFlags::dragging;
                                 ctx.scroll_lock_x = true;
                             }
                             
-                            releases.flags[r] |= EntryFlags::hovered;
+                            releases.flags[r] |= EntityFlags::hovered;
                         }
                     }
                 }
                 
                 if(!pen::input_is_mouse_down(PEN_MOUSE_L))
                 {
-                    releases.flags[r] &= ~EntryFlags::hovered;
+                    releases.flags[r] &= ~EntityFlags::hovered;
                     if(abs(scaled_vel) < 1.0)
                     {
-                        releases.flags[r] &= ~EntryFlags::dragging;
+                        releases.flags[r] &= ~EntityFlags::dragging;
                     }
                 }
                 
                 // stop drags if we no longer hover
-                if(!(releases.flags[r] & EntryFlags::hovered))
+                if(!(releases.flags[r] & EntityFlags::hovered))
                 {
-                    if(releases.flags[r] & EntryFlags::dragging)
+                    if(releases.flags[r] & EntityFlags::dragging)
                     {
                         ctx.scroll_delta.y = 0.0f;
                         releases.scrollx[r] -= scaled_vel;
@@ -1452,25 +1455,25 @@ namespace
                     f32 target = releases.select_track[r] * imgw;
                     f32 ssx = releases.scrollx[r];
                     
-                    if(!(releases.flags[r] & EntryFlags::transitioning))
+                    if(!(releases.flags[r] & EntityFlags::transitioning))
                     {
                         if(ssx > target + (imgw/2) && releases.select_track[r]+1 < num_images)
                         {
                             ctx.scroll_delta.x = 0.0;
                             releases.select_track[r] += 1;
-                            releases.flags[r] |= EntryFlags::transitioning;
+                            releases.flags[r] |= EntityFlags::transitioning;
                         }
                         else if(ssx < target - (imgw/2) && (ssize_t)releases.select_track[r]-1 >= 0)
                         {
                             ctx.scroll_delta.x = 0.0;
                             releases.select_track[r] -= 1;
-                            releases.flags[r] |= EntryFlags::transitioning;
+                            releases.flags[r] |= EntityFlags::transitioning;
                         }
                         else
                         {
                             if(abs(scaled_vel) < 5.0)
                             {
-                                releases.flags[r] |= EntryFlags::transitioning;
+                                releases.flags[r] |= EntityFlags::transitioning;
                             }
                         }
                     }
@@ -1479,7 +1482,7 @@ namespace
                         if(abs(ssx - target) < k_inertia_cutoff)
                         {
                             releases.scrollx[r] = target;
-                            releases.flags[r] &= ~EntryFlags::transitioning;
+                            releases.flags[r] &= ~EntityFlags::transitioning;
                         }
                         else
                         {
@@ -1490,12 +1493,12 @@ namespace
                         }
                     }
                 }
-                else if (releases.flags[r] & EntryFlags::dragging)
+                else if (releases.flags[r] & EntityFlags::dragging)
                 {
                     releases.scrollx[r] -= ctx.scroll_delta.x;
                     releases.scrollx[r] = std::max(releases.scrollx[r], 0.0f);
                     releases.scrollx[r] = std::min(releases.scrollx[r], max_scroll);
-                    releases.flags[r] &= ~EntryFlags::transitioning;
+                    releases.flags[r] &= ~EntityFlags::transitioning;
                 }
                 
                 ImGui::SetScrollX(releases.scrollx[r]);
@@ -1587,7 +1590,7 @@ namespace
             f32 rad = ctx.w * k_release_button_tap_radius_ratio;
             
             ImGui::PushID("like");
-            if(releases.flags[r] & EntryFlags::liked)
+            if(releases.flags[r] & EntityFlags::liked)
             {
                 ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(225.0f/255.0f, 48.0f/255.0f, 108.0f/255.0f, 1.0f));
                 ImGui::Text("%s", ICON_FA_HEART);
@@ -1595,7 +1598,7 @@ namespace
                 {
                     pen::os_haptic_selection_feedback();
                     remove_like(releases.id[r]);
-                    releases.flags[r] &= ~EntryFlags::liked;
+                    releases.flags[r] &= ~EntityFlags::liked;
                 }
                 ImGui::PopStyleColor();
             }
@@ -1606,7 +1609,7 @@ namespace
                 {
                     pen::os_haptic_selection_feedback();
                     add_like(releases.id[r]);
-                    releases.flags[r] |= EntryFlags::liked;
+                    releases.flags[r] |= EntityFlags::liked;
                 }
             }
             f32 indent_x = ImGui::GetItemRectMin().x;
@@ -1674,6 +1677,10 @@ namespace
             ImGui::Unindent();
             
             ImGui::Spacing();
+            
+            f32 endy = ImGui::GetCursorPos().y;
+            
+            releases.sizey[r] = endy - starty;
         }
         
         // couple of empty ones so we can reach the end of the feed
@@ -1716,6 +1723,7 @@ namespace
                 }
             }
             
+            // play new
             if(ctx.play_track_filepath.length() > 0 && ctx.invalidate_track)
             {
                 // stop existing
@@ -1738,6 +1746,10 @@ namespace
                 
                 put::audio_add_channel_to_group(ci, gi);
                 put::audio_group_set_volume(gi, 1.0f);
+                
+                u32 t = releases.select_track[ctx.top];
+                pen::music_set_now_playing(
+                    releases.artist[ctx.top], releases.title[ctx.top], releases.track_names[ctx.top][t]);
 
                 ctx.invalidate_track = false;
                 started = false;
@@ -1767,7 +1779,7 @@ namespace
                     {
                         ctx.scroll_delta.x = 0.0;
                         releases.select_track[ctx.top] += 1;
-                        releases.flags[ctx.top] |= EntryFlags::transitioning;
+                        releases.flags[ctx.top] |= EntityFlags::transitioning;
                     }
                 }
                 else if(gstate.play_state == put::e_audio_play_state::playing)
@@ -1784,8 +1796,7 @@ namespace
         
         // TODO: make the ranges data driven
         // make requests for data
-        if(ctx.top != -1)
-        {
+        if(ctx.top != -1) {
             s32 range_start = max(ctx.top - 10, 0);
             s32 range_end = min<s32>(ctx.top + 10, (s32)releases.available_entries);
             
@@ -1793,16 +1804,16 @@ namespace
             {
                 if(i >= range_start && i <= range_end) {
                     if(releases.artwork_texture[i] == 0) {
-                        releases.flags[i] |= EntryFlags::artwork_requested;
+                        releases.flags[i] |= EntityFlags::artwork_requested;
                     }
                 }
-                else if (releases.flags[i] & EntryFlags::artwork_loaded){
+                else if (releases.flags[i] & EntityFlags::artwork_loaded){
                     if(releases.artwork_texture[i] != 0) {
                         // proper release
                         pen::renderer_release_texture(releases.artwork_texture[i]);
                         releases.artwork_texture[i] = 0;
-                        releases.flags[i] &= ~EntryFlags::artwork_loaded;
-                        releases.flags[i] &= ~EntryFlags::artwork_requested;
+                        releases.flags[i] &= ~EntityFlags::artwork_loaded;
+                        releases.flags[i] &= ~EntityFlags::artwork_requested;
                     }
                 }
             }
@@ -1810,18 +1821,30 @@ namespace
         }
         
         // make requests for cache
-        if(ctx.top != -1)
-        {
+        if(ctx.top != -1) {
             s32 range_start = max(ctx.top - 100, 0);
             s32 range_end = min<s32>(ctx.top + 100, (s32)releases.available_entries);
             
-            for(size_t i = 0; i < releases.available_entries; ++i)
-            {
+            for(size_t i = 0; i < releases.available_entries; ++i) {
                 if(i >= range_start && i <= range_end) {
-                    releases.flags[i] |= EntryFlags::cache_url_requested;
+                    releases.flags[i] |= EntityFlags::cache_url_requested;
                 }
                 else {
-                    releases.flags[i] &= ~EntryFlags::cache_url_requested;
+                    releases.flags[i] &= ~EntityFlags::cache_url_requested;
+                }
+            }
+        }
+        
+        // apply loads
+        std::atomic_thread_fence(std::memory_order_acquire);
+        for(size_t r = 0; r < releases.available_entries; ++r) {
+            if(releases.flags[r] & EntityFlags::artwork_loaded) {
+                if(releases.artwork_texture[r] == 0) {
+                    if(releases.artwork_tcp[r].data) {
+                        releases.artwork_texture[r] = pen::renderer_create_texture(releases.artwork_tcp[r]);
+                        pen::memory_free(releases.artwork_tcp[r].data); // data is copied for the render thread. safe to delete
+                        releases.artwork_tcp[r].data = nullptr;
+                    }
                 }
             }
         }
@@ -2104,6 +2127,12 @@ namespace
 
         // force audio in silent mode
         pen::os_ignore_slient();
+        
+        // allow background and lock screen audio
+        pen::os_enable_background_audio();
+        
+        // support background control and info display
+        pen::music_enable_remote_control();
         
         // get window size
         pen::window_get_size(ctx.w, ctx.h);

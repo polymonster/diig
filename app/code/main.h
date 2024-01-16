@@ -99,7 +99,7 @@
 
 using namespace put::ecs;
 
-namespace EntryFlags
+namespace EntityFlags
 {
     enum EntryFlags
     {
@@ -113,7 +113,8 @@ namespace EntryFlags
         artwork_requested = 1<<7,
         liked = 1<<8,
         hovered = 1<<9,
-        cache_url_requested = 1<<10
+        cache_url_requested = 1<<10,
+        visible = 1<<11
     };
 };
 
@@ -160,9 +161,9 @@ namespace Page
 }
 typedef u32 Page_t;
 
-namespace DataStatus
+namespace Status
 {
-    enum DataStatus
+    enum Status
     {
         e_not_initialised,
         e_loading,
@@ -171,7 +172,7 @@ namespace DataStatus
         e_no_entries
     };
 }
-typedef u32 DataStatus_t;
+typedef u32 Status_t;
 
 struct soa
 {
@@ -194,6 +195,7 @@ struct soa
     cmp_array<Str*>                         track_filepaths;
     cmp_array<u32>                          select_track;
     cmp_array<f32>                          scrollx;
+    cmp_array<f32>                          sizey;
     cmp_array<StoreTags_t>                  store_tags;
     std::atomic<size_t>                     available_entries = {0};
     std::atomic<size_t>                     soa_size = {0};
@@ -203,7 +205,7 @@ struct AsyncDict
 {
     std::mutex                  mutex;
     nlohmann::json              dict;
-    std::atomic<DataStatus_t>   status = { DataStatus::e_not_initialised };
+    std::atomic<Status_t>   status = { Status::e_not_initialised };
 };
 
 struct DataContext
@@ -230,7 +232,7 @@ struct ReleasesView
     soa                 releases = {};
     DataContext*        data_ctx = nullptr;
     Page_t              page = Page::feed;
-    DataStatus_t        status = DataStatus::e_not_initialised;
+    Status_t        status = Status::e_not_initialised;
     StoreView           store_view = {};
     std::atomic<u32>    terminate = { 0 };
     std::atomic<u32>    threads_terminated = { 0 };

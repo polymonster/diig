@@ -1590,11 +1590,12 @@ namespace
             f32 rad = ctx.w * k_release_button_tap_radius_ratio;
             
             ImGui::PushID("like");
+            bool scrolling = ctx.scroll_lock_x || ctx.scroll_lock_y;
             if(releases.flags[r] & EntityFlags::liked)
             {
                 ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(225.0f/255.0f, 48.0f/255.0f, 108.0f/255.0f, 1.0f));
                 ImGui::Text("%s", ICON_FA_HEART);
-                if(lenient_button_tap(rad))
+                if(!scrolling && lenient_button_tap(rad))
                 {
                     pen::os_haptic_selection_feedback();
                     remove_like(releases.id[r]);
@@ -1605,7 +1606,7 @@ namespace
             else
             {
                 ImGui::Text("%s", ICON_FA_HEART_O);
-                if(lenient_button_tap(rad))
+                if(!scrolling && lenient_button_tap(rad))
                 {
                     pen::os_haptic_selection_feedback();
                     add_like(releases.id[r]);
@@ -1627,7 +1628,7 @@ namespace
                 ImGui::Text("%s", ICON_FA_CART_PLUS);
             }
             
-            if(lenient_button_tap(rad)) {
+            if(!scrolling && lenient_button_tap(rad)) {
                 ctx.open_url_request = releases.link[r];
             }
             ImGui::PopID();
@@ -1747,9 +1748,15 @@ namespace
                 put::audio_add_channel_to_group(ci, gi);
                 put::audio_group_set_volume(gi, 1.0f);
                 
+                u32 r = ctx.top;
                 u32 t = releases.select_track[ctx.top];
+                Str track_name = "";
+                if(t < releases.track_name_count[r]) {
+                    track_name = releases.track_names[r][t];
+                }
+                
                 pen::music_set_now_playing(
-                    releases.artist[ctx.top], releases.title[ctx.top], releases.track_names[ctx.top][t]);
+                    releases.artist[r], releases.title[r], track_name);
 
                 ctx.invalidate_track = false;
                 started = false;

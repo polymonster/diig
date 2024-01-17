@@ -9,9 +9,7 @@
 // - colour and accent tweaks
 // - implement label link (on tap)
 
-// - add info to MPNowPlacyingCenter
 // - add support for prev / next on backgrounded app
-// - add support for playing while locked
 // - add autoplay support
 
 // - user authentication + cloud saves
@@ -35,6 +33,8 @@
 // REGRESS
 
 // DONE
+// x - add support for playing while locked
+// x - add info to MPNowPlacyingCenter
 // x - placeholder artwork image
 // x - improve visuals for loading in progress items
 // x - add support for background audio sesion

@@ -1694,6 +1694,11 @@ namespace
         ImGui::EndChild();
     }
 
+    void set_now_playing_artwork(void* data, u32 row_pitch, u32 depth_pitch, u32 block_size)
+    {
+        pen::music_set_now_playing_artwork(data, row_pitch / block_size, depth_pitch / row_pitch, 8, row_pitch);
+    }
+
     void audio_player()
     {
         auto& releases = ctx.view->releases;
@@ -1705,6 +1710,10 @@ namespace
             static u32 ci = -1;
             static u32 gi = -1;
             static bool started = false;
+            
+            static u32 read_tex_data_handle = -1;
+            
+            u32 r = ctx.top;
             
             if(ctx.top == -1)
             {
@@ -1748,7 +1757,6 @@ namespace
                 put::audio_add_channel_to_group(ci, gi);
                 put::audio_group_set_volume(gi, 1.0f);
                 
-                u32 r = ctx.top;
                 u32 t = releases.select_track[ctx.top];
                 Str track_name = "";
                 if(t < releases.track_name_count[r]) {
@@ -1765,6 +1773,23 @@ namespace
             // playing
             if(is_valid(ci))
             {
+                // read back texture data to display on lock screen
+                if(releases.artwork_texture[r] && read_tex_data_handle != releases.artwork_texture[r])
+                {
+                    pen::resource_read_back_params rrbp;
+                    rrbp.format = releases.artwork_tcp[r].format;
+                    rrbp.block_size = releases.artwork_tcp[r].block_size;
+                    rrbp.data_size = releases.artwork_tcp[r].data_size;
+                    rrbp.depth_pitch = releases.artwork_tcp[r].data_size;
+                    rrbp.row_pitch = releases.artwork_tcp[r].width * rrbp.block_size;
+                    rrbp.resource_index = releases.artwork_texture[r];
+                    rrbp.call_back_function = set_now_playing_artwork;
+                    
+                    pen::renderer_read_back_resource(rrbp);
+                    
+                    read_tex_data_handle = releases.artwork_texture[r];
+                }
+                
                 put::audio_group_state gstate;
                 memset(&gstate, 0x0, sizeof(put::audio_group_state));
                 put::audio_group_get_state(gi, &gstate);

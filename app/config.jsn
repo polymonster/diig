@@ -186,5 +186,14 @@ import "pmtech/tools/pmbuild_ext/pmbuild_init.jsn"
                 "./tools/osx/makeicon -sizes:dist/ios/Images.xcassets/AppIcon.appiconset/Contents.json -input:dist/icon/dig_icon.png -resize -platform:ios dist/ios/Images.xcassets/AppIcon.appiconset"
             ]
         }
+
+        make: {
+            toolchain: "xcodebuild"
+            workspace: "digios.xcworkspace"
+            files: [
+                "build/ios/**/*.xcodeproj"
+            ]
+            change_ext: ""
+        }
     }
 }

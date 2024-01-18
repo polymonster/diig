@@ -55,6 +55,10 @@ if platform == "ios" then
 	xcodebuildresources {
 		"dist/ios/Images.xcassets"
 	}
+
+	links {
+		"CoreGraphics.framework"
+	}
 end
 
 

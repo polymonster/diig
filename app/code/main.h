@@ -232,7 +232,7 @@ struct ReleasesView
     soa                 releases = {};
     DataContext*        data_ctx = nullptr;
     Page_t              page = Page::feed;
-    Status_t        status = Status::e_not_initialised;
+    Status_t            status = Status::e_not_initialised;
     StoreView           store_view = {};
     std::atomic<u32>    terminate = { 0 };
     std::atomic<u32>    threads_terminated = { 0 };

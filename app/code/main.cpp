@@ -115,6 +115,49 @@ namespace curl
         
         return db;
     }
+
+    nlohmann::json request(const c8* url, const c8* data, CURLcode& res) {
+       
+        CURL *curl;
+        DataBuffer db = {};
+        
+        curl = curl_easy_init();
+        
+        if(curl) {
+            curl_easy_setopt(curl, CURLOPT_URL, url);
+            curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
+            curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, false);
+            curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_function);
+            curl_easy_setopt(curl, CURLOPT_WRITEDATA, &db);
+            curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data);
+            
+            struct curl_slist* headers = nullptr;
+            headers = curl_slist_append(headers, "Content-Type: application/json");
+            curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+        
+            res = curl_easy_perform(curl);
+
+            if(res != CURLE_OK)
+            {
+                PEN_LOG("curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+                db.data = nullptr;
+            }
+
+            curl_easy_cleanup(curl);
+        }
+        
+        if(data)
+        {
+            try {
+                return nlohmann::json::parse((const c8*)db.data);
+            }
+            catch(...) {
+                return {};
+            }
+        }
+        
+        return {};
+    }
 }
 
 // TODO: make more user data centric
@@ -225,6 +268,46 @@ Str get_docs_path()
     Str dir = os_get_persistent_data_directory();
     dir.appendf("/dig/");
     return dir;
+}
+
+bool check_cache_hit(const Str& url, Str releaseid)
+{
+    Str filepath = pen::str_replace_string(url, "https://", "");
+    filepath = pen::str_replace_chars(filepath, '/', '_');
+
+    Str dir = get_cache_path();
+    dir.appendf("/%s", releaseid.c_str());
+
+    // filepath
+    Str path = dir;
+    path.appendf("/%s", filepath.c_str());
+    filepath = path;
+
+    // check if file already exists
+    u32 mtime = 0;
+    pen::filesystem_getmtime(filepath.c_str(), mtime);
+    if(mtime == 0)
+    {
+        return false;
+    }
+    
+    size_t ss = pen::filesystem_getsize(filepath.c_str());
+    if(ss < 300)
+    {
+        u8* buf;
+        buf = (u8*)malloc(ss+1);
+        
+        FILE* fp = fopen(filepath.c_str(), "r");
+        fread(buf, ss, 1, fp);
+        fclose(fp);
+        buf[ss] = '\0';
+        
+        PEN_LOG("small file: %s", buf);
+        
+        free(buf);
+    }
+        
+    return true;
 }
 
 Str download_and_cache(const Str& url, Str releaseid)
@@ -395,6 +478,7 @@ bool fetch_json_cache(const c8* url, const c8* cache_filename, AsyncDict& async_
             FILE* fp = fopen(filepath.c_str(), "wb");
             fwrite(j.data, j.size, 1, fp);
             fclose(fp);
+            free(j.data); // cleanup
         });
         cache_thread.detach();
     }
@@ -432,6 +516,9 @@ bool fetch_json_cache(const c8* url, const c8* cache_filename, AsyncDict& async_
             PEN_LOG("no cache for: %s", filepath.c_str());
             async_dict.status = Status::e_not_available;
         }
+        
+        // cleanup
+        free(j.data);
     }
     
     return async_dict.status == Status::e_ready;
@@ -487,7 +574,7 @@ void* user_data_thread(void* userdata)
     }
 }
 
-void* info_loader(void* userdata)
+void* releases_view_loader(void* userdata)
 {
     // get view from userdata
     ReleasesView* view = (ReleasesView*)userdata;
@@ -678,9 +765,14 @@ void* info_loader(void* userdata)
     return nullptr;
 }
 
-size_t get_folder_size_recursive(const pen::fs_tree_node& dir, const c8* root)
-{
+struct DirInfo {
+    Str    path = "";
     size_t size = 0;
+    u32    mtime = -1;
+};
+
+DirInfo get_folder_info_recursive(const pen::fs_tree_node& dir, const c8* root) {
+    DirInfo output = {};
     for(u32 i = 0; i < dir.num_children; ++i)
     {
         Str path = "";
@@ -688,85 +780,118 @@ size_t get_folder_size_recursive(const pen::fs_tree_node& dir, const c8* root)
         
         if(dir.children[i].num_children > 0)
         {
-            size += get_folder_size_recursive(dir.children[i], path.c_str());
+            DirInfo ii = get_folder_info_recursive(dir.children[i], path.c_str());
+            output.size += ii.size;
+            output.mtime = min(ii.mtime, output.mtime);
         }
         else
         {
-            size += filesystem_getsize(path.c_str());
+            output.size = filesystem_getsize(path.c_str());
+            
+            u32 mtime = 0;
+            filesystem_getmtime(path.c_str(), mtime);
+            output.mtime = min(mtime, output.mtime);
         }
     }
     
-    return size;
+    output.path = root;
+    return output;
 }
 
-void* data_cacher(void* userdata)
-{
+void* data_cache_enumerate(void* userdata) {
     // get view from userdata
     ReleasesView* view = (ReleasesView*)userdata;
     
     Str cache_dir = get_cache_path();
+    
+    // track all folders
+    std::vector<DirInfo> cached_releases;
+    
+    auto tt = pen::scope_timer("cache enum", true);
     
     // enum cache stats
     pen::fs_tree_node dir;
     pen::filesystem_enum_directory(cache_dir.c_str(), dir, 1, "**/*.*");
     view->data_ctx->cached_release_folders = 0;
     view->data_ctx->cached_release_bytes = 0;
-    for(u32 i = 0; i < dir.num_children; ++i)
-    {
+    for(u32 i = 0; i < dir.num_children; ++i) {
         Str path = cache_dir;
         path.append(dir.children[i].name);
         
-        if(dir.children[i].num_children > 0)
-        {
-            view->data_ctx->cached_release_folders++;
-            view->data_ctx->cached_release_bytes += get_folder_size_recursive(dir.children[i], cache_dir.c_str());
+        pen::fs_tree_node release_dir;
+        pen::filesystem_enum_directory(path.c_str(), release_dir);
+        view->data_ctx->cached_release_folders++;
+        
+        auto info = get_folder_info_recursive(release_dir, path.c_str());
+        view->data_ctx->cached_release_bytes += info.size;
+        
+        pen::filesystem_enum_free_mem(release_dir);
+        
+        cached_releases.push_back(info);
+    }
+    pen::filesystem_enum_free_mem(dir);
+    
+    // sort the items
+    std::sort(begin(cached_releases),end(cached_releases),[](DirInfo a, DirInfo b) { return a.mtime < b.mtime; });
+    
+    // slowly delete until we hit quota, rm 100 at a time
+    /*
+    constexpr size_t cache_target_size = (2lu * 1024lu * 1024lu * 1024lu);
+    for(u32 i = 0; i < 100; ++i) {
+        if(view->data_ctx->cached_release_bytes < cache_target_size) {
+            break;
         }
-        else
-        {
-            pen::fs_tree_node release_dir;
-            pen::filesystem_enum_directory(path.c_str(), release_dir);
-            view->data_ctx->cached_release_folders++;
-            view->data_ctx->cached_release_bytes += get_folder_size_recursive(release_dir, path.c_str());
+        DirInfo ii = cached_releases[0];
+        cached_releases.erase(cached_releases.begin());
+        bool result = pen::os_delete_directory(ii.path);
+        if(result) {
+            PEN_LOG("deleted: %s", ii.path.c_str());
+            view->data_ctx->cached_release_bytes -= ii.size;
+            view->data_ctx->cached_release_folders--;
         }
     }
+    */
+    
+    // flag terminated
+    view->threads_terminated++;
+    return nullptr;
+}
+
+void* data_cache_fetch(void* userdata) {
+    
+    // get view from userdata
+    ReleasesView* view = (ReleasesView*)userdata;
+    
+    Str cache_dir = get_cache_path();
         
-    for(;;)
-    {
+    for(;;) {
         if(view->terminate) {
             break;
         }
         
         // waits on info loader thread
-        for(size_t i = 0; i < view->releases.available_entries; ++i)
-        {
+        for(size_t i = 0; i < view->releases.available_entries; ++i) {
             if(!(view->releases.flags[i] & EntityFlags::cache_url_requested)) {
                 continue;
             }
             
             // cache art
-            if(!view->releases.artwork_url[i].empty())
-            {
-                if(view->releases.artwork_filepath[i].empty())
-                {
+            if(!view->releases.artwork_url[i].empty()) {
+                if(view->releases.artwork_filepath[i].empty()) {
                     view->releases.artwork_filepath[i] = download_and_cache(view->releases.artwork_url[i], view->releases.id[i]);
                     view->releases.flags[i] |= EntityFlags::artwork_cached;
                 }
             }
             
             // cache tracks
-            if(!(view->releases.flags[i] & EntityFlags::tracks_cached))
-            {
-                if(view->releases.track_url_count[i] > 0 && view->releases.track_filepaths[i] == nullptr)
-                {
+            if(!(view->releases.flags[i] & EntityFlags::tracks_cached)) {
+                if(view->releases.track_url_count[i] > 0 && view->releases.track_filepaths[i] == nullptr) {
                     view->releases.track_filepaths[i] = new Str[view->releases.track_url_count[i]];
-                    
-                    for(u32 t = 0; t < view->releases.track_url_count[i]; ++t)
-                    {
+                    for(u32 t = 0; t < view->releases.track_url_count[i]; ++t) {
                         view->releases.track_filepaths[i][t] = "";
                         Str fp = download_and_cache(view->releases.track_urls[i][t], view->releases.id[i]);
                         view->releases.track_filepaths[i][t] = fp;
                     }
-                    
                     std::atomic_thread_fence(std::memory_order_release);
                     view->releases.flags[i] |= EntityFlags::tracks_cached;
                     view->releases.track_filepath_count[i] = view->releases.track_url_count[i];
@@ -787,23 +912,18 @@ void* data_loader(void* userdata)
     // get view from userdata
     ReleasesView* view = (ReleasesView*)userdata;
     
-    for(;;)
-    {
+    for(;;) {
         if(view->terminate) {
             break;
         }
         
-        for(size_t i = 0; i < view->releases.available_entries; ++i)
-        {
+        for(size_t i = 0; i < view->releases.available_entries; ++i) {
             // load art if cached and not loaded
             std::atomic_thread_fence(std::memory_order_acquire);
-            
             if((view->releases.flags[i] & EntityFlags::artwork_cached) &&
                !(view->releases.flags[i] & EntityFlags::artwork_loaded) &&
-               (view->releases.flags[i] & EntityFlags::artwork_requested))
-            {
+               (view->releases.flags[i] & EntityFlags::artwork_requested)) {
                 view->releases.artwork_tcp[i] = load_texture_from_disk(view->releases.artwork_filepath[i]);
-                
                 std::atomic_thread_fence(std::memory_order_release);
                 view->releases.flags[i] |= EntityFlags::artwork_loaded;
             }
@@ -856,9 +976,10 @@ namespace
         view->store_view = store_view;
         
         // workers per view
-        pen::thread_create(info_loader, 10 * 1024 * 1024, view, pen::e_thread_start_flags::detached);
-        pen::thread_create(data_cacher, 10 * 1024 * 1024, view, pen::e_thread_start_flags::detached);
-        pen::thread_create(data_loader, 10 * 1024 * 1024, view, pen::e_thread_start_flags::detached);
+        view->thread_mem[0] = pen::thread_create(releases_view_loader, 10 * 1024 * 1024, view, pen::e_thread_start_flags::detached);
+        view->thread_mem[1] = pen::thread_create(data_cache_enumerate, 10 * 1024 * 1024, view, pen::e_thread_start_flags::detached);
+        view->thread_mem[2] = pen::thread_create(data_cache_fetch, 10 * 1024 * 1024, view, pen::e_thread_start_flags::detached);
+        view->thread_mem[3] = pen::thread_create(data_loader, 10 * 1024 * 1024, view, pen::e_thread_start_flags::detached);
         
         return view;
     }
@@ -901,8 +1022,7 @@ namespace
 
         if(!view.store_name.empty() && !view.selected_view.empty() && view.selected_sections.size() > 0) {
             // first we add the current view into background views
-            if(ctx.view && ctx.view->page == Page::feed)
-            {
+            if(ctx.view && ctx.view->page == Page::feed) {
                 ctx.back_view = ctx.view;
                 ctx.background_views.insert(ctx.view);
             }
@@ -960,9 +1080,10 @@ namespace
             if(view != ctx.back_view && view != ctx.view)
             {
                 view->terminate = 1;
-                if(view->threads_terminated == 3)
+                if(view->threads_terminated == k_num_threads_per_view)
                 {
                     auto& releases = view->releases;
+                    
                     for(size_t i = 0; i < releases.available_entries; ++i) {
                         // unload textures
                         if (releases.flags[i] & EntityFlags::artwork_loaded) {
@@ -976,27 +1097,49 @@ namespace
                                 // texture preloaded from disk
                                 free(releases.artwork_tcp[i].data);
                             }
-                            memset(&releases.artwork_tcp, 0x0, sizeof(texture_creation_params));
+                            memset(&releases.artwork_tcp[i], 0x0, sizeof(texture_creation_params));
                             releases.flags[i] &= ~EntityFlags::artwork_loaded;
                             releases.flags[i] &= ~EntityFlags::artwork_requested;
                         }
                         
                         // unload strings
                         if(view->releases.track_filepaths[i]) {
+                            for(u32 t = 0; t < view->releases.track_filepath_count[i]; ++t) {
+                                view->releases.track_filepaths[i][t].clear();
+                            }
                             delete[] view->releases.track_filepaths[i];
                         }
                         
                         if(view->releases.track_names.data && view->releases.track_names[i]) {
+                            for(u32 t = 0; t < view->releases.track_name_count[i]; ++t) {
+                                view->releases.track_names[i][t].clear();
+                            }
                             delete[] view->releases.track_names[i];
                         }
                         
                         if(view->releases.track_urls[i]) {
+                            for(u32 t = 0; t < view->releases.track_url_count[i]; ++t) {
+                                view->releases.track_urls[i][t].clear();
+                            }
                             delete[] view->releases.track_urls[i];
                         }
+                        
+                        // unload strings
+                        releases.id[i].clear();
+                        releases.artist[i].clear();
+                        releases.title[i].clear();
+                        releases.link[i].clear();
+                        releases.label[i].clear();
+                        releases.artwork_url[i].clear();
                     }
                     
                     // cleanup memory from the soa itself
                     free_components(view->releases);
+                    
+                    // freeup the thread mem
+                    for(u32 t = 0; t < k_num_threads_per_view; ++t) {
+                        free(view->thread_mem[t]);
+                    }
                     
                     // add to remove list to preserve the set iterator
                     to_remove.push_back(view);
@@ -1006,7 +1149,6 @@ namespace
         
         // erase view
         for(auto& rm : to_remove) {
-            PEN_LOG("erasing view");
             ctx.background_views.erase(ctx.background_views.find(rm));
         }
     }
@@ -1142,11 +1284,21 @@ namespace
                 
                 // create a string by concatonating sections
                 Str sections_string = "";
+                u32 concatonated = 0;
                 for(u32 section = 0; section < store.sections_display_names.size(); ++section) {
-                    if(!sections_string.empty()) {
-                        sections_string.append(" / ");
+                    if(store.selected_sections_mask & (1<<section))
+                    {
+                        if(++concatonated > 2)
+                        {
+                            sections_string.append(" + More...");
+                            break;
+                        }
+                        
+                        if(!sections_string.empty()) {
+                            sections_string.append(" / ");
+                        }
+                        sections_string.append(store.sections_display_names[section].c_str());
                     }
-                    sections_string.append(store.sections_display_names[section].c_str());
                 }
                 
                 // section name
@@ -1170,14 +1322,11 @@ namespace
                         u32 store_bit = (1<<v);
                         
                         // check mark
-                        if(store.selected_sections_mask & store_bit) {
-                            menu_item_str.append(ICON_FA_CHECK_SQUARE);
-                            menu_item_str.append(" ");
-                        }
+                        bool selected = store.selected_sections_mask & store_bit;
                         
                         // menu item
                         menu_item_str.append(store.sections_display_names[v].c_str());
-                        if(ImGui::MenuItem(menu_item_str.c_str())) {
+                        if(ImGui::Checkbox(menu_item_str.c_str(), &selected)) {
                             if(store.selected_sections_mask & store_bit) {
                                 store.selected_sections_mask &= ~store_bit;
                             }
@@ -1233,22 +1382,6 @@ namespace
         vec2f vbmax = vec2f(bbmax.x, bbmax.y);
         vec2f mid = vbmin + ((vbmax - vbmin) * 0.5f);
         
-        if(false)
-        {
-            ImGui::GetForegroundDrawList()->AddCircle(ImVec2(mid.x, mid.y), padding, 0xffff00ff);
-            
-            u32 col = 0xffff0000;
-            
-            f32 d = dist(vec2f(ms.x, ms.y), mid);
-            if(d < padding)
-            {
-                col = 0xff0000ff;
-                PEN_LOG("clicked 0");
-            }
-            
-            ImGui::GetForegroundDrawList()->AddCircleFilled(ImVec2(ms.x, ms.y), 32.0f, col);
-        }
-        
         // need to wait on debounce
         if(debounce)
         {
@@ -1296,8 +1429,11 @@ namespace
         
         // likes button on same line
         ImGui::SameLine();
-        f32 offset = ImGui::CalcTextSize("%s", ICON_FA_HEART_O).y;
-        ImGui::SetCursorPosX(ctx.w - offset * 3.0f);
+        
+        //f32 offset = ImGui::CalcTextSize("%s\0", ICON_FA_HEART_O).y;
+        f32 offset = k_indent1;
+        
+        ImGui::SetCursorPosX(ctx.w - offset);
         ImGui::Text("%s", ctx.view->page == Page::likes ? ICON_FA_HEART : ICON_FA_HEART_O);
         
         f32 rad = ctx.w * k_page_button_press_radius_ratio;
@@ -1710,8 +1846,7 @@ namespace
             static u32 ci = -1;
             static u32 gi = -1;
             static bool started = false;
-            
-            static u32 read_tex_data_handle = -1;
+            static u32 read_tex_data_handle = 0;
             
             u32 r = ctx.top;
             
@@ -1766,6 +1901,7 @@ namespace
                 pen::music_set_now_playing(
                     releases.artist[r], releases.title[r], track_name);
 
+                read_tex_data_handle = 0;
                 ctx.invalidate_track = false;
                 started = false;
             }
@@ -1773,6 +1909,31 @@ namespace
             // playing
             if(is_valid(ci))
             {
+                // get length and check errors
+                u32 len_ms = 0;
+                audio_sound_file_info info = {};
+                auto info_err = put::audio_channel_get_sound_file_info(si, &info);
+                if(info_err == PEN_ERR_OK) {
+                    if(info.error != 0) {
+                        // TODO: re-download
+                        PEN_LOG("I GOT U SOUL CAPSULE");
+                    }
+                    else {
+                        len_ms = info.length_ms;
+                    }
+                }
+                
+                // get pos
+                u32 pos_ms = 0;
+                audio_channel_state state = {};
+                auto state_err = put::audio_channel_get_state(ci, &state);
+                if(state_err == PEN_ERR_OK) {
+                    pos_ms = state.position_ms;
+                }
+                
+                // set pos / length info
+                pen::music_set_now_playing_time_info(pos_ms, len_ms);
+                
                 // read back texture data to display on lock screen
                 if(releases.artwork_texture[r] && read_tex_data_handle != releases.artwork_texture[r])
                 {
@@ -2018,8 +2179,167 @@ namespace
         ImGui::SetWindowFontScale(k_text_size_body);
     }
 
-    void main_window()
+    void debug_menu()
     {
+        ImGui::SetWindowFontScale(k_text_size_nerds);
+        
+        ImGui::Indent();
+        
+        if(ctx.view)
+        {
+            ImGui::Text("feed: %zu / %zu",
+                ctx.view->releases.available_entries.load(),
+                ctx.view->releases.soa_size.load()
+            );
+        }
+        
+        ImGui::Text("cache: %i (%imb)",
+            ctx.data_ctx.cached_release_folders.load(),
+            (u32)(ctx.data_ctx.cached_release_bytes.load() / 1024 / 1024)
+        );
+        
+        ImGui::Unindent();
+    }
+
+    void login_or_singup_menu() {
+        
+        ImGui::SetWindowFontScale(k_text_size_h1);
+        
+        f32 ypos = ImGui::GetWindowHeight() * 0.5f - ImGui::GetTextLineHeight() * 3.0f;
+        ImGui::SetCursorPosY(ypos);
+        
+        ImGui::TextCentred("Log In");
+        if(ImGui::IsItemClicked()) {
+            ctx.view->page = Page::login;
+        }
+        ImGui::Spacing();
+        
+        ImGui::SetWindowFontScale(k_text_size_body);
+        ImGui::TextCentred("or");
+        ImGui::Spacing();
+        
+        ImGui::SetWindowFontScale(k_text_size_h1);
+        ImGui::TextCentred("Sign Up");
+        if(ImGui::IsItemClicked()) {
+            ctx.view->page = Page::signup;
+        }
+    }
+
+    void login_menu() {
+        static c8 buf[k_login_buf_size];
+        ImGui::SetWindowFontScale(k_text_size_h1);
+        ImGui::InputText("Email", &buf[0], k_login_buf_size);
+        ImGui::InputText("Password", &buf[0], k_login_buf_size, ImGuiInputTextFlags_Password);
+    }
+
+    void signup_menu() {
+        static c8 username_buf[k_login_buf_size] = {0};
+        static c8 email_buf[k_login_buf_size] = {0};
+        static c8 password_buf[k_login_buf_size] = {0};
+        static c8 retype_buf[k_login_buf_size] = {0};
+        
+        ImGui::SetWindowFontScale(k_text_size_body);
+        
+        f32 ypos = ImGui::GetWindowHeight() * 0.5f - ImGui::GetTextLineHeight() * 5.0f;
+        ImGui::SetCursorPosY(ypos);
+        
+        bool return_pressed = pen::input_is_key_down(PK_RETURN);
+        
+        bool any_active = false;
+        ImGui::Indent();
+        ImGui::InputText("Username", &username_buf[0], k_login_buf_size);
+        if(ImGui::IsItemActive()) {
+            any_active = true;
+        }
+        
+        ImGui::InputText("Email", &email_buf[0], k_login_buf_size);
+        if(ImGui::IsItemActive()) {
+            any_active = true;
+        }
+        else if(return_pressed) {
+            ImGui::SetKeyboardFocusHere();
+            return_pressed = false;
+        }
+        
+        ImGui::InputText("Password", &password_buf[0], k_login_buf_size, ImGuiInputTextFlags_Password);
+        if(ImGui::IsItemActive()) {
+            any_active = true;
+        }
+        else if(return_pressed) {
+            ImGui::SetKeyboardFocusHere();
+            return_pressed = false;
+        }
+        
+        ImGui::InputText("Retype", &retype_buf[0], k_login_buf_size, ImGuiInputTextFlags_Password);
+        if(ImGui::IsItemActive()) {
+            any_active = true;
+        }
+        else if(return_pressed) {
+            ImGui::SetKeyboardFocusHere();
+            return_pressed = false;
+        }
+        
+        if(return_pressed) {
+            ImGui::SetWindowFocus(nullptr);
+        }
+        
+        if(ImGui::Button("Back")) {
+            ctx.view->page = Page::login_or_signup;
+        }
+        
+        // validate
+        bool valid =
+            strlen(username_buf) &&
+            strlen(email_buf) &&
+            strlen(password_buf) &&
+            strlen(retype_buf) &&
+            strcmp(password_buf, retype_buf) == 0;
+        
+        if(valid) {
+            ImGui::SameLine();
+            if(ImGui::Button("Sign Up")) {
+                Str jstr;
+                jstr.appendf("{email: \"%s\", password: \"%s\", returnSecureToken: true}", email_buf, password_buf);
+                
+                CURLcode code;
+                auto response = curl::request(
+                    "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyDF3LxvEbVx78GxLjreVRYTUeTChJn__iI",
+                    jstr.c_str(),
+                    code
+                );
+                
+                if(code == CURLE_OK)
+                {
+                    PEN_LOG("%s", response.dump(4).c_str());
+                }
+                else
+                {
+                    PEN_LOG("error: %i", code);
+                }
+            }
+        }
+        
+        ImGui::Unindent();
+        
+        // OSK
+        pen::os_show_on_screen_keyboard(any_active);
+        pen::input_set_key_up(PK_BACK); // reset any back presses
+        pen::input_set_key_up(PK_RETURN);
+    }
+
+    void login_complete() {
+        // TODO: here we can sync with user perferences
+        // initialise store
+        if(ctx.view && ctx.view->page == Page::login_complete) {
+            if(ctx.stores.size() > 0) {
+                if(ctx.store.name.empty()) {
+                    ctx.store = change_store("redeye");
+                }
+            }
+        }
+    }
+
+    void main_window() {
         s32 w, h;
         pen::window_get_size(w, h);
         ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f));
@@ -2034,28 +2354,46 @@ namespace
         
         ImGui::Dummy(ImVec2(0.0f, ctx.status_bar_height));
         
+        // ..
+        if(false) {
+            debug_menu();
+        }
+        
         // ui menus
         header_menu();
         
-        // pages
-        if(ctx.view->page == Page::settings)
-        {
-            settings_menu();
-        }
-        else
-        {
-            store_menu();
-            view_menu();
-            view_reload();
-            release_feed();
+        // state machine for page naviagtion
+        if(ctx.view) {
+            switch(ctx.view->page) {
+                case Page::login_or_signup:
+                    login_or_singup_menu();
+                break;
+                case Page::login:
+                    login_menu();
+                break;
+                case Page::signup:
+                    signup_menu();
+                break;
+                case Page::login_complete:
+                    login_complete();
+                break;
+                case Page::settings:
+                    settings_menu();
+                break;
+                default:
+                    store_menu();
+                    view_menu();
+                    view_reload();
+                    release_feed();
+                break;
+            }
         }
         
         ImGui::PopStyleVar(4);
         ImGui::End();
     }
 
-    void apply_clicks()
-    {
+    void apply_clicks() {
         if(pen::input_is_mouse_down(PEN_MOUSE_L))
         {
             ctx.touch_down = true;
@@ -2066,8 +2404,7 @@ namespace
         }
     }
 
-    void main_update()
-    {
+    void main_update() {
         apply_taps();
         apply_drags();
         apply_clicks();
@@ -2076,26 +2413,16 @@ namespace
         issue_open_url_requests();
     }
 
-    void setup_stores()
-    {
+    void setup_stores() {
         // grab stores
-        if(ctx.stores.empty())
-        {
+        if(ctx.stores.empty()) {
             ctx.data_ctx.stores.mutex.lock();
             ctx.stores = ctx.data_ctx.stores.dict;
             ctx.data_ctx.stores.mutex.unlock();
         }
-        
-        // initialise store
-        if(ctx.stores.size() > 0) {
-            if(ctx.store.name.empty()) {
-                ctx.store = change_store("redeye");
-            }
-        }
     }
 
-    void update_loading_anims()
-    {
+    void update_loading_anims() {
         // loading dots
         static f32 track_load_dots = 0.0f;
         track_load_dots += ctx.dt;
@@ -2111,8 +2438,7 @@ namespace
         }
     }
 
-    loop_t user_update()
-    {
+    loop_t user_update() {
         ctx.dt = 1.0f / (f32)pen::timer_elapsed_ms(frame_timer);
         update_loading_anims();
         
@@ -2132,7 +2458,10 @@ namespace
         if(ctx.view)
         {
             main_window();
-            main_update();
+            
+            if(ctx.releases_window) {
+                main_update();
+            }
         }
         
         // present
@@ -2150,8 +2479,7 @@ namespace
         pen_main_loop_continue();
     }
 
-    void* user_setup(void* params)
-    {
+    void* user_setup(void* params) {
         // unpack the params passed to the thread and signal to the engine it ok to proceed
         pen::job_thread_params* job_params = (pen::job_thread_params*)params;
         s_thread_info = job_params->job_info;
@@ -2214,18 +2542,30 @@ namespace
                 ctx.h * (ImGui::GetStyle().ItemInnerSpacing.y / k_promax_11_h)
         );
         
+        ImGui::GetStyle().Colors[ImGuiCol_CheckMark] = ImVec4(1.0f, 0.5f, 0.0f, 1.00f);
+        ImGui::GetStyle().Colors[ImGuiCol_HeaderHovered] = ImVec4(1.0f, 0.5f, 0.0f, 1.00f);
+        ImGui::GetStyle().Colors[ImGuiCol_HeaderActive] = ImVec4(1.0f, 0.5f, 0.0f, 1.00f);
+        ImGui::GetStyle().Colors[ImGuiCol_Button] = ImVec4(1.0f, 0.5f, 0.0f, 1.00f);
+        ImGui::GetStyle().Colors[ImGuiCol_ButtonActive] = ImVec4(1.0f, 0.5f, 0.0f, 1.00f);
+        ImGui::GetStyle().Colors[ImGuiCol_ButtonHovered] = ImVec4(1.0f, 0.5f, 0.0f, 1.00f);
+        
         // spinner
         ctx.spinner_texture = put::load_texture("data/images/spinner.dds");
         
         // white label
         ctx.white_label_texture = put::load_texture("data/images/white_label.dds");
+        
+        // enter
+        ReleasesView* view = new ReleasesView;
+        // view->page = Page::login_or_signup;
+        view->page = Page::login_complete;
+        ctx.view = view;
 
         pen_main_loop(user_update);
         return PEN_THREAD_OK;
     }
 
-    void user_shutdown()
-    {
+    void user_shutdown() {
         pen::renderer_new_frame();
 
         pen::renderer_present();

@@ -1,38 +1,44 @@
 // TASKS
 
+// - user authentication + cloud saves
+// - refactor user data into a single dict and move to context
+
 // - re-instate likes
 // - re-instate settings
+// - re-download & validate broken files
 
 // - improve feedback for loading failures (not spinning endlessly)
 // - relay info if there are no results
 
-// - colour and accent tweaks
 // - implement label link (on tap)
 
 // - add support for prev / next on backgrounded app
 // - add autoplay support
 
-// - user authentication + cloud saves
-// - refactor user data into a single dict and move to context
 // - user store prev position, prev mode etc
 // - serialise prev position and prev mode?
 // - user fav store
 // - user fav genres
 
-// - thread to free up space
-// - function to delete files
 // - img and audio file cache management
 // - add clear cache and cache options
 
-// - move scrapers to sub folder
 // - add reg validation
 
 // - side swipe still isnt perfect
 // - vertical swipe still sometimes feel sticky
 
+// - ReleasesView can leak mem
+
 // REGRESS
 
 // DONE
+// x - colour and accent tweaks
+// x - mem leaks (at least the main ones)
+// x - thread to free up space
+// x - function to delete files
+// x - move scrapers to sub folder
+// x - add artwork to lock screen
 // x - add support for playing while locked
 // x - add info to MPNowPlacyingCenter
 // x - placeholder artwork image
@@ -99,6 +105,28 @@
 
 using namespace put::ecs;
 
+// magic number constants
+constexpr f32 k_promax_11_w = 1125.0f; // ratios were tuned from pixels sizes on iphone11 pro max
+constexpr f32 k_promax_11_h = 2436.0f;
+constexpr f32 k_drag_threshold = 0.1f;
+constexpr f32 k_inertia = 0.96f;
+constexpr f32 k_inertia_cutoff = 3.33f;
+constexpr f32 k_snap_lerp = 0.3f;
+constexpr f32 k_indent1 = 2.0f;
+constexpr f32 k_top_pull_pad = 1.5f;
+constexpr f32 k_top_pull_reload = 1.25f;
+constexpr f32 k_text_size_h1 = 2.25f;
+constexpr f32 k_text_size_h2 = 1.5f;
+constexpr f32 k_text_size_h3 = 1.25f;
+constexpr f32 k_text_size_body = 1.0f;
+constexpr f32 k_text_size_track = 0.75f;
+constexpr f32 k_text_size_nerds = 0.7f;
+constexpr f32 k_text_size_dots = 0.8f;
+constexpr f32 k_release_button_tap_radius_ratio = 64.0f / k_promax_11_w;
+constexpr f32 k_page_button_press_radius_ratio = 86.0f / k_promax_11_w;
+constexpr u32 k_num_threads_per_view = 4;
+constexpr size_t k_login_buf_size = 320;
+
 namespace EntityFlags
 {
     enum EntryFlags
@@ -148,6 +176,10 @@ namespace Page
 {
     enum Page
     {
+        login_or_signup,
+        signup,
+        login,
+        login_complete,
         feed,
         likes,
         settings
@@ -178,6 +210,7 @@ struct soa
 {
     cmp_array<Str>                          id;
     cmp_array<u64>                          flags;
+    cmp_array<std::atomic<u64>>             atomic_flags;
     cmp_array<Str>                          artist;
     cmp_array<Str>                          title;
     cmp_array<Str>                          label;
@@ -205,7 +238,7 @@ struct AsyncDict
 {
     std::mutex                  mutex;
     nlohmann::json              dict;
-    std::atomic<Status_t>   status = { Status::e_not_initialised };
+    std::atomic<Status_t>       status = { Status::e_not_initialised };
 };
 
 struct DataContext
@@ -238,6 +271,7 @@ struct ReleasesView
     std::atomic<u32>    threads_terminated = { 0 };
     u32                 top_pos = 0;
     vec2f               scroll = vec2f(0.0f, 0.0f);
+    void*               thread_mem[k_num_threads_per_view] = {0};
 };
 
 struct ChartItem
@@ -290,22 +324,3 @@ struct AppContext
     u32                     loading_dots = 0;
     f32                     loading_rot = 0.0f;
 };
-
-// magic number constants
-constexpr f32 k_promax_11_w = 1125.0f; // ratios were tuned from pixels sizes on iphone11 pro max
-constexpr f32 k_promax_11_h = 2436.0f;
-constexpr f32 k_drag_threshold = 0.1f;
-constexpr f32 k_inertia = 0.96f;
-constexpr f32 k_inertia_cutoff = 3.33f;
-constexpr f32 k_snap_lerp = 0.3f;
-constexpr f32 k_indent1 = 2.0f;
-constexpr f32 k_top_pull_pad = 1.5f;
-constexpr f32 k_top_pull_reload = 1.25f;
-constexpr f32 k_text_size_h1 = 2.25f;
-constexpr f32 k_text_size_h2 = 1.5f;
-constexpr f32 k_text_size_h3 = 1.25f;
-constexpr f32 k_text_size_body = 1.0f;
-constexpr f32 k_text_size_track = 0.75f;
-constexpr f32 k_text_size_dots = 0.8f;
-constexpr f32 k_release_button_tap_radius_ratio = 64.0f / k_promax_11_w;
-constexpr f32 k_page_button_press_radius_ratio = 86.0f / k_promax_11_w;

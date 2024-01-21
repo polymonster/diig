@@ -1430,9 +1430,8 @@ namespace
         // likes button on same line
         ImGui::SameLine();
         
-        //f32 offset = ImGui::CalcTextSize("%s\0", ICON_FA_HEART_O).y;
-        f32 offset = k_indent1;
-        
+        f32 offset = ImGui::GetTextLineHeight() * 3.0f + k_indent1;
+
         ImGui::SetCursorPosX(ctx.w - offset);
         ImGui::Text("%s", ctx.view->page == Page::likes ? ICON_FA_HEART : ICON_FA_HEART_O);
         
@@ -1448,12 +1447,53 @@ namespace
         ImGui::Spacing();
         
         ImGui::SameLine();
-        ImGui::Text("%s", ICON_FA_ELLIPSIS_H);
+        ImGui::Text("%s", ICON_FA_BARS);
+                
+        // options menu button
+        bool ellipsis_debounce = false;
+        if(lenient_button_click(rad, ellipsis_debounce, true)) {
+            ImGui::OpenPopup("Options Menu");
+        }
         
-        static bool ellipsis_debounce = false;
-        if(lenient_button_click(rad, ellipsis_debounce, true))
-        {
-            //change_view(Page::settings);
+        // options menu popup
+        ImGui::SetWindowFontScale(k_text_size_h2);
+        constexpr const c8* k_options[] = {
+            "Profile",
+            "Contact",
+            "Help"
+        };
+        
+        f32 s = ctx.w - offset * 2.0f;
+        ImVec2 options_menu_pos = ImVec2(s, ImGui::GetCursorPosY());
+        ImGui::SetNextWindowPos(options_menu_pos);
+        ImGui::SetNextWindowSize(ImVec2(s, 0.0f));
+        if(ImGui::BeginPopup("Options Menu")) {
+            
+            // user name
+            if(!ctx.username.empty())
+            {
+                ImGui::SetWindowFontScale(k_text_size_body);
+                ImGui::Text("%s", ctx.username.c_str());
+                ImGui::Separator();
+            }
+
+            ImGui::SetWindowFontScale(k_text_size_h3);
+            
+            // option menus
+            for(auto& opt : k_options) {
+                ImGui::MenuItem(opt);
+                // TODO: implement options
+            }
+            
+            // log out
+            if(!ctx.auth_response.empty()) {
+                ImGui::Separator();
+                if(ImGui::MenuItem("Log Out")) {
+                    ctx.view->page = Page::login_or_signup;
+                }
+            }
+            
+            ImGui::EndPopup();
         }
         
         ImGui::SetWindowFontScale(k_text_size_body);
@@ -2225,11 +2265,194 @@ namespace
         }
     }
 
-    void login_menu() {
-        static c8 buf[k_login_buf_size];
+    Str unpack_error_response(CURLcode code, nlohmann::json response) {
+        if(code == CURLE_OK) {
+            // unpack error message
+            if(response.contains("error")) {
+                if(response["error"].contains("message")) {
+                    std::string err = response["error"]["message"];
+                    return Str(err.c_str());
+                }
+            }
+        }
+        else {
+            return "Cannot Connect To Server";
+        }
+        
+        return "";
+    }
+
+    void forgotten_password_menu() {
+        static c8  email_buf[k_login_buf_size] = {0};
+        static Str error_message = "";
+        static Str success_message = "";
+        
         ImGui::SetWindowFontScale(k_text_size_h1);
-        ImGui::InputText("Email", &buf[0], k_login_buf_size);
-        ImGui::InputText("Password", &buf[0], k_login_buf_size, ImGuiInputTextFlags_Password);
+        
+        ImGui::Spacing();
+        ImGui::TextCentred("Forgotten Password");
+        
+        ImGui::SetWindowFontScale(k_text_size_body);
+        
+        f32 ypos = ImGui::GetWindowHeight() * 0.5f - ImGui::GetTextLineHeight() * 5.0f;
+        ImGui::SetCursorPosY(ypos);
+        
+        bool return_pressed = pen::input_is_key_down(PK_RETURN);
+        
+        bool any_active = false;
+        
+        ImGui::Indent();
+        ImGui::InputText("Email", &email_buf[0], k_login_buf_size);
+        if(ImGui::IsItemActive()) {
+            any_active = true;
+        }
+        
+        if(return_pressed) {
+            ImGui::SetWindowFocus(nullptr);
+        }
+        
+        if(ImGui::Button("Back")) {
+            ctx.view->page = Page::login_or_signup;
+            pen::os_haptic_selection_feedback();
+        }
+        
+        // validate
+        bool valid = strlen(email_buf);
+        
+        if(valid) {
+            ImGui::SameLine();
+            if(ImGui::Button("Reset")) {
+                pen::os_haptic_selection_feedback();
+                
+                Str jstr;
+                jstr.appendf("{email: \"%s\", requestType:\"PASSWORD_RESET\"}", email_buf);
+                
+                CURLcode code;
+                auto response = curl::request(
+                    "https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=AIzaSyDF3LxvEbVx78GxLjreVRYTUeTChJn__iI",
+                    jstr.c_str(),
+                    code
+                );
+                
+                error_message = unpack_error_response(code, response);
+                
+                if(error_message.empty()) {
+                    success_message = "";
+                    success_message.appendf("Password Reset Email Sent To: %s", email_buf);
+                }
+            }
+        }
+        
+        ImGui::Spacing();
+        
+        // error
+        ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.5f, 0.0f, 0.0f, 1.0f));
+        ImGui::TextWrapped("%s", error_message.c_str());
+        ImGui::PopStyleColor();
+        
+        ImGui::TextWrapped("%s", success_message.c_str());
+
+        ImGui::Unindent();
+        
+        // OSK
+        pen::os_show_on_screen_keyboard(any_active);
+        pen::input_set_key_up(PK_BACK); // reset any back presses
+        pen::input_set_key_up(PK_RETURN);
+    }
+
+    void login_menu() {
+        static c8  email_buf[k_login_buf_size] = {0};
+        static c8  password_buf[k_login_buf_size] = {0};
+        static Str error_message = "";
+        
+        ImGui::SetWindowFontScale(k_text_size_h1);
+        
+        ImGui::Spacing();
+        ImGui::TextCentred("Log In");
+        
+        ImGui::SetWindowFontScale(k_text_size_body);
+        
+        f32 ypos = ImGui::GetWindowHeight() * 0.5f - ImGui::GetTextLineHeight() * 5.0f;
+        ImGui::SetCursorPosY(ypos);
+        
+        bool return_pressed = pen::input_is_key_down(PK_RETURN);
+        
+        bool any_active = false;
+        
+        ImGui::Indent();
+        ImGui::InputText("Email", &email_buf[0], k_login_buf_size);
+        if(ImGui::IsItemActive()) {
+            any_active = true;
+        }
+        
+        ImGui::InputText("Password", &password_buf[0], k_login_buf_size, ImGuiInputTextFlags_Password);
+        if(ImGui::IsItemActive()) {
+            any_active = true;
+        }
+        else if(return_pressed) {
+            ImGui::SetKeyboardFocusHere();
+            return_pressed = false;
+        }
+        
+        if(return_pressed) {
+            ImGui::SetWindowFocus(nullptr);
+        }
+        
+        if(ImGui::Button("Back")) {
+            ctx.view->page = Page::login_or_signup;
+            pen::os_haptic_selection_feedback();
+        }
+        
+        // validate
+        bool valid = strlen(email_buf) && strlen(password_buf);
+        
+        if(valid) {
+            ImGui::SameLine();
+            if(ImGui::Button("Log In")) {
+                pen::os_haptic_selection_feedback();
+                Str jstr;
+                jstr.appendf("{email: \"%s\", password: \"%s\", returnSecureToken: true}", email_buf, password_buf);
+                
+                CURLcode code;
+                auto response = curl::request(
+                    "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyDF3LxvEbVx78GxLjreVRYTUeTChJn__iI",
+                    jstr.c_str(),
+                    code
+                );
+                
+                error_message = unpack_error_response(code, response);
+                
+                if(error_message.empty()) {
+                    // stash credentials
+                    pen::os_set_keychain_item("com.pmtech.dig", "email", email_buf);
+                    pen::os_set_keychain_item("com.pmtech.dig", "password", password_buf);
+                    ctx.auth_response = response;
+                    ctx.view->page = Page::login_complete;
+                }
+            }
+        }
+        
+        ImGui::Spacing();
+        ImGui::Spacing();
+        
+        ImGui::Text("Forgot Password?");
+        if(ImGui::IsItemClicked()) {
+            ctx.view->page = Page::forgotten_password;
+        }
+        
+        ImGui::Spacing();
+        
+        // error
+        ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.5f, 0.0f, 0.0f, 1.0f));
+        ImGui::TextWrapped("%s", error_message.c_str());
+        ImGui::PopStyleColor();
+
+        ImGui::Unindent();
+        
+        // OSK
+        pen::os_show_on_screen_keyboard(any_active);
+        pen::input_set_key_up(PK_BACK); // reset any back presses
+        pen::input_set_key_up(PK_RETURN);
     }
 
     void signup_menu() {
@@ -2237,6 +2460,12 @@ namespace
         static c8 email_buf[k_login_buf_size] = {0};
         static c8 password_buf[k_login_buf_size] = {0};
         static c8 retype_buf[k_login_buf_size] = {0};
+        static Str error_message = "";
+        
+        ImGui::SetWindowFontScale(k_text_size_h1);
+        
+        ImGui::Spacing();
+        ImGui::TextCentred("Sign Up");
         
         ImGui::SetWindowFontScale(k_text_size_body);
         
@@ -2284,6 +2513,7 @@ namespace
         }
         
         if(ImGui::Button("Back")) {
+            pen::os_haptic_selection_feedback();
             ctx.view->page = Page::login_or_signup;
         }
         
@@ -2298,6 +2528,7 @@ namespace
         if(valid) {
             ImGui::SameLine();
             if(ImGui::Button("Sign Up")) {
+                pen::os_haptic_selection_feedback();
                 Str jstr;
                 jstr.appendf("{email: \"%s\", password: \"%s\", returnSecureToken: true}", email_buf, password_buf);
                 
@@ -2308,16 +2539,25 @@ namespace
                     code
                 );
                 
-                if(code == CURLE_OK)
-                {
-                    PEN_LOG("%s", response.dump(4).c_str());
-                }
-                else
-                {
-                    PEN_LOG("error: %i", code);
+                error_message = unpack_error_response(code, response);
+                
+                if(error_message.empty()) {
+                    // stash credentials
+                    pen::os_set_keychain_item("com.pmtech.dig", "email", email_buf);
+                    pen::os_set_keychain_item("com.pmtech.dig", "password", password_buf);
+                    pen::os_set_keychain_item("com.pmtech.dig", "username", username_buf);
+                    ctx.auth_response = response;
+                    ctx.view->page = Page::login_complete;
                 }
             }
         }
+        
+        ImGui::Spacing();
+        
+        // error
+        ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.5f, 0.0f, 0.0f, 1.0f));
+        ImGui::TextWrapped("%s", error_message.c_str());
+        ImGui::PopStyleColor();
         
         ImGui::Unindent();
         
@@ -2336,6 +2576,52 @@ namespace
                     ctx.store = change_store("redeye");
                 }
             }
+        }
+    }
+
+    void auto_login() {
+        // enter
+        ReleasesView* view = new ReleasesView;
+        ctx.view = view;
+                
+        Str email_address = pen::os_get_keychain_item("com.pmtech.dig", "email");
+        Str password = pen::os_get_keychain_item("com.pmtech.dig", "password");
+        Str username = pen::os_get_keychain_item("com.pmtech.dig", "username");
+        
+        if(!email_address.empty() && !password.empty()) {
+            Str jstr;
+            jstr.appendf("{email: \"%s\", password: \"%s\", returnSecureToken: true}", email_address.c_str(), password.c_str());
+            
+            CURLcode code;
+            auto response = curl::request(
+                "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyDF3LxvEbVx78GxLjreVRYTUeTChJn__iI",
+                jstr.c_str(),
+                code
+            );
+            
+            if(code == CURLE_OK)
+            {
+                Str error_message = unpack_error_response(code, response);
+                
+                if(error_message.empty()) {
+                    ctx.auth_response = response;
+                    ctx.username = username;
+                    ctx.view->page = Page::login_complete;
+                }
+                else {
+                    view->page = Page::login_or_signup;
+                }
+            }
+            else
+            {
+                // allow login, but without auth
+                view->page = Page::login_or_signup;
+            }
+        }
+        else
+        {
+            // new user
+            view->page = Page::login_or_signup;
         }
     }
 
@@ -2373,6 +2659,9 @@ namespace
                 break;
                 case Page::signup:
                     signup_menu();
+                break;
+                case Page::forgotten_password:
+                    forgotten_password_menu();
                 break;
                 case Page::login_complete:
                     login_complete();
@@ -2457,12 +2746,20 @@ namespace
         // main code entry
         if(ctx.view)
         {
-            main_window();
-            
             if(ctx.releases_window) {
                 main_update();
             }
+            
+            main_window();
         }
+        
+        // sync likes
+        s_like_mutex.lock();
+        if(!ctx.auth_response.empty())
+        {
+            
+        }
+        s_like_mutex.unlock();
         
         // present
         put::dev_ui::render();
@@ -2555,11 +2852,7 @@ namespace
         // white label
         ctx.white_label_texture = put::load_texture("data/images/white_label.dds");
         
-        // enter
-        ReleasesView* view = new ReleasesView;
-        // view->page = Page::login_or_signup;
-        view->page = Page::login_complete;
-        ctx.view = view;
+        auto_login();
 
         pen_main_loop(user_update);
         return PEN_THREAD_OK;

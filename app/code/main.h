@@ -1,6 +1,6 @@
 // TASKS
 
-// - user authentication + cloud saves
+// - cloud saves
 // - refactor user data into a single dict and move to context
 
 // - re-instate likes
@@ -33,6 +33,7 @@
 // REGRESS
 
 // DONE
+// x - user authentication
 // x - colour and accent tweaks
 // x - mem leaks (at least the main ones)
 // x - thread to free up space
@@ -202,7 +203,8 @@ namespace Status
         e_loading,
         e_ready,
         e_not_available,
-        e_no_entries
+        e_no_entries,
+        e_invalidated
     };
 }
 typedef u32 Status_t;
@@ -244,11 +246,8 @@ struct AsyncDict
 
 struct DataContext
 {
-    // TODO: legacy
-    nlohmann::json      user_data;
-    std::atomic<u32>    user_data_status = { 0 };
-    
-    //
+    AsyncDict           auth;
+    AsyncDict           user_data;
     AsyncDict           stores;
     std::atomic<u32>    cached_release_folders = { 0 };
     std::atomic<size_t> cached_release_bytes = { 0 };

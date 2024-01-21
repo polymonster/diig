@@ -158,48 +158,55 @@ namespace curl
         
         return {};
     }
+
+    nlohmann::json patch(const c8* url, const c8* data, CURLcode& res) {
+        CURL *curl;
+        DataBuffer db = {};
+        
+        curl = curl_easy_init();
+        
+        if(curl) {
+            curl_easy_setopt(curl, CURLOPT_URL, url);
+            curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
+            curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, false);
+            curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_function);
+            curl_easy_setopt(curl, CURLOPT_WRITEDATA, &db);
+            curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "PATCH");
+            curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data);
+            
+            struct curl_slist* headers = nullptr;
+            headers = curl_slist_append(headers, "Content-Type: application/json");
+            curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+        
+            res = curl_easy_perform(curl);
+
+            if(res != CURLE_OK)
+            {
+                PEN_LOG("curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+                db.data = nullptr;
+            }
+
+            curl_easy_cleanup(curl);
+        }
+        
+        if(data)
+        {
+            try {
+                return nlohmann::json::parse((const c8*)db.data);
+            }
+            catch(...) {
+                return {};
+            }
+        }
+        
+        return {};
+    }
 }
 
 // TODO: make more user data centric
-static nlohmann::json   s_likes;
-static std::mutex       s_like_mutex;
-static bool             s_likes_invalidated = false;
-
-nlohmann::json get_likes()
-{
-    s_like_mutex.lock();
-    auto cp = s_likes;
-    s_like_mutex.unlock();
-    return cp;
-}
-
-bool has_like(Str id)
-{
-    bool ret = false;
-    s_like_mutex.lock();
-    if(s_likes.contains(id.c_str()))
-    {
-        ret = s_likes[id.c_str()];
-    }
-    s_like_mutex.unlock();
-    return ret;
-}
-
-void add_like(Str id)
-{
-    s_like_mutex.lock();
-    s_likes[id.c_str()] = true;
-    s_like_mutex.unlock();
-    s_likes_invalidated = true;
-}
-
-void remove_like(Str id)
-{
-    s_like_mutex.lock();
-    s_likes.erase(id.c_str());
-    s_like_mutex.unlock();
-    s_likes_invalidated = true;
-}
+//static nlohmann::json   s_likes;
+//static std::mutex       s_like_mutex;
+//static bool             s_likes_invalidated = false;
 
 generic_cmp_array& get_component_array(soa& s, size_t i)
 {
@@ -540,24 +547,47 @@ void* registry_loader(void* userdata)
 
 void* user_data_thread(void* userdata)
 {
-    // get user data dir
-    Str user_data_dir = os_get_persistent_data_directory();
-    user_data_dir.append("/dig/user_data/");
+    // grab user data from disk
+    Str dig_dir = os_get_persistent_data_directory();
+    dig_dir.append("/dig");
     
-    // create dir
-    pen::os_create_directory(user_data_dir);
+    Str user_data_filepath = dig_dir;
+    user_data_filepath.append("/user_data.json");
     
-    // grab likes
-    u32 mtime  = 0;
-    Str likes_filepath = user_data_dir;
-    likes_filepath.appendf("likes.json");
-    pen::filesystem_getmtime(likes_filepath.c_str(), mtime);
-    if(mtime)
+    u32 mtime = 0;
+    pen::filesystem_getmtime(user_data_filepath.c_str(), mtime);
+    if(mtime > 0)
     {
-        std::ifstream f(likes_filepath.c_str());
-        s_likes = nlohmann::json::parse(f);;
+        std::ifstream f(user_data_filepath.c_str());
+        auto user_data = nlohmann::json::parse(f);
     }
+    
+    // TODO: here we can sync with user perferences
+    
+    /*
+    // write something
 
+    Str url = "https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app/users/";
+    url.appendf("%s.json", userid.c_str());
+    url.appendf("?auth=%s", token.c_str());
+    
+    //
+    PEN_LOG("%s", userid.c_str());
+    
+    Str payload;
+    payload.appendf("{ \"username\": \"%s\" }", username.c_str());
+    
+    CURLcode code;
+    auto response = curl::patch(url.c_str(), payload.c_str(), code);
+    
+    curl::DataBuffer fetch = curl::download(url.c_str());
+    if(fetch.data)
+    {
+        PEN_LOG("%s", fetch.data);
+    }
+    */
+
+    /*
     for(;;)
     {
         if(s_likes_invalidated)
@@ -572,6 +602,9 @@ void* user_data_thread(void* userdata)
         
         pen::thread_sleep_ms(66);
     }
+    */
+    
+    return nullptr;
 }
 
 void* releases_view_loader(void* userdata)
@@ -647,6 +680,8 @@ void* releases_view_loader(void* userdata)
         releases_registry.merge_patch(async_registry.dict);
     }
     
+    // TODO:
+    /*
     if(view->page == Page::likes)
     {
         for(auto& like : s_likes.items())
@@ -661,7 +696,8 @@ void* releases_view_loader(void* userdata)
             }
         }
     }
-    
+    */
+     
     if(view_chart.empty())
     {
         view->status = Status::e_not_available;
@@ -741,10 +777,12 @@ void* releases_view_loader(void* userdata)
         }
         
         // check likes
+        /*
         if(has_like(view->releases.id[ri]))
         {
             view->releases.flags[ri] |= EntityFlags::liked;
         }
+        */
         
         // store tags
         if(release.contains("store_tags"))
@@ -966,6 +1004,38 @@ namespace
     pen::timer* frame_timer;
     u32         clear_screen;
     AppContext  ctx;
+
+    bool has_like(Str id)
+    {
+        bool ret = false;
+        ctx.data_ctx.user_data.mutex.lock();
+        
+        /*
+        if(s_likes.contains(id.c_str()))
+        {
+            ret = s_likes[id.c_str()];
+        }
+         */
+        
+        ctx.data_ctx.user_data.mutex.unlock();
+        return ret;
+    }
+
+    void add_like(Str id)
+    {
+        ctx.data_ctx.user_data.mutex.lock();
+        //s_likes[id.c_str()] = true;
+        ctx.data_ctx.user_data.mutex.unlock();
+        ctx.data_ctx.user_data.status = Status::e_invalidated;
+    }
+
+    void remove_like(Str id)
+    {
+        ctx.data_ctx.user_data.mutex.lock();
+        //s_likes.erase(id.c_str());
+        ctx.data_ctx.user_data.mutex.unlock();
+        ctx.data_ctx.user_data.status = Status::e_invalidated;
+    }
 
     ReleasesView* new_view(Page_t page, StoreView store_view)
     {
@@ -2568,7 +2638,11 @@ namespace
     }
 
     void login_complete() {
-        // TODO: here we can sync with user perferences
+        // copy auth credentials
+        ctx.data_ctx.auth.mutex.lock();
+        ctx.data_ctx.auth.dict = ctx.auth_response;
+        ctx.data_ctx.auth.mutex.unlock();
+        
         // initialise store
         if(ctx.view && ctx.view->page == Page::login_complete) {
             if(ctx.stores.size() > 0) {
@@ -2752,14 +2826,6 @@ namespace
             
             main_window();
         }
-        
-        // sync likes
-        s_like_mutex.lock();
-        if(!ctx.auth_response.empty())
-        {
-            
-        }
-        s_like_mutex.unlock();
         
         // present
         put::dev_ui::render();

@@ -179,6 +179,7 @@ namespace Page
         login_or_signup,
         signup,
         login,
+        forgotten_password,
         login_complete,
         feed,
         likes,
@@ -323,4 +324,6 @@ struct AppContext
     u32                     white_label_texture = 0;
     u32                     loading_dots = 0;
     f32                     loading_rot = 0.0f;
+    nlohmann::json          auth_response = {};
+    Str                     username = "";
 };

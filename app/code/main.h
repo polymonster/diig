@@ -211,6 +211,7 @@ typedef u32 Status_t;
 
 struct soa
 {
+    cmp_array<Str>                          key;
     cmp_array<Str>                          id;
     cmp_array<u64>                          flags;
     cmp_array<std::atomic<u64>>             atomic_flags;
@@ -326,3 +327,8 @@ struct AppContext
     nlohmann::json          auth_response = {};
     Str                     username = "";
 };
+
+// likes API
+bool has_like(Str id);
+void add_like(Str id);
+void remove_like(Str id);

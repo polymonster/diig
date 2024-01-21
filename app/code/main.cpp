@@ -547,6 +547,8 @@ void* registry_loader(void* userdata)
 
 void* user_data_thread(void* userdata)
 {
+    DataContext* ctx = (DataContext*)userdata;
+    
     // grab user data from disk
     Str dig_dir = os_get_persistent_data_directory();
     dig_dir.append("/dig");
@@ -562,47 +564,94 @@ void* user_data_thread(void* userdata)
         auto user_data = nlohmann::json::parse(f);
     }
     
-    // TODO: here we can sync with user perferences
+    bool auth_cloud = false;
+    bool fetch_cloud = true;
+    bool update_cloud = false;
     
-    /*
-    // write something
-
-    Str url = "https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app/users/";
-    url.appendf("%s.json", userid.c_str());
-    url.appendf("?auth=%s", token.c_str());
+    Str userid = "";
+    Str tokenid = "";
+    Str user_url = "https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app/users/";
     
-    //
-    PEN_LOG("%s", userid.c_str());
+    nlohmann::json update_payload = {};
     
-    Str payload;
-    payload.appendf("{ \"username\": \"%s\" }", username.c_str());
+    // once
+    ctx->user_data.status = Status::e_invalidated;
     
-    CURLcode code;
-    auto response = curl::patch(url.c_str(), payload.c_str(), code);
-    
-    curl::DataBuffer fetch = curl::download(url.c_str());
-    if(fetch.data)
-    {
-        PEN_LOG("%s", fetch.data);
-    }
-    */
-
-    /*
     for(;;)
     {
-        if(s_likes_invalidated)
-        {
-            auto likes = get_likes();
-            auto likes_str = likes.dump();
-            
-            FILE* fp = fopen(likes_filepath.c_str(), "w");
-            fwrite(likes_str.c_str(), likes_str.length(), 1, fp);
-            fclose(fp);
+        // authenticate
+        if(!auth_cloud) {
+            if(ctx->auth.status == Status::e_ready) {
+                if(ctx->auth.dict.contains("localId") && ctx->auth.dict.contains("idToken")) {
+                    // set tokens
+                    userid = ((std::string)ctx->auth.dict["localId"]).c_str();
+                    tokenid = ((std::string)ctx->auth.dict["idToken"]).c_str();
+                    auth_cloud = true;
+                }
+            }
         }
+        
+        // if authenticated
+        if(auth_cloud) {
+            if(fetch_cloud) {
+                Str url = user_url;
+                url.appendf("%s.json", userid.c_str());
+                url.appendf("?auth=%s", tokenid.c_str());
+                
+                curl::DataBuffer fetch = curl::download(url.c_str());
+                if(fetch.data)
+                {
+                    // TODO: sync changes
+                    PEN_LOG("%s", fetch.data);
+                }
+                
+                fetch_cloud = false;
+            }
+            
+            // or update
+            if(update_cloud) {
+                Str url = user_url;
+                url.appendf("%s.json", userid.c_str());
+                url.appendf("?auth=%s", tokenid.c_str());
+                
+                std::string payload_str = update_payload.dump(4).c_str();
+                
+                CURLcode code;
+                auto response = curl::patch(url.c_str(), payload_str.c_str(), code);
+                
+                curl::DataBuffer fetch = curl::download(url.c_str());
+                if(fetch.data)
+                {
+                    PEN_LOG("%s", fetch.data);
+                }
+                
+                update_cloud = false;
+            }
+        }
+        
+        // if we have changes from the main thread, we can write to disk
+        ctx->user_data.mutex.lock();
+        if(ctx->user_data.status == Status::e_invalidated) {
+            // timestamp for merges
+            ctx->user_data.dict["timestamp"] = pen::get_time_ms();
+            
+            std::string user_data_str = ctx->user_data.dict.dump(4);
+            PEN_LOG("%s", user_data_str.c_str());
+            
+            FILE* fp = fopen(user_data_filepath.c_str(), "w");
+            fwrite(user_data_str.c_str(), user_data_str.length(), 1, fp);
+            fclose(fp);
+            
+            // and also update the cloud
+            update_payload = ctx->user_data.dict;
+            update_cloud = true;
+            
+            ctx->user_data.status = Status::e_ready;
+        }
+        ctx->user_data.mutex.unlock();
         
         pen::thread_sleep_ms(66);
     }
-    */
     
     return nullptr;
 }
@@ -737,6 +786,7 @@ void* releases_view_loader(void* userdata)
         
         std::string id = release["id"];
         view->releases.id[ri] = id.c_str();
+        view->releases.key[ri] = entry.index;
 
         // assign artwork url
         if(release["artworks"].size() > 1)
@@ -777,12 +827,10 @@ void* releases_view_loader(void* userdata)
         }
         
         // check likes
-        /*
-        if(has_like(view->releases.id[ri]))
+        if(has_like(view->releases.key[ri]))
         {
             view->releases.flags[ri] |= EntityFlags::liked;
         }
-        */
         
         // store tags
         if(release.contains("store_tags"))
@@ -1004,38 +1052,6 @@ namespace
     pen::timer* frame_timer;
     u32         clear_screen;
     AppContext  ctx;
-
-    bool has_like(Str id)
-    {
-        bool ret = false;
-        ctx.data_ctx.user_data.mutex.lock();
-        
-        /*
-        if(s_likes.contains(id.c_str()))
-        {
-            ret = s_likes[id.c_str()];
-        }
-         */
-        
-        ctx.data_ctx.user_data.mutex.unlock();
-        return ret;
-    }
-
-    void add_like(Str id)
-    {
-        ctx.data_ctx.user_data.mutex.lock();
-        //s_likes[id.c_str()] = true;
-        ctx.data_ctx.user_data.mutex.unlock();
-        ctx.data_ctx.user_data.status = Status::e_invalidated;
-    }
-
-    void remove_like(Str id)
-    {
-        ctx.data_ctx.user_data.mutex.lock();
-        //s_likes.erase(id.c_str());
-        ctx.data_ctx.user_data.mutex.unlock();
-        ctx.data_ctx.user_data.status = Status::e_invalidated;
-    }
 
     ReleasesView* new_view(Page_t page, StoreView store_view)
     {
@@ -1844,7 +1860,7 @@ namespace
                 if(!scrolling && lenient_button_tap(rad))
                 {
                     pen::os_haptic_selection_feedback();
-                    remove_like(releases.id[r]);
+                    remove_like(releases.key[r]);
                     releases.flags[r] &= ~EntityFlags::liked;
                 }
                 ImGui::PopStyleColor();
@@ -1855,7 +1871,7 @@ namespace
                 if(!scrolling && lenient_button_tap(rad))
                 {
                     pen::os_haptic_selection_feedback();
-                    add_like(releases.id[r]);
+                    add_like(releases.key[r]);
                     releases.flags[r] |= EntityFlags::liked;
                 }
             }
@@ -2641,6 +2657,7 @@ namespace
         // copy auth credentials
         ctx.data_ctx.auth.mutex.lock();
         ctx.data_ctx.auth.dict = ctx.auth_response;
+        ctx.data_ctx.auth.status = Status::e_ready;
         ctx.data_ctx.auth.mutex.unlock();
         
         // initialise store
@@ -2875,7 +2892,7 @@ namespace
 
         // permanent workers
         pen::thread_create(registry_loader, 10 * 1024 * 1024, &ctx.data_ctx, pen::e_thread_start_flags::detached);
-        pen::thread_create(user_data_thread, 10 * 1024 * 1024, ctx.view, pen::e_thread_start_flags::detached);
+        pen::thread_create(user_data_thread, 10 * 1024 * 1024, &ctx.data_ctx, pen::e_thread_start_flags::detached);
 
         // timer
         frame_timer = pen::timer_create();
@@ -2938,4 +2955,35 @@ namespace
 void* pen::user_entry( void* params )
 {
     return PEN_THREAD_OK;
+}
+
+bool has_like(Str id)
+{
+    bool ret = false;
+    ctx.data_ctx.user_data.mutex.lock();
+    if(ctx.data_ctx.user_data.dict.contains("likes")) {
+        if(ctx.data_ctx.user_data.dict["likes"].contains(id.c_str())) {
+            ret = ctx.data_ctx.user_data.dict["likes"][id.c_str()];
+        }
+    }
+    ctx.data_ctx.user_data.mutex.unlock();
+    return ret;
+}
+
+void add_like(Str id)
+{
+    ctx.data_ctx.user_data.mutex.lock();
+    ctx.data_ctx.user_data.dict["likes"][id.c_str()] = true;
+    ctx.data_ctx.user_data.mutex.unlock();
+    ctx.data_ctx.user_data.status = Status::e_invalidated;
+}
+
+void remove_like(Str id)
+{
+    ctx.data_ctx.user_data.mutex.lock();
+    if(ctx.data_ctx.user_data.dict.contains("likes")) {
+        ctx.data_ctx.user_data.dict["likes"].erase(id.c_str());
+    }
+    ctx.data_ctx.user_data.mutex.unlock();
+    ctx.data_ctx.user_data.status = Status::e_invalidated;
 }

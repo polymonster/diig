@@ -558,10 +558,11 @@ void* user_data_thread(void* userdata)
     
     u32 mtime = 0;
     pen::filesystem_getmtime(user_data_filepath.c_str(), mtime);
+    nlohmann::json user_data_cache = {};
     if(mtime > 0)
     {
         std::ifstream f(user_data_filepath.c_str());
-        auto user_data = nlohmann::json::parse(f);
+        user_data_cache = nlohmann::json::parse(f);
     }
     
     bool auth_cloud = false;
@@ -574,8 +575,10 @@ void* user_data_thread(void* userdata)
     
     nlohmann::json update_payload = {};
     
-    // once
-    ctx->user_data.status = Status::e_invalidated;
+    // merge cache into the user_data
+    ctx->user_data.mutex.lock();
+    ctx->user_data.dict.merge_patch(user_data_cache);
+    ctx->user_data.mutex.unlock();
     
     for(;;)
     {
@@ -601,7 +604,7 @@ void* user_data_thread(void* userdata)
                 curl::DataBuffer fetch = curl::download(url.c_str());
                 if(fetch.data)
                 {
-                    // TODO: sync changes
+                    // TODO: sync changes from cloud
                     PEN_LOG("%s", fetch.data);
                 }
                 
@@ -668,85 +671,100 @@ void* releases_view_loader(void* userdata)
     // track added items to avoid duplicates that appear in multiple genre sections
     std::map<std::string, size_t> added_map;
     
-    for(auto& section : store_view.selected_sections) {
-        // index is concantonated store-section-view.json
-        Str index_on = "";
-        index_on.appendf(
-            "%s-%s-%s",
-            store_view.store_name.c_str(),
-            section.c_str(),
-            store_view.selected_view.c_str()
-        );
-        
-        // cache file is the index name saved as json
-        Str cache_file = index_on;
-        cache_file.append(".json");
-        
-        // ordered search
-        Str search_url = "https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app/releases.json";
-        search_url.appendf("?orderBy=\"%s\"&startAt=0&timeout=10s", index_on.c_str());
-        
-        AsyncDict async_registry;
-        fetch_json_cache(
-            search_url.c_str(),
-            cache_file.c_str(),
-            async_registry
-        );
-        
-        // TODO: handle total failure case
-        if(async_registry.status != Status::e_ready)
-        {
-            PEN_LOG("error: fetching %s", index_on.c_str());
-            view->status = Status::e_not_available;
-            view->threads_terminated++;
-            return nullptr;
-        }
-        
-        // add stored?
-        for(auto& item : async_registry.dict.items())
-        {
-            auto val = item.value();
+    if(view->page == Page::feed) {
+        for(auto& section : store_view.selected_sections) {
+            // index is concantonated store-section-view.json
+            Str index_on = "";
+            index_on.appendf(
+                             "%s-%s-%s",
+                             store_view.store_name.c_str(),
+                             section.c_str(),
+                             store_view.selected_view.c_str()
+                             );
             
-            if(added_map.find(item.key()) != added_map.end()) {
-                // if already in map, update using the min chart pos
-                auto vp = added_map[item.key()];
-                view_chart[vp].pos = std::min<u32>((u32)val[index_on.c_str()], (u32)view_chart[vp].pos);
-            }
-            else {
-                // add new entry to view_chart
-                added_map.insert({
-                    item.key(),
-                    view_chart.size()
-                });
-                
-                view_chart.push_back({
-                    item.key(),
-                    val[index_on.c_str()]
-                });
-            }
-        }
-        
-        releases_registry.merge_patch(async_registry.dict);
-    }
-    
-    // TODO:
-    /*
-    if(view->page == Page::likes)
-    {
-        for(auto& like : s_likes.items())
-        {
-            std::string id = "redeye-" + like.key();
-            if(releases_registry.contains(id) && like.value())
+            // cache file is the index name saved as json
+            Str cache_file = index_on;
+            cache_file.append(".json");
+            
+            // ordered search
+            Str search_url = "https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app/releases.json";
+            search_url.appendf("?orderBy=\"%s\"&startAt=0&timeout=10s", index_on.c_str());
+            
+            AsyncDict async_registry;
+            fetch_json_cache(
+                search_url.c_str(),
+                cache_file.c_str(),
+                async_registry
+            );
+            
+            // TODO: handle total failure case
+            if(async_registry.status != Status::e_ready)
             {
-                view_chart.push_back({
-                    id,
-                    0
-                });
+                PEN_LOG("error: fetching %s", index_on.c_str());
+                view->status = Status::e_not_available;
+                view->threads_terminated++;
+                return nullptr;
+            }
+            
+            // add stored?
+            for(auto& item : async_registry.dict.items())
+            {
+                auto val = item.value();
+                
+                if(added_map.find(item.key()) != added_map.end()) {
+                    // if already in map, update using the min chart pos
+                    auto vp = added_map[item.key()];
+                    view_chart[vp].pos = std::min<u32>((u32)val[index_on.c_str()], (u32)view_chart[vp].pos);
+                }
+                else {
+                    // add new entry to view_chart
+                    added_map.insert({
+                        item.key(),
+                        view_chart.size()
+                    });
+                    
+                    view_chart.push_back({
+                        item.key(),
+                        val[index_on.c_str()]
+                    });
+                }
+            }
+            
+            releases_registry.merge_patch(async_registry.dict);
+        }
+    }
+    else {
+        auto likes = get_likes();
+        if(!likes.empty()) {
+            for(auto& like : likes.items()) {
+                if(like.value()) {
+                    Str search_url = "https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app/releases.json";
+                    search_url.appendf("?orderBy=\"$key\"&equalTo=\"%s\"", like.key().c_str());
+                    
+                    auto db = curl::download(search_url.c_str());
+                    if(db.data)
+                    {
+                        nlohmann::json release;
+                        try {
+                            release = nlohmann::json::parse(db.data);
+                            releases_registry[like.key()] = release[like.key()];
+                            
+                            view_chart.push_back({
+                                like.key(),
+                                0
+                            });
+                        }
+                        catch(...) {
+                            //
+                        }
+                        
+                        free(db.data);
+                    }
+                }
             }
         }
     }
-    */
-     
+
     if(view_chart.empty())
     {
         view->status = Status::e_not_available;
@@ -1053,8 +1071,7 @@ namespace
     u32         clear_screen;
     AppContext  ctx;
 
-    ReleasesView* new_view(Page_t page, StoreView store_view)
-    {
+    ReleasesView* new_view(Page_t page, StoreView store_view) {
         ReleasesView* view = new ReleasesView;
         view->data_ctx = &ctx.data_ctx;
         view->page = page;
@@ -1070,8 +1087,7 @@ namespace
         return view;
     }
 
-    StoreView store_view_from_store(Page_t page, const Store& store)
-    {
+    StoreView store_view_from_store(Page_t page, const Store& store) {
         StoreView view;
         
         view.store_name = store.name;
@@ -1091,8 +1107,7 @@ namespace
         return view;
     }
 
-    ReleasesView* reload_view()
-    {
+    ReleasesView* reload_view() {
         if(ctx.view)
         {
             auto store_view = store_view_from_store(ctx.view->page, ctx.store);
@@ -1102,8 +1117,18 @@ namespace
         return nullptr;
     }
 
-    void change_store_view(Page_t page, const Store& store)
-    {
+    void change_page(Page_t page) {
+        // first we add the current view into background views
+        if(ctx.view && ctx.view->page == Page::feed) {
+            ctx.back_view = ctx.view;
+            ctx.background_views.insert(ctx.view);
+        }
+            
+        // kick off a new view
+        ctx.view = new_view(page, {});
+    }
+
+    void change_store_view(Page_t page, const Store& store) {
         StoreView view = store_view_from_store(page, store);
 
         if(!view.store_name.empty() && !view.selected_view.empty() && view.selected_sections.size() > 0) {
@@ -1118,8 +1143,7 @@ namespace
         }
     }
 
-    Store change_store(const Str& store_name)
-    {
+    Store change_store(const Str& store_name) {
         Store output = {};
         if(ctx.stores.contains(store_name.c_str()))
         {
@@ -1526,7 +1550,7 @@ namespace
         static bool heart_debounce = false;
         if(lenient_button_click(rad, heart_debounce, true))
         {
-            //change_view(Page::likes);
+            change_page(Page::likes);
         }
         
         ImGui::SameLine();
@@ -1536,9 +1560,14 @@ namespace
         ImGui::Text("%s", ICON_FA_BARS);
                 
         // options menu button
-        bool ellipsis_debounce = false;
+        static bool ellipsis_debounce = false;
         if(lenient_button_click(rad, ellipsis_debounce, true)) {
-            ImGui::OpenPopup("Options Menu");
+            if(ImGui::IsPopupOpen("Options Menu")) {
+                ImGui::CloseCurrentPopup();
+            }
+            else {
+                ImGui::OpenPopup("Options Menu");
+            }
         }
         
         // options menu popup
@@ -2986,4 +3015,16 @@ void remove_like(Str id)
     }
     ctx.data_ctx.user_data.mutex.unlock();
     ctx.data_ctx.user_data.status = Status::e_invalidated;
+}
+
+nlohmann::json get_likes()
+{
+    nlohmann::json result = {};
+    ctx.data_ctx.user_data.mutex.lock();
+    if(ctx.data_ctx.user_data.dict.contains("likes")) {
+        result = ctx.data_ctx.user_data.dict["likes"];
+    }
+    ctx.data_ctx.user_data.mutex.unlock();
+    
+    return result;
 }

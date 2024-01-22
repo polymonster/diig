@@ -1,11 +1,16 @@
 // TASKS
 
-// - cloud saves
-// - refactor user data into a single dict and move to context
-
 // - re-instate likes
-// - re-instate settings
 // - re-download & validate broken files
+
+// - help page
+// - contact page
+// - button for stats
+
+// - user store prev position, prev mode etc
+// - serialise prev position and prev mode?
+// - user fav store
+// - user fav genres
 
 // - improve feedback for loading failures (not spinning endlessly)
 // - relay info if there are no results
@@ -13,12 +18,7 @@
 // - implement label link (on tap)
 
 // - add support for prev / next on backgrounded app
-// - add autoplay support
-
-// - user store prev position, prev mode etc
-// - serialise prev position and prev mode?
-// - user fav store
-// - user fav genres
+// - add autoplay support to next item
 
 // - img and audio file cache management
 // - add clear cache and cache options
@@ -28,11 +28,14 @@
 // - side swipe still isnt perfect
 // - vertical swipe still sometimes feel sticky
 
-// - ReleasesView can leak mem
+// - ReleasesView can leak mem boot flow!
 
 // REGRESS
 
 // DONE
+// x - re-instate settings
+// x - cloud saves
+// x - refactor user data into a single dict and move to context
 // x - user authentication
 // x - colour and accent tweaks
 // x - mem leaks (at least the main ones)
@@ -329,6 +332,7 @@ struct AppContext
 };
 
 // likes API
-bool has_like(Str id);
-void add_like(Str id);
-void remove_like(Str id);
+bool            has_like(Str id);
+void            add_like(Str id);
+void            remove_like(Str id);
+nlohmann::json  get_likes();

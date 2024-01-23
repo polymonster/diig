@@ -800,6 +800,7 @@ void* releases_view_loader(void* userdata)
         view->releases.link[ri] = release["link"];
         view->releases.label[ri] = release["label"];
         view->releases.cat[ri] = release["cat"];
+        view->releases.label_link[ri] = release["label_link"];
         
         // clear
         view->releases.artwork_filepath[ri] = "";
@@ -1252,6 +1253,7 @@ namespace
                         releases.link[i].clear();
                         releases.label[i].clear();
                         releases.artwork_url[i].clear();
+                        releases.label_link[i].clear();
                     }
                     
                     // cleanup memory from the soa itself
@@ -1686,6 +1688,13 @@ namespace
             ImGui::Dummy(ImVec2(k_indent1, 0.0f));
             ImGui::SameLine();
             ImGui::TextWrapped("%s: %s", releases.label[r].c_str(), releases.cat[r].c_str());
+            
+            // TODO: open label link on tap
+            /*
+            if(ImGui::IsItemClicked()) {
+                ctx.open_url_request = releases.label_link[r];
+            }
+            */
             
             ImGui::SetWindowFontScale(k_text_size_body);
             

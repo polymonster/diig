@@ -146,7 +146,7 @@ namespace curl
             curl_easy_cleanup(curl);
         }
         
-        if(data)
+        if(db.data)
         {
             try {
                 return nlohmann::json::parse((const c8*)db.data);
@@ -2541,6 +2541,7 @@ namespace
                     // stash credentials
                     pen::os_set_keychain_item("com.pmtech.dig", "email", email_buf);
                     pen::os_set_keychain_item("com.pmtech.dig", "password", password_buf);
+                    pen::os_set_keychain_item("com.pmtech.dig", "lastauth", std::to_string(pen::get_time_ms()).c_str());
                     ctx.auth_response = response;
                     ctx.view->page = Page::login_complete;
                 }
@@ -2661,6 +2662,7 @@ namespace
                     pen::os_set_keychain_item("com.pmtech.dig", "email", email_buf);
                     pen::os_set_keychain_item("com.pmtech.dig", "password", password_buf);
                     pen::os_set_keychain_item("com.pmtech.dig", "username", username_buf);
+                    pen::os_set_keychain_item("com.pmtech.dig", "lastauth", std::to_string(pen::get_time_ms()).c_str());
                     ctx.auth_response = response;
                     ctx.view->page = Page::login_complete;
                 }
@@ -2707,6 +2709,7 @@ namespace
         Str email_address = pen::os_get_keychain_item("com.pmtech.dig", "email");
         Str password = pen::os_get_keychain_item("com.pmtech.dig", "password");
         Str username = pen::os_get_keychain_item("com.pmtech.dig", "username");
+        Str lastauth = pen::os_get_keychain_item("com.pmtech.dig", "lastauth");
         
         if(!email_address.empty() && !password.empty()) {
             Str jstr;
@@ -2719,11 +2722,23 @@ namespace
                 code
             );
             
-            if(code == CURLE_OK)
-            {
+            if(code == CURLE_OK) {
                 Str error_message = unpack_error_response(code, response);
-                
                 if(error_message.empty()) {
+                    // stash last auth timestamp
+                    pen::os_set_keychain_item("com.pmtech.dig", "lastauth", std::to_string(pen::get_time_ms()).c_str());
+                    ctx.auth_response = response;
+                    ctx.username = username;
+                    ctx.view->page = Page::login_complete;
+                }
+                else {
+                    // need to debug the error message
+                    view->page = Page::login_or_signup;
+                }
+            }
+            else {
+                // allow login, but without auth if we have credentials stored... these details would have been authenticated at sometime
+                if(!password.empty() && !username.empty() && !lastauth.empty()) {
                     ctx.auth_response = response;
                     ctx.username = username;
                     ctx.view->page = Page::login_complete;
@@ -2731,11 +2746,6 @@ namespace
                 else {
                     view->page = Page::login_or_signup;
                 }
-            }
-            else
-            {
-                // allow login, but without auth
-                view->page = Page::login_or_signup;
             }
         }
         else
@@ -2889,6 +2899,7 @@ namespace
     }
 
     void* user_setup(void* params) {
+        
         // unpack the params passed to the thread and signal to the engine it ok to proceed
         pen::job_thread_params* job_params = (pen::job_thread_params*)params;
         s_thread_info = job_params->job_info;
@@ -2921,7 +2932,6 @@ namespace
 
         // permanent workers
         pen::thread_create(registry_loader, 10 * 1024 * 1024, &ctx.data_ctx, pen::e_thread_start_flags::detached);
-        pen::thread_create(user_data_thread, 10 * 1024 * 1024, &ctx.data_ctx, pen::e_thread_start_flags::detached);
 
         // timer
         frame_timer = pen::timer_create();
@@ -2964,6 +2974,8 @@ namespace
         // white label
         ctx.white_label_texture = put::load_texture("data/images/white_label.dds");
         
+        // lets go
+        pen::thread_create(user_data_thread, 10 * 1024 * 1024, &ctx.data_ctx, pen::e_thread_start_flags::detached);
         auto_login();
 
         pen_main_loop(user_update);

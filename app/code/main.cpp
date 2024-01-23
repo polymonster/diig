@@ -579,7 +579,7 @@ void* user_data_thread(void* userdata)
     ctx->user_data.mutex.lock();
     ctx->user_data.dict.merge_patch(user_data_cache);
     ctx->user_data.mutex.unlock();
-    
+        
     for(;;)
     {
         // authenticate
@@ -604,8 +604,19 @@ void* user_data_thread(void* userdata)
                 curl::DataBuffer fetch = curl::download(url.c_str());
                 if(fetch.data)
                 {
-                    // TODO: sync changes from cloud
-                    PEN_LOG("%s", fetch.data);
+                    try {
+                        auto cloud_user_data = nlohmann::json::parse(fetch.data);
+                        if(cloud_user_data.contains("timestamp")) {
+                            if(ctx->user_data.dict.empty()) {
+                                // sync cloud changes if we have no local data
+                                ctx->user_data.dict.merge_patch(cloud_user_data);
+                            }
+                            // TODO: if newer
+                        }
+                    }
+                    catch(...) {
+                        // skip
+                    }
                 }
                 
                 fetch_cloud = false;
@@ -631,7 +642,7 @@ void* user_data_thread(void* userdata)
                 update_cloud = false;
             }
         }
-        
+                
         // if we have changes from the main thread, we can write to disk
         ctx->user_data.mutex.lock();
         if(ctx->user_data.status == Status::e_invalidated) {
@@ -1540,7 +1551,7 @@ namespace
         // likes button on same line
         ImGui::SameLine();
         
-        f32 offset = ImGui::GetTextLineHeight() * 3.0f + k_indent1;
+        f32 offset = ImGui::GetTextLineHeight() * 2.75f + k_indent1;
 
         ImGui::SetCursorPosX(ctx.w - offset);
         ImGui::Text("%s", ctx.view->page == Page::likes ? ICON_FA_HEART : ICON_FA_HEART_O);
@@ -1604,6 +1615,7 @@ namespace
             if(!ctx.auth_response.empty()) {
                 ImGui::Separator();
                 if(ImGui::MenuItem("Log Out")) {
+                    
                     ctx.view->page = Page::login_or_signup;
                 }
             }
@@ -2691,6 +2703,9 @@ namespace
         ctx.data_ctx.auth.status = Status::e_ready;
         ctx.data_ctx.auth.mutex.unlock();
         
+        // from keychain
+        ctx.username = pen::os_get_keychain_item("com.pmtech.dig", "username");
+        
         // initialise store
         if(ctx.view && ctx.view->page == Page::login_complete) {
             if(ctx.stores.size() > 0) {
@@ -2708,7 +2723,6 @@ namespace
                 
         Str email_address = pen::os_get_keychain_item("com.pmtech.dig", "email");
         Str password = pen::os_get_keychain_item("com.pmtech.dig", "password");
-        Str username = pen::os_get_keychain_item("com.pmtech.dig", "username");
         Str lastauth = pen::os_get_keychain_item("com.pmtech.dig", "lastauth");
         
         if(!email_address.empty() && !password.empty()) {
@@ -2728,7 +2742,6 @@ namespace
                     // stash last auth timestamp
                     pen::os_set_keychain_item("com.pmtech.dig", "lastauth", std::to_string(pen::get_time_ms()).c_str());
                     ctx.auth_response = response;
-                    ctx.username = username;
                     ctx.view->page = Page::login_complete;
                 }
                 else {
@@ -2738,9 +2751,7 @@ namespace
             }
             else {
                 // allow login, but without auth if we have credentials stored... these details would have been authenticated at sometime
-                if(!password.empty() && !username.empty() && !lastauth.empty()) {
-                    ctx.auth_response = response;
-                    ctx.username = username;
+                if(lastauth.empty()) {
                     ctx.view->page = Page::login_complete;
                 }
                 else {
@@ -2823,7 +2834,18 @@ namespace
         }
     }
 
+    void update_user() {
+        if(ctx.username.empty()) {
+            ctx.data_ctx.user_data.mutex.lock();
+            if(ctx.data_ctx.user_data.dict.contains("username")) {
+                ctx.username = ((std::string)ctx.data_ctx.user_data.dict["username"]).c_str();
+            }
+            ctx.data_ctx.user_data.mutex.unlock();
+        }
+    }
+
     void main_update() {
+        update_user();
         apply_taps();
         apply_drags();
         apply_clicks();

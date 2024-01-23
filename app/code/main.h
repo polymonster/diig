@@ -1,6 +1,5 @@
 // TASKS
 
-// - re-instate likes
 // - re-download & validate broken files
 
 // - help page
@@ -33,6 +32,7 @@
 // REGRESS
 
 // DONE
+// x - re-instate likes
 // x - re-instate settings
 // x - cloud saves
 // x - refactor user data into a single dict and move to context

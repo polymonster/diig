@@ -223,6 +223,7 @@ struct soa
     cmp_array<Str>                          label;
     cmp_array<Str>                          cat;
     cmp_array<Str>                          link;
+    cmp_array<Str>                          label_link;
     cmp_array<Str>                          artwork_url;
     cmp_array<Str>                          artwork_filepath;
     cmp_array<u32>                          artwork_texture;

@@ -203,11 +203,6 @@ namespace curl
     }
 }
 
-// TODO: make more user data centric
-//static nlohmann::json   s_likes;
-//static std::mutex       s_like_mutex;
-//static bool             s_likes_invalidated = false;
-
 generic_cmp_array& get_component_array(soa& s, size_t i)
 {
     generic_cmp_array* begin = (generic_cmp_array*)&s;
@@ -615,7 +610,7 @@ void* user_data_thread(void* userdata)
                         }
                     }
                     catch(...) {
-                        // skip
+                        // pass
                     }
                 }
                 
@@ -750,7 +745,7 @@ void* releases_view_loader(void* userdata)
             for(auto& like : likes.items()) {
                 if(like.value()) {
                     Str search_url = "https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app/releases.json";
-                    search_url.appendf("?orderBy=\"$key\"&equalTo=\"%s\"", like.key().c_str());
+                    search_url.appendf("?orderBy=\"$key\"&equalTo=\"%s\"&timeout=1s", like.key().c_str());
                     
                     auto db = curl::download(search_url.c_str());
                     if(db.data)
@@ -771,7 +766,44 @@ void* releases_view_loader(void* userdata)
                         
                         free(db.data);
                     }
+                    else {
+                    }
                 }
+            }
+        }
+        
+        Str filepath = get_persistent_filepath("likes_feed.json", true);
+        if(view_chart.size() == 0)
+        {
+            // look in cache
+            try {
+                releases_registry = nlohmann::json::parse(std::ifstream(filepath.c_str()));
+                
+                // add to view chart
+                for(auto& item : releases_registry.items()) {
+                    view_chart.push_back({
+                        item.key(),
+                        0
+                    });
+                }
+                
+            } catch (...) {
+                view->status = Status::e_not_available;
+            }
+        }
+        else
+        {
+            if(view_chart.size() == likes.size())
+            {
+                PEN_LOG("caching likes");
+                // cache async
+                std::thread cache_thread([releases_registry, filepath]() {
+                    FILE* fp = fopen(filepath.c_str(), "wb");
+                    std::string j = releases_registry.dump();
+                    fwrite(j.c_str(), j.length(), 1, fp);
+                    fclose(fp);
+                });
+                cache_thread.detach();
             }
         }
     }
@@ -800,7 +832,14 @@ void* releases_view_loader(void* userdata)
         view->releases.link[ri] = release["link"];
         view->releases.label[ri] = release["label"];
         view->releases.cat[ri] = release["cat"];
-        view->releases.label_link[ri] = release["label_link"];
+        
+        //
+        if(release.contains("label_link")) {
+            view->releases.label_link[ri] = release["label_link"];
+        }
+        else {
+            view->releases.label_link[ri] = "";
+        }
         
         // clear
         view->releases.artwork_filepath[ri] = "";
@@ -1553,7 +1592,7 @@ namespace
         // likes button on same line
         ImGui::SameLine();
         
-        f32 offset = ImGui::GetTextLineHeight() * 2.75f + k_indent1;
+        f32 offset = ImGui::GetTextLineHeight() * 3.0f + k_indent1;
 
         ImGui::SetCursorPosX(ctx.w - offset);
         ImGui::Text("%s", ctx.view->page == Page::likes ? ICON_FA_HEART : ICON_FA_HEART_O);
@@ -1585,11 +1624,6 @@ namespace
         
         // options menu popup
         ImGui::SetWindowFontScale(k_text_size_h2);
-        constexpr const c8* k_options[] = {
-            "Profile",
-            "Contact",
-            "Help"
-        };
         
         f32 s = ctx.w - offset * 2.0f;
         ImVec2 options_menu_pos = ImVec2(s, ImGui::GetCursorPosY());
@@ -1605,12 +1639,17 @@ namespace
                 ImGui::Separator();
             }
 
-            ImGui::SetWindowFontScale(k_text_size_h3);
+            ImGui::SetWindowFontScale(k_text_size_body);
             
-            // option menus
-            for(auto& opt : k_options) {
-                ImGui::MenuItem(opt);
-                // TODO: implement options
+            if(ctx.show_debug) {
+                if(ImGui::MenuItem("Hide Debug")) {
+                    ctx.show_debug = false;
+                }
+            }
+            else {
+                if(ImGui::MenuItem("Show Debug")) {
+                    ctx.show_debug = true;
+                }
             }
             
             // log out
@@ -2091,8 +2130,11 @@ namespace
                 auto info_err = put::audio_channel_get_sound_file_info(si, &info);
                 if(info_err == PEN_ERR_OK) {
                     if(info.error != 0) {
-                        // TODO: re-download
-                        PEN_LOG("I GOT U SOUL CAPSULE");
+                        Str cache = get_cache_path();
+                        cache.appendf(releases.id[r].c_str());
+                        pen::os_delete_directory(cache);
+                        releases.flags[r] &= ~(EntityFlags::tracks_loaded | EntityFlags::tracks_cached);
+
                     }
                     else {
                         len_ms = info.length_ms;
@@ -2399,6 +2441,16 @@ namespace
         if(ImGui::IsItemClicked()) {
             ctx.view->page = Page::signup;
         }
+        
+        ImGui::Spacing();
+        
+        // error relay
+        ImGui::Indent();
+        ImGui::SetWindowFontScale(k_text_size_body);
+        if(!ctx.last_response_message.empty()) {
+            ImGui::TextWrapped("%s", ctx.last_response_message.c_str());
+        }
+        ImGui::Unindent();
     }
 
     Str unpack_error_response(CURLcode code, nlohmann::json response) {
@@ -2756,16 +2808,22 @@ namespace
                 else {
                     // need to debug the error message
                     view->page = Page::login_or_signup;
+                    
+                    ctx.last_response_code = code;
+                    ctx.last_response_message = error_message;
                 }
             }
             else {
                 // allow login, but without auth if we have credentials stored... these details would have been authenticated at sometime
-                if(lastauth.empty()) {
+                if(!lastauth.empty()) {
                     ctx.view->page = Page::login_complete;
                 }
                 else {
                     view->page = Page::login_or_signup;
                 }
+                
+                ctx.last_response_code = code;
+                ctx.last_response_message.setf("curl code %i", code);
             }
         }
         else
@@ -2791,7 +2849,7 @@ namespace
         ImGui::Dummy(ImVec2(0.0f, ctx.status_bar_height));
         
         // ..
-        if(false) {
+        if(ctx.show_debug) {
             debug_menu();
         }
         

@@ -1,5 +1,7 @@
 // TASKS
 
+// - implement label link (on tap)
+
 // - re-download & validate broken files
 
 // - help page
@@ -14,8 +16,7 @@
 // - improve feedback for loading failures (not spinning endlessly)
 // - relay info if there are no results
 
-// - implement label link (on tap)
-
+// - support to stop audio on sing out
 // - add support for prev / next on backgrounded app
 // - add autoplay support to next item
 
@@ -127,7 +128,7 @@ constexpr f32 k_text_size_track = 0.75f;
 constexpr f32 k_text_size_nerds = 0.7f;
 constexpr f32 k_text_size_dots = 0.8f;
 constexpr f32 k_release_button_tap_radius_ratio = 64.0f / k_promax_11_w;
-constexpr f32 k_page_button_press_radius_ratio = 86.0f / k_promax_11_w;
+constexpr f32 k_page_button_press_radius_ratio = 94.0f / k_promax_11_w;
 constexpr u32 k_num_threads_per_view = 4;
 constexpr size_t k_login_buf_size = 320;
 
@@ -304,6 +305,7 @@ struct AppContext
     f32                     dt;
     f32                     releases_scroll_maxy = 0.0f;
     void*                   releases_window = nullptr;
+    bool                    show_debug = false;
     Str                     play_track_filepath = "";
     bool                    invalidate_track = false;
     bool                    mute = false;
@@ -330,6 +332,8 @@ struct AppContext
     f32                     loading_rot = 0.0f;
     nlohmann::json          auth_response = {};
     Str                     username = "";
+    Str                     last_response_message = "";
+    u32                     last_response_code = 0;
 };
 
 // likes API

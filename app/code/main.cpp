@@ -189,7 +189,7 @@ namespace curl
             curl_easy_cleanup(curl);
         }
         
-        if(data)
+        if(db.data)
         {
             try {
                 return nlohmann::json::parse((const c8*)db.data);

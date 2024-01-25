@@ -92,6 +92,18 @@ curl https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app/releases.
 
 ## App
 
+### Beta
+
+A beta is available on iOS, you can follow these instructions to get access or request an invite:
+
+1. Download and install [TestFlight](https://apps.apple.com/us/app/testflight/id899247664/) for iOS from the AppStore.
+2. Open TestFlight and click on your profile, use the email address displayed in TestFlight to request an invite.
+3. You will recieve a notification from TestFlight when a new build is available.
+4. Select diig and Install within the TestFlight app.
+5. diig will now be installed on your iOS device.
+
+### Building From Source
+
 The dig app currently runs natively on iOS, it is implemented using C++, Objective-C and ImGui via my cross platform game engine [pmtech](https://github.com/polymonster/pmtech). You can find more info in that repository on how to build in more detail but for a quick start you can use:
 
 ```text

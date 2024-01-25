@@ -196,4 +196,14 @@ import "pmtech/tools/pmbuild_ext/pmbuild_init.jsn"
             change_ext: ""
         }
     }
+
+    ios-testflight: {
+        testflight: {
+            type: shell
+            commands: [
+                "xcodebuild archive -workspace build/ios/diig_ios.xcworkspace -configuration Release -scheme diig -archivePath build/ios/diig_ios -allowProvisioningUpdates",
+                "xcodebuild -exportArchive -archivePath build/ios/diig_ios.xcarchive -exportPath build/ios/export -exportOptionsPlist dist/ios/ExportOptions.plist -allowProvisioningUpdates"
+            ]
+        }
+    }
 }

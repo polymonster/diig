@@ -628,11 +628,8 @@ void* user_data_thread(void* userdata)
                 CURLcode code;
                 auto response = curl::patch(url.c_str(), payload_str.c_str(), code);
                 
+                // TODO: this is not actually download, its writing
                 curl::DataBuffer fetch = curl::download(url.c_str());
-                if(fetch.data)
-                {
-                    PEN_LOG("%s", fetch.data);
-                }
                 
                 update_cloud = false;
             }
@@ -645,8 +642,6 @@ void* user_data_thread(void* userdata)
             ctx->user_data.dict["timestamp"] = pen::get_time_ms();
             
             std::string user_data_str = ctx->user_data.dict.dump(4);
-            PEN_LOG("%s", user_data_str.c_str());
-            
             FILE* fp = fopen(user_data_filepath.c_str(), "w");
             fwrite(user_data_str.c_str(), user_data_str.length(), 1, fp);
             fclose(fp);

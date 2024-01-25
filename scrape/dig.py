@@ -160,23 +160,6 @@ def auth_session():
     return AuthorizedSession(credentials)
 
 
-# testing
-def firebase_test():
-    # dig-19d4c
-    # https://firestore.googleapis.com/v1/projects/diig/databases/(default)
-
-    authed_session = auth_session()
-    response = authed_session.get(
-        "https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app/")
-
-    # get single
-    response = authed_session.get(
-        'https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app/releases.json?orderBy="weekly_chart_deep-house"&startAt=0&endAt=100&print=pretty')
-
-    print(response.text)
-    pass
-
-
 # write entire registry contents
 def patch_releases(entries: str):
     authed_session = auth_session()

@@ -1,6 +1,6 @@
-# Dig
+# diig
 
-Dig is a record digging app that provides a high performance audio player and ergonomic user interface to make digging through record snippets rapid, responsive and enjoyable.
+diig is a record digging app that provides a high performance audio player and ergonomic user interface to make digging through record snippets rapid, responsive and enjoyable.
 
 It provides a record store agnostic audio player with a familiar social media infinite scrolling interface to allow users to dig for new releases and provide click through links to stores to buy. Feeds and snippets are cached which also enables offline browsing.
 
@@ -44,7 +44,7 @@ A release schema defines a single release, specifying artist, track names, track
         "preorder": true
     },
 
-    "<store>-<section>_<view>": "int - position in a view (page) for particular store and section (genre group)",
+    "<store>-<section>-<view>": "int - position in a view (page) for particular store and section (genre group)",
     "Example Genre": "Genre Tag"
 }
 ```

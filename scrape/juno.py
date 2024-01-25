@@ -101,7 +101,13 @@ def scrape_page(url, store, view, section, counter = 0):
         (_, link_elem) = dig.find_parse_elem(release, 0, "<a href=", ">")
         (_, artwork_elem) = dig.find_parse_elem(release, 0, "<img class", ">")
 
-        (offset, artist_elem) = dig.find_parse_elem(release, 0, '<a class="text-md"', "</a>")
+        # handle VA case
+        if release.find("<strong>VARIOUS</strong>") != -1:
+            artist_elem = "<strong>VARIOUS</strong>"
+            offset = 0
+        else:
+            (offset, artist_elem) = dig.find_parse_elem(release, 0, '<a class="text-md"', "</a>")
+
         (offset, title_elem) = dig.find_parse_elem(release, offset, '<a class="text-md"', "</a>")
         (offset, label_elem) = dig.find_parse_elem(release, offset, '<a class="text-md"', "</a>")
         (offset, cat_elem) = dig.find_parse_elem(release, offset, '<div class="vi-text', "<br class")
@@ -136,7 +142,13 @@ def scrape_page(url, store, view, section, counter = 0):
         release_dict["id"] = parse_id(id_elem)
         release_dict["link"] = parse_link(link_elem)
         release_dict["artist"] = dig.parse_body(artist_elem)
+
         release_dict["title"] = dig.parse_body(title_elem)
+        if release_dict["title"].find("<span") != -1:
+            print(release)
+            assert(0)
+
+
         release_dict["label"] = parse_label(label_elem)
         release_dict["cat"] = parse_cat(cat_elem)
         release_dict["artworks"] = parse_artworks(artwork_elem)

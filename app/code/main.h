@@ -6,7 +6,6 @@
 
 // - help page
 // - contact page
-// - button for stats
 
 // - user store prev position, prev mode etc
 // - serialise prev position and prev mode?
@@ -33,6 +32,7 @@
 // REGRESS
 
 // DONE
+// x - button for stats
 // x - re-instate likes
 // x - re-instate settings
 // x - cloud saves

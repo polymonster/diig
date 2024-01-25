@@ -97,10 +97,12 @@ curl https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app/releases.
 A beta is available on iOS, you can follow these instructions to get access or request an invite:
 
 1. Download and install [TestFlight](https://apps.apple.com/us/app/testflight/id899247664/) for iOS from the AppStore.
-2. Open TestFlight and click on your profile, use the email address displayed in TestFlight to request an invite.
-3. You will recieve a notification from TestFlight when a new build is available.
-4. Select diig and Install within the TestFlight app.
-5. diig will now be installed on your iOS device.
+2. Obtain your email address associated with your apple id, the best way to confirm this is Settings > Click Profile Picture: email address is beneath you profile picture.
+3. Send over the email address (you can request in GitHub issues or request via [email](polymonster@icloud.com)).
+4. Once you are invited you will receive an email with a link, open this email and click the link to open in TestFlight on your device.
+5. Accept the invite in TestFlight and install.
+6. diig will now be installed on your iOS device, you can open it like any normal app from the home screen.
+7. Opening TestFlight will give you chance to update if one is available.
 
 ### Building From Source
 

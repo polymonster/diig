@@ -189,7 +189,7 @@ import "pmtech/tools/pmbuild_ext/pmbuild_init.jsn"
 
         make: {
             toolchain: "xcodebuild"
-            workspace: "digios.xcworkspace"
+            workspace: "diig_ios.xcworkspace"
             files: [
                 "build/ios/**/*.xcodeproj"
             ]

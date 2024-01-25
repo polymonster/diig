@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>generateAppStoreInformation</key>
+	<false/>
+	<key>method</key>
+	<string>app-store</string>
+	<key>signingCertificate</key>
+	<string>iOS Distribution</string>
+	<key>signingStyle</key>
+	<string>automatic</string>
+	<key>stripSwiftSymbols</key>
+	<true/>
+	<key>teamID</key>
+	<string>7C3Y39TX3G</string>
+	<key>uploadSymbols</key>
+	<true/>
+</dict>
+</plist>

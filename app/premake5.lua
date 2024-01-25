@@ -3,10 +3,10 @@ dofile "pmtech/tools/premake/globals.lua"
 dofile "pmtech/tools/premake/app_template.lua"
 
 -- Solution
-solution ("dig" .. platform_dir)
+solution ("diig_" .. platform_dir)
 	location ("build/" .. platform_dir )
 	configurations { "Debug", "Release" }
-	startproject "dig"
+	startproject "diig"
 	buildoptions { build_cmd }
 	linkoptions { link_cmd }
 
@@ -36,7 +36,7 @@ configuration{}
 	}
 
 -- app
-create_app("dig", "", script_path())
+create_app("diig", "", script_path())
 
 -- ios dist overrides
 configuration{}

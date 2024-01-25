@@ -1581,7 +1581,7 @@ namespace
         }
         else
         {
-            ImGui::Text("Dig");
+            ImGui::Text("diig");
         }
         
         // likes button on same line

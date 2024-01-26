@@ -4,7 +4,19 @@ on:
     - cron: "0 0 * * *"
   workflow_dispatch:
 jobs:
+  update-stores:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: install_deps
+      run: |
+        python3 -m pip install --upgrade pip
+        python3 -m pip install --upgrade google-auth
+    - name: scrape_and_commit
+      run: |
+        python3 dig.py -update-stores
   scrape-juno:
+    needs: update-stores
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -23,6 +35,7 @@ jobs:
         git pull --rebase
         git push origin HEAD:main
   scrape-redeye:
+    needs: update-stores
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3

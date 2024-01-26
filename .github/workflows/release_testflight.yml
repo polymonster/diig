@@ -1,0 +1,12 @@
+name: update_tesflight
+on:
+  workflow_dispatch:
+jobs:
+  update_tesflight:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: update_tesflight
+      run: |
+        cd app
+        pmtech/pmbuild ios-tesflight

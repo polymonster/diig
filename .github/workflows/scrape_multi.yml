@@ -14,6 +14,7 @@ jobs:
         python3 -m pip install --upgrade google-auth
     - name: scrape_and_commit
       run: |
+        cd scrape
         python3 dig.py -update-stores
   scrape-juno:
     needs: update-stores

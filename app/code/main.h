@@ -4,6 +4,9 @@
 
 // - re-download & validate broken files
 
+// - skip install in pen and put
+// - autmate uploads on tag
+
 // - help page
 // - contact page
 

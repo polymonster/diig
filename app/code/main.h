@@ -5,7 +5,7 @@
 // - re-download & validate broken files
 
 // - skip install in pen and put
-// - autmate uploads on tag
+// - automate uploads on tag
 
 // - help page
 // - contact page
@@ -18,7 +18,7 @@
 // - improve feedback for loading failures (not spinning endlessly)
 // - relay info if there are no results
 
-// - support to stop audio on sing out
+// - support to stop audio on sign out
 // - add support for prev / next on backgrounded app
 // - add autoplay support to next item
 

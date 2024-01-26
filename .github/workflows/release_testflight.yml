@@ -13,4 +13,4 @@ jobs:
         cd app
         pmtech/pmbuild ios -libs
         pmtech/pmbuild ios
-        pmtech/pmbuild ios-tesflight
+        pmtech/pmbuild ios-testflight

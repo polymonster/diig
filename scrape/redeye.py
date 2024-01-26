@@ -17,6 +17,8 @@ def parse_redeye_release_id(elem: str):
 def parse_redeye_artist(elem: str):
     body = dig.parse_body(elem)
     artist_end = body.find("-")
+    if artist_end == -1:
+        artist_end = len(elem)
     return {
         "artist": body[:artist_end].strip(),
         "title": body[artist_end+1:].strip()

@@ -65,7 +65,7 @@
                 "display_name": "Monthly Chart"
             },
             "back_catalogue": {
-                "url": "https://www.redeyerecords.co.uk/${{section}}/back-catalogue",
+                "url": "https://www.redeyerecords.co.uk/${{section}}/back-catalogue/page-${{page}}",
                 "page_count": 100,
                 "display_name": "Back Catalogue"
             }

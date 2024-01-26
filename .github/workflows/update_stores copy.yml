@@ -6,6 +6,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
+      with:
+        submodules: true
     - name: install_deps
       run: |
         python3 -m pip install --upgrade pip
@@ -13,4 +15,4 @@ jobs:
     - name: scrape_and_commit
       run: |
         cd scrape
-        python3 dig.py -update-stores
+        python3 dig.py -update-stores -key '${{secrets.SERVICE_ACCOUNT}}'

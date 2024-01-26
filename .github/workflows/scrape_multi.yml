@@ -15,7 +15,7 @@ jobs:
     - name: scrape_and_commit
       run: |
         cd scrape
-        python3 dig.py -update-stores
+        python3 dig.py -update-stores -key '${{secrets.SERVICE_ACCOUNT}}'
   scrape-juno:
     needs: update-stores
     runs-on: ubuntu-latest

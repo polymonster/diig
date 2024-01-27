@@ -32,6 +32,7 @@ jobs:
         BUILD_CERTIFICATE_BASE64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
         P12_PASSWORD: ${{ secrets.P12_PASSWORD }}
         KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+        API_KEY_H: ${{ secrets.API_KEY_H }}
       run: |
         # create variables
         CERTIFICATE_PATH=$RUNNER_TEMP/build_certificate.p12
@@ -40,7 +41,7 @@ jobs:
 
         # import certificate and provisioning profile from secrets
         echo -n "$BUILD_CERTIFICATE_BASE64" | base64 --decode -o $CERTIFICATE_PATH
-        # echo -n "$BUILD_PROVISION_PROFILE_BASE64" | base64 --decode -o $PP_PATH
+        echo -n "$BUILD_PROVISION_PROFILE_BASE64" | base64 --decode -o $PP_PATH
 
         # create temporary keychain
         security create-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
@@ -52,11 +53,12 @@ jobs:
         security list-keychain -d user -s $KEYCHAIN_PATH
 
         # apply provisioning profile
-        # mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
-        # cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
+        mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+        cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
 
         cd app
         pmtech/pmbuild ios -libs
         pmtech/pmbuild ios
+        echo "$API_KEY_H" >> code/api_key.h
         pmtech/pmbuild ios-testflight
         xcrun altool --upload-app -f build/ios/export/diig.ipa -t ios -u ${{secrets.APP_EMAIL}} -p ${{secrets.P12_PASSWORD}}

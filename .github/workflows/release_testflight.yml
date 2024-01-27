@@ -62,7 +62,7 @@ jobs:
 
         cd app
         pmtech/pmbuild ios
-        xcodebuild archive -workspace build/ios/diig_ios.xcworkspace -configuration Release -scheme diig -archivePath build/ios/diig_ios OTHER_CODE_SIGN_FLAGS="--keychain $KEYCHAIN_PATH"  PROVISIONING_PROFILE="c201552e-2c71-4513-af2f-6fbfc39a4988"
+        xcodebuild archive -workspace build/ios/diig_ios.xcworkspace -configuration Release -scheme diig -archivePath build/ios/diig_ios OTHER_CODE_SIGN_FLAGS="--keychain $KEYCHAIN_PATH" PROVISIONING_PROFILE="c201552e-2c71-4513-af2f-6fbfc39a4988" CODE_SIGN_STYLE="Manual"
 
         # pmtech/pmbuild ios -libs
         # echo "$API_KEY_H" >> code/api_key.h

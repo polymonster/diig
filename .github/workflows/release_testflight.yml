@@ -34,7 +34,9 @@ jobs:
         KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
         API_KEY_H: ${{ secrets.API_KEY_H }}
       run: |
-        # xcode version
+        # xcode / macos version debug
+        sw_vers -productVersion
+        ls /Applications
         xcodebuild -version
 
         # create variables

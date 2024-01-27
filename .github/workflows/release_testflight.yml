@@ -62,7 +62,7 @@ jobs:
 
         cd app
         pmtech/pmbuild ios
-        xcodebuild archive -workspace build/ios/diig_ios.xcworkspace -configuration Release -scheme diig -archivePath build/ios/diig_ios PROVISIONING_PROFILE=build_pp.mobileprovision
+        xcodebuild archive -workspace build/ios/diig_ios.xcworkspace -configuration Release -scheme diig -archivePath build/ios/diig_ios OTHER_CODE_SIGN_FLAGS=--keychain '$KEYCHAIN_PATH'
 
         # pmtech/pmbuild ios -libs
         # echo "$API_KEY_H" >> code/api_key.h

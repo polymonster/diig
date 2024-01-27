@@ -61,8 +61,10 @@ jobs:
         ls ~/Library/MobileDevice/Provisioning\ Profiles
 
         cd app
-        pmtech/pmbuild ios -libs
         pmtech/pmbuild ios
+        xcodebuild archive -workspace build/ios/diig_ios.xcworkspace -configuration Release -scheme diig -archivePath build/ios/diig_ios PROVISIONING_PROFILE=build_pp.mobileprovision"
+
+        pmtech/pmbuild ios -libs
         echo "$API_KEY_H" >> code/api_key.h
         pmtech/pmbuild ios-testflight
         xcrun altool --upload-app -f build/ios/export/diig.ipa -t ios -u ${{secrets.APP_EMAIL}} -p ${{secrets.P12_PASSWORD}}

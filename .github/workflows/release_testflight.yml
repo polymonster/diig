@@ -43,8 +43,7 @@ jobs:
 
         # import certificate and provisioning profile from secrets
         echo -n "$DEV_CERTIFICATE_64" | base64 --decode -o $CERTIFICATE_PATH
-
-        # echo -n "$BUILD_PROVISION_PROFILE_BASE64" | base64 --decode -o $PP_PATH
+        echo -n "$BUILD_PROVISION_PROFILE_BASE64" | base64 --decode -o $PP_PATH
 
         # create temporary keychain
         security create-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
@@ -57,7 +56,7 @@ jobs:
 
         # apply provisioning profile
         mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
-        cp app/dist/ios/digiosdev.mobileprovision ~/Library/MobileDevice/Provisioning\ Profiles
+        cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles/3eb587ae-8fa2-40d2-866b-5f7633803661.mobileprovision
 
         ls ~/Library/MobileDevice/Provisioning\ Profiles
 

@@ -56,7 +56,7 @@ jobs:
 
         # apply provisioning profile
         mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
-        cp 3eb587ae-8fa2-40d2-866b-5f7633803661.mobileprovision ~/Library/MobileDevice/Provisioning\ Profiles
+        cp app/dist/ios/3eb587ae-8fa2-40d2-866b-5f7633803661.mobileprovision ~/Library/MobileDevice/Provisioning\ Profiles
 
         ls ~/Library/MobileDevice/Provisioning\ Profiles
 

@@ -1,3 +1,5 @@
+#include "api_key.h"
+
 #include "renderer.h"
 #include "timer.h"
 #include "file_system.h"
@@ -16,10 +18,10 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb/stb_image.h"
 
+#include "maths/maths.h"
+
 #include <fstream>
 #include <thread>
-
-#include "maths/maths.h"
 
 using namespace put;
 using namespace pen;
@@ -200,6 +202,12 @@ namespace curl
         }
         
         return {};
+    }
+
+    Str url_with_key(const c8* url) {
+        Str urlk = url;
+        urlk.appendf("?key=%s", k_api_key);
+        return urlk;
     }
 }
 
@@ -827,6 +835,7 @@ void* releases_view_loader(void* userdata)
         view->releases.link[ri] = release["link"];
         view->releases.label[ri] = release["label"];
         view->releases.cat[ri] = release["cat"];
+        view->releases.store[ri] = release["store"];
         
         //
         if(release.contains("label_link")) {
@@ -1198,10 +1207,38 @@ namespace
             auto& section_search_names = store["sections"];
             auto& section_display_names = store["section_display_names"];
             
+            // hardcoded priority order
+            static const c8* k_view_order[] = {
+                "new_releases",
+                "weekly_chart",
+                "monthly_chart"
+            };
+            
+            // add view priority order
+            for(auto v : k_view_order) {
+                if(views.contains(v)) {
+                    output.view_search_names.push_back(v);
+                    std::string dn = views[v]["display_name"];
+                    output.view_display_names.push_back(dn.c_str());
+                }
+            }
+            
+            // add remaining views
             for(auto& view : views.items())
             {
-                output.view_search_names.push_back(view.key());
+                // skip prioritised
+                bool exists = false;
+                for(auto& v : k_view_order) {
+                    if(std::string(v) == view.key()) {
+                        exists = true;
+                    }
+                }
+                if(exists) {
+                    continue;
+                }
                 
+                // add view
+                output.view_search_names.push_back(view.key());
                 std::string dn = view.value()["display_name"];
                 output.view_display_names.push_back(dn.c_str());
             }
@@ -1286,6 +1323,8 @@ namespace
                         releases.title[i].clear();
                         releases.link[i].clear();
                         releases.label[i].clear();
+                        releases.cat[i].clear();
+                        releases.store[i].clear();
                         releases.artwork_url[i].clear();
                         releases.label_link[i].clear();
                     }
@@ -1647,12 +1686,17 @@ namespace
                 }
             }
             
+            if(ImGui::MenuItem("Next")) {
+                u32 next_release = ctx.top + 1;
+                ctx.view->scroll.y = ctx.view->releases.posy[next_release];
+            }
+            
             // log out
             if(!ctx.auth_response.empty()) {
                 ImGui::Separator();
                 if(ImGui::MenuItem("Log Out")) {
-                    
                     ctx.view->page = Page::login_or_signup;
+                    audio_player_stop_existing();
                 }
             }
             
@@ -1693,6 +1737,9 @@ namespace
                 break;
             }
             
+            // assign release pos
+            releases.posy[r] = starty;
+            
             // skip items we have passed with a dummy
             if(releases.sizey[r] > 0.0f)
             {
@@ -1714,6 +1761,22 @@ namespace
                         ctx.top = r;
                     }
                 }
+            }
+                        
+            // debug display ID
+            if(ctx.show_debug) {
+                ImGui::SetWindowFontScale(k_text_size_nerds);
+                ImGui::Dummy(ImVec2(k_indent1, 0.0f));
+                ImGui::SameLine();
+                ImGui::Text("(%s)", releases.key[r].c_str());
+            }
+            
+            // display store for likes
+            if(ctx.view->page == Page::likes) {
+                ImGui::SetWindowFontScale(k_text_size_body);
+                ImGui::Dummy(ImVec2(k_indent1, 0.0f));
+                ImGui::SameLine();
+                ImGui::Text("%s", releases.store[r].c_str());
             }
             
             // label and catalogue
@@ -1854,7 +1917,7 @@ namespace
             }
             else
             {
-                // TODO: this is not scrollable
+                // should never reach this case
                 ImGui::Dummy(ImVec2(w, w));
             }
             
@@ -2009,8 +2072,13 @@ namespace
             ImGui::Text("%s", hype_icons.c_str());
             
             // release info
-            ImGui::TextWrapped("%s", artist.c_str());
-            ImGui::TextWrapped("%s", title.c_str());
+            if(!artist.empty()) {
+                ImGui::TextWrapped("%s", artist.c_str());
+            }
+            
+            if(!title.empty()) {
+                ImGui::TextWrapped("%s", title.c_str());
+            }
             
             // track name
             ImGui::SetWindowFontScale(k_text_size_track);
@@ -2036,6 +2104,7 @@ namespace
         
         // get scroll limit
         ctx.releases_scroll_maxy = ImGui::GetScrollMaxY() - w;
+        ctx.scroll_pos_y = ImGui::GetScrollY();
         
         ImGui::EndChild();
     }
@@ -2043,157 +2112,6 @@ namespace
     void set_now_playing_artwork(void* data, u32 row_pitch, u32 depth_pitch, u32 block_size)
     {
         pen::music_set_now_playing_artwork(data, row_pitch / block_size, depth_pitch / row_pitch, 8, row_pitch);
-    }
-
-    void audio_player()
-    {
-        auto& releases = ctx.view->releases;
-        
-        // audio player
-        if(!ctx.mute)
-        {
-            static u32 si = -1;
-            static u32 ci = -1;
-            static u32 gi = -1;
-            static bool started = false;
-            static u32 read_tex_data_handle = 0;
-            
-            u32 r = ctx.top;
-            
-            if(ctx.top == -1)
-            {
-                // stop existing
-                if(is_valid(si))
-                {
-                    // release existing
-                    put::audio_channel_stop(ci);
-                    put::audio_release_resource(si);
-                    put::audio_release_resource(ci);
-                    put::audio_release_resource(gi);
-                    si = -1;
-                    ci = -1;
-                    gi = -1;
-                    started = false;
-                    ctx.play_track_filepath = "";
-                }
-            }
-            
-            // play new
-            if(ctx.play_track_filepath.length() > 0 && ctx.invalidate_track)
-            {
-                // stop existing
-                if(is_valid(si))
-                {
-                    // release existing
-                    put::audio_channel_stop(ci);
-                    put::audio_release_resource(si);
-                    put::audio_release_resource(ci);
-                    put::audio_release_resource(gi);
-                    si = -1;
-                    ci = -1;
-                    gi = -1;
-                    started = false;
-                }
-                
-                si = put::audio_create_stream(ctx.play_track_filepath.c_str());
-                ci = put::audio_create_channel_for_sound(si);
-                gi = put::audio_create_channel_group();
-                
-                put::audio_add_channel_to_group(ci, gi);
-                put::audio_group_set_volume(gi, 1.0f);
-                
-                u32 t = releases.select_track[ctx.top];
-                Str track_name = "";
-                if(t < releases.track_name_count[r]) {
-                    track_name = releases.track_names[r][t];
-                }
-                
-                pen::music_set_now_playing(
-                    releases.artist[r], releases.title[r], track_name);
-
-                read_tex_data_handle = 0;
-                ctx.invalidate_track = false;
-                started = false;
-            }
-            
-            // playing
-            if(is_valid(ci))
-            {
-                // get length and check errors
-                u32 len_ms = 0;
-                audio_sound_file_info info = {};
-                auto info_err = put::audio_channel_get_sound_file_info(si, &info);
-                if(info_err == PEN_ERR_OK) {
-                    if(info.error != 0) {
-                        Str cache = get_cache_path();
-                        cache.appendf(releases.id[r].c_str());
-                        pen::os_delete_directory(cache);
-                        releases.flags[r] &= ~(EntityFlags::tracks_loaded | EntityFlags::tracks_cached);
-
-                    }
-                    else {
-                        len_ms = info.length_ms;
-                    }
-                }
-                
-                // get pos
-                u32 pos_ms = 0;
-                audio_channel_state state = {};
-                auto state_err = put::audio_channel_get_state(ci, &state);
-                if(state_err == PEN_ERR_OK) {
-                    pos_ms = state.position_ms;
-                }
-                
-                // set pos / length info
-                pen::music_set_now_playing_time_info(pos_ms, len_ms);
-                
-                // read back texture data to display on lock screen
-                if(releases.artwork_texture[r] && read_tex_data_handle != releases.artwork_texture[r])
-                {
-                    pen::resource_read_back_params rrbp;
-                    rrbp.format = releases.artwork_tcp[r].format;
-                    rrbp.block_size = releases.artwork_tcp[r].block_size;
-                    rrbp.data_size = releases.artwork_tcp[r].data_size;
-                    rrbp.depth_pitch = releases.artwork_tcp[r].data_size;
-                    rrbp.row_pitch = releases.artwork_tcp[r].width * rrbp.block_size;
-                    rrbp.resource_index = releases.artwork_texture[r];
-                    rrbp.call_back_function = set_now_playing_artwork;
-                    
-                    pen::renderer_read_back_resource(rrbp);
-                    
-                    read_tex_data_handle = releases.artwork_texture[r];
-                }
-                
-                put::audio_group_state gstate;
-                memset(&gstate, 0x0, sizeof(put::audio_group_state));
-                put::audio_group_get_state(gi, &gstate);
-                
-                if(started && gstate.play_state == put::e_audio_play_state::not_playing)
-                {
-                    //
-                    put::audio_channel_stop(ci);
-                    put::audio_release_resource(si);
-                    put::audio_release_resource(ci);
-                    put::audio_release_resource(gi);
-                    si = -1;
-                    ci = -1;
-                    gi = -1;
-                    
-                    // move to next
-                    u32 next = releases.select_track[ctx.top] + 1;
-                    if(next < releases.track_filepath_count[ctx.top])
-                    {
-                        ctx.scroll_delta.x = 0.0;
-                        releases.select_track[ctx.top] += 1;
-                        releases.flags[ctx.top] |= EntityFlags::transitioning;
-                    }
-                }
-                else if(gstate.play_state == put::e_audio_play_state::playing)
-                {
-                    started = true;
-                }
-            }
-        }
     }
 
     void issue_data_requests()
@@ -2411,6 +2329,9 @@ namespace
             (u32)(ctx.data_ctx.cached_release_bytes.load() / 1024 / 1024)
         );
         
+        //
+        ImGui::Text("scroll: %f", ctx.scroll_pos_y);
+        
         ImGui::Unindent();
     }
 
@@ -2485,7 +2406,9 @@ namespace
         bool any_active = false;
         
         ImGui::Indent();
-        ImGui::InputText("Email", &email_buf[0], k_login_buf_size);
+        if(ImGui::InputText("Email", &email_buf[0], k_login_buf_size)) {
+            error_message.clear();
+        }
         if(ImGui::IsItemActive()) {
             any_active = true;
         }
@@ -2493,6 +2416,8 @@ namespace
         if(return_pressed) {
             ImGui::SetWindowFocus(nullptr);
         }
+        
+        ImGui::SetWindowFontScale(k_text_size_h2);
         
         if(ImGui::Button("Back")) {
             ctx.view->page = Page::login_or_signup;
@@ -2512,7 +2437,7 @@ namespace
                 
                 CURLcode code;
                 auto response = curl::request(
-                    "https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=AIzaSyDF3LxvEbVx78GxLjreVRYTUeTChJn__iI",
+                    curl::url_with_key("https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode").c_str(),
                     jstr.c_str(),
                     code
                 );
@@ -2527,6 +2452,8 @@ namespace
         }
         
         ImGui::Spacing();
+        
+        ImGui::SetWindowFontScale(k_text_size_body);
         
         // error
         ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.5f, 0.0f, 0.0f, 1.0f));
@@ -2563,12 +2490,16 @@ namespace
         bool any_active = false;
         
         ImGui::Indent();
-        ImGui::InputText("Email", &email_buf[0], k_login_buf_size);
+        if(ImGui::InputText("Email", &email_buf[0], k_login_buf_size)) {
+            error_message.clear();
+        }
         if(ImGui::IsItemActive()) {
             any_active = true;
         }
         
-        ImGui::InputText("Password", &password_buf[0], k_login_buf_size, ImGuiInputTextFlags_Password);
+        if(ImGui::InputText("Password", &password_buf[0], k_login_buf_size, ImGuiInputTextFlags_Password)) {
+            error_message.clear();
+        }
         if(ImGui::IsItemActive()) {
             any_active = true;
         }
@@ -2580,6 +2511,8 @@ namespace
         if(return_pressed) {
             ImGui::SetWindowFocus(nullptr);
         }
+        
+        ImGui::SetWindowFontScale(k_text_size_h2);
         
         if(ImGui::Button("Back")) {
             ctx.view->page = Page::login_or_signup;
@@ -2598,7 +2531,7 @@ namespace
                 
                 CURLcode code;
                 auto response = curl::request(
-                    "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyDF3LxvEbVx78GxLjreVRYTUeTChJn__iI",
+                    curl::url_with_key("https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword").c_str(),
                     jstr.c_str(),
                     code
                 );
@@ -2615,6 +2548,8 @@ namespace
                 }
             }
         }
+        
+        ImGui::SetWindowFontScale(k_text_size_body);
         
         ImGui::Spacing();
         ImGui::Spacing();
@@ -2660,21 +2595,16 @@ namespace
         
         bool any_active = false;
         ImGui::Indent();
-        ImGui::InputText("Username", &username_buf[0], k_login_buf_size);
+        if(ImGui::InputText("Username", &username_buf[0], k_login_buf_size)) {
+            error_message.clear();
+        }
         if(ImGui::IsItemActive()) {
             any_active = true;
         }
         
-        ImGui::InputText("Email", &email_buf[0], k_login_buf_size);
-        if(ImGui::IsItemActive()) {
-            any_active = true;
+        if(ImGui::InputText("Email", &email_buf[0], k_login_buf_size)) {
+            error_message.clear();
         }
-        else if(return_pressed) {
-            ImGui::SetKeyboardFocusHere();
-            return_pressed = false;
-        }
-        
-        ImGui::InputText("Password", &password_buf[0], k_login_buf_size, ImGuiInputTextFlags_Password);
         if(ImGui::IsItemActive()) {
             any_active = true;
         }
@@ -2683,7 +2613,20 @@ namespace
             return_pressed = false;
         }
         
-        ImGui::InputText("Retype", &retype_buf[0], k_login_buf_size, ImGuiInputTextFlags_Password);
+        if(ImGui::InputText("Password", &password_buf[0], k_login_buf_size, ImGuiInputTextFlags_Password)) {
+            error_message.clear();
+        }
+        if(ImGui::IsItemActive()) {
+            any_active = true;
+        }
+        else if(return_pressed) {
+            ImGui::SetKeyboardFocusHere();
+            return_pressed = false;
+        }
+        
+        if(ImGui::InputText("Retype", &retype_buf[0], k_login_buf_size, ImGuiInputTextFlags_Password)) {
+            error_message.clear();
+        }
         if(ImGui::IsItemActive()) {
             any_active = true;
         }
@@ -2695,6 +2638,8 @@ namespace
         if(return_pressed) {
             ImGui::SetWindowFocus(nullptr);
         }
+        
+        ImGui::SetWindowFontScale(k_text_size_h2);
         
         if(ImGui::Button("Back")) {
             pen::os_haptic_selection_feedback();
@@ -2718,7 +2663,7 @@ namespace
                 
                 CURLcode code;
                 auto response = curl::request(
-                    "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyDF3LxvEbVx78GxLjreVRYTUeTChJn__iI",
+                    curl::url_with_key("https://identitytoolkit.googleapis.com/v1/accounts:signUp").c_str(),
                     jstr.c_str(),
                     code
                 );
@@ -2738,6 +2683,8 @@ namespace
         }
         
         ImGui::Spacing();
+        
+        ImGui::SetWindowFontScale(k_text_size_body);
         
         // error
         ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.5f, 0.0f, 0.0f, 1.0f));
@@ -2768,6 +2715,9 @@ namespace
                 if(ctx.store.name.empty()) {
                     ctx.store = change_store("redeye");
                 }
+                else {
+                    ctx.store = change_store(ctx.store.name);
+                }
             }
         }
     }
@@ -2787,7 +2737,7 @@ namespace
             
             CURLcode code;
             auto response = curl::request(
-                "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyDF3LxvEbVx78GxLjreVRYTUeTChJn__iI",
+                curl::url_with_key("https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword").c_str(),
                 jstr.c_str(),
                 code
             );
@@ -2841,7 +2791,7 @@ namespace
         
         ImGui::Begin("Main", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar);
         
-        ImGui::Dummy(ImVec2(0.0f, ctx.status_bar_height));
+        ImGui::Dummy(ImVec2(0.0f, ctx.status_bar_height * 1.25f));
         
         // ..
         if(ctx.show_debug) {
@@ -3045,12 +2995,14 @@ namespace
                 ctx.h * (ImGui::GetStyle().ItemInnerSpacing.y / k_promax_11_h)
         );
         
-        ImGui::GetStyle().Colors[ImGuiCol_CheckMark] = ImVec4(1.0f, 0.5f, 0.0f, 1.00f);
-        ImGui::GetStyle().Colors[ImGuiCol_HeaderHovered] = ImVec4(1.0f, 0.5f, 0.0f, 1.00f);
-        ImGui::GetStyle().Colors[ImGuiCol_HeaderActive] = ImVec4(1.0f, 0.5f, 0.0f, 1.00f);
-        ImGui::GetStyle().Colors[ImGuiCol_Button] = ImVec4(1.0f, 0.5f, 0.0f, 1.00f);
-        ImGui::GetStyle().Colors[ImGuiCol_ButtonActive] = ImVec4(1.0f, 0.5f, 0.0f, 1.00f);
-        ImGui::GetStyle().Colors[ImGuiCol_ButtonHovered] = ImVec4(1.0f, 0.5f, 0.0f, 1.00f);
+        ImGui::GetStyle().Colors[ImGuiCol_CheckMark] = ImVec4(1.0f, 0.5f, 0.0f, 1.0f);
+        ImGui::GetStyle().Colors[ImGuiCol_HeaderHovered] = ImVec4(1.0f, 0.5f, 0.0f, 1.0f);
+        ImGui::GetStyle().Colors[ImGuiCol_HeaderActive] = ImVec4(1.0f, 0.5f, 0.0f, 1.0f);
+        ImGui::GetStyle().Colors[ImGuiCol_Button] = ImVec4(1.0f, 0.5f, 0.0f, 1.0f);
+        ImGui::GetStyle().Colors[ImGuiCol_ButtonActive] = ImVec4(1.0f, 0.5f, 0.0f, 1.0f);
+        ImGui::GetStyle().Colors[ImGuiCol_ButtonHovered] = ImVec4(1.0f, 0.5f, 0.0f, 1.0f);
+        ImGui::GetStyle().Colors[ImGuiCol_CheckMark] = ImVec4(1.0f, 0.5f, 0.0f, 1.0f);
+        ImGui::GetStyle().Colors[ImGuiCol_FrameBgHovered] = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
         
         // spinner
         ctx.spinner_texture = put::load_texture("data/images/spinner.dds");
@@ -3080,6 +3032,150 @@ namespace
 void* pen::user_entry( void* params )
 {
     return PEN_THREAD_OK;
+}
+
+void audio_player_stop_existing()
+{
+    auto& audio_ctx = ctx.audio_ctx;
+    
+    // stop existing
+    if(is_valid(audio_ctx.si))
+    {
+        // release existing
+        put::audio_channel_stop(audio_ctx.ci);
+        put::audio_release_resource(audio_ctx.si);
+        put::audio_release_resource(audio_ctx.ci);
+        put::audio_release_resource(audio_ctx.gi);
+        audio_ctx.si = -1;
+        audio_ctx.ci = -1;
+        audio_ctx.gi = -1;
+        audio_ctx.started = false;
+    }
+}
+
+void audio_player()
+{
+    auto& releases = ctx.view->releases;
+    auto& audio_ctx = ctx.audio_ctx;
+    
+    // audio player
+    if(!ctx.mute)
+    {
+        u32 r = ctx.top;
+        
+        if(ctx.top == -1)
+        {
+            // stop existing
+            audio_player_stop_existing();
+            ctx.play_track_filepath = "";
+        }
+        
+        // play new
+        if(ctx.play_track_filepath.length() > 0 && ctx.invalidate_track)
+        {
+            // stop existing
+            audio_player_stop_existing();
+            
+            audio_ctx.si = put::audio_create_stream(ctx.play_track_filepath.c_str());
+            audio_ctx.ci = put::audio_create_channel_for_sound(audio_ctx.si);
+            audio_ctx.gi = put::audio_create_channel_group();
+            
+            put::audio_add_channel_to_group(audio_ctx.ci, audio_ctx.gi);
+            put::audio_group_set_volume(audio_ctx.gi, 1.0f);
+            
+            u32 t = releases.select_track[ctx.top];
+            Str track_name = "";
+            if(t < releases.track_name_count[r]) {
+                track_name = releases.track_names[r][t];
+            }
+            
+            pen::music_set_now_playing(
+                releases.artist[r], releases.title[r], track_name);
+
+            audio_ctx.read_tex_data_handle = 0;
+            ctx.invalidate_track = false; // TODO: move to audio ctx
+            audio_ctx.started = false;
+        }
+        
+        // playing
+        if(is_valid(audio_ctx.ci))
+        {
+            // get length and check errors
+            u32 len_ms = 0;
+            audio_sound_file_info info = {};
+            auto info_err = put::audio_channel_get_sound_file_info(audio_ctx.si, &info);
+            if(info_err == PEN_ERR_OK) {
+                if(info.error != 0) {
+                    Str cache = get_cache_path();
+                    cache.appendf(releases.id[r].c_str());
+                    pen::os_delete_directory(cache);
+                    releases.flags[r] &= ~(EntityFlags::tracks_loaded | EntityFlags::tracks_cached);
+
+                }
+                else {
+                    len_ms = info.length_ms;
+                }
+            }
+            
+            // get pos
+            u32 pos_ms = 0;
+            audio_channel_state state = {};
+            auto state_err = put::audio_channel_get_state(audio_ctx.ci, &state);
+            if(state_err == PEN_ERR_OK) {
+                pos_ms = state.position_ms;
+            }
+            
+            // set pos / length info
+            pen::music_set_now_playing_time_info(pos_ms, len_ms);
+            
+            // read back texture data to display on lock screen
+            if(releases.artwork_texture[r] && audio_ctx.read_tex_data_handle != releases.artwork_texture[r])
+            {
+                pen::resource_read_back_params rrbp;
+                rrbp.format = releases.artwork_tcp[r].format;
+                rrbp.block_size = releases.artwork_tcp[r].block_size;
+                rrbp.data_size = releases.artwork_tcp[r].data_size;
+                rrbp.depth_pitch = releases.artwork_tcp[r].data_size;
+                rrbp.row_pitch = releases.artwork_tcp[r].width * rrbp.block_size;
+                rrbp.resource_index = releases.artwork_texture[r];
+                rrbp.call_back_function = set_now_playing_artwork;
+                
+                pen::renderer_read_back_resource(rrbp);
+                
+                audio_ctx.read_tex_data_handle = releases.artwork_texture[r];
+            }
+            
+            put::audio_group_state gstate;
+            memset(&gstate, 0x0, sizeof(put::audio_group_state));
+            put::audio_group_get_state(audio_ctx.gi, &gstate);
+            
+            if(audio_ctx.started && gstate.play_state == put::e_audio_play_state::not_playing)
+            {
+                audio_player_stop_existing();
+                
+                // move to next track
+                u32 next_track = releases.select_track[ctx.top] + 1;
+                if(next_track < releases.track_filepath_count[ctx.top])
+                {
+                    ctx.scroll_delta.x = 0.0;
+                    releases.select_track[ctx.top] += 1;
+                    releases.flags[ctx.top] |= EntityFlags::transitioning;
+                }
+                else {
+                    // move to next release
+                    ctx.scroll_delta = vec2f::zero();
+                    u32 next_release = ctx.top + 1;
+                    if(next_release < releases.available_entries) {
+                        ctx.view->scroll.y = releases.posy[next_release];
+                    }
+                }
+            }
+            else if(gstate.play_state == put::e_audio_play_state::playing)
+            {
+                audio_ctx.started = true;
+            }
+        }
+    }
 }
 
 bool has_like(Str id)

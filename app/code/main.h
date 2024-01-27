@@ -1,14 +1,17 @@
 // TASKS
 
-// - implement label link (on tap)
+// - add support for prev / next on backgrounded app
 
-// - re-download & validate broken files
+// - implement label link (on tap)
+// - follow?
+// - public likes
 
 // - skip install in pen and put
 // - automate uploads on tag
 
 // - help page
 // - contact page
+// - following page
 
 // - user store prev position, prev mode etc
 // - serialise prev position and prev mode?
@@ -18,14 +21,12 @@
 // - improve feedback for loading failures (not spinning endlessly)
 // - relay info if there are no results
 
-// - support to stop audio on sign out
-// - add support for prev / next on backgrounded app
-// - add autoplay support to next item
-
 // - img and audio file cache management
 // - add clear cache and cache options
 
 // - add reg validation
+// - yayaku
+// - cold cuts
 
 // - side swipe still isnt perfect
 // - vertical swipe still sometimes feel sticky
@@ -33,8 +34,17 @@
 // - ReleasesView can leak mem boot flow!
 
 // REGRESS
+// - juno </strong> in various
 
 // DONE
+// x - securley handle web api key
+// x - show store on likes page for items
+// x - show ids on debug
+// x - checkbox hovered colour
+// x - add autoplay support to next item
+// x - prioritise order [latest, weekly, monthly]
+// x - support to stop audio on sign out
+// x - re-download & validate broken files
 // x - button for stats
 // x - re-instate likes
 // x - re-instate settings
@@ -240,8 +250,10 @@ struct soa
     cmp_array<Str*>                         track_filepaths;
     cmp_array<u32>                          select_track;
     cmp_array<f32>                          scrollx;
+    cmp_array<f32>                          posy;
     cmp_array<f32>                          sizey;
     cmp_array<StoreTags_t>                  store_tags;
+    cmp_array<Str>                          store;
     std::atomic<size_t>                     available_entries = {0};
     std::atomic<size_t>                     soa_size = {0};
 };
@@ -296,13 +308,24 @@ struct Store
     std::vector<Str> view_display_names;
     std::vector<Str> section_search_names;
     std::vector<Str> sections_display_names;
-    u32              selected_view_index = 1;
+    u32              selected_view_index = 0;
     u32              selected_sections_mask = 0xff;
     StoreView        store_view = {};
 };
 
+struct AudioPlayerContext
+{
+    u32     si = -1;
+    u32     ci = -1;
+    u32     gi = -1;
+    bool    started = false;
+    u32     read_tex_data_handle = 0;
+};
+
 struct AppContext
 {
+    DataContext             data_ctx = {};
+    AudioPlayerContext      audio_ctx = {};
     s32                     w, h = 0;
     f32                     status_bar_height = 0.0f;
     f32                     dt;
@@ -316,6 +339,7 @@ struct AppContext
     bool                    scroll_lock_x = false;
     bool                    side_drag = false;
     vec2f                   scroll_delta = vec2f::zero();
+    f32                     scroll_pos_y = 0.0f;
     bool                    touch_down = false;
     vec2f                   tap_pos = vec2f(FLT_MAX, FLT_MAX);
     s32                     top = -1;
@@ -327,7 +351,6 @@ struct AppContext
     ReleasesView*           view = nullptr;
     ReleasesView*           back_view = nullptr;
     ReleasesView*           reload_view = nullptr;
-    DataContext             data_ctx = {};
     std::set<ReleasesView*> background_views = {};
     u32                     spinner_texture = 0;
     u32                     white_label_texture = 0;
@@ -338,6 +361,10 @@ struct AppContext
     Str                     last_response_message = "";
     u32                     last_response_code = 0;
 };
+
+// audio API
+void            audio_player_stop_existing();
+void            audio_player();
 
 // likes API
 bool            has_like(Str id);

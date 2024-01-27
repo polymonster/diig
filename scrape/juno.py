@@ -103,7 +103,7 @@ def scrape_page(url, store, view, section, counter = 0):
 
         # handle VA case
         if release.find("<strong>VARIOUS</strong>") != -1:
-            artist_elem = "<strong>VARIOUS</strong>"
+            artist_elem = "<strong>VARIOUS"
             offset = 0
         else:
             (offset, artist_elem) = dig.find_parse_elem(release, 0, '<a class="text-md"', "</a>")

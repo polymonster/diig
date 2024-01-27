@@ -58,6 +58,8 @@ jobs:
         mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
         cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
 
+        ls ~/Library/MobileDevice/Provisioning\ Profiles
+
         cd app
         pmtech/pmbuild ios -libs
         pmtech/pmbuild ios

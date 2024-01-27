@@ -34,6 +34,9 @@ jobs:
         KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
         API_KEY_H: ${{ secrets.API_KEY_H }}
       run: |
+        # xcode version
+        xcodebuild -version
+
         # create variables
         DIG_IOS_DEV_PATH=$RUNNER_TEMP/dig_ios_dev_certificate.p12
         KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db

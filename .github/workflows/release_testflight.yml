@@ -34,10 +34,8 @@ jobs:
         KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
         API_KEY_H: ${{ secrets.API_KEY_H }}
       run: |
-        # xcode / macos version debug
-        sw_vers -productVersion
-        ls /Applications
-        xcodebuild -version
+        # select xcode 15
+        sudo xcode-select -s /Applications/Xcode_15.0.1.app/Contents/Developer
 
         # create variables
         DIG_IOS_DEV_PATH=$RUNNER_TEMP/dig_ios_dev_certificate.p12

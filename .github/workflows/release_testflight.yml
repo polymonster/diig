@@ -29,21 +29,17 @@ jobs:
         submodules: recursive
     - name: update_tesflight
       env:
-        DEV_CERTIFICATE_64: ${{ secrets.DEV_CERTIFICATE_64 }}
-        DEV_PROFILE_64: ${{ secrets.DEV_CERTIFICATE_64 }}
-        BUILD_CERTIFICATE_BASE64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
+        DIG_IOS_DEV_64: ${{ secrets.DEV_CERTIFICATE_64 }}
         P12_PASSWORD: ${{ secrets.P12_PASSWORD }}
         KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
         API_KEY_H: ${{ secrets.API_KEY_H }}
       run: |
         # create variables
-        CERTIFICATE_PATH=$RUNNER_TEMP/build_certificate.p12
-        PP_PATH=$RUNNER_TEMP/build_pp.mobileprovision
+        DIG_IOS_DEV_PATH=$RUNNER_TEMP/dig_ios_dev_certificate.p12
         KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
 
         # import certificate and provisioning profile from secrets
-        echo -n "$DEV_CERTIFICATE_64" | base64 --decode -o $CERTIFICATE_PATH
-        # echo -n "$BUILD_PROVISION_PROFILE_BASE64" | base64 --decode -o $PP_PATH
+        echo -n "$DIG_IOS_DEV_64" | base64 --decode -o $DIG_IOS_DEV_PATH
 
         # create temporary keychain
         security create-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
@@ -51,20 +47,19 @@ jobs:
         security unlock-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
 
         # import certificate to keychain
-        security import $CERTIFICATE_PATH -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
+        security import $DIG_IOS_DEV_PATH -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
         security list-keychain -d user -s $KEYCHAIN_PATH
 
         # apply provisioning profile
         mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
-        cp app/dist/ios/3eb587ae-8fa2-40d2-866b-5f7633803661.mobileprovision ~/Library/MobileDevice/Provisioning\ Profiles
-
+        cp app/dist/ios/c201552e-2c71-4513-af2f-6fbfc39a4988.mobileprovision ~/Library/MobileDevice/Provisioning\ Profiles
         ls ~/Library/MobileDevice/Provisioning\ Profiles
 
         cd app
         pmtech/pmbuild ios
         xcodebuild archive -workspace build/ios/diig_ios.xcworkspace -configuration Release -scheme diig -archivePath build/ios/diig_ios PROVISIONING_PROFILE=build_pp.mobileprovision
 
-        pmtech/pmbuild ios -libs
-        echo "$API_KEY_H" >> code/api_key.h
-        pmtech/pmbuild ios-testflight
-        xcrun altool --upload-app -f build/ios/export/diig.ipa -t ios -u ${{secrets.APP_EMAIL}} -p ${{secrets.P12_PASSWORD}}
+        # pmtech/pmbuild ios -libs
+        # echo "$API_KEY_H" >> code/api_key.h
+        # pmtech/pmbuild ios-testflight
+        # xcrun altool --upload-app -f build/ios/export/diig.ipa -t ios -u ${{secrets.APP_EMAIL}} -p ${{secrets.P12_PASSWORD}}

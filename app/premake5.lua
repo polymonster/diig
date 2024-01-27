@@ -48,7 +48,7 @@ if platform == "ios" then
         ["PRODUCT_BUNDLE_IDENTIFIER"] = "com.pmtech.dig",
 		["DEVELOPMENT_TEAM"] = "7C3Y39TX3G", -- personal team (Alex Dixon)
 		["IPHONEOS_DEPLOYMENT_TARGET"] = 15.0,
-		["SKIP_INSTALL"] = "YES"
+		["SKIP_INSTALL"] = "NO"
     }
 
 	files {
@@ -61,6 +61,10 @@ if platform == "ios" then
 
 	links {
 		"CoreGraphics.framework"
+	}
+
+	linkoptions {
+		"-ld_classic"
 	}
 end
 

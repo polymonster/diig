@@ -1,8 +1,25 @@
-name: release_tesflight
+name: release
 on:
-  workflow_dispatch:
+  push:
+    tags:
+    - '*'
 jobs:
+  setup:
+    name: create release
+    runs-on: ubuntu-latest
+    steps:
+      - name: create_release
+        id: create_release
+        uses: actions/create-release@v1
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+    outputs:
+      upload_url: ${{ steps.create_release.outputs.upload_url }}
   release_tesflight:
+    needs: setup
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v3
@@ -14,3 +31,4 @@ jobs:
         pmtech/pmbuild ios -libs
         pmtech/pmbuild ios
         pmtech/pmbuild ios-testflight
+        xcrun altool --upload-app -f build/ios/export/diig.ipa -t ios -u ${{secrets.APP_EMAIL}} -p ${{secrets.APP_PASS}}

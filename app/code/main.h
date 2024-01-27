@@ -1,13 +1,12 @@
 // TASKS
 
-// - add support for prev / next on backgrounded app
+// - ReleasesView can leak mem boot flow!
 
-// - implement label link (on tap)
-// - follow?
-// - public likes
+// - add support for prev / next on backgrounded app
 
 // - skip install in pen and put
 // - automate uploads on tag
+// - create release on tag
 
 // - help page
 // - contact page
@@ -31,7 +30,9 @@
 // - side swipe still isnt perfect
 // - vertical swipe still sometimes feel sticky
 
-// - ReleasesView can leak mem boot flow!
+// - implement label link (on tap)
+// - follow?
+// - public likes
 
 // REGRESS
 // - juno </strong> in various

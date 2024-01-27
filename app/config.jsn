@@ -201,7 +201,7 @@ import "pmtech/tools/pmbuild_ext/pmbuild_init.jsn"
         testflight: {
             type: shell
             commands: [
-                "xcodebuild archive -workspace build/ios/diig_ios.xcworkspace -configuration Release -scheme diig -archivePath build/ios/diig_ios",
+                "xcodebuild archive -workspace build/ios/diig_ios.xcworkspace -configuration Release -scheme diig -archivePath build/ios/diig_ios PROVISIONING_PROFILE=dig-ios-dev",
                 "xcodebuild -exportArchive -archivePath build/ios/diig_ios.xcarchive -exportPath build/ios/export -exportOptionsPlist dist/ios/ExportOptionsAgent.plist"
             ]
         }

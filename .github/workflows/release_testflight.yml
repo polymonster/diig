@@ -29,6 +29,7 @@ jobs:
         submodules: recursive
     - name: release_tesflight
       env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         DIG_IOS_DEV_64: ${{ secrets.DIG_IOS_DEV_64 }}
         DIG_IOS_DIST_64: ${{ secrets.DIG_IOS_DIST_64 }}
         P12_PASSWORD: ${{ secrets.P12_PASSWORD }}

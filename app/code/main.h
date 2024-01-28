@@ -4,9 +4,7 @@
 
 // - add support for prev / next on backgrounded app
 
-// - skip install in pen and put
 // - automate uploads on tag
-// - create release on tag
 
 // - help page
 // - contact page
@@ -35,9 +33,11 @@
 // - public likes
 
 // REGRESS
-// - juno </strong> in various
 
 // DONE
+// x - create release on tag
+// x - juno </strong> in various
+// x - skip install in pen and put
 // x - securley handle web api key
 // x - show store on likes page for items
 // x - show ids on debug

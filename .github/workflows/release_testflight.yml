@@ -81,10 +81,3 @@ jobs:
         xcodebuild archive -workspace build/ios/diig_ios.xcworkspace -configuration Release -scheme diig -archivePath build/ios/diig_ios OTHER_CODE_SIGN_FLAGS="--keychain $KEYCHAIN_PATH" PROVISIONING_PROFILE="c201552e-2c71-4513-af2f-6fbfc39a4988" CODE_SIGN_STYLE="Manual"
         xcodebuild -exportArchive -archivePath build/ios/diig_ios.xcarchive -exportPath build/ios/export -exportOptionsPlist dist/ios/ExportOptionsAgent.plist OTHER_CODE_SIGN_FLAGS="--keychain $KEYCHAIN_PATH" PROVISIONING_PROFILE="67f31053-7cc4-4b1b-bdf3-030ef5ecff39" CODE_SIGN_STYLE="Manual"
         xcrun altool --upload-app -f build/ios/export/diig.ipa -t ios -u ${{secrets.APP_EMAIL}} -p ${{secrets.APP_PASSWORD}}
-
-        # on success
-        git config user.name github-actions
-        git config user.email github-actions@github.com
-        git add .
-        git commit -m "-  bump Info.plist version to $VERSION for TestFlight"
-        git push origin HEAD:master

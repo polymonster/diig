@@ -4,8 +4,6 @@
 
 // - add support for prev / next on backgrounded app
 
-// - automate uploads on tag
-
 // - help page
 // - contact page
 // - following page
@@ -33,6 +31,7 @@
 // - public likes
 
 // REGRESS
+// - automate uploads on tag (just wait to next build)
 
 // DONE
 // x - create release on tag
@@ -145,6 +144,8 @@ constexpr f32 k_release_button_tap_radius_ratio = 64.0f / k_promax_11_w;
 constexpr f32 k_page_button_press_radius_ratio = 94.0f / k_promax_11_w;
 constexpr u32 k_num_threads_per_view = 4;
 constexpr size_t k_login_buf_size = 320;
+constexpr s32 k_ram_cache_range = 10;
+constexpr s32 k_disk_cache_min_range = 10;
 
 namespace EntityFlags
 {
@@ -255,6 +256,7 @@ struct soa
     cmp_array<f32>                          sizey;
     cmp_array<StoreTags_t>                  store_tags;
     cmp_array<Str>                          store;
+    cmp_array<u32>                          like_count;
     std::atomic<size_t>                     available_entries = {0};
     std::atomic<size_t>                     soa_size = {0};
 };
@@ -367,8 +369,11 @@ struct AppContext
 void            audio_player_stop_existing();
 void            audio_player();
 
-// likes API
-bool            has_like(Str id);
-void            add_like(Str id);
-void            remove_like(Str id);
+// user / likes API
+bool            has_like(const Str& id);
+void            add_like(const Str& id);
+f32             get_like_timestamp(const Str& id);
+void            remove_like(const Str& id);
 nlohmann::json  get_likes();
+void            update_last_store(const Str& name);
+void            update_store_prefs(const Str& store_name, const Str& view, const std::vector<Str> sections);

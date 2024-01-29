@@ -131,7 +131,10 @@ namespace curl
             curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, false);
             curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_function);
             curl_easy_setopt(curl, CURLOPT_WRITEDATA, &db);
-            curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data);
+            
+            if(data) {
+                curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data);
+            }
             
             struct curl_slist* headers = nullptr;
             headers = curl_slist_append(headers, "Content-Type: application/json");
@@ -575,6 +578,7 @@ void* user_data_thread(void* userdata)
     Str userid = "";
     Str tokenid = "";
     Str user_url = "https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app/users/";
+    Str likes_url = "https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app/likes/";
     
     nlohmann::json update_payload = {};
     
@@ -636,8 +640,29 @@ void* user_data_thread(void* userdata)
                 CURLcode code;
                 auto response = curl::patch(url.c_str(), payload_str.c_str(), code);
                 
-                // TODO: this is not actually download, its writing
-                curl::DataBuffer fetch = curl::download(url.c_str());
+                // sync likes
+                for(auto& like : update_payload["likes"].items()) {
+                    // construct url for the release in likes section
+                    Str like_release_url = likes_url;
+                    like_release_url.appendf("%s.json", like.key().c_str());
+                    like_release_url.appendf("?auth=%s", tokenid.c_str());
+                    
+                    // unpack bool or numerical like
+                    bool like_val = false;
+                    if(like.value().is_boolean()) {
+                        like_val = like.value();
+                    }
+                    else if(like.value().is_number()) {
+                        like_val = like.value() > 0.0f;
+                    }
+                    
+                    // patch payload for user specific like
+                    Str like_payload = "";
+                    like_payload.appendf("{\"%s\": %i }", userid.c_str(), (s32)like_val);
+                    
+                    CURLcode code;
+                    auto response = curl::patch(like_release_url.c_str(), like_payload.c_str(), code);
+                }
                 
                 update_cloud = false;
             }
@@ -746,7 +771,19 @@ void* releases_view_loader(void* userdata)
         auto likes = get_likes();
         if(!likes.empty()) {
             for(auto& like : likes.items()) {
-                if(like.value()) {
+                
+                // like value might be bool or number
+                bool like_true = false;
+                f32 timestamp = 0.0f;
+                if(like.value().is_boolean()) {
+                    like_true = like.value();
+                }
+                else if(like.value().is_number()) {
+                    like_true = true;
+                    timestamp = like.value();
+                }
+                
+                if(like_true) {
                     Str search_url = "https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app/releases.json";
                     search_url.appendf("?orderBy=\"$key\"&equalTo=\"%s\"&timeout=1s", like.key().c_str());
                     
@@ -760,7 +797,7 @@ void* releases_view_loader(void* userdata)
                             
                             view_chart.push_back({
                                 like.key(),
-                                0
+                                (u32)timestamp
                             });
                         }
                         catch(...) {
@@ -819,10 +856,19 @@ void* releases_view_loader(void* userdata)
     }
     
     // sort the items
-    std::sort(begin(view_chart),end(view_chart),[](ChartItem a, ChartItem b) {return a.pos < b.pos; });
+    if(view->page == Page::likes) {
+        // likes are sorted descending by timestamp
+        std::sort(begin(view_chart),end(view_chart),[](ChartItem a, ChartItem b) {return a.pos > b.pos; });
+    }
+    else {
+        // feed is sorted ascending by position
+        std::sort(begin(view_chart),end(view_chart),[](ChartItem a, ChartItem b) {return a.pos < b.pos; });
+    }
     
     // make space
     resize_components(view->releases, view_chart.size());
+    
+    Str likes_url = "https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app/likes/";
     
     for(auto& entry : view_chart)
     {
@@ -899,10 +945,24 @@ void* releases_view_loader(void* userdata)
             view->releases.track_url_count[ri] = url_count;
         }
         
-        // check likes
+        // check local likes
         if(has_like(view->releases.key[ri]))
         {
             view->releases.flags[ri] |= EntityFlags::liked;
+        }
+        
+        // count cloud likes
+        Str like_release_url = likes_url;
+        like_release_url.appendf("%s.json&timeout=16ms", view->releases.key[ri].c_str());
+        
+        CURLcode code;
+        auto likes = curl::request(like_release_url.c_str(), nullptr, code);
+        
+        view->releases.like_count[ri] = 0;
+        for(auto& like : likes) {
+            if(like > 0) {
+                view->releases.like_count[ri]++;
+            }
         }
         
         // store tags
@@ -1195,6 +1255,9 @@ namespace
                 
             // kick off a new view
             ctx.view = new_view(page, view);
+            
+            // update store prefs
+            update_store_prefs(store.name, view.selected_view, view.selected_sections);
         }
     }
 
@@ -1258,6 +1321,7 @@ namespace
             output.name = store_name;
             
             // now change the store feed
+            update_last_store(store_name);
             change_store_view(Page::feed, output);
         }
         
@@ -2071,6 +2135,18 @@ namespace
             
             ImGui::Text("%s", hype_icons.c_str());
             
+            // like count
+            if(releases.like_count[r] > 0) {
+                ImGui::SetWindowFontScale(k_text_size_nerds);
+                if(releases.like_count[r] > 1) {
+                    ImGui::Text("%i likes", releases.like_count[r]);
+                }
+                else if(!(releases.flags[r] & EntityFlags::liked)) {
+                    ImGui::Text("%i like", releases.like_count[r]);
+                }
+                ImGui::SetWindowFontScale(k_text_size_body);
+            }
+            
             // release info
             if(!artist.empty()) {
                 ImGui::TextWrapped("%s", artist.c_str());
@@ -2118,11 +2194,10 @@ namespace
     {
         auto& releases = ctx.view->releases;
         
-        // TODO: make the ranges data driven
         // make requests for data
         if(ctx.top != -1) {
-            s32 range_start = max(ctx.top - 10, 0);
-            s32 range_end = min<s32>(ctx.top + 10, (s32)releases.available_entries);
+            s32 range_start = max<s32>(ctx.top - k_ram_cache_range, 0);
+            s32 range_end = min<s32>(ctx.top + k_ram_cache_range, (s32)releases.available_entries);
             
             for(size_t i = 0; i < releases.available_entries; ++i)
             {
@@ -2146,8 +2221,8 @@ namespace
         
         // make requests for cache
         if(ctx.top != -1) {
-            s32 range_start = max(ctx.top - 100, 0);
-            s32 range_end = min<s32>(ctx.top + 100, (s32)releases.available_entries);
+            s32 range_start = max<s32>(ctx.top - k_disk_cache_min_range, 0);
+            s32 range_end = min<s32>(ctx.top + k_disk_cache_min_range, (s32)releases.available_entries);
             
             for(size_t i = 0; i < releases.available_entries; ++i) {
                 if(i >= range_start && i <= range_end) {
@@ -2853,6 +2928,7 @@ namespace
                 ctx.username = ((std::string)ctx.data_ctx.user_data.dict["username"]).c_str();
             }
             ctx.data_ctx.user_data.mutex.unlock();
+            ctx.data_ctx.user_data.status = Status::e_invalidated;
         }
     }
 
@@ -3178,28 +3254,49 @@ void audio_player()
     }
 }
 
-bool has_like(Str id)
-{
+bool has_like(const Str& id) {
     bool ret = false;
     ctx.data_ctx.user_data.mutex.lock();
     if(ctx.data_ctx.user_data.dict.contains("likes")) {
         if(ctx.data_ctx.user_data.dict["likes"].contains(id.c_str())) {
-            ret = ctx.data_ctx.user_data.dict["likes"][id.c_str()];
+            if(ctx.data_ctx.user_data.dict["likes"][id.c_str()].is_boolean()) {
+                ret = ctx.data_ctx.user_data.dict["likes"][id.c_str()];
+            }
+            else if(ctx.data_ctx.user_data.dict["likes"][id.c_str()].is_number()) {
+                ret = ctx.data_ctx.user_data.dict["likes"][id.c_str()] > 0;
+            }
         }
     }
     ctx.data_ctx.user_data.mutex.unlock();
     return ret;
 }
 
-void add_like(Str id)
+f32 get_like_timestamp(const Str& id) {
+    f32 ret = 0.0f;
+    ctx.data_ctx.user_data.mutex.lock();
+    if(ctx.data_ctx.user_data.dict.contains("likes")) {
+        if(ctx.data_ctx.user_data.dict["likes"].contains(id.c_str())) {
+            if(ctx.data_ctx.user_data.dict["likes"][id.c_str()].is_boolean()) {
+                ret = 0.0f;
+            }
+            else if(ctx.data_ctx.user_data.dict["likes"][id.c_str()].is_number()) {
+                ret = ctx.data_ctx.user_data.dict["likes"][id.c_str()];
+            }
+        }
+    }
+    ctx.data_ctx.user_data.mutex.unlock();
+    return ret;
+}
+
+void add_like(const Str& id)
 {
     ctx.data_ctx.user_data.mutex.lock();
-    ctx.data_ctx.user_data.dict["likes"][id.c_str()] = true;
+    ctx.data_ctx.user_data.dict["likes"][id.c_str()] = pen::get_time_ms();
     ctx.data_ctx.user_data.mutex.unlock();
     ctx.data_ctx.user_data.status = Status::e_invalidated;
 }
 
-void remove_like(Str id)
+void remove_like(const Str& id)
 {
     ctx.data_ctx.user_data.mutex.lock();
     if(ctx.data_ctx.user_data.dict.contains("likes")) {
@@ -3219,4 +3316,22 @@ nlohmann::json get_likes()
     ctx.data_ctx.user_data.mutex.unlock();
     
     return result;
+}
+
+void update_last_store(const Str& name) {
+    ctx.data_ctx.user_data.mutex.lock();
+    ctx.data_ctx.user_data.dict["last_store"] = name.c_str();
+    ctx.data_ctx.user_data.mutex.unlock();
+    ctx.data_ctx.user_data.status = Status::e_invalidated;
+}
+
+void update_store_prefs(const Str& store_name, const Str& view, const std::vector<Str> sections) {
+    ctx.data_ctx.user_data.mutex.lock();
+    ctx.data_ctx.user_data.dict["stores"][store_name.c_str()]["view"] = view.c_str();
+    ctx.data_ctx.user_data.dict["stores"][store_name.c_str()]["sections"] = {};
+    for(auto& section : sections) {
+        ctx.data_ctx.user_data.dict["stores"][store_name.c_str()]["sections"].push_back(section.c_str());
+    }
+    ctx.data_ctx.user_data.mutex.unlock();
+    ctx.data_ctx.user_data.status = Status::e_invalidated;
 }

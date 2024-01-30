@@ -296,6 +296,8 @@ struct ReleasesView
     u32                 top_pos = 0;
     vec2f               scroll = vec2f(0.0f, 0.0f);
     void*               thread_mem[k_num_threads_per_view] = {0};
+    std::map<u32, u32>  release_pos = {};
+    Status_t            release_pos_status = Status::e_not_initialised;
 };
 
 struct ChartItem

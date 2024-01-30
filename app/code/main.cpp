@@ -303,22 +303,6 @@ bool check_cache_hit(const Str& url, Str releaseid)
     {
         return false;
     }
-    
-    size_t ss = pen::filesystem_getsize(filepath.c_str());
-    if(ss < 300)
-    {
-        u8* buf;
-        buf = (u8*)malloc(ss+1);
-        
-        FILE* fp = fopen(filepath.c_str(), "r");
-        fread(buf, ss, 1, fp);
-        fclose(fp);
-        buf[ss] = '\0';
-        
-        PEN_LOG("small file: %s", buf);
-        
-        free(buf);
-    }
         
     return true;
 }
@@ -500,8 +484,7 @@ bool fetch_json_cache(const c8* url, const c8* cache_filename, AsyncDict& async_
         // check for a cached item
         u32 mtime = 0;
         pen::filesystem_getmtime(filepath.c_str(), mtime);
-        if(mtime > 0)
-        {
+        if(mtime > 0) {
             PEN_LOG("fallback to cache: %s", filepath.c_str());
             
             // ensures it's valid
@@ -710,11 +693,11 @@ void* releases_view_loader(void* userdata)
             // index is concantonated store-section-view.json
             Str index_on = "";
             index_on.appendf(
-                             "%s-%s-%s",
-                             store_view.store_name.c_str(),
-                             section.c_str(),
-                             store_view.selected_view.c_str()
-                             );
+                "%s-%s-%s",
+                store_view.store_name.c_str(),
+                section.c_str(),
+                store_view.selected_view.c_str()
+            );
             
             // cache file is the index name saved as json
             Str cache_file = index_on;
@@ -749,6 +732,10 @@ void* releases_view_loader(void* userdata)
                     // if already in map, update using the min chart pos
                     auto vp = added_map[item.key()];
                     view_chart[vp].pos = std::min<u32>((u32)val[index_on.c_str()], (u32)view_chart[vp].pos);
+                    
+                    // update map pos
+                    u32 hh = PEN_HASH(item.key().c_str());
+                    view->release_pos[hh] = view_chart[vp].pos;
                 }
                 else {
                     // add new entry to view_chart
@@ -759,6 +746,13 @@ void* releases_view_loader(void* userdata)
                     
                     view_chart.push_back({
                         item.key(),
+                        val[index_on.c_str()]
+                    });
+                    
+                    // insert hashed
+                    u32 hh = PEN_HASH(item.key().c_str());
+                    view->release_pos.insert({
+                        hh,
                         val[index_on.c_str()]
                     });
                 }
@@ -854,6 +848,9 @@ void* releases_view_loader(void* userdata)
         view->threads_terminated++;
         return nullptr;
     }
+    
+    // view is ready to cleanup
+    view->release_pos_status = Status::e_ready;
     
     // sort the items
     if(view->page == Page::likes) {
@@ -953,7 +950,7 @@ void* releases_view_loader(void* userdata)
         
         // count cloud likes
         Str like_release_url = likes_url;
-        like_release_url.appendf("%s.json&timeout=16ms", view->releases.key[ri].c_str());
+        like_release_url.appendf("%s.json?timeout=25ms", view->releases.key[ri].c_str());
         
         CURLcode code;
         auto likes = curl::request(like_release_url.c_str(), nullptr, code);
@@ -1022,7 +1019,7 @@ void* data_cache_enumerate(void* userdata) {
     ReleasesView* view = (ReleasesView*)userdata;
     
     Str cache_dir = get_cache_path();
-    
+        
     // track all folders
     std::vector<DirInfo> cached_releases;
     
@@ -1053,23 +1050,57 @@ void* data_cache_enumerate(void* userdata) {
     // sort the items
     std::sort(begin(cached_releases),end(cached_releases),[](DirInfo a, DirInfo b) { return a.mtime < b.mtime; });
     
-    // slowly delete until we hit quota, rm 100 at a time
-    /*
-    constexpr size_t cache_target_size = (2lu * 1024lu * 1024lu * 1024lu);
-    for(u32 i = 0; i < 100; ++i) {
-        if(view->data_ctx->cached_release_bytes < cache_target_size) {
-            break;
+    // wait until we have at least 200 entries
+    while(view->release_pos_status != Status::e_ready) {
+        // return early if something went wrong
+        if(view->status == Status::e_not_available) {
+            view->threads_terminated++;
+            return nullptr;
         }
-        DirInfo ii = cached_releases[0];
-        cached_releases.erase(cached_releases.begin());
-        bool result = pen::os_delete_directory(ii.path);
-        if(result) {
-            PEN_LOG("deleted: %s", ii.path.c_str());
-            view->data_ctx->cached_release_bytes -= ii.size;
-            view->data_ctx->cached_release_folders--;
+        // early out to terminate
+        if(view->terminate) {
+            view->threads_terminated++;
+            return nullptr;
+        }
+        pen::thread_sleep_ms(1);
+    }
+    
+    // iterate through releases in reverse remvoing items not in the view
+    for(ssize_t i = cached_releases.size()-1; i >= 200; --i) {
+        
+        DirInfo ii = cached_releases[i];
+        auto bn = str_basename(ii.path);
+        u32 bnh = PEN_HASH(bn.c_str());
+        
+        if(view->release_pos.find(bnh) != view->release_pos.end()) {
+            if(view->release_pos[bnh] > 200) {
+                PEN_LOG("should remove out of range %s", bn.c_str());
+                cached_releases.erase(cached_releases.begin());
+                bool result = pen::os_delete_directory(ii.path);
+                if(result) {
+                    PEN_LOG("deleted: %s", ii.path.c_str());
+                    view->data_ctx->cached_release_bytes -= ii.size;
+                    view->data_ctx->cached_release_folders--;
+                }
+            }
+        }
+        else {
+            PEN_LOG("should remove not in list %s", bn.c_str());
+            cached_releases.erase(cached_releases.begin());
+            bool result = pen::os_delete_directory(ii.path);
+            if(result) {
+                PEN_LOG("deleted: %s", ii.path.c_str());
+                view->data_ctx->cached_release_bytes -= ii.size;
+                view->data_ctx->cached_release_folders--;
+            }
+        }
+        
+        // early out to terminate
+        if(view->terminate) {
+            view->threads_terminated++;
+            return nullptr;
         }
     }
-    */
     
     // flag terminated
     view->threads_terminated++;
@@ -1097,7 +1128,7 @@ void* data_cache_fetch(void* userdata) {
             // cache art
             if(!view->releases.artwork_url[i].empty()) {
                 if(view->releases.artwork_filepath[i].empty()) {
-                    view->releases.artwork_filepath[i] = download_and_cache(view->releases.artwork_url[i], view->releases.id[i]);
+                    view->releases.artwork_filepath[i] = download_and_cache(view->releases.artwork_url[i], view->releases.key[i]);
                     view->releases.flags[i] |= EntityFlags::artwork_cached;
                 }
             }
@@ -1108,7 +1139,7 @@ void* data_cache_fetch(void* userdata) {
                     view->releases.track_filepaths[i] = new Str[view->releases.track_url_count[i]];
                     for(u32 t = 0; t < view->releases.track_url_count[i]; ++t) {
                         view->releases.track_filepaths[i][t] = "";
-                        Str fp = download_and_cache(view->releases.track_urls[i][t], view->releases.id[i]);
+                        Str fp = download_and_cache(view->releases.track_urls[i][t], view->releases.key[i]);
                         view->releases.track_filepaths[i][t] = fp;
                     }
                     std::atomic_thread_fence(std::memory_order_release);
@@ -1443,8 +1474,14 @@ namespace
         }
 
         // reload anim if we have an empty view or are relaoding
-        if(ctx.reload_view || ctx.view->releases.available_entries == 0)
-        {
+        if(ctx.view->status == Status::e_not_available) {
+            // small padding
+            f32 ss = ImGui::GetFontSize() * 2.0f;
+            ImGui::Dummy(ImVec2(0.0f, ss));
+            
+            ImGui::TextCentred("No items...");
+        }
+        else if(ctx.reload_view || ctx.view->releases.available_entries == 0) {
             ImGui::SetWindowFontScale(2.0f);
             
             // small padding
@@ -1470,6 +1507,8 @@ namespace
                 ctx.view = ctx.reload_view;
                 ctx.reload_view = nullptr;
             }
+            
+            // TODO: handle failure
         }
     }
 
@@ -1697,8 +1736,7 @@ namespace
         
         f32 rad = ctx.w * k_page_button_press_radius_ratio;
         
-        static bool heart_debounce = false;
-        if(lenient_button_click(rad, heart_debounce, true))
+        if(lenient_button_tap(rad) && !ctx.scroll_lock_x && ! ctx.scroll_lock_y)
         {
             change_page(Page::likes);
         }
@@ -1710,8 +1748,7 @@ namespace
         ImGui::Text("%s", ICON_FA_BARS);
                 
         // options menu button
-        static bool ellipsis_debounce = false;
-        if(lenient_button_click(rad, ellipsis_debounce, true)) {
+        if(lenient_button_tap(rad) && !ctx.scroll_lock_x && ! ctx.scroll_lock_y) {
             if(ImGui::IsPopupOpen("Options Menu")) {
                 ImGui::CloseCurrentPopup();
             }
@@ -1748,11 +1785,6 @@ namespace
                 if(ImGui::MenuItem("Show Debug")) {
                     ctx.show_debug = true;
                 }
-            }
-            
-            if(ImGui::MenuItem("Next")) {
-                u32 next_release = ctx.top + 1;
-                ctx.view->scroll.y = ctx.view->releases.posy[next_release];
             }
             
             // log out

@@ -2086,7 +2086,6 @@ namespace
                             // load up the track
                             if(!(ctx.play_track_filepath == releases.track_filepaths[r][sel]))
                             {
-                                PEN_LOG("we did this how? : %s", ctx.play_track_filepath.c_str());
                                 ctx.play_track_filepath = releases.track_filepaths[r][sel];
                                 ctx.invalidate_track = true;
                             }
@@ -3205,25 +3204,31 @@ void audio_player_next(bool prev)
     u32 r = ctx.top;
     auto& releases = ctx.view->releases;
     
+    s32 dir = 1;
+    if(prev)
+    {
+        dir = -1;
+    }
+    
     if(r != -1) {
+        
         // next track
-        u32 sel = releases.select_track[r] + 1;
+        s32 sel = releases.select_track[r] + dir;
         
         // move to next release
-        if(sel >= releases.track_filepath_count[r])
+        if(sel >= releases.track_filepath_count[r] || sel < 0)
         {
-            r = ctx.top + 1;
+            r = ctx.top + dir;
+            r = max<s32>(r, 0); // clamp releases to 0
             ctx.scroll_delta = vec2f::zero();
             if(r < releases.available_entries) {
                 ctx.view->scroll.y = releases.posy[r];
-                releases.select_track[r] = sel;
-                sel = 0;
+                sel = releases.select_track[r];
             }
         }
         
         if(sel < releases.track_filepath_count[r]) {
             ctx.play_track_filepath = releases.track_filepaths[r][sel];
-            PEN_LOG("%s", ctx.play_track_filepath.c_str());
             ctx.invalidate_track = true;
         }
         
@@ -3293,8 +3298,7 @@ void audio_player()
         {
             // stop existing
             audio_player_stop_existing();
-            
-            PEN_LOG("set stream %s", ctx.play_track_filepath.c_str());
+
             audio_ctx.si = put::audio_create_stream(ctx.play_track_filepath.c_str());
             audio_ctx.ci = put::audio_create_channel_for_sound(audio_ctx.si);
             audio_ctx.gi = put::audio_create_channel_group();

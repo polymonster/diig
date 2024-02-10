@@ -336,8 +336,11 @@ Str download_and_cache(const Str& url, Str releaseid)
         if(db->data)
         {
             FILE* fp = fopen(filepath.c_str(), "wb");
-            fwrite(db->data, db->size, 1, fp);
-            fclose(fp);
+            if(fp)
+            {
+                fwrite(db->data, db->size, 1, fp);
+                fclose(fp);
+            }
             
             // free
             free(db->data);
@@ -1025,57 +1028,86 @@ void* data_cache_enumerate(void* userdata) {
     
     auto tt = pen::scope_timer("cache enum", true);
     
-    // enum cache stats
-    pen::fs_tree_node dir;
-    pen::filesystem_enum_directory(cache_dir.c_str(), dir, 1, "**/*.*");
-    view->data_ctx->cached_release_folders = 0;
-    view->data_ctx->cached_release_bytes = 0;
-    for(u32 i = 0; i < dir.num_children; ++i) {
-        Str path = cache_dir;
-        path.append(dir.children[i].name);
-        
-        pen::fs_tree_node release_dir;
-        pen::filesystem_enum_directory(path.c_str(), release_dir);
-        view->data_ctx->cached_release_folders++;
-        
-        auto info = get_folder_info_recursive(release_dir, path.c_str());
-        view->data_ctx->cached_release_bytes += info.size;
-        
-        pen::filesystem_enum_free_mem(release_dir);
-        
-        cached_releases.push_back(info);
-    }
-    pen::filesystem_enum_free_mem(dir);
+    s32 last_top = 26;
     
-    // sort the items
-    std::sort(begin(cached_releases),end(cached_releases),[](DirInfo a, DirInfo b) { return a.mtime < b.mtime; });
-    
-    // wait until we have at least 200 entries
-    while(view->release_pos_status != Status::e_ready) {
-        // return early if something went wrong
-        if(view->status == Status::e_not_available) {
-            view->threads_terminated++;
-            return nullptr;
+    for(;;) {
+        
+        // apply updates when we have moved an amount
+        if(abs(last_top - (s32)view->top_pos) < 25)
+        {
+            last_top = view->top_pos;
+            pen::thread_sleep_ms(66);
+            continue;
         }
-        // early out to terminate
-        if(view->terminate) {
-            view->threads_terminated++;
-            return nullptr;
+        
+        last_top = view->top_pos;
+        
+        // enum cache stats
+        pen::fs_tree_node dir;
+        pen::filesystem_enum_directory(cache_dir.c_str(), dir, 1, "**/*.*");
+        view->data_ctx->cached_release_folders = 0;
+        view->data_ctx->cached_release_bytes = 0;
+        for(u32 i = 0; i < dir.num_children; ++i) {
+            Str path = cache_dir;
+            path.append(dir.children[i].name);
+            
+            pen::fs_tree_node release_dir;
+            pen::filesystem_enum_directory(path.c_str(), release_dir);
+            view->data_ctx->cached_release_folders++;
+            
+            auto info = get_folder_info_recursive(release_dir, path.c_str());
+            view->data_ctx->cached_release_bytes += info.size;
+            
+            pen::filesystem_enum_free_mem(release_dir);
+            
+            cached_releases.push_back(info);
         }
-        pen::thread_sleep_ms(1);
-    }
-    
-    // iterate through releases in reverse remvoing items not in the view
-    for(ssize_t i = cached_releases.size()-1; i >= 200; --i) {
+        pen::filesystem_enum_free_mem(dir);
         
-        DirInfo ii = cached_releases[i];
-        auto bn = str_basename(ii.path);
-        u32 bnh = PEN_HASH(bn.c_str());
+        // sort the items
+        std::sort(begin(cached_releases),end(cached_releases),[](DirInfo a, DirInfo b) { return a.mtime < b.mtime; });
         
-        if(view->release_pos.find(bnh) != view->release_pos.end()) {
-            if(view->release_pos[bnh] > 200) {
-                PEN_LOG("should remove out of range %s", bn.c_str());
-                cached_releases.erase(cached_releases.begin());
+        // wait until we have at least 200 entries
+        while(view->release_pos_status != Status::e_ready) {
+            // return early if something went wrong
+            if(view->status == Status::e_not_available) {
+                view->threads_terminated++;
+                return nullptr;
+            }
+            // early out to terminate
+            if(view->terminate) {
+                view->threads_terminated++;
+                return nullptr;
+            }
+            pen::thread_sleep_ms(1);
+        }
+        
+        // TODO: this will become data driven
+        constexpr ssize_t k_min_cache_size = 2000;
+        
+        // iterate through releases in reverse remvoing items not in the view
+        for(ssize_t i = cached_releases.size()-1; i >= k_min_cache_size; --i) {
+            
+            DirInfo ii = cached_releases[i];
+            auto bn = str_basename(ii.path);
+            u32 bnh = PEN_HASH(bn.c_str());
+            PEN_LOG("scan %s", bn.c_str());
+            
+            if(view->release_pos.find(bnh) != view->release_pos.end()) {
+                if(view->release_pos[bnh] > k_min_cache_size) {
+                    PEN_LOG("should remove out of range %s", bn.c_str());
+                    cached_releases.erase(cached_releases.begin() + i);
+                    bool result = pen::os_delete_directory(ii.path);
+                    if(result) {
+                        PEN_LOG("deleted: %s", ii.path.c_str());
+                        view->data_ctx->cached_release_bytes -= ii.size;
+                        view->data_ctx->cached_release_folders--;
+                    }
+                }
+            }
+            else {
+                PEN_LOG("should remove not in list %s", bn.c_str());
+                cached_releases.erase(cached_releases.begin() + i);
                 bool result = pen::os_delete_directory(ii.path);
                 if(result) {
                     PEN_LOG("deleted: %s", ii.path.c_str());
@@ -1083,19 +1115,14 @@ void* data_cache_enumerate(void* userdata) {
                     view->data_ctx->cached_release_folders--;
                 }
             }
-        }
-        else {
-            PEN_LOG("should remove not in list %s", bn.c_str());
-            cached_releases.erase(cached_releases.begin());
-            bool result = pen::os_delete_directory(ii.path);
-            if(result) {
-                PEN_LOG("deleted: %s", ii.path.c_str());
-                view->data_ctx->cached_release_bytes -= ii.size;
-                view->data_ctx->cached_release_folders--;
+            
+            // early out to terminate
+            if(view->terminate) {
+                view->threads_terminated++;
+                return nullptr;
             }
         }
         
-        // early out to terminate
         if(view->terminate) {
             view->threads_terminated++;
             return nullptr;
@@ -1146,6 +1173,11 @@ void* data_cache_fetch(void* userdata) {
                     view->releases.flags[i] |= EntityFlags::tracks_cached;
                     view->releases.track_filepath_count[i] = view->releases.track_url_count[i];
                 }
+            }
+            
+            // early out
+            if(view->terminate) {
+                break;
             }
         }
         
@@ -1787,6 +1819,14 @@ namespace
                 }
             }
             
+            if(ImGui::MenuItem("Pause")) {
+                audio_player_pause(true);
+            }
+            
+            if(ImGui::MenuItem("Play")) {
+                audio_player_pause(false);
+            }
+            
             // log out
             if(!ctx.auth_response.empty()) {
                 ImGui::Separator();
@@ -2046,6 +2086,7 @@ namespace
                             // load up the track
                             if(!(ctx.play_track_filepath == releases.track_filepaths[r][sel]))
                             {
+                                PEN_LOG("we did this how? : %s", ctx.play_track_filepath.c_str());
                                 ctx.play_track_filepath = releases.track_filepaths[r][sel];
                                 ctx.invalidate_track = true;
                             }
@@ -3000,6 +3041,12 @@ namespace
     }
 
     loop_t user_update() {
+        
+        if(os_is_backgrounded()) {
+            pen::thread_sleep_ms(1000);
+            pen_main_loop_continue();
+        }
+        
         ctx.dt = 1.0f / (f32)pen::timer_elapsed_ms(frame_timer);
         update_loading_anims();
         
@@ -3054,7 +3101,11 @@ namespace
         pen::os_enable_background_audio();
         
         // support background control and info display
-        pen::music_enable_remote_control();
+        pen::music_player_remote remote;
+        remote.pause = audio_player_pause;
+        remote.next = audio_player_next;
+        remote.tick = audio_player_tick;
+        pen::music_enable_remote_control(remote);
         
         // get window size
         pen::window_get_size(ctx.w, ctx.h);
@@ -3142,8 +3193,67 @@ void* pen::user_entry( void* params )
     return PEN_THREAD_OK;
 }
 
-void audio_player_stop_existing()
+void audio_player_tick()
 {
+    renderer_consume_cmd_buffer_non_blocking();
+    put::audio_consume_command_buffer();
+    audio_player();
+}
+
+void audio_player_next(bool prev)
+{
+    u32 r = ctx.top;
+    auto& releases = ctx.view->releases;
+    
+    if(r != -1) {
+        // next track
+        u32 sel = releases.select_track[r] + 1;
+        
+        // move to next release
+        if(sel >= releases.track_filepath_count[r])
+        {
+            r = ctx.top + 1;
+            ctx.scroll_delta = vec2f::zero();
+            if(r < releases.available_entries) {
+                ctx.view->scroll.y = releases.posy[r];
+                releases.select_track[r] = sel;
+                sel = 0;
+            }
+        }
+        
+        if(sel < releases.track_filepath_count[r]) {
+            ctx.play_track_filepath = releases.track_filepaths[r][sel];
+            PEN_LOG("%s", ctx.play_track_filepath.c_str());
+            ctx.invalidate_track = true;
+        }
+        
+        // assign
+        releases.select_track[r] = sel;
+        ctx.top = r;
+    }
+    
+    // flush an update
+    audio_player();
+    put::audio_consume_command_buffer();
+    audio_player();
+    renderer_consume_cmd_buffer_non_blocking();
+}
+
+void audio_player_pause(bool pause) {
+    auto& audio_ctx = ctx.audio_ctx;
+    
+    // stop existing
+    if(is_valid(audio_ctx.si))
+    {
+        // pause existing
+        put::audio_group_set_pause(audio_ctx.gi, pause);
+    }
+    
+    // flush an update
+    put::audio_consume_command_buffer();
+}
+
+void audio_player_stop_existing() {
     auto& audio_ctx = ctx.audio_ctx;
     
     // stop existing
@@ -3184,6 +3294,7 @@ void audio_player()
             // stop existing
             audio_player_stop_existing();
             
+            PEN_LOG("set stream %s", ctx.play_track_filepath.c_str());
             audio_ctx.si = put::audio_create_stream(ctx.play_track_filepath.c_str());
             audio_ctx.ci = put::audio_create_channel_for_sound(audio_ctx.si);
             audio_ctx.gi = put::audio_create_channel_group();
@@ -3234,6 +3345,7 @@ void audio_player()
             }
             
             // set pos / length info
+            // PEN_LOG("set time %i, %i", pos_ms, len_ms);
             pen::music_set_now_playing_time_info(pos_ms, len_ms);
             
             // read back texture data to display on lock screen
@@ -3268,6 +3380,12 @@ void audio_player()
                     ctx.scroll_delta.x = 0.0;
                     releases.select_track[ctx.top] += 1;
                     releases.flags[ctx.top] |= EntityFlags::transitioning;
+                    
+                    if(os_is_backgrounded())
+                    {
+                        ctx.play_track_filepath = releases.track_filepaths[ctx.top][releases.select_track[ctx.top]];
+                        ctx.invalidate_track = true;
+                    }
                 }
                 else {
                     // move to next release
@@ -3276,7 +3394,21 @@ void audio_player()
                     if(next_release < releases.available_entries) {
                         ctx.view->scroll.y = releases.posy[next_release];
                     }
+                    
+                    if(os_is_backgrounded())
+                    {
+                        ctx.top += 1;
+                        u32 sel = releases.select_track[ctx.top];
+                        if(sel < releases.track_filepath_count[ctx.top])
+                        {
+                            ctx.play_track_filepath = releases.track_filepaths[ctx.top][sel];
+                            ctx.invalidate_track = true;
+                        }
+                    }
                 }
+                
+                //
+
             }
             else if(gstate.play_state == put::e_audio_play_state::playing)
             {

@@ -124,28 +124,28 @@
 using namespace put::ecs;
 
 // magic number constants
-constexpr f32 k_promax_11_w = 1125.0f; // ratios were tuned from pixels sizes on iphone11 pro max
-constexpr f32 k_promax_11_h = 2436.0f;
-constexpr f32 k_drag_threshold = 0.1f;
-constexpr f32 k_inertia = 0.96f;
-constexpr f32 k_inertia_cutoff = 3.33f;
-constexpr f32 k_snap_lerp = 0.3f;
-constexpr f32 k_indent1 = 2.0f;
-constexpr f32 k_top_pull_pad = 1.5f;
-constexpr f32 k_top_pull_reload = 1.25f;
-constexpr f32 k_text_size_h1 = 2.25f;
-constexpr f32 k_text_size_h2 = 1.5f;
-constexpr f32 k_text_size_h3 = 1.25f;
-constexpr f32 k_text_size_body = 1.0f;
-constexpr f32 k_text_size_track = 0.75f;
-constexpr f32 k_text_size_nerds = 0.7f;
-constexpr f32 k_text_size_dots = 0.8f;
-constexpr f32 k_release_button_tap_radius_ratio = 64.0f / k_promax_11_w;
-constexpr f32 k_page_button_press_radius_ratio = 94.0f / k_promax_11_w;
-constexpr u32 k_num_threads_per_view = 4;
-constexpr size_t k_login_buf_size = 320;
-constexpr s32 k_ram_cache_range = 10;
-constexpr s32 k_disk_cache_min_range = 10;
+constexpr f32       k_promax_11_w = 1125.0f; // ratios were tuned from pixels sizes on iphone11 pro max
+constexpr f32       k_promax_11_h = 2436.0f;
+constexpr f32       k_drag_threshold = 0.1f;
+constexpr f32       k_inertia = 0.96f;
+constexpr f32       k_inertia_cutoff = 3.33f;
+constexpr f32       k_snap_lerp = 0.3f;
+constexpr f32       k_indent1 = 2.0f;
+constexpr f32       k_top_pull_pad = 1.5f;
+constexpr f32       k_top_pull_reload = 1.25f;
+constexpr f32       k_text_size_h1 = 2.25f;
+constexpr f32       k_text_size_h2 = 1.5f;
+constexpr f32       k_text_size_h3 = 1.25f;
+constexpr f32       k_text_size_body = 1.0f;
+constexpr f32       k_text_size_track = 0.75f;
+constexpr f32       k_text_size_nerds = 0.7f;
+constexpr f32       k_text_size_dots = 0.8f;
+constexpr f32       k_release_button_tap_radius_ratio = 64.0f / k_promax_11_w;
+constexpr f32       k_page_button_press_radius_ratio = 94.0f / k_promax_11_w;
+constexpr u32       k_num_threads_per_view = 4;
+constexpr size_t    k_login_buf_size = 320;
+constexpr s32       k_ram_cache_range = 10;
+constexpr s32       k_disk_cache_min_range = 10;
 
 namespace EntityFlags
 {
@@ -368,6 +368,9 @@ struct AppContext
 };
 
 // audio API
+void            audio_player_pause(bool pause);
+void            audio_player_next(bool prev);
+void            audio_player_tick();
 void            audio_player_stop_existing();
 void            audio_player();
 

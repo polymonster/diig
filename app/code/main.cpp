@@ -572,7 +572,7 @@ void* user_data_thread(void* userdata)
     ctx->user_data.mutex.lock();
     ctx->user_data.dict.merge_patch(user_data_cache);
     ctx->user_data.mutex.unlock();
-        
+
     for(;;)
     {
         // authenticate
@@ -589,6 +589,33 @@ void* user_data_thread(void* userdata)
         
         // if authenticated
         if(auth_cloud) {
+            
+            // sync lost likes from global likes
+            static bool sync_likes = false;
+            if(sync_likes)
+            {
+                // get all likes
+                CURLcode code;
+                
+                Str url = "https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app/likes.json";
+                url.appendf("?auth=%s", tokenid.c_str());
+                
+                auto global_likes = curl::request(url.c_str(), nullptr, code);
+                                
+                for(auto& like : global_likes.items()) {
+                    for(auto& user : like.value().items()) {
+                        if(user.key() == std::string(userid.c_str()))
+                        {
+                            if(user.value() > 0) {
+                                add_like(like.key());
+                            }
+                        }
+                    }
+                }
+                
+                sync_likes = false;
+            }
+            
             if(fetch_cloud) {
                 Str url = user_url;
                 url.appendf("%s.json", userid.c_str());
@@ -600,11 +627,15 @@ void* user_data_thread(void* userdata)
                     try {
                         auto cloud_user_data = nlohmann::json::parse(fetch.data);
                         if(cloud_user_data.contains("timestamp")) {
+                            
+                            /*
                             if(ctx->user_data.dict.empty()) {
                                 // sync cloud changes if we have no local data
                                 ctx->user_data.dict.merge_patch(cloud_user_data);
-                            }
-                            // TODO: if newer
+                            */
+                            
+                            ctx->user_data.dict.merge_patch(cloud_user_data);
+                    
                         }
                     }
                     catch(...) {
@@ -632,7 +663,7 @@ void* user_data_thread(void* userdata)
                     Str like_release_url = likes_url;
                     like_release_url.appendf("%s.json", like.key().c_str());
                     like_release_url.appendf("?auth=%s", tokenid.c_str());
-                    
+
                     // unpack bool or numerical like
                     bool like_val = false;
                     if(like.value().is_boolean()) {
@@ -3104,6 +3135,7 @@ namespace
         remote.pause = audio_player_pause;
         remote.next = audio_player_next;
         remote.tick = audio_player_tick;
+        remote.like = audio_player_toggle_like;
         pen::music_enable_remote_control(remote);
         
         // get window size
@@ -3197,6 +3229,21 @@ void audio_player_tick()
     renderer_consume_cmd_buffer_non_blocking();
     put::audio_consume_command_buffer();
     audio_player();
+}
+
+void audio_player_toggle_like() {
+    u32 r = ctx.top;
+    
+    auto& releases = ctx.view->releases;
+    
+    if(releases.flags[r] & EntityFlags::liked) {
+        add_like(releases.key[r]);
+        releases.flags[r] |= EntityFlags::liked;
+    }
+    else {
+        remove_like(releases.key[r]);
+        releases.flags[r] |= EntityFlags::liked;
+    }
 }
 
 void audio_player_next(bool prev)

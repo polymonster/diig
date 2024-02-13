@@ -371,6 +371,7 @@ struct AppContext
 void            audio_player_pause(bool pause);
 void            audio_player_next(bool prev);
 void            audio_player_tick();
+void            audio_player_toggle_like();
 void            audio_player_stop_existing();
 void            audio_player();
 

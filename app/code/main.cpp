@@ -572,6 +572,8 @@ void* user_data_thread(void* userdata)
     ctx->user_data.mutex.lock();
     ctx->user_data.dict.merge_patch(user_data_cache);
     ctx->user_data.mutex.unlock();
+    
+    ctx->user_data.status = Status::e_initialised;
 
     for(;;)
     {
@@ -627,13 +629,6 @@ void* user_data_thread(void* userdata)
                     try {
                         auto cloud_user_data = nlohmann::json::parse(fetch.data);
                         if(cloud_user_data.contains("timestamp")) {
-                            
-                            /*
-                            if(ctx->user_data.dict.empty()) {
-                                // sync cloud changes if we have no local data
-                                ctx->user_data.dict.merge_patch(cloud_user_data);
-                            */
-                            
                             ctx->user_data.dict.merge_patch(cloud_user_data);
                     
                         }
@@ -1355,6 +1350,64 @@ namespace
         }
     }
 
+    void apply_user_store_prefs(const Str& store_name, Store& store) {
+        // prev prefs
+        auto user_data = ctx.data_ctx.user_data.dict;
+        ctx.data_ctx.user_data.mutex.lock();
+        
+        if (ctx.data_ctx.user_data.dict.contains("stores") &&
+            ctx.data_ctx.user_data.dict["stores"].contains(store_name.c_str()))
+        {
+            // grab user store prefs
+            auto& store_prefs = ctx.data_ctx.user_data.dict["stores"][store_name.c_str()];
+            
+            // sections
+            std::vector<std::string> section_preference;
+            if (store_prefs.contains("sections")) {
+                section_preference = ctx.data_ctx.user_data.dict["stores"][store_name.c_str()]["sections"];
+            }
+            
+            // view
+            std::string view_preference;
+            if (store_prefs.contains("view")) {
+                view_preference = ctx.data_ctx.user_data.dict["stores"][store_name.c_str()]["view"];
+            }
+                            
+            // set section mask
+            if(section_preference.size() > 0)
+            {
+                store.selected_sections_mask = 0;
+                for(u32 i = 0; i < store.section_search_names.size(); ++i)
+                {
+                    auto pos = std::find(
+                        begin(section_preference),
+                        end(section_preference),
+                        store.section_search_names[i].c_str()
+                    );
+                    
+                    if(pos != end(section_preference))
+                    {
+                        u32 x = (u32)(pos - begin(section_preference));
+                        store.selected_sections_mask |= (1<<x);
+                    }
+                }
+            }
+            
+            // find view index
+            auto pos = std::find(
+                begin(store.view_search_names),
+                end(store.view_search_names),
+                view_preference.c_str()
+            );
+            
+            if(pos != end(store.view_search_names)) {
+                store.selected_view_index = (u32)(pos - begin(store.view_search_names));
+            }
+        }
+        
+        ctx.data_ctx.user_data.mutex.unlock();
+    }
+
     Store change_store(const Str& store_name) {
         Store output = {};
         if(ctx.stores.contains(store_name.c_str()))
@@ -1413,6 +1466,8 @@ namespace
             }
             
             output.name = store_name;
+            
+            apply_user_store_prefs(store_name, output);
             
             // now change the store feed
             update_last_store(store_name);
@@ -2413,6 +2468,7 @@ namespace
         if(pen::input_is_mouse_down(PEN_MOUSE_L))
         {
             ctx.scroll_delta = cur_scroll_delta;
+            ctx.view->target_scroll_y = 0; // disable next release auto lerp
         }
         else
         {
@@ -2430,6 +2486,15 @@ namespace
             // release locks
             ctx.scroll_lock_x = false;
             ctx.scroll_lock_y = false;
+        }
+        
+        // apply lerp to next release target
+        if(ctx.view->target_scroll_y) {
+            ctx.view->scroll.y = lerp(ctx.view->scroll.y, (f32)ctx.view->target_scroll_y, 0.5f);
+            if(ctx.view->target_scroll_y < 1.0f) {
+                ctx.view->scroll.y = ctx.view->target_scroll_y;
+                ctx.view->target_scroll_y = 0.0f;
+            }
         }
         
         // clamp to top
@@ -2891,7 +2956,39 @@ namespace
         if(ctx.view && ctx.view->page == Page::login_complete) {
             if(ctx.stores.size() > 0) {
                 if(ctx.store.name.empty()) {
-                    ctx.store = change_store("redeye");
+                    
+                    // get user last visited store preferences
+                    while(ctx.data_ctx.user_data.status == Status::e_not_initialised) {
+                        pen::thread_sleep_ms(1);
+                    }
+                    
+                    // extract info from dict
+                    std::string store_preference = "";
+                    std::vector<std::string> section_preference = {};
+                    ctx.data_ctx.user_data.mutex.lock();
+                    if(ctx.data_ctx.user_data.dict.contains("last_store")) {
+                        // store
+                        store_preference = ctx.data_ctx.user_data.dict["last_store"];
+                    }
+                    ctx.data_ctx.user_data.mutex.unlock();
+                    
+                    // load prev or default
+                    if(!store_preference.empty())
+                    {
+                        // ..
+                        PEN_LOG("last visited: %s", store_preference.c_str());
+                        for(auto& sec : section_preference) {
+                            PEN_LOG("%s", sec.c_str());
+                        }
+                        
+                        ctx.store = change_store(((std::string)ctx.data_ctx.user_data.dict["last_store"]).c_str());
+                    }
+                    else
+                    {
+                        ctx.store = change_store("redeye");
+                    }
+                    
+                    ctx.data_ctx.user_data.mutex.unlock();
                 }
                 else {
                     ctx.store = change_store(ctx.store.name);
@@ -3269,7 +3366,8 @@ void audio_player_next(bool prev)
             r = max<s32>(r, 0); // clamp releases to 0
             ctx.scroll_delta = vec2f::zero();
             if(r < releases.available_entries) {
-                ctx.view->scroll.y = releases.posy[r];
+                ctx.view->scroll.y = releases.posy[r-1];
+                ctx.view->target_scroll_y = releases.posy[r];
                 sel = releases.select_track[r];
             }
         }
@@ -3443,7 +3541,7 @@ void audio_player()
                     ctx.scroll_delta = vec2f::zero();
                     u32 next_release = ctx.top + 1;
                     if(next_release < releases.available_entries) {
-                        ctx.view->scroll.y = releases.posy[next_release];
+                        ctx.view->target_scroll_y = releases.posy[next_release];
                     }
                     
                     if(os_is_backgrounded())

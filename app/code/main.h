@@ -219,6 +219,7 @@ namespace Status
     enum Status
     {
         e_not_initialised,
+        e_initialised,
         e_loading,
         e_ready,
         e_not_available,
@@ -295,6 +296,7 @@ struct ReleasesView
     std::atomic<u32>    threads_terminated = { 0 };
     u32                 top_pos = 0;
     vec2f               scroll = vec2f(0.0f, 0.0f);
+    f32                 target_scroll_y = 0.0f;
     void*               thread_mem[k_num_threads_per_view] = {0};
     std::map<u32, u32>  release_pos = {};
     Status_t            release_pos_status = Status::e_not_initialised;

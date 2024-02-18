@@ -103,7 +103,6 @@ def scrape_page(url, store, view, section, counter = 0):
 
         # assign pos per section
         release_dict[f"{store}-{section}-{view}"] = int(counter)
-
         counter += 1
 
         # merge into main

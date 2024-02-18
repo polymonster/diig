@@ -70,5 +70,20 @@
                 "display_name": "Back Catalogue"
             }
         }
+    },
+    "yoyaku": {
+        "sections": [
+            "breaks"
+        ],
+        "section_display_names": [
+            "Breaks"
+        ],
+        "views": {
+            "new_releases": {
+                "url": "https://www.yoyaku.io/style/breaks/page/${{page}}/?orderby=date",
+                "page_count": 100,
+                "display_name": "Latest"
+            }
+        }
     }
 }

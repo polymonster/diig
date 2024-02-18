@@ -1,5 +1,6 @@
 {
     "id": "string - store specific id for the release",
+    "store": "string - the specifc store this release is from",
     "link": "string - url link to the store specific page for the release",
     "artist": "string - the artist name",
     "title": "string - the releases title name",
@@ -15,7 +16,6 @@
     "track_urls": [
         "string list - url links to track mp3s"
     ],
-    "store": "string - the specifc store this release is from",
     "store_tags": {
         "out_of_stock": true,
         "has_sold_out": true,

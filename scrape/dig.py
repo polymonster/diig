@@ -60,6 +60,15 @@ def parse_body(elem: str):
     return elem[tag_end:]
 
 
+# parse the html tag to return the body text <p class="tag">BODY</p> + strip any extraneous html
+def parse_strip_body(elem: str):
+    tag_end = cgu.enclose("<", ">", elem, 0)
+    body_end = elem.find("</", tag_end)
+    if body_end != -1:
+        return elem[tag_end:body_end]
+    return elem[tag_end:]
+
+
 # iteratively parse body to extract an element within a nested section
 def parse_nested_body(elem: str, depth: int):
     iter = elem

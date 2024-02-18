@@ -1,4 +1,4 @@
-name: scrape_multi
+name: scrape
 on:
   schedule:
     - cron: "0 0 * * *"

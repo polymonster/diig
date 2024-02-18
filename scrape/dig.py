@@ -235,9 +235,9 @@ def clear_tracker_keys(store, view_tracker_keys):
             for key in view_tracker_keys:
                 if key in release:
                     del release[key]
-    # write the registry back
-    release_registry = (json.dumps(releases_dict, indent=4))
-    open(reg_filepath, "w+").write(release_registry)
+        # write the registry back
+        release_registry = (json.dumps(releases_dict, indent=4))
+        open(reg_filepath, "w+").write(release_registry)
 
 
 # patch store releases

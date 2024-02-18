@@ -27,6 +27,7 @@ def scrape_page(url, store, view, section, counter = 0):
     releases = dig.parse_class(html_str, "class=\"ct-media-container\"", "a")
 
     # open existing reg
+    releases_dict = dict()
     reg_filepath = f"registry/{store}.json"
     if os.path.exists(reg_filepath):
         releases_dict = json.loads(open(reg_filepath, "r").read())

@@ -184,7 +184,7 @@ def scrape_page(url, store, view, section, counter = 0):
         html_file = urllib.request.urlopen(url)
     except:
         print("error: url not found {}".format(url))
-        return
+        return -1
 
     # store release entries in dict
     releases_dict = dict()

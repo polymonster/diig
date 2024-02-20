@@ -77,7 +77,7 @@ def scrape_page(url, store, view, section, counter = 0):
     try:
         html_file = urllib.request.urlopen(url)
     except:
-        return
+        return -1
 
     html_str = html_file.read().decode("utf8")
 
@@ -147,7 +147,6 @@ def scrape_page(url, store, view, section, counter = 0):
         if release_dict["title"].find("<span") != -1:
             print(release)
             assert(0)
-
 
         release_dict["label"] = parse_label(label_elem)
         release_dict["cat"] = parse_cat(cat_elem)

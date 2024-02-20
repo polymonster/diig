@@ -40,7 +40,7 @@ def scrape_page(url, store, view, section, counter = 0):
         release_dict["id"] = os.path.basename(release_dict["link"].strip("/"))
         key = f'{release_dict["store"]}-{release_dict["id"]}'
 
-        if release_dict["id"] not in releases_dict:
+        if release_dict["id"] not in releases_dict or "-force" in sys.argv:
             srcset = dig.get_value(release, "srcset")
 
             # images order
@@ -95,11 +95,59 @@ def scrape_page(url, store, view, section, counter = 0):
 
             # track urls
             cdn = "https://yydistribution.ams3.digitaloceanspaces.com/yyplayer/mp3"
-            cdn_id = release_dict["id"].upper()
+            cdn_id = release_dict["cat"].upper()
+
+            id_start = release_dict["id"].rfind("_")
+            id_id = release_dict["id"][id_start+1:]
+
+            attempts = [
+                cdn_id,
+                cdn_id.lower(),
+                id_id,
+                id_id.upper()
+            ]
 
             release_dict["track_urls"] = list()
-            for i in range(0, len(tracklist)):
-                release_dict["track_urls"].append(f"{cdn}/{cdn_id}_{i}.mp3")
+
+            fails = 0
+            for attempt in attempts:
+                attempt_list = list()
+                for i in range(0, len(tracklist)):
+                    try:
+                        # we need to check if exists
+                        linear = f"{cdn}/{attempt}_{i+1}.mp3"
+                        if urllib.request.urlopen(linear).code == 200:
+                            print(f"append linear: {linear}")
+                            attempt_list.append(linear)
+                    except:
+                        # or use the track prefix
+                        name = release_dict["track_names"][i]
+                        pp = name.find(".")
+                        cp = name.find(":")
+                        if pp != -1 and cp != -1:
+                            pp = min(pp, cp)
+                        else:
+                            pp = max(pp, cp)
+                        try:
+                            track_named = f"{cdn}/{attempt}_{name[:pp]}.mp3"
+                            if urllib.request.urlopen(track_named).code == 200:
+                                print(f"append tracked: {track_named}")
+                                attempt_list.append(track_named)
+                        except:
+                            fails += 1
+                            break
+
+                if len(attempt_list) > len(release_dict["track_urls"]):
+                    release_dict["track_urls"] = list(attempt_list)
+
+                if not attempt_list.empty() and not release_dict["track_urls"].empty():
+                    print(f"found multiple track lists")
+
+            if release_dict["track_urls"].empty():
+                ll = release_dict["link"]
+                print(attempts)
+                print(f"didn't find tracks for {ll}")
+
 
         # assign pos per section
         release_dict[f"{store}-{section}-{view}"] = int(counter)

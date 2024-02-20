@@ -286,6 +286,8 @@ def scrape_store(stores, store_name):
                         section,
                         counter
                     )
+                    if counter == -1:
+                        break
     else:
         print("error: unknown store {}".format(store_name))
         exit(1)

@@ -20,7 +20,7 @@ def scrape_page(url, store, view, section, counter = 0):
         html_file = urllib.request.urlopen(req)
     except:
         print("error: url not found {}".format(url))
-        return
+        return -1
 
     # parse releases from page
     html_str = html_file.read().decode("utf8")
@@ -143,9 +143,9 @@ def scrape_page(url, store, view, section, counter = 0):
             ll = release_dict["link"]
             if len(release_dict["track_urls"]) == 0:
                 print(attempts)
-                print(f"didn't find tracks for {ll}")
+                print(f"didn't find tracks for {ll}", flush=True)
             elif "-verbose" in sys.argv:
-                print(f"found tracks for {ll}")
+                print(f"found tracks for {ll}", flush=True)
 
 
         # assign pos per section

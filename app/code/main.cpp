@@ -320,6 +320,9 @@ Str download_and_cache(const Str& url, Str releaseid)
     path.appendf("/%s", filepath.c_str());
     filepath = path;
     
+    // force remove mp3
+    filepath = pen::str_replace_string(filepath, ".mp3", "");
+    
     // check if file already exists
     u32 mtime = 0;
     pen::filesystem_getmtime(filepath.c_str(), mtime);
@@ -3443,7 +3446,7 @@ void audio_player()
         {
             // stop existing
             audio_player_stop_existing();
-
+            
             audio_ctx.si = put::audio_create_stream(ctx.play_track_filepath.c_str());
             audio_ctx.ci = put::audio_create_channel_for_sound(audio_ctx.si);
             audio_ctx.gi = put::audio_create_channel_group();
@@ -3461,7 +3464,9 @@ void audio_player()
                 releases.artist[r], releases.title[r], track_name);
 
             audio_ctx.read_tex_data_handle = 0;
+            
             ctx.invalidate_track = false; // TODO: move to audio ctx
+            
             audio_ctx.started = false;
         }
         

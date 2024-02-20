@@ -117,7 +117,6 @@ def scrape_page(url, store, view, section, counter = 0):
                         # we need to check if exists
                         linear = f"{cdn}/{attempt}_{i+1}.mp3"
                         if urllib.request.urlopen(linear).code == 200:
-                            print(f"append linear: {linear}")
                             attempt_list.append(linear)
                     except:
                         # or use the track prefix
@@ -131,7 +130,6 @@ def scrape_page(url, store, view, section, counter = 0):
                         try:
                             track_named = f"{cdn}/{attempt}_{name[:pp]}.mp3"
                             if urllib.request.urlopen(track_named).code == 200:
-                                print(f"append tracked: {track_named}")
                                 attempt_list.append(track_named)
                         except:
                             fails += 1
@@ -139,14 +137,15 @@ def scrape_page(url, store, view, section, counter = 0):
 
                 if len(attempt_list) > len(release_dict["track_urls"]):
                     release_dict["track_urls"] = list(attempt_list)
+                    break
 
-                if not attempt_list.empty() and not release_dict["track_urls"].empty():
-                    print(f"found multiple track lists")
-
-            if release_dict["track_urls"].empty():
-                ll = release_dict["link"]
+            # info
+            ll = release_dict["link"]
+            if len(release_dict["track_urls"]) == 0:
                 print(attempts)
                 print(f"didn't find tracks for {ll}")
+            elif "-verbose" in sys.argv:
+                print(f"found tracks for {ll}")
 
 
         # assign pos per section

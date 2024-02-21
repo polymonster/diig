@@ -40,7 +40,7 @@ def scrape_page(url, store, view, section, counter = 0):
         release_dict["id"] = os.path.basename(release_dict["link"].strip("/"))
         key = f'{release_dict["store"]}-{release_dict["id"]}'
 
-        if release_dict["id"] not in releases_dict or "-force" in sys.argv:
+        if key not in releases_dict or "-force" in sys.argv:
             srcset = dig.get_value(release, "srcset")
 
             # images order

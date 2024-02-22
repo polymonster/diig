@@ -59,9 +59,10 @@ namespace curl
     constexpr size_t k_min_alloc = 1024;
 
     struct DataBuffer {
-        u8*    data = nullptr;
-        size_t size = 0;
-        size_t alloc_size = 0;
+        u8*         data = nullptr;
+        size_t      size = 0;
+        size_t      alloc_size = 0;
+        CURLcode    code = CURLE_OK;
     };
 
     void init()
@@ -105,6 +106,7 @@ namespace curl
             curl_easy_setopt(curl, CURLOPT_WRITEDATA, &db);
         
             res = curl_easy_perform(curl);
+            db.code = res;
 
             if(res != CURLE_OK)
             {
@@ -307,7 +309,7 @@ bool check_cache_hit(const Str& url, Str releaseid)
     return true;
 }
 
-Str download_and_cache(const Str& url, Str releaseid)
+Str download_and_cache(const Str& url, Str releaseid, bool validate = false)
 {
     Str filepath = pen::str_replace_string(url, "https://", "");
     filepath = pen::str_replace_chars(filepath, '/', '_');
@@ -335,14 +337,26 @@ Str download_and_cache(const Str& url, Str releaseid)
         auto db = new curl::DataBuffer;
         *db = curl::download(url.c_str());
         
+        // try parse json to validate
+        bool error_response = false;
+        if(validate) {
+            if(strncmp((const c8*)db->data, "error code", 10) == 0) {
+                PEN_LOG("%s: %s\n", db->data, url.c_str());
+                error_response = true;
+            }
+        }
+        
         // stash
         if(db->data)
         {
-            FILE* fp = fopen(filepath.c_str(), "wb");
-            if(fp)
+            if(!error_response)
             {
-                fwrite(db->data, db->size, 1, fp);
-                fclose(fp);
+                FILE* fp = fopen(filepath.c_str(), "wb");
+                if(fp)
+                {
+                    fwrite(db->data, db->size, 1, fp);
+                    fclose(fp);
+                }
             }
             
             // free
@@ -1184,7 +1198,7 @@ void* data_cache_fetch(void* userdata) {
             // cache art
             if(!view->releases.artwork_url[i].empty()) {
                 if(view->releases.artwork_filepath[i].empty()) {
-                    view->releases.artwork_filepath[i] = download_and_cache(view->releases.artwork_url[i], view->releases.key[i]);
+                    view->releases.artwork_filepath[i] = download_and_cache(view->releases.artwork_url[i], view->releases.key[i], true);
                     view->releases.flags[i] |= EntityFlags::artwork_cached;
                 }
             }
@@ -1195,7 +1209,7 @@ void* data_cache_fetch(void* userdata) {
                     view->releases.track_filepaths[i] = new Str[view->releases.track_url_count[i]];
                     for(u32 t = 0; t < view->releases.track_url_count[i]; ++t) {
                         view->releases.track_filepaths[i][t] = "";
-                        Str fp = download_and_cache(view->releases.track_urls[i][t], view->releases.key[i]);
+                        Str fp = download_and_cache(view->releases.track_urls[i][t], view->releases.key[i], true);
                         view->releases.track_filepaths[i][t] = fp;
                     }
                     std::atomic_thread_fence(std::memory_order_release);
@@ -2988,7 +3002,7 @@ namespace
                     }
                     else
                     {
-                        ctx.store = change_store("redeye");
+                        ctx.store = change_store("yoyaku");
                     }
                     
                     ctx.data_ctx.user_data.mutex.unlock();

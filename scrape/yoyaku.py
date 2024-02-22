@@ -47,6 +47,7 @@ def scrape_page(url, store, view, section, counter = 0):
             target_w = [
                 "100w",
                 "400w",
+                "600w",
                 "768w"
             ]
 

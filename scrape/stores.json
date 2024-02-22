@@ -73,15 +73,17 @@
     },
     "yoyaku": {
         "sections": [
-            "breaks"
+            "breaks",
+            "dub-techno"
         ],
         "section_display_names": [
-            "Breaks"
+            "Breaks",
+            "Dub Techno"
         ],
         "views": {
             "new_releases": {
-                "url": "https://www.yoyaku.io/style/breaks/page/${{page}}/?orderby=date",
-                "page_count": 100,
+                "url": "https://www.yoyaku.io/style/${{section}}/page/${{page}}/?orderby=date",
+                "page_count": 30,
                 "display_name": "Latest"
             }
         }

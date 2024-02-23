@@ -722,6 +722,19 @@ void* user_data_thread(void* userdata)
     return nullptr;
 }
 
+inline Str safe_str(nlohmann::json& j, const c8* key, const Str& default_value)
+{
+    if(j.contains(key))
+    {
+        if(j[key].is_string())
+        {
+            return ((std::string)j[key]).c_str();
+        }
+    }
+    
+    return default_value;
+}
+
 void* releases_view_loader(void* userdata)
 {
     // get view from userdata
@@ -919,20 +932,13 @@ void* releases_view_loader(void* userdata)
         auto release = releases_registry[entry.index];
         
         // simple info
-        view->releases.artist[ri] = release["artist"];
-        view->releases.title[ri] = release["title"];
-        view->releases.link[ri] = release["link"];
-        view->releases.label[ri] = release["label"];
-        view->releases.cat[ri] = release["cat"];
-        view->releases.store[ri] = release["store"];
-        
-        //
-        if(release.contains("label_link")) {
-            view->releases.label_link[ri] = release["label_link"];
-        }
-        else {
-            view->releases.label_link[ri] = "";
-        }
+        view->releases.artist[ri] = safe_str(release, "artist", "");
+        view->releases.title[ri] = safe_str(release, "title", "");
+        view->releases.link[ri] = safe_str(release, "link", "");
+        view->releases.label[ri] = safe_str(release, "label", "");
+        view->releases.cat[ri] = safe_str(release, "cat", "");
+        view->releases.store[ri] = safe_str(release, "store", "");
+        view->releases.label_link[ri] = safe_str(release, "label_link", "");
         
         // clear
         view->releases.artwork_filepath[ri] = "";

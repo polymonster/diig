@@ -40,23 +40,35 @@ def scrape_page(url, store, view, section, counter = 0):
         release_dict["id"] = os.path.basename(release_dict["link"].strip("/"))
         key = f'{release_dict["store"]}-{release_dict["id"]}'
 
+        if "-verbose" in sys.argv:
+            print(f"parsing release: {key}")
+
         if key not in releases_dict or "-force" in sys.argv:
+            # look for src set
             srcset = dig.get_value(release, "srcset")
+            if srcset != None:
+                # images order
+                target_w = [
+                    "100w",
+                    "400w",
+                    "600w",
+                    "768w"
+                ]
 
-            # images order
-            target_w = [
-                "100w",
-                "400w",
-                "600w",
-                "768w"
-            ]
-
-            release_dict["artworks"] = list()
-            imgs = srcset.split(",")
-            for w in target_w:
-                for img in imgs:
-                    if img.endswith(w):
-                        release_dict["artworks"].append(img.strip(w).strip())
+                release_dict["artworks"] = list()
+                imgs = srcset.split(",")
+                for w in target_w:
+                    for img in imgs:
+                        if img.endswith(w):
+                            release_dict["artworks"].append(img.strip(w).strip())
+            else:
+                # might have single image
+                img = dig.get_value(release, "src")
+                if img != None:
+                    # splat 3
+                    release_dict["artworks"] = list()
+                    for i in range(0, 3):
+                        release_dict["artworks"].append(img)
 
             # detail info
             try:
@@ -95,58 +107,60 @@ def scrape_page(url, store, view, section, counter = 0):
                 release_dict["track_names"].append(dig.parse_strip_body(track))
 
             # track urls
-            cdn = "https://yydistribution.ams3.digitaloceanspaces.com/yyplayer/mp3"
-            cdn_id = release_dict["cat"].upper()
+            if "urls" in sys.argv:
+                cdn = "https://yydistribution.ams3.digitaloceanspaces.com/yyplayer/mp3"
+                cdn_id = release_dict["cat"].upper()
 
-            id_start = release_dict["id"].rfind("_")
-            id_id = release_dict["id"][id_start+1:]
+                id_start = release_dict["id"].rfind("_")
+                id_id = release_dict["id"][id_start+1:]
 
-            attempts = [
-                cdn_id,
-                cdn_id.lower(),
-                id_id,
-                id_id.upper()
-            ]
+                attempts = [
+                    cdn_id,
+                    cdn_id.lower(),
+                    id_id,
+                    id_id.upper()
+                ]
 
-            release_dict["track_urls"] = list()
+                release_dict["track_urls"] = list()
 
-            fails = 0
-            for attempt in attempts:
-                attempt_list = list()
-                for i in range(0, len(tracklist)):
-                    try:
-                        # we need to check if exists
-                        linear = f"{cdn}/{attempt}_{i+1}.mp3"
-                        if urllib.request.urlopen(linear).code == 200:
-                            attempt_list.append(linear)
-                    except:
-                        # or use the track prefix
-                        name = release_dict["track_names"][i]
-                        pp = name.find(".")
-                        cp = name.find(":")
-                        if pp != -1 and cp != -1:
-                            pp = min(pp, cp)
-                        else:
-                            pp = max(pp, cp)
+                fails = 0
+                for attempt in attempts:
+                    attempt_list = list()
+                    for i in range(0, len(tracklist)):
                         try:
-                            track_named = f"{cdn}/{attempt}_{name[:pp]}.mp3"
-                            if urllib.request.urlopen(track_named).code == 200:
-                                attempt_list.append(track_named)
+                            # we need to check if exists
+                            linear = f"{cdn}/{attempt}_{i+1}.mp3"
+                            if urllib.request.urlopen(linear).code == 200:
+                                attempt_list.append(linear)
                         except:
-                            fails += 1
-                            break
+                            # or use the track prefix
+                            name = release_dict["track_names"][i]
+                            pp = name.find(".")
+                            cp = name.find(":")
+                            if pp != -1 and cp != -1:
+                                pp = min(pp, cp)
+                            else:
+                                pp = max(pp, cp)
+                            try:
+                                track_named = f"{cdn}/{attempt}_{name[:pp]}.mp3"
+                                if urllib.request.urlopen(track_named).code == 200:
+                                    attempt_list.append(track_named)
+                            except:
+                                fails += 1
+                                break
 
-                if len(attempt_list) > len(release_dict["track_urls"]):
-                    release_dict["track_urls"] = list(attempt_list)
-                    break
+                    if len(attempt_list) > len(release_dict["track_urls"]):
+                        release_dict["track_urls"] = list(attempt_list)
+                        break
 
-            # info
-            ll = release_dict["link"]
-            if len(release_dict["track_urls"]) == 0:
-                print(attempts)
-                print(f"didn't find tracks for {ll}", flush=True)
-            elif "-verbose" in sys.argv:
-                print(f"found tracks for {ll}", flush=True)
+                # print status on missing tracks
+                ll = release_dict["link"]
+                if "track_urls" in release_dict:
+                    if len(release_dict["track_urls"]) == 0:
+                        print(attempts)
+                        print(f"didn't find tracks for {ll}", flush=True)
+                    elif "-verbose" in sys.argv:
+                        print(f"found tracks for {ll}", flush=True)
 
 
         # assign pos per section

@@ -26,6 +26,9 @@
 using namespace put;
 using namespace pen;
 
+void settings_menu();
+void* data_cache_enumerate(void* userdata);
+
 namespace
 {
     void*  user_setup(void* params);
@@ -1066,123 +1069,6 @@ DirInfo get_folder_info_recursive(const pen::fs_tree_node& dir, const c8* root) 
     return output;
 }
 
-void* data_cache_enumerate(void* userdata) {
-    // get view from userdata
-    ReleasesView* view = (ReleasesView*)userdata;
-    
-    Str cache_dir = get_cache_path();
-        
-    // track all folders
-    std::vector<DirInfo> cached_releases;
-    
-    auto tt = pen::scope_timer("cache enum", true);
-    
-    s32 last_top = 26;
-    
-    for(;;) {
-        
-        // apply updates when we have moved an amount
-        if(abs(last_top - (s32)view->top_pos) < 25)
-        {
-            last_top = view->top_pos;
-            pen::thread_sleep_ms(66);
-            continue;
-        }
-        
-        last_top = view->top_pos;
-        
-        // enum cache stats
-        pen::fs_tree_node dir;
-        pen::filesystem_enum_directory(cache_dir.c_str(), dir, 1, "**/*.*");
-        view->data_ctx->cached_release_folders = 0;
-        view->data_ctx->cached_release_bytes = 0;
-        for(u32 i = 0; i < dir.num_children; ++i) {
-            Str path = cache_dir;
-            path.append(dir.children[i].name);
-            
-            pen::fs_tree_node release_dir;
-            pen::filesystem_enum_directory(path.c_str(), release_dir);
-            view->data_ctx->cached_release_folders++;
-            
-            auto info = get_folder_info_recursive(release_dir, path.c_str());
-            view->data_ctx->cached_release_bytes += info.size;
-            
-            pen::filesystem_enum_free_mem(release_dir);
-            
-            cached_releases.push_back(info);
-        }
-        pen::filesystem_enum_free_mem(dir);
-        
-        // sort the items
-        std::sort(begin(cached_releases),end(cached_releases),[](DirInfo a, DirInfo b) { return a.mtime < b.mtime; });
-        
-        // wait until we have at least 200 entries
-        while(view->release_pos_status != Status::e_ready) {
-            // return early if something went wrong
-            if(view->status == Status::e_not_available) {
-                view->threads_terminated++;
-                return nullptr;
-            }
-            // early out to terminate
-            if(view->terminate) {
-                view->threads_terminated++;
-                return nullptr;
-            }
-            pen::thread_sleep_ms(1);
-        }
-        
-        // TODO: this will become data driven
-        constexpr ssize_t k_min_cache_size = 2000;
-        
-        // iterate through releases in reverse remvoing items not in the view
-        for(ssize_t i = cached_releases.size()-1; i >= k_min_cache_size; --i) {
-            
-            DirInfo ii = cached_releases[i];
-            auto bn = str_basename(ii.path);
-            u32 bnh = PEN_HASH(bn.c_str());
-            PEN_LOG("scan %s", bn.c_str());
-            
-            if(view->release_pos.find(bnh) != view->release_pos.end()) {
-                if(view->release_pos[bnh] > k_min_cache_size) {
-                    PEN_LOG("should remove out of range %s", bn.c_str());
-                    cached_releases.erase(cached_releases.begin() + i);
-                    bool result = pen::os_delete_directory(ii.path);
-                    if(result) {
-                        PEN_LOG("deleted: %s", ii.path.c_str());
-                        view->data_ctx->cached_release_bytes -= ii.size;
-                        view->data_ctx->cached_release_folders--;
-                    }
-                }
-            }
-            else {
-                PEN_LOG("should remove not in list %s", bn.c_str());
-                cached_releases.erase(cached_releases.begin() + i);
-                bool result = pen::os_delete_directory(ii.path);
-                if(result) {
-                    PEN_LOG("deleted: %s", ii.path.c_str());
-                    view->data_ctx->cached_release_bytes -= ii.size;
-                    view->data_ctx->cached_release_folders--;
-                }
-            }
-            
-            // early out to terminate
-            if(view->terminate) {
-                view->threads_terminated++;
-                return nullptr;
-            }
-        }
-        
-        if(view->terminate) {
-            view->threads_terminated++;
-            return nullptr;
-        }
-    }
-    
-    // flag terminated
-    view->threads_terminated++;
-    return nullptr;
-}
-
 void* data_cache_fetch(void* userdata) {
     
     // get view from userdata
@@ -1889,13 +1775,21 @@ namespace
         ImGui::Text("%s", ICON_FA_BARS);
                 
         // options menu button
-        if(lenient_button_tap(rad) && !ctx.scroll_lock_x && ! ctx.scroll_lock_y) {
-            if(ImGui::IsPopupOpen("Options Menu")) {
-                ImGui::CloseCurrentPopup();
+        static bool s_debounce_menu = false;
+        if(!s_debounce_menu) {
+            if(lenient_button_tap(rad) && !ctx.scroll_lock_x && ! ctx.scroll_lock_y) {
+                if(ImGui::IsPopupOpen("Options Menu")) {
+                    ImGui::CloseCurrentPopup();
+                    s_debounce_menu = true;
+                }
+                else {
+                    ImGui::OpenPopup("Options Menu");
+                }
             }
-            else {
-                ImGui::OpenPopup("Options Menu");
-            }
+        }
+        
+        if(!pen::input_is_mouse_down(PEN_MOUSE_L)) {
+            s_debounce_menu = false;
         }
         
         // options menu popup
@@ -1917,6 +1811,10 @@ namespace
 
             ImGui::SetWindowFontScale(k_text_size_body);
             
+            if(ImGui::MenuItem("Settings")) {
+                change_page(Page::settings);
+            }
+            
             if(ctx.show_debug) {
                 if(ImGui::MenuItem("Hide Debug")) {
                     ctx.show_debug = false;
@@ -1926,14 +1824,6 @@ namespace
                 if(ImGui::MenuItem("Show Debug")) {
                     ctx.show_debug = true;
                 }
-            }
-            
-            if(ImGui::MenuItem("Pause")) {
-                audio_player_pause(true);
-            }
-            
-            if(ImGui::MenuItem("Play")) {
-                audio_player_pause(false);
             }
             
             // log out
@@ -2557,29 +2447,6 @@ namespace
         }
     }
 
-    void settings_menu()
-    {
-        ImGui::SetWindowFontScale(k_text_size_h2);
-        
-        if(ImGui::CollapsingHeader("Help"))
-        {
-            ImGui::Text("%s - Released / Buy Link", ICON_FA_CART_PLUS);
-            ImGui::Text("%s - Preorder / Buy Link", ICON_FA_CALENDAR_PLUS_O);
-            ImGui::Text("%s - Sold Out", ICON_FA_EXCLAMATION);
-            ImGui::Text("%s - Has Charted", ICON_FA_FIRE);
-            ImGui::Text("%s - Has Previously Sold Out", ICON_FA_EXCLAMATION);
-        }
-        
-        if(ImGui::CollapsingHeader("Cache"))
-        {
-            float mb = (((float)ctx.data_ctx.cached_release_bytes.load()) / 1024.0 / 1024.0);
-            ImGui::Text("Cached Releases: %i", ctx.data_ctx.cached_release_folders.load());
-            ImGui::Text("Cached Data: %f(mb)", mb);
-        }
-        
-        ImGui::SetWindowFontScale(k_text_size_body);
-    }
-
     void debug_menu()
     {
         ImGui::SetWindowFontScale(k_text_size_nerds);
@@ -2588,9 +2455,10 @@ namespace
         
         if(ctx.view)
         {
-            ImGui::Text("feed: %zu / %zu",
+            ImGui::Text("feed: %zu / %zu\t pos: %i",
                 ctx.view->releases.available_entries.load(),
-                ctx.view->releases.soa_size.load()
+                ctx.view->releases.soa_size.load(),
+                ctx.top
             );
         }
         
@@ -3458,6 +3326,11 @@ void audio_player()
     {
         u32 r = ctx.top;
         
+        // guard
+        if(r >= releases.available_entries) {
+            return;
+        }
+        
         if(ctx.top == -1)
         {
             // stop existing
@@ -3676,4 +3549,194 @@ void update_store_prefs(const Str& store_name, const Str& view, const std::vecto
     }
     ctx.data_ctx.user_data.mutex.unlock();
     ctx.data_ctx.user_data.status = Status::e_invalidated;
+}
+
+template<typename T>
+T get_user_setting(const c8* key, T default_value) {
+    T return_value = default_value;
+    ctx.data_ctx.user_data.mutex.lock();
+    if(ctx.data_ctx.user_data.dict.contains(key)) {
+        return_value = ctx.data_ctx.user_data.dict[key];
+    }
+    ctx.data_ctx.user_data.mutex.unlock();
+    return return_value;
+}
+
+template<typename T>
+void set_user_setting(const c8* key, T value) {
+    ctx.data_ctx.user_data.mutex.lock();
+    ctx.data_ctx.user_data.dict[key] = value;
+    ctx.data_ctx.user_data.mutex.unlock();
+    ctx.data_ctx.user_data.status = Status::e_invalidated;
+}
+
+void settings_menu()
+{
+    ImGui::SetWindowFontScale(k_text_size_h2);
+    
+    ImGui::Spacing();
+    ImGui::Spacing();
+    
+    /*
+    if(ImGui::CollapsingHeader("Help"))
+    {
+        ImGui::Text("%s - Released / Buy Link", ICON_FA_CART_PLUS);
+        ImGui::Text("%s - Preorder / Buy Link", ICON_FA_CALENDAR_PLUS_O);
+        ImGui::Text("%s - Sold Out", ICON_FA_EXCLAMATION);
+        ImGui::Text("%s - Has Charted", ICON_FA_FIRE);
+        ImGui::Text("%s - Has Previously Sold Out", ICON_FA_EXCLAMATION);
+    }
+    
+    if(ImGui::CollapsingHeader("Cache"))
+    {
+        float mb = (((float)ctx.data_ctx.cached_release_bytes.load()) / 1024.0 / 1024.0);
+        ImGui::Text("Cached Releases: %i", ctx.data_ctx.cached_release_folders.load());
+        ImGui::Text("Cached Data: %f(mb)", mb);
+    }
+    */
+    
+    static int s_selected_cache_size_setting = get_user_setting("setting_cache_size", 0);
+    static const c8* k_cache_options = "Small\0Med\0Large\0Uncapped\0";
+    if(ImGui::Combo("Cache Size", &s_selected_cache_size_setting, k_cache_options)) {
+        set_user_setting("setting_cache_size", s_selected_cache_size_setting);
+    }
+    
+    static bool s_play_backgrounded_setting = get_user_setting("setting_play_backgrounded", true);
+    if(ImGui::Checkbox("Play When Backgrounded", &s_play_backgrounded_setting)) {
+        set_user_setting("setting_play_backgrounded", s_play_backgrounded_setting);
+    }
+    
+    ImGui::SetWindowFontScale(k_text_size_body);
+}
+
+void* data_cache_enumerate(void* userdata) {
+    // get view from userdata
+    ReleasesView* view = (ReleasesView*)userdata;
+    
+    Str cache_dir = get_cache_path();
+        
+    // track all folders
+    std::vector<DirInfo> cached_releases;
+    
+    auto tt = pen::scope_timer("cache enum", true);
+    
+    s32 last_top = 26;
+    
+    s32 size_setting = get_user_setting("setting_cache_size", 0);
+    
+    s32 size_ranges[] = {
+        500,
+        2000,
+        4000,
+        1000000
+    };
+    
+    s32 cache_range = size_ranges[size_setting];
+    
+    for(;;) {
+        
+        // apply updates when we have moved an amount
+        if(abs(last_top - (s32)view->top_pos) < 25)
+        {
+            last_top = view->top_pos;
+            pen::thread_sleep_ms(66);
+            continue;
+        }
+        
+        last_top = view->top_pos;
+        
+        // enum cache stats
+        pen::fs_tree_node dir;
+        pen::filesystem_enum_directory(cache_dir.c_str(), dir, 1, "**/*.*");
+        view->data_ctx->cached_release_folders = 0;
+        view->data_ctx->cached_release_bytes = 0;
+        for(u32 i = 0; i < dir.num_children; ++i) {
+            Str path = cache_dir;
+            path.append(dir.children[i].name);
+            
+            pen::fs_tree_node release_dir;
+            pen::filesystem_enum_directory(path.c_str(), release_dir);
+            view->data_ctx->cached_release_folders++;
+            
+            auto info = get_folder_info_recursive(release_dir, path.c_str());
+            view->data_ctx->cached_release_bytes += info.size;
+            
+            pen::filesystem_enum_free_mem(release_dir);
+            
+            cached_releases.push_back(info);
+        }
+        pen::filesystem_enum_free_mem(dir);
+        
+        // uncapped
+        if(size_setting == 3)
+        {
+            view->threads_terminated++;
+            return nullptr;
+        }
+        
+        // sort the items
+        std::sort(begin(cached_releases),end(cached_releases),[](DirInfo a, DirInfo b) { return a.mtime < b.mtime; });
+        
+        // wait until we have at least 200 entries
+        while(view->release_pos_status != Status::e_ready) {
+            // return early if something went wrong
+            if(view->status == Status::e_not_available) {
+                view->threads_terminated++;
+                return nullptr;
+            }
+            // early out to terminate
+            if(view->terminate) {
+                view->threads_terminated++;
+                return nullptr;
+            }
+            pen::thread_sleep_ms(1);
+        }
+        
+        // iterate through releases in reverse remvoing items not in the view
+        for(ssize_t i = cached_releases.size()-1; i >= cache_range; --i) {
+            
+            DirInfo ii = cached_releases[i];
+            auto bn = str_basename(ii.path);
+            u32 bnh = PEN_HASH(bn.c_str());
+            PEN_LOG("scan %s", bn.c_str());
+            
+            if(view->release_pos.find(bnh) != view->release_pos.end()) {
+                if(view->release_pos[bnh] > cache_range) {
+                    PEN_LOG("should remove out of range %s", bn.c_str());
+                    cached_releases.erase(cached_releases.begin() + i);
+                    bool result = pen::os_delete_directory(ii.path);
+                    if(result) {
+                        PEN_LOG("deleted: %s", ii.path.c_str());
+                        view->data_ctx->cached_release_bytes -= ii.size;
+                        view->data_ctx->cached_release_folders--;
+                    }
+                }
+            }
+            else {
+                PEN_LOG("should remove not in list %s", bn.c_str());
+                cached_releases.erase(cached_releases.begin() + i);
+                bool result = pen::os_delete_directory(ii.path);
+                if(result) {
+                    PEN_LOG("deleted: %s", ii.path.c_str());
+                    view->data_ctx->cached_release_bytes -= ii.size;
+                    view->data_ctx->cached_release_folders--;
+                }
+            }
+            
+            // early out to terminate
+            if(view->terminate) {
+                view->threads_terminated++;
+                return nullptr;
+            }
+        }
+        
+        if(view->terminate) {
+            view->threads_terminated++;
+            return nullptr;
+        }
+    }
+    
+    // flag terminated
+    view->threads_terminated++;
+    return nullptr;
 }

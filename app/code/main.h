@@ -2,38 +2,34 @@
 
 // - ReleasesView can leak mem boot flow!
 
-// - add support for prev / next on backgrounded app
-
 // - help page
 // - contact page
 // - following page
 
-// - user store prev position, prev mode etc
-// - serialise prev position and prev mode?
-// - user fav store
-// - user fav genres
-
 // - improve feedback for loading failures (not spinning endlessly)
-// - relay info if there are no results
 
-// - img and audio file cache management
 // - add clear cache and cache options
 
 // - add reg validation
-// - yayaku
 // - cold cuts
+
+// - implement label link (on tap)
+// - follow?
 
 // - side swipe still isnt perfect
 // - vertical swipe still sometimes feel sticky
 
-// - implement label link (on tap)
-// - follow?
-// - public likes
-
-// REGRESS
-// - automate uploads on tag (just wait to next build)
-
 // DONE
+// x - img and audio file cache management
+// x - yayaku
+// x - relay info if there are no results
+// x - user store prev position, prev mode etc
+// x - serialise prev position and prev mode?
+// x - user fav store
+// x - user fav genres
+// x - public likes
+// x - automate uploads on tag (just wait to next build)
+// x - add support for prev / next on backgrounded app
 // x - create release on tag
 // x - juno </strong> in various
 // x - skip install in pen and put

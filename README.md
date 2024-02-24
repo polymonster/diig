@@ -1,6 +1,6 @@
 # diig
 
-[![scrape](https://github.com/polymonster/diig/actions/workflows/scrape_multi.yml/badge.svg)](https://github.com/polymonster/diig/actions/workflows/scrape_multi.yml)
+[![scrape](https://github.com/polymonster/diig/actions/workflows/scrape.yml/badge.svg)](https://github.com/polymonster/diig/actions/workflows/scrape.yml)
 [![tests](https://github.com/polymonster/diig/actions/workflows/release_testflight.yml/badge.svg)](https://github.com/polymonster/diig/actions/workflows/release_testflight.yml)
 
 diig is a record digging app that provides a high performance audio player and ergonomic user interface to make digging through record snippets rapid, responsive and enjoyable.

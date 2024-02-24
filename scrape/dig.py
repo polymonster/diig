@@ -147,6 +147,36 @@ def parse_class(html_str, html_class, ty):
 
     return outputs
 
+# parse entireity of a div section
+def parse_class_single(html_str, html_class, ty):
+    outputs = []
+    while True:
+        first = html_str.find(html_class)
+        open_len = len("<{} ".format(ty))
+        close_len = len("</")
+        # no more left
+        if first == -1:
+            break
+        start = html_str[:first].rfind("<{} ".format(ty))
+        stack = 1
+        iter_pos = first
+        while stack > 0:
+            open = cgu.us(html_str.find("<{}".format(ty), iter_pos))
+            close = html_str.find("</", iter_pos)
+            if close != -1 and open < close:
+                stack += 1
+                iter_pos = open + open_len
+            elif close != -1:
+                stack -= 1
+                iter_pos = close + close_len
+
+        outputs.append(html_str[start:iter_pos])
+
+        # iterate
+        html_str = html_str[iter_pos:]
+
+    return outputs
+
 
 # creates an authorised session to write entires to firebase
 def auth_session():

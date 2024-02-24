@@ -6,6 +6,28 @@ import json
 import datetime
 import sys
 
+def debug(url):
+    req = urllib.request.Request(
+        url=url,
+        headers={'User-Agent': 'Mozilla/5.0'}
+    )
+    html_file = urllib.request.urlopen(req)
+    html_str = html_file.read().decode("utf8")
+    related = html_str.find('<section class="related products')
+    if related != -1:
+        html_str = html_str[:related]
+
+    stock = dig.parse_class(html_str, "stock out-of-stock", "p")
+    if len(stock) > 0:
+        stock = dig.parse_strip_body(stock[0])
+        print(stock)
+
+    low = dig.parse_class(html_str, "last-copies", "p")
+    if len(low) > 0:
+        low = dig.parse_strip_body(low[0])
+        print(low)
+
+
 # scrape an individual page for a view (weekly chart, new releases) and section (techno-electro etc)
 def scrape_page(url, store, view, section, counter = 0):
     print(f"scraping page: {url}", flush=True)
@@ -38,12 +60,21 @@ def scrape_page(url, store, view, section, counter = 0):
         release_dict["link"] = dig.get_value(release, "href")
         release_dict["title"] = dig.get_value(release, "aria-label")
         release_dict["id"] = os.path.basename(release_dict["link"].strip("/"))
+        release_dict["store_tags"] = dict()
         key = f'{release_dict["store"]}-{release_dict["id"]}'
 
         if "-verbose" in sys.argv:
             print(f"parsing release: {key}")
 
-        if key not in releases_dict or "-force" in sys.argv:
+        if 1:
+            # check existing
+            exists = False
+            track_url_count = 0
+            if key in releases_dict:
+                exists = True
+                if "track_urls" in releases_dict[key]:
+                    track_url_count = len(releases_dict[key]["track_urls"])
+
             # look for src set
             srcset = dig.get_value(release, "srcset")
             if srcset != None:
@@ -79,10 +110,15 @@ def scrape_page(url, store, view, section, counter = 0):
                 release_html_file = urllib.request.urlopen(req)
             except:
                 print("error: url not found {}".format(url))
-                return
+                continue
 
             # parse release page
             release_html_str = release_html_file.read().decode("utf8")
+
+            # strip related
+            related = release_html_str.find('<section class="related products')
+            if related != -1:
+                release_html_str = release_html_str[:related]
 
             # artist info
             pp = release_html_str.find("class=\"product-artists\"")
@@ -106,8 +142,30 @@ def scrape_page(url, store, view, section, counter = 0):
             for track in tracklist:
                 release_dict["track_names"].append(dig.parse_strip_body(track))
 
+            # store tags: preorder / out of stock
+            release_dict["store_tags"]["out_of_stock"] = False
+            release_dict["store_tags"]["preorder"] = False
+            if release_html_str.find("stock out-of-stock") != -1:
+                stock = dig.parse_class(release_html_str, "stock out-of-stock", "p")
+                if len(stock) > 0:
+                    stock = dig.parse_strip_body(stock[0]).lower()
+                    if stock == "out of stock":
+                        release_dict["store_tags"]["out_of_stock"] = True
+                        release_dict["store_tags"]["has_been_out_of_stock"] = True
+                    else:
+                        release_dict["store_tags"]["preorder"] = True
+
+            # store tags: low stock
+            release_dict["store_tags"]["low_stock"] = False
+            if release_html_str.find("last-copies") != -1:
+                low = dig.parse_class(release_html_str, "last-copies", "p")
+                if len(low) > 0:
+                    low = dig.parse_strip_body(low[0]).lower()
+                    if stock == "last copies" or stock == "last copy":
+                        release_dict["store_tags"]["low_stock"] = True
+
             # track urls
-            if "urls" in sys.argv:
+            if "-urls" in sys.argv and track_url_count != len(tracklist):
                 cdn = "https://yydistribution.ams3.digitaloceanspaces.com/yyplayer/mp3"
                 cdn_id = release_dict["cat"].upper()
 

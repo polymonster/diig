@@ -2300,6 +2300,10 @@ namespace
                 hype_icons.append(ICON_FA_FIRE);
             }
             
+            if(releases.store_tags[r] & StoreTags::low_stock) {
+                hype_icons.append(ICON_FA_THERMOMETER_QUARTER);
+            }
+            
             if(!(releases.store_tags[r] & StoreTags::out_of_stock)) {
                 if(releases.store_tags[r] & StoreTags::has_been_out_of_stock) {
                     if(!hype_icons.empty()) {

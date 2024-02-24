@@ -161,7 +161,7 @@ def scrape_page(url, store, view, section, counter = 0):
                 low = dig.parse_class(release_html_str, "last-copies", "p")
                 if len(low) > 0:
                     low = dig.parse_strip_body(low[0]).lower()
-                    if stock == "last copies" or stock == "last copy":
+                    if low == "last copies" or low == "last copy":
                         release_dict["store_tags"]["low_stock"] = True
 
             # track urls

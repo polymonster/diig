@@ -173,21 +173,24 @@ namespace StoreTags
         preorder = 1<<0,
         out_of_stock = 1<<1,
         has_charted = 1<<2,
-        has_been_out_of_stock = 1<<3
+        has_been_out_of_stock = 1<<3,
+        low_stock = 1<<4
     };
 
     const c8* names[] = {
         "preorder",
         "out_of_stock",
         "has_charted",
-        "has_been_out_of_stock"
+        "has_been_out_of_stock",
+        "low_stock"
     };
 
     const c8* icons[] = {
         ICON_FA_CALENDAR_TIMES_O,
         ICON_FA_EXCLAMATION_TRIANGLE,
         ICON_FA_FIRE,
-        ICON_FA_EXCLAMATION
+        ICON_FA_EXCLAMATION,
+        ICON_FA_THERMOMETER_QUARTER
     };
 }
 typedef u32 StoreTags_t;

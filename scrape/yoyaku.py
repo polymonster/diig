@@ -17,6 +17,8 @@ def debug(url):
     if related != -1:
         html_str = html_str[:related]
 
+    print(html_str)
+
     stock = dig.parse_class(html_str, "stock out-of-stock", "p")
     if len(stock) > 0:
         stock = dig.parse_strip_body(stock[0])
@@ -32,6 +34,9 @@ def debug(url):
 def scrape_page(url, store, view, section, counter = 0):
     print(f"scraping page: {url}", flush=True)
 
+    # debug("https://www.yoyaku.io/release/td2110/")
+    # assert(0)
+
     req = urllib.request.Request(
         url=url,
         headers={'User-Agent': 'Mozilla/5.0'}
@@ -46,6 +51,12 @@ def scrape_page(url, store, view, section, counter = 0):
 
     # parse releases from page
     html_str = html_file.read().decode("utf8")
+
+    # find the sidebar
+    sidebar = html_str.find("woocommerce-bestsellers")
+    if sidebar != -1:
+        html_str = html_str[:sidebar]
+
     releases = dig.parse_class(html_str, "class=\"ct-media-container\"", "a")
 
     # open existing reg
@@ -155,14 +166,15 @@ def scrape_page(url, store, view, section, counter = 0):
                     else:
                         release_dict["store_tags"]["preorder"] = True
 
-            # store tags: low stock
-            release_dict["store_tags"]["low_stock"] = False
-            if release_html_str.find("last-copies") != -1:
-                low = dig.parse_class(release_html_str, "last-copies", "p")
-                if len(low) > 0:
-                    low = dig.parse_strip_body(low[0]).lower()
-                    if low == "last copies" or low == "last copy":
-                        release_dict["store_tags"]["low_stock"] = True
+            # store tags: low stock.. TODO: need to handle <p or <span
+            if False:
+                release_dict["store_tags"]["low_stock"] = False
+                if release_html_str.find("last-copies") != -1:
+                    low = dig.parse_class(release_html_str, "last-copies", "p")
+                    if len(low) > 0:
+                        low = dig.parse_strip_body(low[0]).lower()
+                        if low == "last copies" or low == "last copy":
+                            release_dict["store_tags"]["low_stock"] = True
 
             # track urls
             if "-urls" in sys.argv and track_url_count != len(tracklist):
@@ -184,12 +196,15 @@ def scrape_page(url, store, view, section, counter = 0):
                 fails = 0
                 for attempt in attempts:
                     attempt_list = list()
+                    use_attempt = False
+                    use_named = False
                     for i in range(0, len(tracklist)):
                         try:
                             # we need to check if exists
                             linear = f"{cdn}/{attempt}_{i+1}.mp3"
                             if urllib.request.urlopen(linear).code == 200:
-                                attempt_list.append(linear)
+                                use_attempt = True
+                                break
                         except:
                             # or use the track prefix
                             name = release_dict["track_names"][i]
@@ -202,10 +217,21 @@ def scrape_page(url, store, view, section, counter = 0):
                             try:
                                 track_named = f"{cdn}/{attempt}_{name[:pp]}.mp3"
                                 if urllib.request.urlopen(track_named).code == 200:
-                                    attempt_list.append(track_named)
+                                    use_attempt = True
+                                    use_named = True
+                                    break
                             except:
                                 fails += 1
                                 break
+
+                    # if we found compatible urls just assume the rest
+                    if use_attempt:
+                        for i in range(0, len(tracklist)):
+                            if use_named:
+                                attempt_list.append(f"{cdn}/{attempt}_{name[:pp]}.mp3")
+                            else:
+                                attempt_list.append(f"{cdn}/{attempt}_{i+1}.mp3")
+                        break
 
                     if len(attempt_list) > len(release_dict["track_urls"]):
                         release_dict["track_urls"] = list(attempt_list)

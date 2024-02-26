@@ -22,12 +22,12 @@
             },
             "weekly_chart": {
                 "url": "https://www.juno.co.uk/${{section}}/charts/bestsellers/this-week/${{page}}?show_out_of_stock=1",
-                "page_count": 5,
+                "page_count": 2,
                 "display_name": "Weekly Chart"
             },
             "monthly_chart": {
                 "url": "https://www.juno.co.uk/${{section}}/charts/bestsellers/four-weeks/${{page}}?show_out_of_stock=1",
-                "page_count": 5,
+                "page_count": 2,
                 "display_name": "Monthly Chart"
             },
             "preorders": {

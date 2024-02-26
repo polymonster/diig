@@ -17,25 +17,22 @@ def debug(url):
     if related != -1:
         html_str = html_str[:related]
 
-    print(html_str)
-
-    stock = dig.parse_class(html_str, "stock out-of-stock", "p")
-    if len(stock) > 0:
-        stock = dig.parse_strip_body(stock[0])
+    stock = dig.parse_class_single(html_str, "stock out-of-stock", "p")
+    if stock:
+        print(stock)
+        stock = dig.parse_strip_body(stock)
         print(stock)
 
-    low = dig.parse_class(html_str, "last-copies", "p")
-    if len(low) > 0:
-        low = dig.parse_strip_body(low[0])
+    low = dig.parse_class_single(html_str, "last-copies", "p")
+    if low:
+        print(low)
+        low = dig.parse_strip_body(low)
         print(low)
 
 
 # scrape an individual page for a view (weekly chart, new releases) and section (techno-electro etc)
-def scrape_page(url, store, view, section, counter = 0):
+def scrape_page(url, store, view, section, counter, session_scraped_ids):
     print(f"scraping page: {url}", flush=True)
-
-    # debug("https://www.yoyaku.io/release/td2110/")
-    # assert(0)
 
     req = urllib.request.Request(
         url=url,
@@ -66,190 +63,197 @@ def scrape_page(url, store, view, section, counter = 0):
         releases_dict = json.loads(open(reg_filepath, "r").read())
 
     for release in releases:
+        # basic info
         release_dict = dict()
         release_dict["store"] = "yoyaku"
         release_dict["link"] = dig.get_value(release, "href")
-        release_dict["title"] = dig.get_value(release, "aria-label")
         release_dict["id"] = os.path.basename(release_dict["link"].strip("/"))
-        release_dict["store_tags"] = dict()
         key = f'{release_dict["store"]}-{release_dict["id"]}'
 
-        if "-verbose" in sys.argv:
-            print(f"parsing release: {key}")
+        # early out for already processed ids during this session
+        key = f"{store}-" + release_dict["id"]
+        if key in session_scraped_ids:
+            if "-verbose" in sys.argv:
+                print(f"parsing release: {key}", flush=True)
+            continue
+        elif "-verbose" in sys.argv:
+            print(f"parsing release: {key}", flush=True)
 
-        if 1:
-            # check existing
-            exists = False
-            track_url_count = 0
-            if key in releases_dict:
-                exists = True
-                if "track_urls" in releases_dict[key]:
-                    track_url_count = len(releases_dict[key]["track_urls"])
+        # main page info
+        release_dict["title"] = dig.get_value(release, "aria-label")
+        release_dict["store_tags"] = dict()
 
-            # look for src set
-            srcset = dig.get_value(release, "srcset")
-            if srcset != None:
-                # images order
-                target_w = [
-                    "100w",
-                    "400w",
-                    "600w",
-                    "768w"
-                ]
+        # check existing tracks
+        track_url_count = 0
+        if key in releases_dict:
+            if "track_urls" in releases_dict[key]:
+                track_url_count = len(releases_dict[key]["track_urls"])
 
+        # look for src set
+        srcset = dig.get_value(release, "srcset")
+        if srcset != None:
+            # images order
+            target_w = [
+                "100w",
+                "400w",
+                "600w",
+                "768w"
+            ]
+
+            release_dict["artworks"] = list()
+            imgs = srcset.split(",")
+            for w in target_w:
+                for img in imgs:
+                    if img.endswith(w):
+                        release_dict["artworks"].append(img.strip(w).strip())
+        else:
+            # might have single image
+            img = dig.get_value(release, "src")
+            if img != None:
+                # splat 3
                 release_dict["artworks"] = list()
-                imgs = srcset.split(",")
-                for w in target_w:
-                    for img in imgs:
-                        if img.endswith(w):
-                            release_dict["artworks"].append(img.strip(w).strip())
-            else:
-                # might have single image
-                img = dig.get_value(release, "src")
-                if img != None:
-                    # splat 3
-                    release_dict["artworks"] = list()
-                    for i in range(0, 3):
-                        release_dict["artworks"].append(img)
+                for i in range(0, 3):
+                    release_dict["artworks"].append(img)
 
-            # detail info
-            try:
-                req = urllib.request.Request(
-                    url=release_dict["link"],
-                    headers={'User-Agent': 'Mozilla/5.0'}
-                )
-                release_html_file = urllib.request.urlopen(req)
-            except:
-                print("error: url not found {}".format(url))
-                continue
+        # detail info
+        try:
+            req = urllib.request.Request(
+                url=release_dict["link"],
+                headers={'User-Agent': 'Mozilla/5.0'}
+            )
+            release_html_file = urllib.request.urlopen(req)
+        except:
+            print("error: url not found {}".format(url))
+            continue
 
-            # parse release page
-            release_html_str = release_html_file.read().decode("utf8")
+        # parse release page
+        release_html_str = release_html_file.read().decode("utf8")
 
-            # strip related
-            related = release_html_str.find('<section class="related products')
-            if related != -1:
-                release_html_str = release_html_str[:related]
+        # strip related
+        related = release_html_str.find('<section class="related products')
+        if related != -1:
+            release_html_str = release_html_str[:related]
 
-            # artist info
-            pp = release_html_str.find("class=\"product-artists\"")
-            pe = release_html_str.find("</span>", pp)
-            release_dict["artist"] = dig.parse_strip_body(release_html_str[pp:pe])
+        # artist info
+        pp = release_html_str.find("class=\"product-artists\"")
+        pe = release_html_str.find("</span>", pp)
+        release_dict["artist"] = dig.parse_strip_body(release_html_str[pp:pe])
 
-            # label info
-            pp = release_html_str.find("class=\"product-labels\"")
-            pe = release_html_str.find("</span>", pp)
-            release_dict["label"] = dig.parse_strip_body(release_html_str[pp:pe])
-            release_dict["label_link"] = dig.get_value(release_html_str[pp:pe], "href")
+        # label info
+        pp = release_html_str.find("class=\"product-labels\"")
+        pe = release_html_str.find("</span>", pp)
+        release_dict["label"] = dig.parse_strip_body(release_html_str[pp:pe])
+        release_dict["label_link"] = dig.get_value(release_html_str[pp:pe], "href")
 
-            # cat
-            pp = release_html_str.find("class=\"sku\"")
-            pe = release_html_str.find("</span>", pp)
-            release_dict["cat"] = dig.parse_strip_body(release_html_str[pp:pe])
+        # cat
+        pp = release_html_str.find("class=\"sku\"")
+        pe = release_html_str.find("</span>", pp)
+        release_dict["cat"] = dig.parse_strip_body(release_html_str[pp:pe])
 
-            # tracklist
-            release_dict["track_names"] = list()
-            tracklist = dig.parse_class(release_html_str, "class=\"track fwap-play\"", "a")
-            for track in tracklist:
-                release_dict["track_names"].append(dig.parse_strip_body(track))
+        # tracklist
+        release_dict["track_names"] = list()
+        tracklist = dig.parse_class(release_html_str, "class=\"track fwap-play\"", "a")
+        for track in tracklist:
+            release_dict["track_names"].append(dig.parse_strip_body(track))
 
-            # store tags: preorder / out of stock
-            release_dict["store_tags"]["out_of_stock"] = False
-            release_dict["store_tags"]["preorder"] = False
-            if release_html_str.find("stock out-of-stock") != -1:
-                stock = dig.parse_class(release_html_str, "stock out-of-stock", "p")
-                if len(stock) > 0:
-                    stock = dig.parse_strip_body(stock[0]).lower()
-                    if stock == "out of stock":
-                        release_dict["store_tags"]["out_of_stock"] = True
-                        release_dict["store_tags"]["has_been_out_of_stock"] = True
-                    else:
-                        release_dict["store_tags"]["preorder"] = True
+        # store tags: preorder / out of stock
+        release_dict["store_tags"]["out_of_stock"] = False
+        release_dict["store_tags"]["preorder"] = False
+        if release_html_str.find("stock out-of-stock") != -1:
+            stock = dig.parse_class_single(release_html_str, "stock out-of-stock", "p")
+            if stock:
+                stock = dig.parse_strip_body(stock).lower()
+                if stock == "out of stock":
+                    release_dict["store_tags"]["out_of_stock"] = True
+                    release_dict["store_tags"]["has_been_out_of_stock"] = True
+                else:
+                    release_dict["store_tags"]["preorder"] = True
 
-            # store tags: low stock.. TODO: need to handle <p or <span
-            if False:
-                release_dict["store_tags"]["low_stock"] = False
-                if release_html_str.find("last-copies") != -1:
-                    low = dig.parse_class(release_html_str, "last-copies", "p")
-                    if len(low) > 0:
-                        low = dig.parse_strip_body(low[0]).lower()
-                        if low == "last copies" or low == "last copy":
-                            release_dict["store_tags"]["low_stock"] = True
+        # store tags: low stock..,
+        release_dict["store_tags"]["low_stock"] = False
+        if release_html_str.find("last-copies") != -1:
+            low = dig.parse_class_single(release_html_str, "last-copies", "p")
+            if low:
+                low = dig.parse_strip_body(low).lower()
+                if low == "last copies" or low == "last copy":
+                    release_dict["store_tags"]["low_stock"] = True
 
-            # track urls
-            if "-urls" in sys.argv and track_url_count != len(tracklist):
-                cdn = "https://yydistribution.ams3.digitaloceanspaces.com/yyplayer/mp3"
-                cdn_id = release_dict["cat"].upper()
+        # track urls
+        if "-urls" in sys.argv and track_url_count != len(tracklist):
+            cdn = "https://yydistribution.ams3.digitaloceanspaces.com/yyplayer/mp3"
+            cdn_id = release_dict["cat"].upper()
 
-                id_start = release_dict["id"].rfind("_")
-                id_id = release_dict["id"][id_start+1:]
+            id_start = release_dict["id"].rfind("_")
+            id_id = release_dict["id"][id_start+1:]
 
-                attempts = [
-                    cdn_id,
-                    cdn_id.lower(),
-                    id_id,
-                    id_id.upper()
-                ]
+            attempts = [
+                cdn_id,
+                cdn_id.lower(),
+                id_id,
+                id_id.upper()
+            ]
 
-                release_dict["track_urls"] = list()
+            release_dict["track_urls"] = list()
 
-                fails = 0
-                for attempt in attempts:
-                    attempt_list = list()
-                    use_attempt = False
-                    use_named = False
-                    for i in range(0, len(tracklist)):
+            fails = 0
+            for attempt in attempts:
+                attempt_list = list()
+                use_attempt = False
+                use_named = False
+                for i in range(0, len(tracklist)):
+                    try:
+                        # we need to check if exists
+                        linear = f"{cdn}/{attempt}_{i+1}.mp3"
+                        if urllib.request.urlopen(linear).code == 200:
+                            use_attempt = True
+                            break
+                    except:
+                        # or use the track prefix
+                        name = release_dict["track_names"][i]
+                        pp = name.find(".")
+                        cp = name.find(":")
+                        if pp != -1 and cp != -1:
+                            pp = min(pp, cp)
+                        else:
+                            pp = max(pp, cp)
                         try:
-                            # we need to check if exists
-                            linear = f"{cdn}/{attempt}_{i+1}.mp3"
-                            if urllib.request.urlopen(linear).code == 200:
+                            track_named = f"{cdn}/{attempt}_{name[:pp]}.mp3"
+                            if urllib.request.urlopen(track_named).code == 200:
                                 use_attempt = True
+                                use_named = True
                                 break
                         except:
-                            # or use the track prefix
-                            name = release_dict["track_names"][i]
-                            pp = name.find(".")
-                            cp = name.find(":")
-                            if pp != -1 and cp != -1:
-                                pp = min(pp, cp)
-                            else:
-                                pp = max(pp, cp)
-                            try:
-                                track_named = f"{cdn}/{attempt}_{name[:pp]}.mp3"
-                                if urllib.request.urlopen(track_named).code == 200:
-                                    use_attempt = True
-                                    use_named = True
-                                    break
-                            except:
-                                fails += 1
-                                break
+                            fails += 1
+                            break
 
-                    # if we found compatible urls just assume the rest
-                    if use_attempt:
-                        for i in range(0, len(tracklist)):
-                            if use_named:
-                                attempt_list.append(f"{cdn}/{attempt}_{name[:pp]}.mp3")
-                            else:
-                                attempt_list.append(f"{cdn}/{attempt}_{i+1}.mp3")
-                        break
+                # if we found compatible urls just assume the rest
+                if use_attempt:
+                    for i in range(0, len(tracklist)):
+                        if use_named:
+                            attempt_list.append(f"{cdn}/{attempt}_{name[:pp]}.mp3")
+                        else:
+                            attempt_list.append(f"{cdn}/{attempt}_{i+1}.mp3")
+                    break
 
-                    if len(attempt_list) > len(release_dict["track_urls"]):
-                        release_dict["track_urls"] = list(attempt_list)
-                        break
+                if len(attempt_list) > len(release_dict["track_urls"]):
+                    release_dict["track_urls"] = list(attempt_list)
+                    break
 
-                # print status on missing tracks
-                ll = release_dict["link"]
-                if "track_urls" in release_dict:
-                    if len(release_dict["track_urls"]) == 0:
-                        print(attempts)
-                        print(f"didn't find tracks for {ll}", flush=True)
-                    elif "-verbose" in sys.argv:
-                        print(f"found tracks for {ll}", flush=True)
-
+            # print status on missing tracks
+            ll = release_dict["link"]
+            if "track_urls" in release_dict:
+                if len(release_dict["track_urls"]) == 0:
+                    print(attempts)
+                    print(f"didn't find tracks for {ll}", flush=True)
+                elif "-verbose" in sys.argv:
+                    print(f"found tracks for {ll}", flush=True)
 
         # assign pos per section
         release_dict[f"{store}-{section}-{view}"] = int(counter)
         counter += 1
+
+        # track this as scraped already this session
+        session_scraped_ids.append(key)
 
         # merge into main
         merge = dict()

@@ -172,7 +172,7 @@ def parse_redeye_grid_elems(html_str):
 
 
 # scrape an individual page for a view (weekly chart, new releases) and section (techno-electro etc)
-def scrape_page(url, store, view, section, counter = 0):
+def scrape_page(url, store, view, section, counter, session_scraped_ids):
     print(f"scraping page: {url}", flush=True)
 
     # grab var args
@@ -199,21 +199,33 @@ def scrape_page(url, store, view, section, counter = 0):
 
     for grid_elem in grid_elems:
         (_, id_elem) = dig.find_parse_elem(grid_elem, 0, "<div id=", ">")
+
+        # basic info
+        release_dict = dict()
+        release_dict["store"] = f"{store}"
+        release_dict["id"] = parse_redeye_release_id(id_elem)
+        key = "{}-{}".format(store, release_dict["id"])
+
+        # early out for already processed ids during this session
+        key = f"{store}-" + release_dict["id"]
+        if key in session_scraped_ids:
+            if "-verbose" in sys.argv:
+                print(f"parsing release: {key}", flush=True)
+            continue
+        elif "-verbose" in sys.argv:
+            print(f"parsing release: {key}", flush=True)
+
         (_, artist_elem) = dig.find_parse_elem(grid_elem, 0, '<p class="artist"', "</p>")
         (_, tracks_elem) = dig.find_parse_elem(grid_elem, 0, '<p class="tracks"', "</p>")
         (_, label_elem) = dig.find_parse_elem(grid_elem, 0, '<p class="label"', "</p>")
         (_, link_elem) = dig.find_parse_elem(grid_elem, 0, '<a class="link"', "</a>")
 
-        release_dict = dict()
-        release_dict["store"] = f"{store}"
-        release_dict["id"] = parse_redeye_release_id(id_elem)
         release_dict["track_names"] = parse_redeye_track_names(tracks_elem)
         release_dict["link"] = parse_redeye_release_link(link_elem)
         dig.merge_dicts(release_dict, parse_redeye_label(label_elem))
         dig.merge_dicts(release_dict, parse_redeye_artist(artist_elem))
         id = release_dict["id"]
         release_dict["store_tags"] = dict()
-        key = "{}-{}".format(store, release_dict["id"])
 
         # add store tags
         if grid_elem.find("price preorder") != -1:
@@ -267,6 +279,9 @@ def scrape_page(url, store, view, section, counter = 0):
         merge = dict()
         merge[key] = release_dict
         dig.merge_dicts(releases_dict, merge)
+
+        # flagg for scraped this session
+        session_scraped_ids.append(key)
 
         # validate track counts and try reparsing
         merged = releases_dict[key]

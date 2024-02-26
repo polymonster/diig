@@ -70,7 +70,7 @@ def parse_tracks(tracks):
 
 
 # scape a single page with counter tracking
-def scrape_page(url, store, view, section, counter = 0):
+def scrape_page(url, store, view, section, counter, session_scraped_ids):
     print("scraping: juno ", url, flush=True)
 
     # try and then continue if the page does not exist
@@ -98,6 +98,21 @@ def scrape_page(url, store, view, section, counter = 0):
     for release in releases:
         # parse divs and sections of htmls
         (_, id_elem) = dig.find_parse_elem(release, 0, "<div id=", ">")
+
+        # basic info
+        release_dict = dict()
+        release_dict["store"] = f"{store}"
+        release_dict["id"] = parse_id(id_elem)
+
+        # early out for already processed ids during this session
+        key = f"{store}-" + release_dict["id"]
+        if key in session_scraped_ids:
+            if "-verbose" in sys.argv:
+                print(f"parsing release: {key}", flush=True)
+            continue
+        elif "-verbose" in sys.argv:
+            print(f"parsing release: {key}", flush=True)
+
         (_, link_elem) = dig.find_parse_elem(release, 0, "<a href=", ">")
         (_, artwork_elem) = dig.find_parse_elem(release, 0, "<img class", ">")
 
@@ -137,9 +152,6 @@ def scrape_page(url, store, view, section, counter = 0):
         # TODO: preorder
 
         # extract values from the html sections
-        release_dict = dict()
-        release_dict["store"] = f"{store}"
-        release_dict["id"] = parse_id(id_elem)
         release_dict["link"] = parse_link(link_elem)
         release_dict["artist"] = dig.parse_body(artist_elem)
 
@@ -168,10 +180,12 @@ def scrape_page(url, store, view, section, counter = 0):
             release_dict[tag_str] = "genre_tag"
 
         # merge into main
-        unique_id = f"{store}-" + release_dict["id"]
         merge = dict()
-        merge[unique_id] = release_dict
+        merge[key] = release_dict
         dig.merge_dicts(releases_dict, merge)
+
+        # mark as done this session
+        session_scraped_ids.append(key)
 
     # write to file
     release_registry = (json.dumps(releases_dict, indent=4))

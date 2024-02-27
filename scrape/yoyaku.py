@@ -205,6 +205,7 @@ def scrape_page(url, store, view, section, counter, session_scraped_ids):
                         # we need to check if exists
                         linear = f"{cdn}/{attempt}_{i+1}.mp3"
                         if urllib.request.urlopen(linear).code == 200:
+                            print(f"use linear: {linear}", flush=True)
                             use_attempt = True
                             break
                     except:
@@ -230,23 +231,31 @@ def scrape_page(url, store, view, section, counter, session_scraped_ids):
                 if use_attempt:
                     for i in range(0, len(tracklist)):
                         if use_named:
+                            name = release_dict["track_names"][i]
+                            pp = name.find(".")
+                            cp = name.find(":")
+                            if pp != -1 and cp != -1:
+                                pp = min(pp, cp)
+                            else:
+                                pp = max(pp, cp)
+                            print(f"{cdn}/{attempt}_{name[:pp]}.mp3")
                             attempt_list.append(f"{cdn}/{attempt}_{name[:pp]}.mp3")
                         else:
+                            print(f"{cdn}/{attempt}_{i+1}.mp3")
                             attempt_list.append(f"{cdn}/{attempt}_{i+1}.mp3")
-                    break
-
-                if len(attempt_list) > len(release_dict["track_urls"]):
-                    release_dict["track_urls"] = list(attempt_list)
+                    if len(attempt_list) > len(release_dict["track_urls"]):
+                        release_dict["track_urls"] = list(attempt_list)
                     break
 
             # print status on missing tracks
             ll = release_dict["link"]
-            if "track_urls" in release_dict:
-                if len(release_dict["track_urls"]) == 0:
-                    print(attempts)
-                    print(f"didn't find tracks for {ll}", flush=True)
-                elif "-verbose" in sys.argv:
-                    print(f"found tracks for {ll}", flush=True)
+            if "-verbose" in sys.argv:
+                if "track_urls" in release_dict:
+                    if len(release_dict["track_urls"]) == 0:
+                        print(attempts)
+                        print(f"didn't find tracks for {ll}", flush=True)
+                    elif "-verbose" in sys.argv:
+                        print(f"found tracks for {ll}", flush=True)
 
         # assign pos per section
         release_dict[f"{store}-{section}-{view}"] = int(counter)

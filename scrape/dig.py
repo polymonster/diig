@@ -287,7 +287,15 @@ def scrape_store(stores, store_name):
         session_scraped_ids = list()
         # iterate per section, per view
         for section in store["sections"]:
+            # allow commandline control of section
+            if "-section" in sys.argv:
+                if section not in sys.argv:
+                    continue
             for view in store["views"]:
+                # allow commandline control of views
+                if "-view" in sys.argv:
+                    if view not in sys.argv:
+                        continue
                 view_dict = store["views"][view]
                 page_count = view_dict["page_count"]
                 counter = 0

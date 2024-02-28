@@ -194,13 +194,14 @@ def scrape_page(url, store, view, section, counter, session_scraped_ids):
         # track urls
         if "-urls" in sys.argv and track_url_count != len(tracklist):
             cdn = "https://yydistribution.ams3.digitaloceanspaces.com/yyplayer/mp3"
-            cdn_id = release_dict["cat"].upper()
+            cdn_id = release_dict["cat"]
 
             id_start = release_dict["id"].rfind("_")
             id_id = release_dict["id"][id_start+1:]
 
             attempts = [
                 cdn_id,
+                cdn_id.upper(),
                 cdn_id.lower(),
                 id_id,
                 id_id.upper()
@@ -217,7 +218,7 @@ def scrape_page(url, store, view, section, counter, session_scraped_ids):
                         # we need to check if exists
                         linear = f"{cdn}/{attempt}_{i+1}.mp3"
                         if urllib.request.urlopen(linear).code == 200:
-                            print(f"use linear: {linear}", flush=True)
+                            print(f"use linear naming: {linear}", flush=True)
                             use_attempt = True
                             break
                     except urllib.error.HTTPError:
@@ -234,6 +235,7 @@ def scrape_page(url, store, view, section, counter, session_scraped_ids):
                         try:
                             track_named = f"{cdn}/{attempt}_{name[:pp]}.mp3"
                             if urllib.request.urlopen(track_named).code == 200:
+                                print(f"use track side naming: {name[:pp]}", flush=True)
                                 use_attempt = True
                                 use_named = True
                                 break

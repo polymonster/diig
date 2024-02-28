@@ -43340,7 +43340,11 @@
             "Dorisburg - Nightflight",
             "Genius Of Time - Rymd02"
         ],
-        "track_urls": [],
+        "track_urls": [
+            "https://yydistribution.ams3.digitaloceanspaces.com/yyplayer/mp3/AniaraWL03_1.mp3",
+            "https://yydistribution.ams3.digitaloceanspaces.com/yyplayer/mp3/AniaraWL03_2.mp3",
+            "https://yydistribution.ams3.digitaloceanspaces.com/yyplayer/mp3/AniaraWL03_3.mp3"
+        ],
         "store_tags": {
             "out_of_stock": false,
             "preorder": false,

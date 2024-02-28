@@ -122,7 +122,7 @@ def get_redeye_snippit_urls(release_id):
                 else:
                     break
                 l = chr(ord(l) + 1)
-    except:
+    except urllib.error.HTTPError:
         pass
     return tracks
 
@@ -137,7 +137,7 @@ def get_redeye_artwork_urls(release_id):
             try_url = f"{cdn}{release_id}-{i}.jpg"
             if urllib.request.urlopen(try_url).code == 200:
                 artworks.append(try_url)
-    except:
+    except urllib.error.HTTPError:
         pass
     return artworks
 
@@ -182,7 +182,7 @@ def scrape_page(url, store, view, section, counter, session_scraped_ids):
     # try and then continue if the page does not exist
     try:
         html_file = urllib.request.urlopen(url)
-    except:
+    except urllib.error.HTTPError:
         print("error: url not found {}".format(url))
         return -1
 
@@ -198,13 +198,23 @@ def scrape_page(url, store, view, section, counter, session_scraped_ids):
     grid_elems = parse_redeye_grid_elems(html_str)
 
     for grid_elem in grid_elems:
-        (_, id_elem) = dig.find_parse_elem(grid_elem, 0, "<div id=", ">")
-
         # basic info
+        (_, id_elem) = dig.find_parse_elem(grid_elem, 0, "<div id=", ">")
         release_dict = dict()
         release_dict["store"] = f"{store}"
         release_dict["id"] = parse_redeye_release_id(id_elem)
         key = "{}-{}".format(store, release_dict["id"])
+
+        # get indices
+        if view in ["weekly_chart", "monthly_chart"]:
+            pos = grid_elems.index(grid_elem)
+            release_dict["store_tags"]["has_charted"] = True
+        else:
+            pos = counter
+
+        # assign pos per section
+        release_dict[f"{store}-{section}-{view}"] = int(pos)
+        counter += 1
 
         # early out for already processed ids during this session
         key = f"{store}-" + release_dict["id"]
@@ -261,19 +271,6 @@ def scrape_page(url, store, view, section, counter, session_scraped_ids):
 
             if not has_artworks:
                 release_dict["artworks"] = get_redeye_artwork_urls(id)
-
-        # get indices
-        if view in ["weekly_chart", "monthly_chart"]:
-            pos = grid_elems.index(grid_elem)
-            release_dict["store_tags"]["has_charted"] = True
-        else:
-            pos = counter
-
-        # assign pos per section
-        release_dict[f"{store}-{section}-{view}"] = int(pos)
-
-        # increment counter
-        counter += 1
 
         # merge into main
         merge = dict()

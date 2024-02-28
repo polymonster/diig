@@ -11,6 +11,13 @@ from google.auth.transport.requests import AuthorizedSession
 # global key for this session, not functional but saves passing through
 global auth_key
 
+
+# return true if the supplied `view` name is a chart
+def is_view_chart(view):
+    if view in ["weekly_chart", "monthly_chart"]:
+        return True
+    return False
+
 # member wise merge 2 dicts, second will overwrite dest
 def merge_dicts(dest, second):
     for k, v in second.items():

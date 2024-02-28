@@ -6,12 +6,13 @@
 // - contact page
 // - following page
 
-// - improve feedback for loading failures (not spinning endlessly)
+// - handle auto play when backgrounded setting
 
-// - add clear cache and cache options
+// - improve feedback for loading failures (not spinning endlessly)
 
 // - add reg validation
 // - cold cuts
+// - genreless setions, all generes new / chart
 
 // - implement label link (on tap)
 // - follow?
@@ -20,6 +21,7 @@
 // - vertical swipe still sometimes feel sticky
 
 // DONE
+// x - add clear cache and cache options
 // x - img and audio file cache management
 // x - yayaku
 // x - relay info if there are no results

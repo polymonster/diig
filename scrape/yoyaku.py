@@ -49,10 +49,19 @@ def scrape_page(url, store, view, section, counter, session_scraped_ids):
     # parse releases from page
     html_str = html_file.read().decode("utf8")
 
-    # find the sidebar
+    # find the charts
     sidebar = html_str.find("woocommerce-bestsellers")
     if sidebar != -1:
-        html_str = html_str[:sidebar]
+        if dig.is_view_chart(view):
+            # ignore generic charts
+            bs2 = html_str.find("id=\"yoyaku_wc_bestsellers-2\"")
+            if bs2 != -1:
+                html_str = html_str[sidebar:bs2]
+            else:
+                html_str = html_str[sidebar:]
+        else:
+            # ignore charts
+            html_str = html_str[:sidebar]
 
     releases = dig.parse_class(html_str, "class=\"ct-media-container\"", "a")
 
@@ -199,7 +208,6 @@ def scrape_page(url, store, view, section, counter, session_scraped_ids):
 
             release_dict["track_urls"] = list()
 
-            fails = 0
             for attempt in attempts:
                 attempt_list = list()
                 use_attempt = False
@@ -219,6 +227,8 @@ def scrape_page(url, store, view, section, counter, session_scraped_ids):
                         cp = name.find(":")
                         if pp != -1 and cp != -1:
                             pp = min(pp, cp)
+                        if pp == -1 and cp == -1:
+                            break
                         else:
                             pp = max(pp, cp)
                         try:
@@ -228,7 +238,6 @@ def scrape_page(url, store, view, section, counter, session_scraped_ids):
                                 use_named = True
                                 break
                         except urllib.error.HTTPError:
-                            fails += 1
                             break
 
                 # if we found compatible urls just assume the rest

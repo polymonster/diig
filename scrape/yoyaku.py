@@ -42,7 +42,7 @@ def scrape_page(url, store, view, section, counter, session_scraped_ids):
     # try and then continue if the page does not exist
     try:
         html_file = urllib.request.urlopen(req)
-    except:
+    except urllib.error.HTTPError:
         print("error: url not found {}".format(url))
         return -1
 
@@ -69,6 +69,10 @@ def scrape_page(url, store, view, section, counter, session_scraped_ids):
         release_dict["link"] = dig.get_value(release, "href")
         release_dict["id"] = os.path.basename(release_dict["link"].strip("/"))
         key = f'{release_dict["store"]}-{release_dict["id"]}'
+
+        # assign pos per section
+        release_dict[f"{store}-{section}-{view}"] = int(counter)
+        counter += 1
 
         # early out for already processed ids during this session
         key = f"{store}-" + release_dict["id"]
@@ -122,7 +126,7 @@ def scrape_page(url, store, view, section, counter, session_scraped_ids):
                 headers={'User-Agent': 'Mozilla/5.0'}
             )
             release_html_file = urllib.request.urlopen(req)
-        except:
+        except urllib.error.HTTPError:
             print("error: url not found {}".format(url))
             continue
 
@@ -208,7 +212,7 @@ def scrape_page(url, store, view, section, counter, session_scraped_ids):
                             print(f"use linear: {linear}", flush=True)
                             use_attempt = True
                             break
-                    except:
+                    except urllib.error.HTTPError:
                         # or use the track prefix
                         name = release_dict["track_names"][i]
                         pp = name.find(".")
@@ -223,7 +227,7 @@ def scrape_page(url, store, view, section, counter, session_scraped_ids):
                                 use_attempt = True
                                 use_named = True
                                 break
-                        except:
+                        except urllib.error.HTTPError:
                             fails += 1
                             break
 
@@ -256,10 +260,6 @@ def scrape_page(url, store, view, section, counter, session_scraped_ids):
                         print(f"didn't find tracks for {ll}", flush=True)
                     elif "-verbose" in sys.argv:
                         print(f"found tracks for {ll}", flush=True)
-
-        # assign pos per section
-        release_dict[f"{store}-{section}-{view}"] = int(counter)
-        counter += 1
 
         # track this as scraped already this session
         session_scraped_ids.append(key)

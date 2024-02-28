@@ -76,7 +76,7 @@ def scrape_page(url, store, view, section, counter, session_scraped_ids):
     # try and then continue if the page does not exist
     try:
         html_file = urllib.request.urlopen(url)
-    except:
+    except urllib.error.HTTPError:
         return -1
 
     html_str = html_file.read().decode("utf8")
@@ -96,13 +96,20 @@ def scrape_page(url, store, view, section, counter, session_scraped_ids):
         releases_dict = json.loads(open(reg_filepath, "r").read())
 
     for release in releases:
-        # parse divs and sections of htmls
-        (_, id_elem) = dig.find_parse_elem(release, 0, "<div id=", ">")
-
         # basic info
+        (_, id_elem) = dig.find_parse_elem(release, 0, "<div id=", ">")
         release_dict = dict()
         release_dict["store"] = f"{store}"
         release_dict["id"] = parse_id(id_elem)
+
+        # chart pos
+        if view in ["weekly_chart", "monthly_chart"]:
+            # chart pos are listed
+            pos = dig.parse_nested_body(release, 4).strip()
+            store_tags["has_charted"] = True
+        else:
+            # latest pos is manually tracked
+            pos = counter
 
         # early out for already processed ids during this session
         key = f"{store}-" + release_dict["id"]
@@ -132,15 +139,6 @@ def scrape_page(url, store, view, section, counter, session_scraped_ids):
 
         # store tags
         store_tags = dict()
-
-        # chart pos
-        if view in ["weekly_chart", "monthly_chart"]:
-            # chart pos are listed
-            pos = dig.parse_nested_body(release, 4).strip()
-            store_tags["has_charted"] = True
-        else:
-            # latest pos is manually tracked
-            pos = counter
 
         # sold out
         if release.find(">out of stock<") != -1:

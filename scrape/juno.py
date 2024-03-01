@@ -99,6 +99,7 @@ def scrape_page(url, store, view, section, counter, session_scraped_ids):
         # basic info
         (_, id_elem) = dig.find_parse_elem(release, 0, "<div id=", ">")
         release_dict = dict()
+        store_tags = dict()
         release_dict["store"] = f"{store}"
         release_dict["id"] = parse_id(id_elem)
 
@@ -136,9 +137,6 @@ def scrape_page(url, store, view, section, counter, session_scraped_ids):
 
         # tracks
         tracks = dig.parse_div(release, 'class="listing-track')
-
-        # store tags
-        store_tags = dict()
 
         # sold out
         if release.find(">out of stock<") != -1:

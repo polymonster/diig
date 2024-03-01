@@ -1,4 +1,5 @@
 import urllib.request
+import http
 import dig
 import cgu
 import os
@@ -240,6 +241,8 @@ def scrape_page(url, store, view, section, counter, session_scraped_ids):
                                 use_named = True
                                 break
                         except urllib.error.HTTPError:
+                            break
+                        except http.client.InvalidURL:
                             break
 
                 # if we found compatible urls just assume the rest

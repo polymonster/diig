@@ -201,6 +201,7 @@ def scrape_page(url, store, view, section, counter, session_scraped_ids):
         # basic info
         (_, id_elem) = dig.find_parse_elem(grid_elem, 0, "<div id=", ">")
         release_dict = dict()
+        release_dict["store_tags"] = dict()
         release_dict["store"] = f"{store}"
         release_dict["id"] = parse_redeye_release_id(id_elem)
         key = "{}-{}".format(store, release_dict["id"])
@@ -235,7 +236,6 @@ def scrape_page(url, store, view, section, counter, session_scraped_ids):
         dig.merge_dicts(release_dict, parse_redeye_label(label_elem))
         dig.merge_dicts(release_dict, parse_redeye_artist(artist_elem))
         id = release_dict["id"]
-        release_dict["store_tags"] = dict()
 
         # add store tags
         if grid_elem.find("price preorder") != -1:

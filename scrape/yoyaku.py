@@ -88,7 +88,11 @@ def scrape_page(url, store, view, section, counter, session_scraped_ids):
         key = f"{store}-" + release_dict["id"]
         if key in session_scraped_ids:
             if "-verbose" in sys.argv:
-                print(f"parsing release: {key}", flush=True)
+                print(f"quick parse release: {key}", flush=True)
+            # merge into main
+            merge = dict()
+            merge[key] = release_dict
+            dig.merge_dicts(releases_dict, merge)
             continue
         elif "-verbose" in sys.argv:
             print(f"parsing release: {key}", flush=True)

@@ -222,6 +222,8 @@ def scrape_page(url, store, view, section, counter, session_scraped_ids):
                             print(f"use linear naming: {linear}", flush=True)
                             use_attempt = True
                             break
+                    except http.client.InvalidURL:
+                            break
                     except urllib.error.HTTPError:
                         # or use the track prefix
                         name = release_dict["track_names"][i]

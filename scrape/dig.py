@@ -165,6 +165,10 @@ def parse_class_single(html_str, html_class, ty):
             break
         start = html_str[:first].rfind(f"<{ty} ")
         end = html_str.find(f"</{ty}", first)
+        if end == -1:
+            end = html_str.find(f"&lt;\/{ty}")
+            if end == -1:
+                return None
         if start != -1 and end != -1:
             return html_str[start:end+close_len]
     return None

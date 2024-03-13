@@ -6,6 +6,7 @@ import os
 import json
 import datetime
 import sys
+import html
 
 def debug(url):
     req = urllib.request.Request(
@@ -98,7 +99,6 @@ def scrape_page(url, store, view, section, counter, session_scraped_ids):
             print(f"parsing release: {key}", flush=True)
 
         # main page info
-        release_dict["title"] = dig.get_value(release, "aria-label")
         release_dict["store_tags"] = dict()
 
         # check existing tracks
@@ -152,27 +152,37 @@ def scrape_page(url, store, view, section, counter, session_scraped_ids):
         if related != -1:
             release_html_str = release_html_str[:related]
 
+        # title
+        title = dig.parse_class_single(release_html_str, "product_title entry-title", "h1")
+        title = dig.parse_strip_body(title)
+        release_dict["title"] = html.unescape(title)
+
         # artist info
         pp = release_html_str.find("class=\"product-artists\"")
         pe = release_html_str.find("</span>", pp)
         release_dict["artist"] = dig.parse_strip_body(release_html_str[pp:pe])
+        release_dict["artist"] = html.unescape(release_dict["artist"])
 
         # label info
         pp = release_html_str.find("class=\"product-labels\"")
         pe = release_html_str.find("</span>", pp)
         release_dict["label"] = dig.parse_strip_body(release_html_str[pp:pe])
         release_dict["label_link"] = dig.get_value(release_html_str[pp:pe], "href")
+        release_dict["label"] = html.unescape(release_dict["label"])
 
         # cat
         pp = release_html_str.find("class=\"sku\"")
         pe = release_html_str.find("</span>", pp)
         release_dict["cat"] = dig.parse_strip_body(release_html_str[pp:pe])
+        release_dict["cat"] = html.unescape(release_dict["cat"])
 
         # tracklist
         release_dict["track_names"] = list()
         tracklist = dig.parse_class(release_html_str, "class=\"track fwap-play\"", "a")
         for track in tracklist:
-            release_dict["track_names"].append(dig.parse_strip_body(track))
+            track = dig.parse_strip_body(track)
+            track = html.unescape(track)
+            release_dict["track_names"].append(track)
 
         # store tags: preorder / out of stock
         release_dict["store_tags"]["out_of_stock"] = False

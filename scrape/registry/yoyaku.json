@@ -6087,7 +6087,8 @@
             "preorder": false,
             "low_stock": false
         },
-        "yoyaku-breaks-new_releases": 0
+        "yoyaku-breaks-new_releases": 0,
+        "yoyaku-dub-techno-weekly_chart": 5
     },
     "yoyaku-sl038": {
         "store": "yoyaku",
@@ -8627,7 +8628,7 @@
     "yoyaku-berga03": {
         "store": "yoyaku",
         "link": "https://www.yoyaku.io/release/berga03/",
-        "title": null,
+        "title": "Asymmetrical Connection",
         "id": "berga03",
         "artworks": [
             "https://www.yoyaku.io/wp-content/uploads/2023/02/BERGA03-100x100.jpg",
@@ -8640,9 +8641,9 @@
         "cat": "BERGA03",
         "track_names": [
             "A1. Asymmetrical Connection",
-            "A2. Christopher Ledger &amp; Jamie Leather - Liquid Sense",
+            "A2. Christopher Ledger & Jamie Leather - Liquid Sense",
             "B1. A New Dawn",
-            "B2. Christopher Ledger &amp; Jamie Leather - Liquid Sense (Malin Genie Remix)"
+            "B2. Christopher Ledger & Jamie Leather - Liquid Sense (Malin Genie Remix)"
         ],
         "track_urls": [
             "https://yydistribution.ams3.digitaloceanspaces.com/yyplayer/mp3/BERGA03_1.mp3",
@@ -8656,7 +8657,7 @@
             "low_stock": false
         },
         "yoyaku-breaks-new_releases": 245,
-        "yoyaku-dub-techno-weekly_chart": 5
+        "yoyaku-dub-techno-weekly_chart": 2
     },
     "yoyaku-dote004": {
         "store": "yoyaku",
@@ -43325,7 +43326,7 @@
     "yoyaku-bergqvist_dorisburg_genius_of_time_aniarawl03_aniarawl03": {
         "store": "yoyaku",
         "link": "https://www.yoyaku.io/release/bergqvist_dorisburg_genius_of_time_aniarawl03_aniarawl03/",
-        "title": null,
+        "title": "AniaraWL03",
         "id": "bergqvist_dorisburg_genius_of_time_aniarawl03_aniarawl03",
         "artworks": [
             "https://www.yoyaku.io/wp-content/uploads/2024/01/AniaraWL03_1-100x100.jpg",
@@ -43346,12 +43347,13 @@
             "https://yydistribution.ams3.digitaloceanspaces.com/yyplayer/mp3/AniaraWL03_3.mp3"
         ],
         "store_tags": {
-            "out_of_stock": false,
+            "out_of_stock": true,
             "preorder": false,
-            "low_stock": true
+            "low_stock": false,
+            "has_been_out_of_stock": true
         },
         "yoyaku-dub-techno-new_releases": 1,
-        "yoyaku-dub-techno-weekly_chart": 2
+        "yoyaku-dub-techno-weekly_chart": 1
     },
     "yoyaku-ivan_iacobucci_stella_fiore_triumph_e_p_perlon136": {
         "store": "yoyaku",
@@ -43535,7 +43537,7 @@
     "yoyaku-cc04": {
         "store": "yoyaku",
         "link": "https://www.yoyaku.io/release/cc04/",
-        "title": null,
+        "title": "Up At Dawn",
         "id": "cc04",
         "artworks": [
             "https://www.yoyaku.io/wp-content/uploads/2023/10/CC04-100x100.jpeg",
@@ -43562,12 +43564,12 @@
             "https://yydistribution.ams3.digitaloceanspaces.com/yyplayer/mp3/CC04_3.mp3"
         ],
         "yoyaku-dub-techno-new_releases": 2,
-        "yoyaku-dub-techno-weekly_chart": 9
+        "yoyaku-dub-techno-weekly_chart": 4
     },
     "yoyaku-f4tv006": {
         "store": "yoyaku",
         "link": "https://www.yoyaku.io/release/f4tv006/",
-        "title": null,
+        "title": "Moirae",
         "id": "f4tv006",
         "artworks": [
             "https://www.yoyaku.io/wp-content/uploads/2023/10/F4TV004-100x100.jpeg",
@@ -43594,7 +43596,7 @@
             "https://yydistribution.ams3.digitaloceanspaces.com/yyplayer/mp3/F4TV006_3.mp3"
         ],
         "yoyaku-dub-techno-new_releases": 3,
-        "yoyaku-dub-techno-weekly_chart": 3
+        "yoyaku-dub-techno-weekly_chart": 6
     },
     "yoyaku-a_a_satoshi_tomiie_naotake_gunji_a_a_diskordant_aor05": {
         "store": "yoyaku",
@@ -43846,7 +43848,7 @@
     "yoyaku-kol003": {
         "store": "yoyaku",
         "link": "https://www.yoyaku.io/release/kol003/",
-        "title": null,
+        "title": "The Calling (ft. VRIL remix)",
         "id": "kol003",
         "artworks": [
             "https://www.yoyaku.io/wp-content/uploads/2023/07/KOL003-100x100.jpeg",
@@ -43876,12 +43878,12 @@
             "https://yydistribution.ams3.digitaloceanspaces.com/yyplayer/mp3/KOL003_4.mp3"
         ],
         "yoyaku-dub-techno-new_releases": 12,
-        "yoyaku-dub-techno-weekly_chart": 6
+        "yoyaku-dub-techno-weekly_chart": 7
     },
     "yoyaku-echospace009": {
         "store": "yoyaku",
         "link": "https://www.yoyaku.io/release/echospace009/",
-        "title": null,
+        "title": "Sailingstars",
         "id": "echospace009",
         "artworks": [
             "https://www.yoyaku.io/wp-content/uploads/2023/11/ECHOSPACE009-100x100.png",
@@ -43907,7 +43909,7 @@
             "https://yydistribution.ams3.digitaloceanspaces.com/yyplayer/mp3/ECHOSPACE009_3.mp3"
         ],
         "yoyaku-dub-techno-new_releases": 13,
-        "yoyaku-dub-techno-weekly_chart": 0
+        "yoyaku-dub-techno-weekly_chart": 3
     },
     "yoyaku-ohm008": {
         "store": "yoyaku",
@@ -44001,7 +44003,8 @@
             "https://yydistribution.ams3.digitaloceanspaces.com/yyplayer/mp3/BERGA04_3.mp3",
             "https://yydistribution.ams3.digitaloceanspaces.com/yyplayer/mp3/BERGA04_4.mp3"
         ],
-        "yoyaku-dub-techno-new_releases": 16
+        "yoyaku-dub-techno-new_releases": 16,
+        "yoyaku-dub-techno-weekly_chart": 9
     },
     "yoyaku-loa006": {
         "store": "yoyaku",
@@ -44739,7 +44742,7 @@
     "yoyaku-chxiv03b01v": {
         "store": "yoyaku",
         "link": "https://www.yoyaku.io/release/chxiv03b01v/",
-        "title": null,
+        "title": "B01V",
         "id": "chxiv03b01v",
         "artworks": [
             "https://www.yoyaku.io/wp-content/uploads/2023/07/CHXIV03B01V-100x100.jpg",
@@ -44768,7 +44771,7 @@
             "https://yydistribution.ams3.digitaloceanspaces.com/yyplayer/mp3/CHXIV03B01V_4.mp3"
         ],
         "yoyaku-dub-techno-new_releases": 59,
-        "yoyaku-dub-techno-weekly_chart": 4
+        "yoyaku-dub-techno-weekly_chart": 8
     },
     "yoyaku-aua005": {
         "store": "yoyaku",
@@ -45339,7 +45342,8 @@
             "https://yydistribution.ams3.digitaloceanspaces.com/yyplayer/mp3/AALP003_7.mp3",
             "https://yydistribution.ams3.digitaloceanspaces.com/yyplayer/mp3/AALP003_8.mp3"
         ],
-        "yoyaku-dub-techno-new_releases": 0
+        "yoyaku-dub-techno-new_releases": 0,
+        "yoyaku-dub-techno-weekly_chart": 0
     },
     "yoyaku-ohm007": {
         "store": "yoyaku",

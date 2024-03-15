@@ -238,6 +238,8 @@ def scrape_page(url, store, view, section, counter, session_scraped_ids):
                             break
                     except http.client.InvalidURL:
                             break
+                    except UnicodeEncodeError:
+                            break
                     except urllib.error.HTTPError:
                         # or use the track prefix
                         name = release_dict["track_names"][i]
@@ -259,6 +261,8 @@ def scrape_page(url, store, view, section, counter, session_scraped_ids):
                         except urllib.error.HTTPError:
                             break
                         except http.client.InvalidURL:
+                            break
+                        except UnicodeEncodeError:
                             break
 
                 # if we found compatible urls just assume the rest

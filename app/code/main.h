@@ -370,6 +370,9 @@ struct AppContext
     u32                     last_response_code = 0;
 };
 
+// os callbacks
+void            enter_background(bool backgrounded);
+
 // audio API
 void            audio_player_pause(bool pause);
 void            audio_player_next(bool prev);

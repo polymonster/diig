@@ -3130,6 +3130,9 @@ namespace
         remote.like = audio_player_toggle_like;
         pen::music_enable_remote_control(remote);
         
+        // hook into background callbacks
+        os_register_background_callback(enter_background);
+        
         // get window size
         pen::window_get_size(ctx.w, ctx.h);
         
@@ -3572,40 +3575,34 @@ void set_user_setting(const c8* key, T value) {
 
 void settings_menu()
 {
-    ImGui::SetWindowFontScale(k_text_size_h2);
+    ImGui::SetWindowFontScale(k_text_size_h3);
     
     ImGui::Spacing();
     ImGui::Spacing();
+    ImGui::Spacing();
     
-    /*
-    if(ImGui::CollapsingHeader("Help"))
-    {
-        ImGui::Text("%s - Released / Buy Link", ICON_FA_CART_PLUS);
-        ImGui::Text("%s - Preorder / Buy Link", ICON_FA_CALENDAR_PLUS_O);
-        ImGui::Text("%s - Sold Out", ICON_FA_EXCLAMATION);
-        ImGui::Text("%s - Has Charted", ICON_FA_FIRE);
-        ImGui::Text("%s - Has Previously Sold Out", ICON_FA_EXCLAMATION);
-    }
+    ImGui::Indent();
     
-    if(ImGui::CollapsingHeader("Cache"))
-    {
-        float mb = (((float)ctx.data_ctx.cached_release_bytes.load()) / 1024.0 / 1024.0);
-        ImGui::Text("Cached Releases: %i", ctx.data_ctx.cached_release_folders.load());
-        ImGui::Text("Cached Data: %f(mb)", mb);
-    }
-    */
-    
+    // cache size
     static int s_selected_cache_size_setting = get_user_setting("setting_cache_size", 0);
     static const c8* k_cache_options = "Small\0Med\0Large\0Uncapped\0";
-    if(ImGui::Combo("Cache Size", &s_selected_cache_size_setting, k_cache_options)) {
+    ImGui::Text("%s", "Cache Size");
+    if(ImGui::Combo("##Cache Size", &s_selected_cache_size_setting, k_cache_options)) {
         set_user_setting("setting_cache_size", s_selected_cache_size_setting);
     }
     
+    // background audio
     static bool s_play_backgrounded_setting = get_user_setting("setting_play_backgrounded", true);
-    if(ImGui::Checkbox("Play When Backgrounded", &s_play_backgrounded_setting)) {
+    int i_playbg = s_play_backgrounded_setting;
+    static const c8* k_play_bg_options = "No\0Yes\0";
+    ImGui::Text("%s", "Background Audio");
+    if(ImGui::Combo("##Background Audio", &i_playbg, k_play_bg_options)) {
+        s_play_backgrounded_setting = i_playbg;
         set_user_setting("setting_play_backgrounded", s_play_backgrounded_setting);
     }
     
+    ImGui::Unindent();
+        
     ImGui::SetWindowFontScale(k_text_size_body);
 }
 
@@ -3739,4 +3736,17 @@ void* data_cache_enumerate(void* userdata) {
     // flag terminated
     view->threads_terminated++;
     return nullptr;
+}
+
+void enter_background(bool backgrounded) {
+    bool play_bg = get_user_setting("setting_play_backgrounded", true);
+    if(!play_bg)
+    {
+        if(backgrounded) {
+            audio_player_pause(true);
+        }
+        else {
+            audio_player_pause(false);
+        }
+    }
 }

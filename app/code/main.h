@@ -2,13 +2,11 @@
 
 // - ReleasesView can leak mem boot flow!
 
+// - improve carousel dots
+
 // - help page
 // - contact page
 // - following page
-
-// - handle auto play when backgrounded setting
-
-// - improve feedback for loading failures (not spinning endlessly)
 
 // - add reg validation
 // - cold cuts
@@ -21,6 +19,8 @@
 // - vertical swipe still sometimes feel sticky
 
 // DONE
+// x - improve feedback for loading failures (not spinning endlessly)
+// x - handle auto play when backgrounded setting
 // x - add clear cache and cache options
 // x - img and audio file cache management
 // x - yayaku

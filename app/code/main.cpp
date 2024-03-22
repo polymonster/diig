@@ -343,9 +343,11 @@ Str download_and_cache(const Str& url, Str releaseid, bool validate = false)
         // try parse json to validate
         bool error_response = false;
         if(validate) {
-            if(strncmp((const c8*)db->data, "error code", 10) == 0) {
-                PEN_LOG("%s: %s\n", db->data, url.c_str());
-                error_response = true;
+            if(db->data) {
+                if(strncmp((const c8*)db->data, "error code", 10) == 0) {
+                    PEN_LOG("%s: %s\n", db->data, url.c_str());
+                    error_response = true;
+                }
             }
         }
         

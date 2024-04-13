@@ -200,12 +200,7 @@ def patch_releases(entries: str):
     authed_session = auth_session()
     response = authed_session.patch(
         "https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app/releases.json", entries)
-    assert(response.status_code == 200)
-    if response.status_code == 200:
-        print("successfully patched releases")
-    else:
-        print("error: patching releases")
-
+    print(f"patched releases with response code {response.status_code}")
 
 # update store config to firebase, basically copies the stores.json local file to firebase
 def update_stores():

@@ -196,11 +196,16 @@ def auth_session():
 
 
 # write entire registry contents
-def patch_releases(entries: str):
+def patch_releases(entries: str, throw_assert=False):
     authed_session = auth_session()
     response = authed_session.patch(
         "https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app/releases.json", entries)
+    if throw_assert:
+        print(response.text)
+        print(response.reason)
+        assert(response.status_code == 200)
     print(f"patched releases with response code {response.status_code}")
+
 
 # update store config to firebase, basically copies the stores.json local file to firebase
 def update_stores():
@@ -266,7 +271,16 @@ def patch_store(store):
     reg_filepath = f"registry/{store}.json"
     if os.path.exists(reg_filepath):
         releases_str = open(reg_filepath, "r").read()
-        patch_releases(releases_str)
+        if "-incremental" in sys.argv:
+            releases = json.loads(releases_str)
+            for release in releases:
+                patch_single = dict()
+                patch_single[release] = releases[release]
+                patch_single_str = json.dumps(patch_single, indent=4)
+                print(patch_single_str)
+                patch_releases(patch_single_str, throw_assert=True)
+        else:
+            patch_releases(releases_str, throw_assert=True)
 
 
 # scrape a store based on rules defined in stores.json config

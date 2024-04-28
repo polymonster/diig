@@ -173,10 +173,10 @@ def scrape_page(url, store, view, section, counter, session_scraped_ids):
         counter += 1
 
         # genre tags are just loose in the object so they can be queried
-        genre_tags = dict()
         tags_span = dig.parse_class(release, 'class="juno-tags-tag"', "span")
         for tag_span in tags_span:
             tag_str = dig.parse_nested_body(tag_span, 2).strip()
+            tag_str = dig.firebase_compliant_key(tag_str)
             release_dict[tag_str] = "genre_tag"
 
         # merge into main

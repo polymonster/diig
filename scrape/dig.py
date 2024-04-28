@@ -174,6 +174,18 @@ def parse_class_single(html_str, html_class, ty):
     return None
 
 
+# given a dictionary key make it compliant with firebase, dissalow ([.,$,#,[,],/])
+def firebase_compliant_key(key: str):
+    dissalow = ['.','$','#','[',']','/']
+    compliant = ""
+    for c in key:
+        if c in dissalow:
+            compliant += "_"
+        else:
+            compliant += c
+    return compliant
+
+
 # creates an authorised session to write entires to firebase
 def auth_session():
     scopes = [

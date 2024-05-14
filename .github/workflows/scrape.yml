@@ -55,6 +55,7 @@ jobs:
         git pull --rebase
         git push origin HEAD:main
   scrape-yoyaku:
+    if: false
     needs: update-stores
     runs-on: ubuntu-latest
     steps:

@@ -216,7 +216,8 @@ def patch_releases(entries: str, throw_assert=False):
         print(response.text)
         print(response.reason)
         assert(response.status_code == 200)
-    print(f"patched releases with response code {response.status_code}")
+    if "-verbose" in sys.argv:
+        print(f"patched releases with response code {response.status_code}")
 
 
 # update store config to firebase, basically copies the stores.json local file to firebase
@@ -295,6 +296,29 @@ def patch_store(store):
             patch_releases(releases_str, throw_assert=True)
 
 
+# patch store releases
+def fix_store(store):
+    reg_filepath = f"registry/{store}.json"
+    if os.path.exists(reg_filepath):
+        releases_str = open(reg_filepath, "r").read()
+        releases = json.loads(releases_str)
+        for release in releases:
+            # custom code for juno artwork fix
+            update_artwork = list()
+            if "artworks" in releases[release]:
+                for artwork in releases[release]["artworks"]:
+                    artwork = artwork.replace("-MED-MED", "-MED")
+                    artwork = artwork.replace("-MED-BIG", "-BIG")
+                    update_artwork.append(artwork)
+            releases[release]["artworks"] = update_artwork
+            patch_single_str = json.dumps(releases[release], indent=4)
+            if "-verbose" in sys.argv:
+                print(patch_single_str)
+        open(reg_filepath, "w").write(json.dumps(releases, indent=4))
+        releases_str = open(reg_filepath, "r").read()
+        patch_releases(releases_str, throw_assert=True)
+
+
 # scrape a store based on rules defined in stores.json config
 def scrape_store(stores, store_name):
     page_function = getattr(__import__(store_name), "scrape_page")
@@ -366,6 +390,12 @@ if __name__ == '__main__':
         auth_key = json.loads(sys.argv[sys.argv.index("-key") + 1])
     else:
         auth_key = json.loads(open("diig-auth.json").read())
+
+    # run the fix-store function with custom code
+    if "-fix-store":
+        store = sys.argv[sys.argv.index("-fix-store") + 1]
+        fix_store(store)
+        exit(0)
 
     if "-store" in sys.argv:
         # read store config

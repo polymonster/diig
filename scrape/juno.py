@@ -45,7 +45,9 @@ def parse_artworks(artwork_elem):
     if small.find("data:image") != -1:
         small = dig.get_value(artwork_elem, "data-src")
     med = small.replace("/150/", "/300/").replace(".jpg", "-MED.jpg")
+    med = med.replace("-MED-MED", "-MED")
     large = small.replace("/150/", "/full/").replace(".jpg", "-BIG.jpg")
+    large = large.replace("-MED-BIG", "-BIG")
     return [small, med, large]
 
 

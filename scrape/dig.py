@@ -392,7 +392,7 @@ if __name__ == '__main__':
         auth_key = json.loads(open("diig-auth.json").read())
 
     # run the fix-store function with custom code
-    if "-fix-store":
+    if "-fix-store" in sys.argv:
         store = sys.argv[sys.argv.index("-fix-store") + 1]
         fix_store(store)
         exit(0)

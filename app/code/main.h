@@ -301,6 +301,7 @@ struct ReleasesView
     void*               thread_mem[k_num_threads_per_view] = {0};
     std::map<u32, u32>  release_pos = {};
     Status_t            release_pos_status = Status::e_not_initialised;
+    u32                 request_id = 0;
 };
 
 struct ChartItem

@@ -314,6 +314,9 @@ bool check_cache_hit(const Str& url, Str releaseid)
 
 Str download_and_cache(const Str& url, Str releaseid, bool validate = false)
 {
+    Str url2 = pen::str_replace_string(url, "MED-MED", "MED");
+    url2 = pen::str_replace_string(url2, "MED-BIG", "BIG");
+    
     Str filepath = pen::str_replace_string(url, "https://", "");
     filepath = pen::str_replace_chars(filepath, '/', '_');
     
@@ -338,7 +341,7 @@ Str download_and_cache(const Str& url, Str releaseid, bool validate = false)
         
         // download
         auto db = new curl::DataBuffer;
-        *db = curl::download(url.c_str());
+        *db = curl::download(url2.c_str());
         
         // try parse json to validate
         bool error_response = false;
@@ -740,6 +743,56 @@ inline Str safe_str(nlohmann::json& j, const c8* key, const Str& default_value)
     return default_value;
 }
 
+void update_likes_registry() {
+    // kick off a job to update the likes cache, (get up-to-date out of stock info etc)
+    std::thread cache_thread([]() {
+        auto update_likes_registry = nlohmann::json();
+        auto likes = get_likes();
+        for(auto& like : likes.items()) {
+            // like value might be bool or number
+            bool like_true = false;
+            f32 timestamp = 0.0f;
+            if(like.value().is_boolean()) {
+                like_true = like.value();
+            }
+            else if(like.value().is_number()) {
+                like_true = true;
+                timestamp = like.value();
+            }
+            
+            if(like_true) {
+                Str search_url = "https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app/releases.json";
+                search_url.appendf("?orderBy=\"$key\"&equalTo=\"%s\"&timeout=1s", like.key().c_str());
+                
+                auto db = curl::download(search_url.c_str());
+                if(db.data)
+                {
+                    nlohmann::json release;
+                    try {
+                        release = nlohmann::json::parse(db.data);
+                        update_likes_registry[like.key()] = release[like.key()];
+                    }
+                    catch(...) {
+                        //
+                    }
+                    free(db.data);
+                }
+                else {
+                }
+            }
+        }
+    
+        // write to disk
+        PEN_LOG("updated likes registry");
+        Str filepath = get_persistent_filepath("likes_feed.json", true);
+        FILE* fp = fopen(filepath.c_str(), "wb");
+        std::string j = update_likes_registry.dump();
+        fwrite(j.c_str(), j.length(), 1, fp);
+        fclose(fp);
+    });
+    cache_thread.detach();
+}
+
 void* releases_view_loader(void* userdata)
 {
     // get view from userdata
@@ -754,6 +807,7 @@ void* releases_view_loader(void* userdata)
     
     if(view->page == Page::feed) {
         for(auto& section : store_view.selected_sections) {
+            
             // index is concantonated store-section-view.json
             Str index_on = "";
             index_on.appendf(
@@ -826,8 +880,22 @@ void* releases_view_loader(void* userdata)
         }
     }
     else {
+        
+        // look in cache
+        Str filepath = get_persistent_filepath("likes_feed.json", true);
+        auto likes_registry = nlohmann::json();
+        try {
+            likes_registry = nlohmann::json::parse(std::ifstream(filepath.c_str()));
+            
+        } catch (...) {
+            // ..
+        }
+        
         auto likes = get_likes();
-        if(!likes.empty()) {
+        if(!likes.empty() && likes.size() != likes_registry.size()) {
+            PEN_LOG("populate likes from feed");
+            
+            // populate likes feed from the db
             for(auto& like : likes.items()) {
                 
                 // like value might be bool or number
@@ -868,9 +936,54 @@ void* releases_view_loader(void* userdata)
                     }
                 }
             }
+            
+            // write to cache
+            if(view_chart.size() == likes.size())
+            {
+                PEN_LOG("caching likes registry");
+                
+                // cache async
+                std::thread cache_thread([releases_registry, filepath]() {
+                    FILE* fp = fopen(filepath.c_str(), "wb");
+                    std::string j = releases_registry.dump();
+                    fwrite(j.c_str(), j.length(), 1, fp);
+                    fclose(fp);
+                });
+                cache_thread.detach();
+            }
         }
-        
-        Str filepath = get_persistent_filepath("likes_feed.json", true);
+        else {
+            // populate likes feed from cache
+            PEN_LOG("populate likes from cache");
+            
+            // use likes registry
+            releases_registry = likes_registry;
+            
+            for(auto& like : likes.items()) {
+                
+                // like value might be bool or number
+                bool like_true = false;
+                f32 timestamp = 0.0f;
+                if(like.value().is_boolean()) {
+                    like_true = like.value();
+                }
+                else if(like.value().is_number()) {
+                    like_true = true;
+                    timestamp = like.value();
+                }
+                
+                // add to view chart
+                view_chart.push_back({
+                    like.key(),
+                    (u32)timestamp
+                });
+            }
+            
+            // trigger an update
+            update_likes_registry();
+        }
+
+        // fallback to cache even if it mismatches with like count
         if(view_chart.size() == 0)
         {
             // look in cache
@@ -885,23 +998,9 @@ void* releases_view_loader(void* userdata)
                     });
                 }
                 
-            } catch (...) {
-                view->status = Status::e_not_available;
             }
-        }
-        else
-        {
-            if(view_chart.size() == likes.size())
-            {
-                PEN_LOG("caching likes");
-                // cache async
-                std::thread cache_thread([releases_registry, filepath]() {
-                    FILE* fp = fopen(filepath.c_str(), "wb");
-                    std::string j = releases_registry.dump();
-                    fwrite(j.c_str(), j.length(), 1, fp);
-                    fclose(fp);
-                });
-                cache_thread.detach();
+            catch (...) {
+                view->status = Status::e_not_available;
             }
         }
     }
@@ -1192,13 +1291,14 @@ namespace
         view->page = page;
         view->scroll = vec2f(0.0f, ctx.w);
         view->store_view = store_view;
-        
+                
         // workers per view
         view->thread_mem[0] = pen::thread_create(releases_view_loader, 10 * 1024 * 1024, view, pen::e_thread_start_flags::detached);
         view->thread_mem[1] = pen::thread_create(data_cache_enumerate, 10 * 1024 * 1024, view, pen::e_thread_start_flags::detached);
         view->thread_mem[2] = pen::thread_create(data_cache_fetch, 10 * 1024 * 1024, view, pen::e_thread_start_flags::detached);
         view->thread_mem[3] = pen::thread_create(data_loader, 10 * 1024 * 1024, view, pen::e_thread_start_flags::detached);
         
+        PEN_LOG("creating new view %p", view);
         return view;
     }
 
@@ -2849,6 +2949,9 @@ namespace
         // from keychain
         ctx.username = pen::os_get_keychain_item("com.pmtech.dig", "username");
         
+        // trigger update of likes
+        update_likes_registry();
+        
         // initialise store
         if(ctx.view && ctx.view->page == Page::login_complete) {
             if(ctx.stores.size() > 0) {
@@ -3514,6 +3617,45 @@ void add_like(const Str& id)
     ctx.data_ctx.user_data.dict["likes"][id.c_str()] = pen::get_time_ms();
     ctx.data_ctx.user_data.mutex.unlock();
     ctx.data_ctx.user_data.status = Status::e_invalidated;
+    
+    // async find the release and cache it to the likes cache
+    std::thread cache_thread([id]() {
+        // open cache
+        Str filepath = get_persistent_filepath("likes_feed.json", true);
+        auto likes_registry = nlohmann::json();
+        try {
+            likes_registry = nlohmann::json::parse(std::ifstream(filepath.c_str()));
+            
+        } catch (...) {
+            // ..
+        }
+        
+        // grab the release info
+        Str search_url = "https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app/releases.json";
+        search_url.appendf("?orderBy=\"$key\"&equalTo=\"%s\"&timeout=1s", id.c_str());
+        
+        auto db = curl::download(search_url.c_str());
+        if(db.data)
+        {
+            // store in reg
+            nlohmann::json release;
+            try {
+                release = nlohmann::json::parse(db.data);
+                likes_registry[id.c_str()] = release[id.c_str()];
+            }
+            catch(...) {
+                // ..
+            }
+        }
+        
+        // write to disk
+        PEN_LOG("add %s to likes registry", id.c_str());
+        FILE* fp = fopen(filepath.c_str(), "wb");
+        std::string j = likes_registry.dump();
+        fwrite(j.c_str(), j.length(), 1, fp);
+        fclose(fp);
+    });
+    cache_thread.detach();
 }
 
 void remove_like(const Str& id)
@@ -3524,6 +3666,30 @@ void remove_like(const Str& id)
     }
     ctx.data_ctx.user_data.mutex.unlock();
     ctx.data_ctx.user_data.status = Status::e_invalidated;
+    
+    // remove the entry from the likes registry
+    std::thread cache_thread([id]() {
+        // open cache
+        Str filepath = get_persistent_filepath("likes_feed.json", true);
+        auto likes_registry = nlohmann::json();
+        try {
+            likes_registry = nlohmann::json::parse(std::ifstream(filepath.c_str()));
+            
+        } catch (...) {
+            // ..
+        }
+        
+        if(likes_registry.contains(id.c_str())) {
+            likes_registry.erase(id.c_str());
+            
+            PEN_LOG("remove %s from likes registry", id.c_str());
+            FILE* fp = fopen(filepath.c_str(), "wb");
+            std::string j = likes_registry.dump();
+            fwrite(j.c_str(), j.length(), 1, fp);
+            fclose(fp);
+        }
+    });
+    cache_thread.detach();
 }
 
 nlohmann::json get_likes()

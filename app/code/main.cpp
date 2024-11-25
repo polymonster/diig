@@ -1298,7 +1298,6 @@ namespace
         view->thread_mem[2] = pen::thread_create(data_cache_fetch, 10 * 1024 * 1024, view, pen::e_thread_start_flags::detached);
         view->thread_mem[3] = pen::thread_create(data_loader, 10 * 1024 * 1024, view, pen::e_thread_start_flags::detached);
         
-        PEN_LOG("creating new view %p", view);
         return view;
     }
 
@@ -1341,6 +1340,7 @@ namespace
             
         // kick off a new view
         ctx.view = new_view(page, {});
+        ctx.reload_view = nullptr;
     }
 
     void change_store_view(Page_t page, const Store& store) {
@@ -1355,6 +1355,7 @@ namespace
                 
             // kick off a new view
             ctx.view = new_view(page, view);
+            ctx.reload_view = nullptr;
             
             // update store prefs
             update_store_prefs(store.name, view.selected_view, view.selected_sections);
@@ -1631,6 +1632,8 @@ namespace
         {
             if(ctx.reload_view->releases.available_entries > 0)
             {
+                PEN_LOG("triggered a reload view");
+                
                 // swap existing view with the new one and reset
                 ctx.background_views.insert(ctx.view);
                 ctx.view = ctx.reload_view;

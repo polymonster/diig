@@ -78,6 +78,6 @@ jobs:
         pmtech/pmbuild ios
         pmtech/pmbuild ios -libs
         echo "$API_KEY_H" >> code/api_key.h
-        xcodebuild archive -workspace build/ios/diig_ios.xcworkspace -configuration Release -scheme diig -archivePath build/ios/diig_ios OTHER_CODE_SIGN_FLAGS="--keychain $KEYCHAIN_PATH" PROVISIONING_PROFILE="digiosdev" CODE_SIGN_STYLE="Manual" -allowProvisioningUpdates
-        xcodebuild -exportArchive -archivePath build/ios/diig_ios.xcarchive -exportPath build/ios/export -exportOptionsPlist dist/ios/ExportOptionsAgent.plist OTHER_CODE_SIGN_FLAGS="--keychain $KEYCHAIN_PATH" PROVISIONING_PROFILE="digiosdist" CODE_SIGN_STYLE="Manual"
+        xcodebuild archive -workspace build/ios/diig_ios.xcworkspace -configuration Release -scheme diig -archivePath build/ios/diig_ios OTHER_CODE_SIGN_FLAGS="--keychain $KEYCHAIN_PATH" PROVISIONING_PROFILE_SPECIFIER="digiosdev" CODE_SIGN_STYLE="Manual"
+        xcodebuild -exportArchive -archivePath build/ios/diig_ios.xcarchive -exportPath build/ios/export -exportOptionsPlist dist/ios/ExportOptionsAgent.plist OTHER_CODE_SIGN_FLAGS="--keychain $KEYCHAIN_PATH" PROVISIONING_PROFILE_SPECIFIER="digiosdist" CODE_SIGN_STYLE="Manual"
         xcrun altool --upload-app -f build/ios/export/diig.ipa -t ios -u ${{secrets.APP_EMAIL}} -p ${{secrets.APP_PASSWORD}}

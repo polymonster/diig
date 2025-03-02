@@ -13,7 +13,7 @@
 	<key>provisioningProfiles</key>
 	<dict>
 		<key>com.pmtech.dig</key>
-		<string>diigiosdist</string>
+		<string>digiosdist</string>
 	</dict>
 	<key>stripSwiftSymbols</key>
 	<true/>

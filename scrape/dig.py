@@ -213,7 +213,7 @@ def patch_releases(entries: str, throw_assert=False):
     response = authed_session.patch(
         "https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app/releases.json", entries)
     if throw_assert:
-        print(response.text)
+        # print(response.text)
         print(response.reason)
         assert(response.status_code == 200)
     if "-verbose" in sys.argv:
@@ -417,3 +417,5 @@ if __name__ == '__main__':
         verbose = "-verbose" in sys.argv
         # scrape legacy
         redeye.scrape_legacy(100, get_urls, test_single, verbose)
+
+    print("reached end")

@@ -77,7 +77,11 @@ def scrape_page(url, store, view, section, counter, session_scraped_ids):
 
     # try and then continue if the page does not exist
     try:
-        html_file = urllib.request.urlopen(url)
+        req = urllib.request.Request(
+            url=url,
+            headers={'User-Agent': 'Mozilla/5.0'}
+        )
+        html_file = urllib.request.urlopen(req)
     except urllib.error.HTTPError:
         return -1
 

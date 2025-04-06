@@ -1,0 +1,16 @@
+{
+    "configurations": [
+        {
+            "name": "Python Debugger: Python File",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "dig.py",
+            "cwd": "scrape",
+            "args": [
+                "-store",
+                "juno",
+                "-urls"
+            ]
+        }
+    ]
+}

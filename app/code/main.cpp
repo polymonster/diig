@@ -1,5 +1,3 @@
-// tag 0.0.026
-
 #include "api_key.h"
 
 #include "renderer.h"

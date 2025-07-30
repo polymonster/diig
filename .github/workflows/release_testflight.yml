@@ -38,7 +38,8 @@ jobs:
         REFS_VERSION: ${{ github.ref }}
       run: |
         # select xcode 15
-        sudo xcode-select -s /Applications/Xcode_15.0.1.app/Contents/Developer
+        ls /Applications/
+        sudo xcode-select -s /Applications/Xcode_16.app/Contents/Developer
 
         # create variables
         DIG_IOS_DEV_PATH=$RUNNER_TEMP/dig_ios_dev_certificate.p12

@@ -37,9 +37,9 @@ jobs:
         API_KEY_H: ${{ secrets.API_KEY_H }}
         REFS_VERSION: ${{ github.ref }}
       run: |
-        # select xcode 15
+        # select xcode 16 (self hosted)
         ls /Applications/
-        sudo xcode-select -s /Applications/Xcode_16.app/Contents/Developer
+        sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
 
         # create variables
         DIG_IOS_DEV_PATH=$RUNNER_TEMP/dig_ios_dev_certificate.p12

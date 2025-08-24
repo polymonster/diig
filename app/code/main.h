@@ -307,7 +307,7 @@ struct ReleasesView
 struct ChartItem
 {
     std::string index;
-    u32         pos;
+    f64         pos;
 };
 
 struct Store

@@ -22,6 +22,7 @@
 
 #include <fstream>
 #include <thread>
+#include <chrono>
 
 using namespace put;
 using namespace pen;
@@ -217,6 +218,15 @@ namespace curl
         urlk.appendf("?key=%s", k_api_key);
         return urlk;
     }
+}
+
+f64 get_like_timestamp_time()
+{
+    // this offset fixes an issue where the original timestamp code was based on mach absolute time
+    // it means any new additions after this release will appear in timestamp order, but older likes will be
+    // ordered in groups but not full consecutive
+    constexpr f64 offset = 1696155367;
+    return offset + (f64)(std::chrono::system_clock::now().time_since_epoch() / std::chrono::milliseconds(1));
 }
 
 generic_cmp_array& get_component_array(soa& s, size_t i)
@@ -709,7 +719,7 @@ void* user_data_thread(void* userdata)
         ctx->user_data.mutex.lock();
         if(ctx->user_data.status == Status::e_invalidated) {
             // timestamp for merges
-            ctx->user_data.dict["timestamp"] = pen::get_time_ms();
+            ctx->user_data.dict["timestamp"] = get_like_timestamp_time();
 
             std::string user_data_str = ctx->user_data.dict.dump(4);
             FILE* fp = fopen(user_data_filepath.c_str(), "w");
@@ -890,7 +900,7 @@ void* releases_view_loader(void* userdata)
         } catch (...) {
             // ..
         }
-
+        
         auto likes = get_likes();
         if(!likes.empty() && likes.size() != likes_registry.size()) {
             PEN_LOG("populate likes from feed");
@@ -900,7 +910,7 @@ void* releases_view_loader(void* userdata)
 
                 // like value might be bool or number
                 bool like_true = false;
-                f32 timestamp = 0.0f;
+                f64 timestamp = 0.0f;
                 if(like.value().is_boolean()) {
                     like_true = like.value();
                 }
@@ -923,7 +933,7 @@ void* releases_view_loader(void* userdata)
 
                             view_chart.push_back({
                                 like.key(),
-                                (u32)timestamp
+                                timestamp
                             });
                         }
                         catch(...) {
@@ -963,7 +973,7 @@ void* releases_view_loader(void* userdata)
 
                 // like value might be bool or number
                 bool like_true = false;
-                f32 timestamp = 0.0f;
+                f64 timestamp = 0.0f;
                 if(like.value().is_boolean()) {
                     like_true = like.value();
                 }
@@ -975,7 +985,7 @@ void* releases_view_loader(void* userdata)
                 // add to view chart
                 view_chart.push_back({
                     like.key(),
-                    (u32)timestamp
+                    timestamp
                 });
             }
 
@@ -3617,7 +3627,7 @@ f32 get_like_timestamp(const Str& id) {
 void add_like(const Str& id)
 {
     ctx.data_ctx.user_data.mutex.lock();
-    ctx.data_ctx.user_data.dict["likes"][id.c_str()] = pen::get_time_ms();
+    ctx.data_ctx.user_data.dict["likes"][id.c_str()] = get_like_timestamp_time();
     ctx.data_ctx.user_data.mutex.unlock();
     ctx.data_ctx.user_data.status = Status::e_invalidated;
 

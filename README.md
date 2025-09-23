@@ -85,6 +85,25 @@ A store config can specify parts of a record store website to track. `store` is 
 
 Scrapers run [nightly](https://github.com/polymonster/dig/actions) to update information, if you provide a store schema then you need to define a page scraper function. There are currently a few examples in the project. It involves parsing the release schema information from the store's html pages.
 
+### Running Locally
+
+The scrapers need the following python dependencies:
+
+```
+pip install google-auth google-auth-oauthlib google-auth-httplib2
+
+```
+
+The you can run locally with:
+
+```
+cd scrape
+dig.py -urls -store juno -clear-trackers -key "{}" -verbose
+python3 
+```
+
+Where key should be a valid auth key for a firebase database.
+
 ## Firebase
 
 Data is uploaded and synchronised to firebase with data publicly readable. For a dump of the entire releases database you can use:

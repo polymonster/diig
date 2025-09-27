@@ -1,4 +1,19 @@
 {
+    "phonica": {
+        "sections": [
+            "essentials"
+        ],
+        "section_display_names": [
+            "Essentials"
+        ],
+        "views": {
+            "essentials": {
+                "url": "https://www.phonicarecords.com/essentials/6/all",
+                "page_count": 1,
+                "display_name": "Essentials"
+            }
+        }
+    },
     "juno": {
         "sections": [
             "minimal-tech-house",

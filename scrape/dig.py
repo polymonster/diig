@@ -46,9 +46,34 @@ def find_parse_elem(text: str, pos: int, ident: str, end_str: str, reverse=False
         end = last + text[last:].find(end_str)
 
     # return the result and the iter pos
-    elem =  text[pos:end]
+    elem = text[pos:end]
     return (end, elem)
 
+
+# find and parse a nested named html element
+def find_parse_nested_elems(text: str, pos: int, ident: str, start_str: str, end_str: str, reverse=False):
+    if reverse:
+        pos = text[0:pos].rfind(ident)
+    else:
+        pos = pos + text[pos:].find(ident)
+        assert(pos != -1)
+
+    # parse the start element
+    end = cgu.enclose("<", ">", text, pos)
+
+    while True:
+        last = end-1
+        if text[last] != end_str:
+            find_start = last + text[last:].find(start_str)
+            find_end = last + text[last:].find(end_str)
+            if find_start < find_end:
+                end = find_end + len(end_str)
+            else:
+                end = find_end + len(end_str)
+                break
+
+    elem = text[pos:end]
+    return (end, elem) 
 
 # get the value of a html element, ie <a href="value"
 def get_value(elem: str, ident: str):

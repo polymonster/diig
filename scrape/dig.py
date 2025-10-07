@@ -211,6 +211,14 @@ def firebase_compliant_key(key: str):
     return compliant
 
 
+# grab rate, in seconds to proceed per item
+def get_scrape_rate():
+    rate = 4
+    if "-rate" in sys.argv:
+        rate = sys.argv[sys.argv.index("-rate") + 1]
+    return int(rate)
+
+
 # creates an authorised session to write entires to firebase
 def auth_session():
     scopes = [

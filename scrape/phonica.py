@@ -30,6 +30,7 @@ def cache_page(url, cache_file):
 def execute_page(url, driver):
     driver.get(url)
     html = driver.execute_script("return document.documentElement.outerHTML")
+    print(html)
     return html
 
 
@@ -86,8 +87,6 @@ def scrape_page(url, store, view, section, counter, session_scraped_ids):
     if os.path.exists(reg_filepath):
         releases_dict = json.loads(open(reg_filepath, "r").read())
 
-    rate = dig.get_scrape_rate()
-
     pos = counter
     porducts_html = execute_page(f"{url}/{counter}", driver)
     product_group = dig.parse_div(porducts_html, 'id="archive-grid-view-home-category-6"')
@@ -137,7 +136,7 @@ def scrape_page(url, store, view, section, counter, session_scraped_ids):
             session_scraped_ids.append(release["id"])
             pos += 1
 
-            time.sleep(rate)
+            dig.scrape_yield()
 
     # write to file
     release_registry = (json.dumps(releases_dict, indent=4))

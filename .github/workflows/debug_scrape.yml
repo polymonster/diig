@@ -3,7 +3,6 @@ on:
   workflow_dispatch:
 jobs:
   debug-scrape:
-    needs: update-stores
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3

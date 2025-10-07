@@ -1,12 +1,16 @@
 import dig
 import os
 import json
+import time
+import sys
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
+
+# fetch htl from a cached file if present or spin up a driver and execute the script if not
 def cache_page(url, cache_file):
     if not os.path.exists(cache_file):
         options = webdriver.ChromeOptions()
@@ -21,13 +25,23 @@ def cache_page(url, cache_file):
     else:
         return open(cache_file, "r").read()
 
+
+# fetch html execuing script
+def execute_page(url, driver):
+    driver.get(url)
+    html = driver.execute_script("return document.documentElement.outerHTML")
+    return html
+
+
 # scrape detail info for a single product,obtaining mp3 links and image links
-def scrape_product(release):
-    product_html = cache_page("https://www.phonicarecords.com/product/doc-n-p1ll-rx-prescriptions-volume-2-serenity-now/205828/", "phonica_product.html")
+def scrape_product(release, url, driver):
+    product_html = execute_page(url, driver)
 
     # find track names and urls
     offset = 0
     (offset, playlist_elems)= dig.find_parse_nested_elems(product_html, offset, '<span class="archive-playlist display-none">', "<span", "</span>")
+
+    cdn = "https://dmpqep8cljqhc.cloudfront.net/"
 
     offset = 0
     track_names = list()
@@ -38,7 +52,7 @@ def scrape_product(release):
             name = dig.parse_body(track_elem).strip()
             end = name.find("</span>")
             track_names.append(name[:end])
-            track_urls.append(dig.get_value(track_elem, "id").strip())
+            track_urls.append(cdn + dig.get_value(track_elem, "id").strip())
         else:
             break
 
@@ -60,22 +74,38 @@ def scrape_product(release):
 def scrape_page(url, store, view, section, counter, session_scraped_ids):
     print(f"scraping phonica: {section} {url}")
 
-    porducts_html = cache_page("https://www.phonicarecords.com/essentials/6/all", "phonica_products.html")
+    # spin up a driver for the session
+    options = webdriver.ChromeOptions()
+    options.add_argument('--headless')
+    driver = webdriver.Chrome(options)
+    driver.minimize_window()
+    
+    # grab registry
+    releases_dict = dict()
+    reg_filepath = f"registry/{store}.json"
+    if os.path.exists(reg_filepath):
+        releases_dict = json.loads(open(reg_filepath, "r").read())
 
-    releases = dict()
+    rate = dig.get_scrape_rate()
 
-    # TODO:
-    # store_tags : {
-    #   out_of_stock
-    #   preorder
-    #}
-
+    pos = counter
+    porducts_html = execute_page(f"{url}/{counter}", driver)
     product_group = dig.parse_div(porducts_html, 'id="archive-grid-view-home-category-6"')
     for group in product_group:
         place_holders = dig.parse_div(group, 'class="product-place-holder')
         for p in place_holders:
             offset = 0
             (offset, image_elem) = dig.find_parse_elem(p, offset, '<a id=', "</a>")
+
+            # progress log
+            id = f"{store}-" + dig.get_value(image_elem, "id")
+
+            if "-verbose" in sys.argv:
+                print(f"parsing: {id}")
+
+            if id in session_scraped_ids:
+                continue
+
             (offset, artist_elem) = dig.find_parse_elem(p, offset, '<a id=', "</a>")
             (offset, product_link_elem) = dig.find_parse_elem(p, offset, '<a id=', "</a>")
             (offset, label_elem) = dig.find_parse_elem(p, offset, '<a id=', "</a>")
@@ -85,8 +115,8 @@ def scrape_page(url, store, view, section, counter, session_scraped_ids):
             (offset, title_elem) = dig.find_parse_elem(product_link_elem, offset, '<span class', "</span>")
 
             release = dict()
-            release["store"] = "phonica"
-            release["id"] = "phonica-" + dig.get_value(image_elem, "id")
+            release["store"] = store
+            release["id"] = id
             release["title"] = dig.parse_body(title_elem).strip()
             release["link"] = dig.get_value(product_link_elem, "href").strip()
             release["artist"] = dig.parse_body(artist_elem).strip()
@@ -94,15 +124,26 @@ def scrape_page(url, store, view, section, counter, session_scraped_ids):
             release["label_link"] = dig.get_value(label_elem, "href").strip()
             release["cat"] = ""
 
+            release[f"{store}-{section}-{view}"] = int(pos)
+
             release["store_tags"] = {
                 "out_of_stock": stock_elem.find("circle-shape-red") != -1,
                 "preorder": stock_elem.find("circle-shape-blue") != -1
             }
 
-            scrape_product(release)
+            scrape_product(release, release["link"], driver)
+            releases_dict[release["id"]] = release
 
-            print(json.dumps(release, indent=4))
+            session_scraped_ids.append(release["id"])
+            pos += 1
 
+            time.sleep(rate)
+
+    # write to file
+    release_registry = (json.dumps(releases_dict, indent=4))
+    open(reg_filepath, "w+").write(release_registry)
+
+    return counter + 18
 
 
 

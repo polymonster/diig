@@ -34,7 +34,6 @@ def execute_page(url, driver):
     wait.until(lambda driver: driver.execute_script("return document.readyState") == "complete")
     html = driver.execute_script("return document.documentElement.outerHTML")
 
-    print(html)
     return html
 
 

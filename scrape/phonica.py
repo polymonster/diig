@@ -91,10 +91,9 @@ def scrape_page(url, store, view, section, counter, session_scraped_ids):
     porducts_html = execute_page(f"{url}/{counter}", driver)
     product_group = dig.parse_div(porducts_html, 'id="archive-grid-view-home-category-6"')
     for group in product_group:
-        print(group)
         place_holders = dig.parse_div(group, 'class="product-place-holder')
+        print(len(place_holders))
         for p in place_holders:
-            print(p)
             offset = 0
             (offset, image_elem) = dig.find_parse_elem(p, offset, '<a id=', "</a>")
 
@@ -126,6 +125,8 @@ def scrape_page(url, store, view, section, counter, session_scraped_ids):
             release["cat"] = ""
 
             release[f"{store}-{section}-{view}"] = int(pos)
+
+            print(json.dumps(release), indent=4)
 
             release["store_tags"] = {
                 "out_of_stock": stock_elem.find("circle-shape-red") != -1,

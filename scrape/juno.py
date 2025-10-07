@@ -192,6 +192,7 @@ def scrape_page(url, store, view, section, counter, session_scraped_ids):
 
         # mark as done this session
         session_scraped_ids.append(key)
+        dig.scrape_yield()
 
     # write to file
     release_registry = (json.dumps(releases_dict, indent=4))

@@ -90,6 +90,7 @@ def scrape_page(url, store, view, section, counter, session_scraped_ids):
     pos = counter
     porducts_html = execute_page(f"{url}/{counter}", driver)
     product_group = dig.parse_div(porducts_html, 'id="archive-grid-view-home-category-6"')
+    print(len(product_group))
     for group in product_group:
         place_holders = dig.parse_div(group, 'class="product-place-holder')
         print(len(place_holders))

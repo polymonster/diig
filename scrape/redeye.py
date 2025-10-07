@@ -283,6 +283,7 @@ def scrape_page(url, store, view, section, counter, session_scraped_ids):
 
         # flagg for scraped this session
         session_scraped_ids.append(key)
+        dig.scrape_yield()
 
         # validate track counts and try reparsing
         merged = releases_dict[key]

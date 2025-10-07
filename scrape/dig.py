@@ -4,6 +4,7 @@ import datetime
 import redeye
 import json
 import os
+import time
 
 from google.oauth2 import service_account
 from google.auth.transport.requests import AuthorizedSession
@@ -191,7 +192,7 @@ def parse_class_single(html_str, html_class, ty):
         start = html_str[:first].rfind(f"<{ty} ")
         end = html_str.find(f"</{ty}", first)
         if end == -1:
-            end = html_str.find(f"&lt;\/{ty}")
+            end = html_str.find(f"&lt;\\/{ty}")
             if end == -1:
                 return None
         if start != -1 and end != -1:
@@ -213,10 +214,15 @@ def firebase_compliant_key(key: str):
 
 # grab rate, in seconds to proceed per item
 def get_scrape_rate():
-    rate = 4
+    rate = 1
     if "-rate" in sys.argv:
         rate = sys.argv[sys.argv.index("-rate") + 1]
     return int(rate)
+
+
+# grab rate, in seconds to proceed per item
+def scrape_yield():
+    time.sleep(get_scrape_rate())
 
 
 # creates an authorised session to write entires to firebase

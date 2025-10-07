@@ -48,7 +48,7 @@ jobs:
     - name: scrape_and_commit
       run: |
         cd scrape
-        python3 dig.py -store phonica -key '${{secrets.SERVICE_ACCOUNT}}' -clear-trackers -rate 2
+        python3 dig.py -store phonica -key '${{secrets.SERVICE_ACCOUNT}}' -clear-trackers -verbose
         git config user.name github-actions
         git config user.email github-actions@github.com
         git add .

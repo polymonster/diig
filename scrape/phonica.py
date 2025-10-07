@@ -29,7 +29,11 @@ def cache_page(url, cache_file):
 # fetch html execuing script
 def execute_page(url, driver):
     driver.get(url)
+
+    wait = WebDriverWait(driver, 60)
+    wait.until(lambda driver: driver.execute_script("return document.readyState") == "complete")
     html = driver.execute_script("return document.documentElement.outerHTML")
+
     print(html)
     return html
 
@@ -90,10 +94,8 @@ def scrape_page(url, store, view, section, counter, session_scraped_ids):
     pos = counter
     porducts_html = execute_page(f"{url}/{counter}", driver)
     product_group = dig.parse_div(porducts_html, 'id="archive-grid-view-home-category-6"')
-    print(len(product_group))
     for group in product_group:
         place_holders = dig.parse_div(group, 'class="product-place-holder')
-        print(len(place_holders))
         for p in place_holders:
             offset = 0
             (offset, image_elem) = dig.find_parse_elem(p, offset, '<a id=', "</a>")
@@ -126,8 +128,6 @@ def scrape_page(url, store, view, section, counter, session_scraped_ids):
             release["cat"] = ""
 
             release[f"{store}-{section}-{view}"] = int(pos)
-
-            print(json.dumps(release), indent=4)
 
             release["store_tags"] = {
                 "out_of_stock": stock_elem.find("circle-shape-red") != -1,

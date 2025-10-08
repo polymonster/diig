@@ -8,6 +8,7 @@
         "label": "DFA",
         "label_link": "https://www.phonicarecords.com/label/dfa/204889/all/latest/desc",
         "cat": "",
+        "phonica-essentials-essentials": 0,
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
@@ -33,6 +34,7 @@
         "label": "XL RECORDINGS",
         "label_link": "https://www.phonicarecords.com/label/xl-recordings/205440/all/latest/desc",
         "cat": "",
+        "phonica-essentials-essentials": 1,
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
@@ -58,6 +60,7 @@
         "label": "HYPERDUB",
         "label_link": "https://www.phonicarecords.com/label/hyperdub/205493/all/latest/desc",
         "cat": "",
+        "phonica-essentials-essentials": 2,
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
@@ -85,6 +88,7 @@
         "label": "NERVOUS RECORDS",
         "label_link": "https://www.phonicarecords.com/label/nervous-records/206264/all/latest/desc",
         "cat": "",
+        "phonica-essentials-essentials": 3,
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
@@ -124,6 +128,7 @@
         "label": "RISK REWARD",
         "label_link": "https://www.phonicarecords.com/label/risk-reward/206521/all/latest/desc",
         "cat": "",
+        "phonica-essentials-essentials": 4,
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
@@ -155,6 +160,7 @@
         "label": "NU GROOVE RECORDS",
         "label_link": "https://www.phonicarecords.com/label/nu-groove-records/205373/all/latest/desc",
         "cat": "",
+        "phonica-essentials-essentials": 5,
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
@@ -186,6 +192,7 @@
         "label": "TORPEDO",
         "label_link": "https://www.phonicarecords.com/label/torpedo/205808/all/latest/desc",
         "cat": "",
+        "phonica-essentials-essentials": 6,
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
@@ -217,6 +224,7 @@
         "label": "326 RECORDS",
         "label_link": "https://www.phonicarecords.com/label/326-records/205736/all/latest/desc",
         "cat": "",
+        "phonica-essentials-essentials": 7,
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
@@ -246,6 +254,7 @@
         "label": "SERENITY NOW",
         "label_link": "https://www.phonicarecords.com/label/serenity-now/205828/all/latest/desc",
         "cat": "",
+        "phonica-essentials-essentials": 8,
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
@@ -277,6 +286,7 @@
         "label": "P\u00daCA SOUNDS",
         "label_link": "https://www.phonicarecords.com/label/pca-sounds/206180/all/latest/desc",
         "cat": "",
+        "phonica-essentials-essentials": 9,
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
@@ -304,6 +314,7 @@
         "label": "PERSONALITY DISORDER MUSIC",
         "label_link": "https://www.phonicarecords.com/label/personality-disorder-music/205230/all/latest/desc",
         "cat": "",
+        "phonica-essentials-essentials": 10,
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
@@ -335,6 +346,7 @@
         "label": "KALAHARI OYSTER CULT",
         "label_link": "https://www.phonicarecords.com/label/kalahari-oyster-cult/205777/all/latest/desc",
         "cat": "",
+        "phonica-essentials-essentials": 11,
         "store_tags": {
             "out_of_stock": false,
             "preorder": false

@@ -29,11 +29,9 @@ def cache_page(url, cache_file):
 # fetch html execuing script
 def execute_page(url, driver):
     driver.get(url)
-
     wait = WebDriverWait(driver, 60)
     wait.until(lambda driver: driver.execute_script("return document.readyState") == "complete")
     html = driver.execute_script("return document.documentElement.outerHTML")
-
     return html
 
 
@@ -72,6 +70,8 @@ def scrape_product(release, url, driver):
         dig.get_value(artwork_elems, "content"),
         dig.get_value(artwork_elems, "content"),
     ]
+
+    dig.scrape_yield()
 
 
 # scrape an individual page for a view (essentials, new releases)
@@ -139,12 +139,11 @@ def scrape_page(url, store, view, section, counter, session_scraped_ids):
             session_scraped_ids.append(release["id"])
             pos += 1
 
-            dig.scrape_yield()
-
     # write to file
     release_registry = (json.dumps(releases_dict, indent=4))
     open(reg_filepath, "w+").write(release_registry)
 
+    dig.scrape_yield()
     return counter + 18
 
 

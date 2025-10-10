@@ -264,6 +264,7 @@ def scrape_page(url, store, view, section, counter, session_scraped_ids):
                             break
                         except UnicodeEncodeError:
                             break
+                    dig.scrape_yield()
 
                 # if we found compatible urls just assume the rest
                 if use_attempt:
@@ -307,5 +308,6 @@ def scrape_page(url, store, view, section, counter, session_scraped_ids):
     release_registry = (json.dumps(releases_dict, indent=4))
     open(reg_filepath, "w+").write(release_registry)
 
+    dig.scrape_yield()
     return counter
 

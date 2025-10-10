@@ -296,6 +296,7 @@ def scrape_page(url, store, view, section, counter, session_scraped_ids):
     release_registry = (json.dumps(releases_dict, indent=4))
     open(reg_filepath, "w+").write(release_registry)
 
+    dig.scrape_yield()
     return counter
 
 

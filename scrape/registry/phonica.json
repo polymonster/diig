@@ -192,7 +192,7 @@
         "label": "TORPEDO",
         "label_link": "https://www.phonicarecords.com/label/torpedo/205808/all/latest/desc",
         "cat": "",
-        "phonica-essentials-essentials": 6,
+        "phonica-essentials-essentials": 7,
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
@@ -224,7 +224,7 @@
         "label": "326 RECORDS",
         "label_link": "https://www.phonicarecords.com/label/326-records/205736/all/latest/desc",
         "cat": "",
-        "phonica-essentials-essentials": 7,
+        "phonica-essentials-essentials": 6,
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
@@ -254,7 +254,7 @@
         "label": "SERENITY NOW",
         "label_link": "https://www.phonicarecords.com/label/serenity-now/205828/all/latest/desc",
         "cat": "",
-        "phonica-essentials-essentials": 8,
+        "phonica-essentials-essentials": 9,
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
@@ -286,7 +286,7 @@
         "label": "P\u00daCA SOUNDS",
         "label_link": "https://www.phonicarecords.com/label/pca-sounds/206180/all/latest/desc",
         "cat": "",
-        "phonica-essentials-essentials": 9,
+        "phonica-essentials-essentials": 10,
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
@@ -314,7 +314,7 @@
         "label": "PERSONALITY DISORDER MUSIC",
         "label_link": "https://www.phonicarecords.com/label/personality-disorder-music/205230/all/latest/desc",
         "cat": "",
-        "phonica-essentials-essentials": 10,
+        "phonica-essentials-essentials": 11,
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
@@ -367,6 +367,34 @@
             "https://d1c4rk9le5opln.cloudfront.net/7bfb60b7a8dc6e86bdb3d101d0482aa1_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/7bfb60b7a8dc6e86bdb3d101d0482aa1_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/7bfb60b7a8dc6e86bdb3d101d0482aa1_big.jpg"
+        ]
+    },
+    "phonica-205662": {
+        "store": "phonica",
+        "id": "phonica-205662",
+        "title": "Naked Hunger",
+        "link": "https://www.phonicarecords.com/product/quiet-village-vanessa-daou-naked-hunger-the-quiet-village/205662",
+        "artist": "QUIET VILLAGE &amp; VANESSA DAOU",
+        "label": "THE QUIET VILLAGE",
+        "label_link": "https://www.phonicarecords.com/label/the-quiet-village/205662/all/latest/desc",
+        "cat": "",
+        "phonica-essentials-essentials": 8,
+        "store_tags": {
+            "out_of_stock": false,
+            "preorder": false
+        },
+        "track_names": [
+            "Naked Hunger (Vocal)",
+            "Naked Hunger (Spoken Word)"
+        ],
+        "track_urls": [
+            "https://dmpqep8cljqhc.cloudfront.net/6ccd0a2215a3dcaba951bd2a0578ee3c.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/089f2b6e282c379679da2dfe55ea4fd8.mp3"
+        ],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/deeab4d705d353f8a69970da8f8b4505_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/deeab4d705d353f8a69970da8f8b4505_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/deeab4d705d353f8a69970da8f8b4505_big.jpg"
         ]
     }
 }

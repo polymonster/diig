@@ -5,6 +5,7 @@ import redeye
 import json
 import os
 import time
+import urllib.request
 
 from google.oauth2 import service_account
 from google.auth.transport.requests import AuthorizedSession
@@ -13,11 +14,27 @@ from google.auth.transport.requests import AuthorizedSession
 global auth_key
 
 
+# fetch html from a cached file if present or request the file
+def fetch_cache_page(url, cache_file):
+    if not os.path.exists(cache_file):
+        req = urllib.request.Request(
+            url=url,
+            headers={'User-Agent': 'Mozilla/5.0'}
+        )
+        html_file = urllib.request.urlopen(req)
+        html = html_file.read().decode("utf8")
+        open(cache_file, "w", encoding='utf-8').write(html)
+        return html
+    else:
+        return open(cache_file, "r", encoding='utf-8').read()
+
+
 # return true if the supplied `view` name is a chart
 def is_view_chart(view):
     if view in ["weekly_chart", "monthly_chart"]:
         return True
     return False
+
 
 # member wise merge 2 dicts, second will overwrite dest
 def merge_dicts(dest, second):
@@ -190,9 +207,11 @@ def parse_class_single(html_str, html_class, ty):
         if first == -1:
             break
         start = html_str[:first].rfind(f"<{ty} ")
+        if start == -1:
+            break
         end = html_str.find(f"</{ty}", first)
         if end == -1:
-            end = html_str.find(f"&lt;\/{ty}")
+            end = html_str.find(f"&lt;\\/{ty}")
             if end == -1:
                 return None
         if start != -1 and end != -1:
@@ -397,7 +416,7 @@ def scrape_store(stores, store_name):
                 print("scraping: {} / {}".format(section, view))
                 for i in range(1, 1+page_count):
                     view_url = view_dict["url"]
-                    page_url = view_url.replace("${{section}}", section).replace("${{page}}", str(i))
+                    page_url = view_url.replace("${{section}}", section).replace("${{page}}", str(i)).replace("${{counter}}", str(counter))
                     counter = page_function(
                         page_url,
                         store_name,

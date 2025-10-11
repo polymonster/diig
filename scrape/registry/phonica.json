@@ -8,7 +8,7 @@
         "label": "DFA",
         "label_link": "https://www.phonicarecords.com/label/dfa/204889/all/latest/desc",
         "cat": "",
-        "phonica-essentials-essentials": 0,
+        "phonica-essentials-essentials": 10,
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
@@ -34,7 +34,7 @@
         "label": "XL RECORDINGS",
         "label_link": "https://www.phonicarecords.com/label/xl-recordings/205440/all/latest/desc",
         "cat": "",
-        "phonica-essentials-essentials": 1,
+        "phonica-essentials-essentials": 2,
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
@@ -60,7 +60,7 @@
         "label": "HYPERDUB",
         "label_link": "https://www.phonicarecords.com/label/hyperdub/205493/all/latest/desc",
         "cat": "",
-        "phonica-essentials-essentials": 2,
+        "phonica-essentials-essentials": 4,
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
@@ -88,7 +88,7 @@
         "label": "NERVOUS RECORDS",
         "label_link": "https://www.phonicarecords.com/label/nervous-records/206264/all/latest/desc",
         "cat": "",
-        "phonica-essentials-essentials": 3,
+        "phonica-essentials-essentials": 5,
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
@@ -128,7 +128,7 @@
         "label": "RISK REWARD",
         "label_link": "https://www.phonicarecords.com/label/risk-reward/206521/all/latest/desc",
         "cat": "",
-        "phonica-essentials-essentials": 4,
+        "phonica-essentials-essentials": 7,
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
@@ -160,7 +160,7 @@
         "label": "NU GROOVE RECORDS",
         "label_link": "https://www.phonicarecords.com/label/nu-groove-records/205373/all/latest/desc",
         "cat": "",
-        "phonica-essentials-essentials": 5,
+        "phonica-essentials-essentials": 6,
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
@@ -192,7 +192,7 @@
         "label": "TORPEDO",
         "label_link": "https://www.phonicarecords.com/label/torpedo/205808/all/latest/desc",
         "cat": "",
-        "phonica-essentials-essentials": 6,
+        "phonica-essentials-essentials": 9,
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
@@ -224,7 +224,7 @@
         "label": "326 RECORDS",
         "label_link": "https://www.phonicarecords.com/label/326-records/205736/all/latest/desc",
         "cat": "",
-        "phonica-essentials-essentials": 7,
+        "phonica-essentials-essentials": 8,
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
@@ -254,7 +254,6 @@
         "label": "SERENITY NOW",
         "label_link": "https://www.phonicarecords.com/label/serenity-now/205828/all/latest/desc",
         "cat": "",
-        "phonica-essentials-essentials": 8,
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
@@ -286,7 +285,6 @@
         "label": "P\u00daCA SOUNDS",
         "label_link": "https://www.phonicarecords.com/label/pca-sounds/206180/all/latest/desc",
         "cat": "",
-        "phonica-essentials-essentials": 9,
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
@@ -314,7 +312,6 @@
         "label": "PERSONALITY DISORDER MUSIC",
         "label_link": "https://www.phonicarecords.com/label/personality-disorder-music/205230/all/latest/desc",
         "cat": "",
-        "phonica-essentials-essentials": 10,
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
@@ -346,7 +343,6 @@
         "label": "KALAHARI OYSTER CULT",
         "label_link": "https://www.phonicarecords.com/label/kalahari-oyster-cult/205777/all/latest/desc",
         "cat": "",
-        "phonica-essentials-essentials": 11,
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
@@ -367,6 +363,158 @@
             "https://d1c4rk9le5opln.cloudfront.net/7bfb60b7a8dc6e86bdb3d101d0482aa1_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/7bfb60b7a8dc6e86bdb3d101d0482aa1_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/7bfb60b7a8dc6e86bdb3d101d0482aa1_big.jpg"
+        ]
+    },
+    "phonica-205662": {
+        "store": "phonica",
+        "id": "phonica-205662",
+        "title": "Naked Hunger",
+        "link": "https://www.phonicarecords.com/product/quiet-village-vanessa-daou-naked-hunger-the-quiet-village/205662",
+        "artist": "QUIET VILLAGE &amp; VANESSA DAOU",
+        "label": "THE QUIET VILLAGE",
+        "label_link": "https://www.phonicarecords.com/label/the-quiet-village/205662/all/latest/desc",
+        "cat": "",
+        "phonica-essentials-essentials": 11,
+        "store_tags": {
+            "out_of_stock": false,
+            "preorder": false
+        },
+        "track_names": [
+            "Naked Hunger (Vocal)",
+            "Naked Hunger (Spoken Word)"
+        ],
+        "track_urls": [
+            "https://dmpqep8cljqhc.cloudfront.net/6ccd0a2215a3dcaba951bd2a0578ee3c.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/089f2b6e282c379679da2dfe55ea4fd8.mp3"
+        ],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/deeab4d705d353f8a69970da8f8b4505_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/deeab4d705d353f8a69970da8f8b4505_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/deeab4d705d353f8a69970da8f8b4505_big.jpg"
+        ]
+    },
+    "phonica-205162": {
+        "store": "phonica",
+        "id": "phonica-205162",
+        "title": "Black Mahogani LP (Smokey VInyl)",
+        "link": "https://www.phonicarecords.com/product/moodymann-black-mahogani-lp-smokey-vinyl-peacefrog/205162",
+        "artist": "MOODYMANN",
+        "label": "PEACEFROG",
+        "label_link": "https://www.phonicarecords.com/label/peacefrog/205162/all/latest/desc",
+        "cat": "",
+        "phonica-essentials-essentials": 0,
+        "store_tags": {
+            "out_of_stock": false,
+            "preorder": false
+        },
+        "track_names": [
+            "Holiday",
+            "Roberta Jean Machine",
+            "I Need You So Much",
+            "Runaway",
+            "I'm Doing Fine",
+            "Shades Of Jae",
+            "Riley's Song",
+            "Back At Bakers (On Livernois)",
+            "Mahogani 9000",
+            "Black Mahogani"
+        ],
+        "track_urls": [
+            "https://dmpqep8cljqhc.cloudfront.net/3cc9505c00d33ed61e774d94cd237a2a.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/f0c369a1e36ab6be7baefa05fb433a2b.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/fdf7577ea80028bd3a8cd146b9ff8a3f.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/1792c9b7a20849fd578d53c86c352d90.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/82f6646b706f2afaf013539b6a63c801.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/348413f67946dd8bd34edcd01857b2b6.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/beeb6a036e2aa9730c0bf6a067766283.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/d7b609970299a8e352669225988c5898.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/e8c345972358c4d36f4564936583b8c7.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/180665e2f994c3aea25182526828ef20.mp3"
+        ],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/e503ae8ec75bfee870d73ceb3479a6cb_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/e503ae8ec75bfee870d73ceb3479a6cb_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/e503ae8ec75bfee870d73ceb3479a6cb_big.jpg"
+        ]
+    },
+    "phonica-206028": {
+        "store": "phonica",
+        "id": "phonica-206028",
+        "title": "SickElixir LP",
+        "link": "https://www.phonicarecords.com/product/blawan-sickelixir-lp-xl-recordings/206028",
+        "artist": "BLAWAN",
+        "label": "XL RECORDINGS",
+        "label_link": "https://www.phonicarecords.com/label/xl-recordings/206028/all/latest/desc",
+        "cat": "",
+        "phonica-essentials-essentials": 1,
+        "store_tags": {
+            "out_of_stock": false,
+            "preorder": false
+        },
+        "track_names": [
+            "\"The Gl Lights\"",
+            "\"NOS\"",
+            "\"Weirdos Unite\"",
+            "\"Rabbit Hole\" (feat Monstera Black)",
+            "\"WTF\"",
+            "\"Casch\"",
+            "\"Birf Song\"",
+            "\"During Elevation\"",
+            "\"Dont Worry We Happy\"",
+            "\"Style Teef\"",
+            "\"Sonkind\"",
+            "\"TCP Burn\"",
+            "\"Creature Brigade\"",
+            "\"SickElixir\""
+        ],
+        "track_urls": [
+            "https://dmpqep8cljqhc.cloudfront.net/bc5fd58f4f52bbadc508d66eac5ba418.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/23eee3f030a728842929ba2fa5a1f25b.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/ca4953f985b998d45b3e7964b076776d.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/3311a4f4bd1d79011042f61b928cb8d0.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/aa54e6222a3d28bfda1bcc3178f4579f.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/659f9de799a41ca8de648fdfab1453c8.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/566311feda9f2109942330eb41ff1223.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/4411bd3544bbfd40e3ee7c7bfc95ab80.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/43cdf14c8636c511b4d6ce4d5f7a3bc2.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/9be09999af4937db5930e35d376dcfa6.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/373bae33fedad0cc1944f90064ff4e27.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/c3d987723039ad3fbfb9a75f5045f6e9.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/5658ed18581033fb681ee273f14a6506.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/a2d865087cfa68bd218d078ab8525f09.mp3"
+        ],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/b91dd325af679b63cab4181eb3a0cb8c_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/b91dd325af679b63cab4181eb3a0cb8c_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/b91dd325af679b63cab4181eb3a0cb8c_big.jpg"
+        ]
+    },
+    "phonica-206019": {
+        "store": "phonica",
+        "id": "phonica-206019",
+        "title": "Save Your Soul (Joe Claussell Sacred Rhythm...",
+        "link": "https://www.phonicarecords.com/product/arp-frique-the-perpetual-singers-save-your-soul-joe-claussell-sacred-rhythm-unknownunknown/206019",
+        "artist": "ARP FRIQUE &amp; THE PERPETUAL SINGERS",
+        "label": "UNKNOWNUNKNOWN",
+        "label_link": "https://www.phonicarecords.com/label/unknownunknown/206019/all/latest/desc",
+        "cat": "",
+        "phonica-essentials-essentials": 3,
+        "store_tags": {
+            "out_of_stock": false,
+            "preorder": false
+        },
+        "track_names": [
+            "Save Your Soul (Joe Claussell Sacred Rhythm Praise Version Remix)",
+            "Save Your Soul  "
+        ],
+        "track_urls": [
+            "https://dmpqep8cljqhc.cloudfront.net/71f70b8ebf183f3da53fb589ac3bb8f1.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/d884e2ab671391f244f20381a1ddc305.mp3"
+        ],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/a14d3f667b08021024e52e8cbf009c98_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/a14d3f667b08021024e52e8cbf009c98_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/a14d3f667b08021024e52e8cbf009c98_big.jpg"
         ]
     }
 }

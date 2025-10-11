@@ -10,12 +10,12 @@
         ],
         "views": {
             "essentials": {
-                "url": "https://www.phonicarecords.com/essentials/6/all",
+                "url": "https://www.phonicarecords.com/essentials/6/all/${{counter}}",
                 "page_count": 2,
                 "display_name": "Essentials"
             },
             "new-releases": {
-                "url": "https://www.phonicarecords.com/new-releases/",
+                "url": "https://www.phonicarecords.com/new-releases/${{counter}}",
                 "page_count": 5,
                 "display_name": "New Releases"
             }

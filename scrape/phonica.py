@@ -133,8 +133,14 @@ def scrape_page(url, store, view, section, counter, session_scraped_ids):
                 "preorder": stock_elem.find("circle-shape-blue") != -1
             }
 
-            scrape_product(release, release["link"], driver)
-            releases_dict[release["id"]] = release
+            # merge or scrape deeper
+            if id in releases_dict:
+                merge = dict()
+                merge[id] = release
+                dig.merge_dicts(releases_dict, merge)
+            else:
+                scrape_product(release, release["link"], driver)
+                releases_dict[release["id"]] = release
 
             session_scraped_ids.append(release["id"])
             pos += 1

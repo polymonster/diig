@@ -103,6 +103,10 @@ namespace curl
         curl = curl_easy_init();
 
         if(curl) {
+            struct curl_slist *headers = NULL;
+            headers = curl_slist_append(headers, "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36");
+
+            curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
             curl_easy_setopt(curl, CURLOPT_URL, url);
             curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
             curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, false);
@@ -2998,7 +3002,7 @@ namespace
                     }
                     else
                     {
-                        ctx.store = change_store("yoyaku");
+                        ctx.store = change_store("redeye");
                     }
 
                     ctx.data_ctx.user_data.mutex.unlock();
@@ -3464,7 +3468,7 @@ void audio_player()
         {
             // stop existing
             audio_player_stop_existing();
-
+            
             audio_ctx.si = put::audio_create_stream(ctx.play_track_filepath.c_str());
             audio_ctx.ci = put::audio_create_channel_for_sound(audio_ctx.si);
             audio_ctx.gi = put::audio_create_channel_group();

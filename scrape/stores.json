@@ -10,7 +10,7 @@
         ],
         "views": {
             "essentials": {
-                "url": "https://www.phonicarecords.com/essentials/6/all/${{counter}}",
+                "url": "https://www.phonicarecords.com/special/essentials/6/all/${{counter}}",
                 "page_count": 2,
                 "display_name": "Essentials"
             },

@@ -32,6 +32,10 @@ def execute_page(url, driver):
     wait = WebDriverWait(driver, 60)
     wait.until(lambda driver: driver.execute_script("return document.readyState") == "complete")
     html = driver.execute_script("return document.documentElement.outerHTML")
+
+    if url == "https://www.phonicarecords.com/new-releases/0":
+        cache_page(url, "new-releases.html")
+
     return html
 
 
@@ -91,8 +95,8 @@ def scrape_page(url, store, view, section, counter, session_scraped_ids):
         releases_dict = json.loads(open(reg_filepath, "r").read())
 
     pos = counter
-    porducts_html = execute_page(f"{url}/{counter}", driver)
-    product_group = dig.parse_div(porducts_html, 'id="archive-grid-view-home-category-6"')
+    porducts_html = execute_page(url, driver)
+    product_group = dig.parse_div(porducts_html, 'id="archive-grid-view"')
     for group in product_group:
         place_holders = dig.parse_div(group, 'class="product-place-holder')
         for p in place_holders:
@@ -139,7 +143,9 @@ def scrape_page(url, store, view, section, counter, session_scraped_ids):
                 merge[id] = release
                 dig.merge_dicts(releases_dict, merge)
             else:
-                scrape_product(release, release["link"], driver)
+                link = release["link"]
+                print(f"scrape product page: {link}")
+                scrape_product(release, link, driver)
                 releases_dict[release["id"]] = release
 
             session_scraped_ids.append(release["id"])

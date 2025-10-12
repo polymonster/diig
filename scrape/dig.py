@@ -74,7 +74,7 @@ def find_parse_nested_elems(text: str, pos: int, ident: str, start_str: str, end
         pos = text[0:pos].rfind(ident)
     else:
         pos = pos + text[pos:].find(ident)
-        assert(pos != -1)
+        return (pos + 1, "")
 
     # parse the start element
     end = cgu.enclose("<", ">", text, pos)

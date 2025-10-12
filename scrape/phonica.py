@@ -41,11 +41,19 @@ def execute_page(url, driver):
 
 # scrape detail info for a single product,obtaining mp3 links and image links
 def scrape_product(release, url, driver):
+
     product_html = execute_page(url, driver)
+    print(product_html)
+
+    open("phonica-missing-links", "w", encoding='utf-8').write(product_html)
 
     # find track names and urls
     offset = 0
     (offset, playlist_elems)= dig.find_parse_nested_elems(product_html, offset, '<span class="archive-playlist display-none">', "<span", "</span>")
+
+    print(offset)
+
+    print(playlist_elems)
 
     cdn = "https://dmpqep8cljqhc.cloudfront.net/"
 
@@ -144,9 +152,13 @@ def scrape_page(url, store, view, section, counter, session_scraped_ids):
                 dig.merge_dicts(releases_dict, merge)
             else:
                 link = release["link"]
-                print(f"scrape product page: {link}")
+                if "-verbose" in sys.argv:
+                    print(f"scrape product page: {link}")
                 scrape_product(release, link, driver)
                 releases_dict[release["id"]] = release
+
+            print(json.dumps(releases_dict[release["id"]], indent=4))
+            assert(0)
 
             session_scraped_ids.append(release["id"])
             pos += 1

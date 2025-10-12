@@ -1,19 +1,12 @@
 {
     "phonica": {
         "sections": [
-            "essentials",
-            "new-releases"
+            "all-genres"
         ],
         "section_display_names": [
-            "Essentials",
-            "New Releases"
+            "All Genres"
         ],
         "views": {
-            "essentials": {
-                "url": "https://www.phonicarecords.com/special/essentials/6/all/${{counter}}",
-                "page_count": 2,
-                "display_name": "Essentials"
-            },
             "new-releases": {
                 "url": "https://www.phonicarecords.com/new-releases/${{counter}}",
                 "page_count": 5,

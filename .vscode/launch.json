@@ -8,8 +8,8 @@
             "cwd": "scrape",
             "args": [
                 "-store",
-                "juno",
-                "-urls"
+                "phonica",
+                "-verbose"
             ]
         }
     ]

@@ -13,11 +13,34 @@ The aim is to be extensible so more record stores, genre sections and views can 
     <img src="https://github.com/polymonster/dig/raw/main/media/dig.gif"/>
 </p>
 
-## Schemas
+## Scrapers
+
+Scrapers run [nightly](https://github.com/polymonster/dig/actions) to update information, if you provide a store schema then you need to define a page scraper function. There are currently a few examples in the project. It involves parsing the release schema information from the store's html pages.
+
+### Running Locally
+
+The scrapers need the following python dependencies:
+
+```
+pip install google-auth google-auth-oauthlib google-auth-httplib2
+
+```
+
+The you can run locally with:
+
+```
+cd scrape
+dig.py -urls -store juno -clear-trackers -key "{}" -verbose
+python3 
+```
+
+Where key should be a valid auth key for a firebase database.
+
+### Schemas
 
 The project provides schemas and a unified data representation so that other record stores and sources can be added to expand the database.
 
-### Release Schema
+#### Release Schema
 
 A release schema defines a single release, specifying artist, track names, track urls of snippits and artworks amongst other information. Releases are stored in a flat dictionary with the key being their id plus the store name prefix to avoid ID collisions, each release is treated uniquely per record store. In the future aggregating releases and cross checking them might be a feature worth looking into.
 
@@ -52,7 +75,7 @@ A release schema defines a single release, specifying artist, track names, track
 }
 ```
 
-### Store Schema
+#### Store Schema
 
 A store config can specify parts of a record store website to track. `store` is the record store itself, `sections` define genre groups and `views` define charts, latest releases, preorders and other criteria which may vary from site to site. You can supply the special variables `${{section}}` and `${{page}}` to record store urls to scrape multiple pages and sections.
 
@@ -80,29 +103,6 @@ A store config can specify parts of a record store website to track. `store` is 
     }
 }
 ```
-
-## Scrapers
-
-Scrapers run [nightly](https://github.com/polymonster/dig/actions) to update information, if you provide a store schema then you need to define a page scraper function. There are currently a few examples in the project. It involves parsing the release schema information from the store's html pages.
-
-### Running Locally
-
-The scrapers need the following python dependencies:
-
-```
-pip install google-auth google-auth-oauthlib google-auth-httplib2
-
-```
-
-The you can run locally with:
-
-```
-cd scrape
-dig.py -urls -store juno -clear-trackers -key "{}" -verbose
-python3 
-```
-
-Where key should be a valid auth key for a firebase database.
 
 ## Firebase
 

@@ -274,7 +274,8 @@ def scrape_page(url, store, view, section, counter, session_scraped_ids):
 
             if not has_tracks:
                 release_dict["track_urls"] = get_redeye_snippit_urls("https://redeye-391831.c.cdn77.org/", id)
-                if len(releases_dict[key]["artworks"]) == 0:
+                if len(releases_dict[key]["track_urls"]) < len(release_dict["track_names"]):
+                    dig.scrape_yield()
                     release_dict["track_urls"] = get_redeye_snippit_urls("https://sounds.redeyerecords.co.uk/", id)
 
             if not has_artworks:

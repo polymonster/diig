@@ -105,9 +105,9 @@ def parse_redeye_release_link(elem: str):
 
 
 # find snippit urls by trying id-track and returning when none are found
-def get_redeye_snippit_urls(release_id):
+def get_redeye_snippit_urls(cdn, release_id):
     tracks = list()
-    cdn = "https://redeye-391831.c.cdn77.org/"
+
     # check the releaseid exists, this is track-a
     try_url = f"{cdn}{release_id}.mp3"
     try:
@@ -124,6 +124,7 @@ def get_redeye_snippit_urls(release_id):
                 l = chr(ord(l) + 1)
     except urllib.error.HTTPError:
         pass
+
     return tracks
 
 
@@ -132,13 +133,13 @@ def get_redeye_artwork_urls(release_id):
     artworks = list()
     cdn = "https://www.redeyerecords.co.uk/imagery/"
     # check the artwork exists
-    try:
-        for i in range(0, 3):
+    for i in range(0, 3):
+        try:
             try_url = f"{cdn}{release_id}-{i}.jpg"
             if urllib.request.urlopen(try_url).code == 200:
                 artworks.append(try_url)
-    except urllib.error.HTTPError:
-        pass
+        except urllib.error.HTTPError:
+            pass
     return artworks
 
 
@@ -204,6 +205,8 @@ def scrape_page(url, store, view, section, counter, session_scraped_ids):
         release_dict["store_tags"] = dict()
         release_dict["store"] = f"{store}"
         release_dict["id"] = parse_redeye_release_id(id_elem)
+        id = release_dict["id"]
+
         key = "{}-{}".format(store, release_dict["id"])
 
         # get indices
@@ -239,7 +242,6 @@ def scrape_page(url, store, view, section, counter, session_scraped_ids):
         release_dict["link"] = parse_redeye_release_link(link_elem)
         dig.merge_dicts(release_dict, parse_redeye_label(label_elem))
         dig.merge_dicts(release_dict, parse_redeye_artist(artist_elem))
-        id = release_dict["id"]
 
         # add store tags
         if grid_elem.find("price preorder") != -1:
@@ -271,7 +273,9 @@ def scrape_page(url, store, view, section, counter, session_scraped_ids):
                         has_artworks = True
 
             if not has_tracks:
-                release_dict["track_urls"] = get_redeye_snippit_urls(id)
+                release_dict["track_urls"] = get_redeye_snippit_urls("https://redeye-391831.c.cdn77.org/", id)
+                if len(releases_dict[key]["artworks"]) == 0:
+                    release_dict["track_urls"] = get_redeye_snippit_urls("https://sounds.redeyerecords.co.uk/", id)
 
             if not has_artworks:
                 release_dict["artworks"] = get_redeye_artwork_urls(id)

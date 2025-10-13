@@ -5,11 +5,16 @@
             "type": "debugpy",
             "request": "launch",
             "program": "dig.py",
-            "cwd": "scrape",
+            "cwd": "${workspaceFolder}/scrape",
             "args": [
                 "-store",
-                "phonica",
-                "-verbose"
+                "redeye",
+                "-verbose",
+                "-urls",
+                "-section",
+                "techno-electro",
+                "-view",
+                "weekly_chart"
             ]
         }
     ]

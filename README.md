@@ -26,7 +26,7 @@ pip install google-auth google-auth-oauthlib google-auth-httplib2
 
 ```
 
-The you can run locally with:
+The you can run locally with command lines such as:
 
 ```
 cd scrape
@@ -35,6 +35,33 @@ python3
 ```
 
 Where key should be a valid auth key for a firebase database.
+
+Full help can be viewed with `-help`:
+
+```
+cd scrape
+py -3 dig.py -help
+diig
+  -help - display this message
+  -store <store_name> - specify a store to scrape
+  -key - auth token json string for firebase. if not present will ook for a local file diig-auth.json
+  -rate <in seconds> - duration at which to yield inbetween requests
+  -urls - flag selects whether extra urls such as artwork or mp3s are scraped
+  -verbose - print more info
+  -update-stores - synchronises local stores.json with the database
+  -patch-only - skips scraping and applies patch to the database from store registry
+
+  optional filters:
+    -section <sectiom_name> - specify a single section to scrape ie. 'techno-electro'
+    -view <store_name> - specify a single view to scrape ie. weekly-chart
+
+  debug options:
+    -fix-store <store_name> - specify a store run custom fixup code
+```
+
+### Debugging
+
+You can debug using vscode if you have the python extensions installed, edit [.vscode/launch.json](https://github.com/polymonster/diig/blob/main/.vscode/launch.json) to change which projects to debug. You can supply commandline arguments as descibed above.
 
 ### Schemas
 

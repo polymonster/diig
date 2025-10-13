@@ -14,6 +14,25 @@ from google.auth.transport.requests import AuthorizedSession
 global auth_key
 
 
+def display_help():
+    print("diig")
+    print("  -help - display this message")
+    print("  -store <store_name> - specify a store to scrape")
+    print("  -key - auth token json string for firebase. if not present will ook for a local file diig-auth.json")
+    print("  -rate <in seconds> - duration at which to yield inbetween requests")
+    print("  -urls - flag selects whether extra urls such as artwork or mp3s are scraped")
+    print("  -verbose - print more info")
+    print("  -update-stores - synchronises local stores.json with the database")
+    print("  -patch-only - skips scraping and applies patch to the database from store registry")
+    print("")
+    print("  optional filters:")
+    print("    -section <sectiom_name> - specify a single section to scrape ie. 'techno-electro'")
+    print("    -view <store_name> - specify a single view to scrape ie. weekly-chart")
+    print("")
+    print("  debug options:")
+    print("    -fix-store <store_name> - specify a store run custom fixup code")
+
+    
 # fetch html from a cached file if present or request the file
 def fetch_cache_page(url, cache_file):
     if not os.path.exists(cache_file):
@@ -444,6 +463,10 @@ def test():
 
 # main
 if __name__ == '__main__':
+    if "-help"  in sys.argv:
+        display_help()
+        exit(0)
+
     # service key for firebase writes
     if "-key" in sys.argv:
         auth_key = json.loads(sys.argv[sys.argv.index("-key") + 1])
@@ -476,5 +499,3 @@ if __name__ == '__main__':
         verbose = "-verbose" in sys.argv
         # scrape legacy
         redeye.scrape_legacy(100, get_urls, test_single, verbose)
-
-    print("reached end")

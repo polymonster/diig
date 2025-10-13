@@ -439,7 +439,8 @@
             "https://d1c4rk9le5opln.cloudfront.net/e503ae8ec75bfee870d73ceb3479a6cb_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/e503ae8ec75bfee870d73ceb3479a6cb_big.jpg"
         ],
-        "phonica-essentials-essentials": 0
+        "phonica-essentials-essentials": 0,
+        "phonica-all-genres-new-releases": 64
     },
     "phonica-206028": {
         "store": "phonica",
@@ -491,7 +492,8 @@
             "https://d1c4rk9le5opln.cloudfront.net/b91dd325af679b63cab4181eb3a0cb8c_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/b91dd325af679b63cab4181eb3a0cb8c_big.jpg"
         ],
-        "phonica-essentials-essentials": 1
+        "phonica-essentials-essentials": 1,
+        "phonica-all-genres-new-releases": 75
     },
     "phonica-206019": {
         "store": "phonica",
@@ -518,6 +520,2959 @@
             "https://d1c4rk9le5opln.cloudfront.net/a14d3f667b08021024e52e8cbf009c98_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/a14d3f667b08021024e52e8cbf009c98_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/a14d3f667b08021024e52e8cbf009c98_big.jpg"
+        ],
+        "phonica-all-genres-new-releases": 8
+    },
+    "phonica-206275": {
+        "store": "phonica",
+        "id": "phonica-206275",
+        "title": "Wired (Roman Flugel remix)",
+        "link": "https://www.phonicarecords.com/product/odopt-wired-roman-flugel-remix-club-blanco/206275",
+        "artist": "ODOPT",
+        "label": "CLUB BLANCO",
+        "label_link": "https://www.phonicarecords.com/label/club-blanco/206275/all/latest/desc",
+        "cat": "",
+        "phonica-all-genres-new-releases": 0,
+        "store_tags": {
+            "out_of_stock": false,
+            "preorder": false
+        },
+        "track_names": [
+            "Point L-0",
+            "Wired",
+            "Shine",
+            "Shine (Roman Fl\u00fcgel Remix)"
+        ],
+        "track_urls": [
+            "https://dmpqep8cljqhc.cloudfront.net/66873075f36be22b25e2775ea21b057f.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/a8c42263acb0f59814c55c8e359192ce.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/942126d0cdcab21fa4a3a07b4c52e1ff.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/1efde8af2d7faf96dab4251f66e0dc8b.mp3"
+        ],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/1fcee4b9033b6cdb3a84284d93af345d_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/1fcee4b9033b6cdb3a84284d93af345d_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/1fcee4b9033b6cdb3a84284d93af345d_big.jpg"
+        ]
+    },
+    "phonica-63603": {
+        "store": "phonica",
+        "id": "phonica-63603",
+        "title": "Private Collection 1 (PCC1)",
+        "link": "https://www.phonicarecords.com/product/moodymann-private-collection-1-pcc1-white-label/63603",
+        "artist": "MOODYMANN",
+        "label": "WHITE LABEL",
+        "label_link": "https://www.phonicarecords.com/label/white-label/63603/all/latest/desc",
+        "cat": "",
+        "phonica-all-genres-new-releases": 1,
+        "store_tags": {
+            "out_of_stock": true,
+            "preorder": false
+        },
+        "track_names": [
+            "Track 1",
+            "Track 2",
+            "Track 3"
+        ],
+        "track_urls": [
+            "https://dmpqep8cljqhc.cloudfront.net/ab40d6ce1095b5c58926834857b37565.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/d52354f5dd00f129bd9ed0cdee17d41f.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/646776a2b89509cb04b376c9e32dd1a6.mp3"
+        ],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/a0f01ed9629136dd597bdf19142cbc33_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/a0f01ed9629136dd597bdf19142cbc33_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/a0f01ed9629136dd597bdf19142cbc33_big.jpg"
+        ]
+    },
+    "phonica-204533": {
+        "store": "phonica",
+        "id": "phonica-204533",
+        "title": "PHONOGRAMME VARIOUS VOL. 2",
+        "link": "https://www.phonicarecords.com/product/rick-wade-gari-romalis-vakula-jacksonvi-phonogramme-various-vol-2-phonogramme/204533",
+        "artist": "RICK WADE / GARI ROMALIS / VAKULA / JACKSONVI...",
+        "label": "PHONOGRAMME",
+        "label_link": "https://www.phonicarecords.com/label/phonogramme/204533/all/latest/desc",
+        "cat": "",
+        "phonica-all-genres-new-releases": 2,
+        "store_tags": {
+            "out_of_stock": false,
+            "preorder": false
+        },
+        "track_names": [
+            "Jacksonville - Minnaloushe",
+            "Vakula - Hausnya",
+            "Gari Romalis Electronix - Outta Control",
+            "Rick Wade - Heat Index"
+        ],
+        "track_urls": [
+            "https://dmpqep8cljqhc.cloudfront.net/7e319a78856ae1309837caf53ca776af.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/1df1e1a9aa0728d36c09362816aed70a.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/bed72fad4ca8b645ee276e23060dcc82.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/8dfa3b4f1e3705c32a2458a997140b44.mp3"
+        ],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/6afaa748b6d58f2ea445bd419f5bffbd_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/6afaa748b6d58f2ea445bd419f5bffbd_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/6afaa748b6d58f2ea445bd419f5bffbd_big.jpg"
+        ]
+    },
+    "phonica-203696": {
+        "store": "phonica",
+        "id": "phonica-203696",
+        "title": "Midnight Soul",
+        "link": "https://www.phonicarecords.com/product/dj-steaw-midnight-soul-house-puff/203696",
+        "artist": "DJ STEAW",
+        "label": "HOUSE PUFF",
+        "label_link": "https://www.phonicarecords.com/label/house-puff/203696/all/latest/desc",
+        "cat": "",
+        "phonica-all-genres-new-releases": 3,
+        "store_tags": {
+            "out_of_stock": false,
+            "preorder": false
+        },
+        "track_names": [
+            "Cane Field ",
+            "A Ride With M-S",
+            "Midnight Soul",
+            "N Hancock St"
+        ],
+        "track_urls": [
+            "https://dmpqep8cljqhc.cloudfront.net/6b3dcaed02632ac0f8a93cb9df261fb8.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/ff9606ae3faa61181ebfcbd464638033.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/97038a138b1d7aa14fa34284cc7fb1a8.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/953fbdcd40294f4063df739b1cff1ea7.mp3"
+        ],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/634cda836ff26c69262cbf2f4b508105_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/634cda836ff26c69262cbf2f4b508105_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/634cda836ff26c69262cbf2f4b508105_big.jpg"
+        ]
+    },
+    "phonica-203053": {
+        "store": "phonica",
+        "id": "phonica-203053",
+        "title": "RDY #58",
+        "link": "https://www.phonicarecords.com/product/ron-hardy-rdy-58-rdy/203053",
+        "artist": "RON HARDY",
+        "label": "RDY",
+        "label_link": "https://www.phonicarecords.com/label/rdy/203053/all/latest/desc",
+        "cat": "",
+        "phonica-all-genres-new-releases": 4,
+        "store_tags": {
+            "out_of_stock": false,
+            "preorder": false
+        },
+        "track_names": [
+            "Clean",
+            "Disco Peak",
+            "Dolce",
+            "Carmel"
+        ],
+        "track_urls": [
+            "https://dmpqep8cljqhc.cloudfront.net/d8fe4ac794533f1e5905bb49eca08ec9.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/6755a34f61ea4edbe115274d74fdfc98.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/054342d69145d3da6c647e6771232126.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/fd7658bf361079369db9e57e1dae9d52.mp3"
+        ],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/b60ddbaeca939b4d8c88cdb704647acc_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/b60ddbaeca939b4d8c88cdb704647acc_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/b60ddbaeca939b4d8c88cdb704647acc_big.jpg"
+        ]
+    },
+    "phonica-169837": {
+        "store": "phonica",
+        "id": "phonica-169837",
+        "title": "Virtual Dreams: Ambient Explorations In The...",
+        "link": "https://www.phonicarecords.com/product/lfo-richard-h-kirk-global-communication-virtual-dreams-ambient-explorations-in-the-music-from-memory/169837",
+        "artist": "LFO / RICHARD H KIRK / GLOBAL COMMUNICATION...",
+        "label": "MUSIC FROM MEMORY",
+        "label_link": "https://www.phonicarecords.com/label/music-from-memory/169837/all/latest/desc",
+        "cat": "",
+        "phonica-all-genres-new-releases": 5,
+        "store_tags": {
+            "out_of_stock": false,
+            "preorder": false
+        },
+        "track_names": [
+            "MLO - Birds And Flutes",
+            "Pulusha \u2013 Isolation (Part Two)",
+            "MDA Analog - Rainful Memories",
+            "Space Time Continuum - Fluresence",
+            "David Moufang \u2013 Sergio Leone's Wet Dream",
+            "LA Synthesis \u2013 Frozen Tundra Dub",
+            "Richard H. Kirk \u2013 Oneski",
+            "Sideral \u2013 Mare Nostrum",
+            "The Primitive Painter - Levitation",
+            "Sun Electric \u2013 Love 2 Love",
+            "LFO \u2013 Helen",
+            "Dubtribe Sound System \u2013 Sunshine's Theme (Sunshine's Remix)",
+            "Human Mesh Dance - \u221e",
+            "Link \u2013 Arcadian (Global Communication Remix)",
+            "The Arc - Orphic Mysteries",
+            "Bedouin Ascent - Joyriding III"
+        ],
+        "track_urls": [
+            "https://dmpqep8cljqhc.cloudfront.net/9eb75025379fdbe6c993bf401644cc88.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/bb8755607010b70546b3040338692e28.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/b2320b0b53988c8c99b84b36dad709c1.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/5847633175da752a6c90b7031bede4b1.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/ffa59b9f82a6b9fd67813240ac3cc604.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/b3dc9de34a4466c0ca16a2028d412849.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/a43c649dca69d9b8e643e7e86c336aad.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/bbb894affb40b8dce9548a83494e389d.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/7df73364de4bc32e8ddd2a06ad0c88f8.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/b1bca75abc1de13cd48fe70cac36b027.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/2a67a2b651fd4507cc56ae3b71346e96.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/a8b37938bee87c7175577cd60aa7bb3d.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/f77edbd3cd4b827e5c3117fc9cb07f97.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/30609a88082c98bedb5f61c63f083f7a.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/8c8e4588a52f9eb1a56edafef4185ef3.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/7246cee7210d7b90a20959256f888448.mp3"
+        ],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/cce0216d58caee2f5c122b3faadd5b2d_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/cce0216d58caee2f5c122b3faadd5b2d_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/cce0216d58caee2f5c122b3faadd5b2d_big.jpg"
+        ]
+    },
+    "phonica-205270": {
+        "store": "phonica",
+        "id": "phonica-205270",
+        "title": "Buddhist Hipsters LP (Black Vinyl)",
+        "link": "https://www.phonicarecords.com/product/the-orb-buddhist-hipsters-lp-black-vinyl-cooking-vinyl/205270",
+        "artist": "THE ORB",
+        "label": "COOKING VINYL",
+        "label_link": "https://www.phonicarecords.com/label/cooking-vinyl/205270/all/latest/desc",
+        "cat": "",
+        "phonica-all-genres-new-releases": 6,
+        "store_tags": {
+            "out_of_stock": true,
+            "preorder": false
+        },
+        "track_names": [
+            "Spontaneously Combust",
+            "P 1",
+            "Baraka",
+            "A Sacred Choice",
+            "Arabebonics",
+            "It's Coming Soon",
+            "Doll's House",
+            "The Oort Cloud (Too Night)",
+            "Under The Bed",
+            "Kh\u00e0ron"
+        ],
+        "track_urls": [
+            "https://dmpqep8cljqhc.cloudfront.net/6136acebdc38eec72c92f6f533f88e58.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/9e2b8e9221db8e42dba9c078565c7c31.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/94fc6f08ded0efa1b4fd39b477eea8d0.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/64037ed83b18b3724e2da00d6a6a7610.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/a060d2fc86a881a4a326df49c41efaca.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/67bac6bd04a0e666084b176816c581ce.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/7fcdb913c97a5585df50dc329fb2884e.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/e1488c5b7fb82603ac382ee2d60eaa3a.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/6895fd1403c57ae52200093f1375fb31.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/c1c4b94e8ade147da1b1fa2ee9b813be.mp3"
+        ],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/dfbabb58952a861f4638d54bef611971_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/dfbabb58952a861f4638d54bef611971_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/dfbabb58952a861f4638d54bef611971_big.jpg"
+        ]
+    },
+    "phonica-204535": {
+        "store": "phonica",
+        "id": "phonica-204535",
+        "title": "Distant Travels EP (Coloured Vinyl)",
+        "link": "https://www.phonicarecords.com/product/fred-p-distant-travels-ep-coloured-vinyl-syncrophone/204535",
+        "artist": "FRED P",
+        "label": "SYNCROPHONE",
+        "label_link": "https://www.phonicarecords.com/label/syncrophone/204535/all/latest/desc",
+        "cat": "",
+        "phonica-all-genres-new-releases": 7,
+        "store_tags": {
+            "out_of_stock": false,
+            "preorder": false
+        },
+        "track_names": [
+            "When In Miami",
+            "Cazcavel Hotel Beats",
+            "Live Long Love",
+            "The Heights"
+        ],
+        "track_urls": [
+            "https://dmpqep8cljqhc.cloudfront.net/d782ca68febbbb5a8a8118d5d9f3e14e.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/010cde708bde4afb53e65b3380225961.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/c1af9478d4a95983683d8002e718422d.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/a799a52bd2ca9de8109c4ceff29afb4b.mp3"
+        ],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/d234e590a6d1c29195b34546313e83a7_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/d234e590a6d1c29195b34546313e83a7_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/d234e590a6d1c29195b34546313e83a7_big.jpg"
+        ]
+    },
+    "phonica-206327": {
+        "store": "phonica",
+        "id": "phonica-206327",
+        "title": "Hypnosis EP",
+        "link": "https://www.phonicarecords.com/product/amaliah-hypnosis-ep-peach-discs/206327",
+        "artist": "AMALIAH",
+        "label": "PEACH DISCS",
+        "label_link": "https://www.phonicarecords.com/label/peach-discs/206327/all/latest/desc",
+        "cat": "",
+        "phonica-all-genres-new-releases": 9,
+        "store_tags": {
+            "out_of_stock": false,
+            "preorder": false
+        },
+        "track_names": [
+            "hypnosis",
+            "hold me closer  ",
+            "watch this ",
+            "laser tag",
+            "earthling"
+        ],
+        "track_urls": [
+            "https://dmpqep8cljqhc.cloudfront.net/5fc9e1741f29fbc0d4bf8982c0e46147.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/53d3455ed20338e7b2b81aa760ea459a.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/9b8fb2f1c7116998ff31fd5a7e1cfd66.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/63e3a66e031ff47bd956e9fa455dd9de.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/92997e683e579a63e922ac44cf0439a3.mp3"
+        ],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/1683647e6ea2ed70c5368a75a3c297c3_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/1683647e6ea2ed70c5368a75a3c297c3_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/1683647e6ea2ed70c5368a75a3c297c3_big.jpg"
+        ]
+    },
+    "phonica-206919": {
+        "store": "phonica",
+        "id": "phonica-206919",
+        "title": "lucre LP",
+        "link": "https://www.phonicarecords.com/product/dean-blunt-elias-rnnenfelt-lucre-lp-world-music/206919",
+        "artist": "DEAN BLUNT &amp; ELIAS R\u00d8NNENFELT",
+        "label": "WORLD MUSIC",
+        "label_link": "https://www.phonicarecords.com/label/world-music/206919/all/latest/desc",
+        "cat": "",
+        "phonica-all-genres-new-releases": 10,
+        "store_tags": {
+            "out_of_stock": true,
+            "preorder": false
+        },
+        "track_names": [],
+        "track_urls": [],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/7680d2fb7a8838eb0d1315b3b406d363_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/7680d2fb7a8838eb0d1315b3b406d363_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/7680d2fb7a8838eb0d1315b3b406d363_big.jpg"
+        ]
+    },
+    "phonica-206975": {
+        "store": "phonica",
+        "id": "phonica-206975",
+        "title": "EEL SOUNDS 02",
+        "link": "https://www.phonicarecords.com/product/harri-pierson-brian-not-brian-andy-bainbrid-eel-sounds-02-eel-sounds/206975",
+        "artist": "HARRI PIERSON / BRIAN NOT BRIAN / ANDY BAINBRID...",
+        "label": "EEL SOUNDS",
+        "label_link": "https://www.phonicarecords.com/label/eel-sounds/206975/all/latest/desc",
+        "cat": "",
+        "phonica-all-genres-new-releases": 11,
+        "store_tags": {
+            "out_of_stock": true,
+            "preorder": false
+        },
+        "track_names": [
+            "MIND YOUR EXPOSITION (ANDY BAINBRIDGE EDIT)",
+            "KONNECTED (BRIAN NOT BRIAN EDIT)",
+            "LSD/P (HARRI PIERSON EDIT)",
+            "BARRY &amp; THE BREAKERS - SPACE RIOT (KEYBOARD MASHER EDIT)"
+        ],
+        "track_urls": [
+            "https://dmpqep8cljqhc.cloudfront.net/e422f740d3979c1a021f876d3f3251c5.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/115461726759f1e5c17a39e753bb2c0d.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/6a33d7c23ed1f9ea50098950e2af99fa.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/052d3a60ef5de9153477a66b2ece6ea1.mp3"
+        ],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/4e32fb8a7da2a983b68d46a2c233296a_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/4e32fb8a7da2a983b68d46a2c233296a_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/4e32fb8a7da2a983b68d46a2c233296a_big.jpg"
+        ]
+    },
+    "phonica-206914": {
+        "store": "phonica",
+        "id": "phonica-206914",
+        "title": "Do What U Feel (incl. Specter Remix)",
+        "link": "https://www.phonicarecords.com/product/nico-lahs-do-what-u-feel-incl-specter-remix-u-fit/206914",
+        "artist": "NICO LAHS",
+        "label": "U FIT",
+        "label_link": "https://www.phonicarecords.com/label/u-fit/206914/all/latest/desc",
+        "cat": "",
+        "phonica-all-genres-new-releases": 12,
+        "store_tags": {
+            "out_of_stock": false,
+            "preorder": false
+        },
+        "track_names": [
+            "Do What U Feel",
+            "Get Away",
+            "Losing Respect",
+            "Get Away (Specter Remix)"
+        ],
+        "track_urls": [
+            "https://dmpqep8cljqhc.cloudfront.net/b45c7e5d6b4bb7dc0d50259ff724dea2.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/ace6159ca8fede8fb1a8095a9e00646f.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/9b194a419110bc737d05e7f4163c0788.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/17fcc6a692a97240df188ee7b1c1ad90.mp3"
+        ],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/238221984e5040630c958a4a3ea5436a_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/238221984e5040630c958a4a3ea5436a_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/238221984e5040630c958a4a3ea5436a_big.jpg"
+        ]
+    },
+    "phonica-206588": {
+        "store": "phonica",
+        "id": "phonica-206588",
+        "title": "The Heads That Know feat. Comma Dee",
+        "link": "https://www.phonicarecords.com/product/charlotte-de-witte-the-heads-that-know-feat-comma-dee-kntxt/206588",
+        "artist": "CHARLOTTE DE WITTE",
+        "label": "KNTXT",
+        "label_link": "https://www.phonicarecords.com/label/kntxt/206588/all/latest/desc",
+        "cat": "",
+        "phonica-all-genres-new-releases": 13,
+        "store_tags": {
+            "out_of_stock": false,
+            "preorder": false
+        },
+        "track_names": [
+            "The Heads That Know (Original Mix)",
+            "The Heads That Know (They Know Acid)"
+        ],
+        "track_urls": [
+            "https://dmpqep8cljqhc.cloudfront.net/3dd0a8a49c3cd2a5bbdb39a74b2bd90c.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/0f8f8ee563101b6739f24929fd7c3ceb.mp3"
+        ],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/60f9c78b7cf3ce80b80c7d7735eeeb7b_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/60f9c78b7cf3ce80b80c7d7735eeeb7b_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/60f9c78b7cf3ce80b80c7d7735eeeb7b_big.jpg"
+        ]
+    },
+    "phonica-206778": {
+        "store": "phonica",
+        "id": "phonica-206778",
+        "title": "Global Caress EP",
+        "link": "https://www.phonicarecords.com/product/byron-the-aquarius-global-caress-ep-star-creature/206778",
+        "artist": "BYRON THE AQUARIUS",
+        "label": "STAR CREATURE",
+        "label_link": "https://www.phonicarecords.com/label/star-creature/206778/all/latest/desc",
+        "cat": "",
+        "phonica-all-genres-new-releases": 14,
+        "store_tags": {
+            "out_of_stock": true,
+            "preorder": false
+        },
+        "track_names": [
+            "ATLiens 2 Detroit",
+            "Bob Power At It Again",
+            "Everlasting",
+            "FaNtAsyies",
+            "Long Way Home",
+            "Jamama",
+            "Track 07"
+        ],
+        "track_urls": [
+            "https://dmpqep8cljqhc.cloudfront.net/08480e6def6c1a01984b5686636eb8c4.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/1cc9577dcaa09d25dac93d7eb17987a1.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/f1b2fd4fed2c23b7ebf8baf3ec595f96.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/1fdd587ec8698456300a29f4c2e262c3.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/2a95a0e2f5415fa3136f28f7bb3d8836.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/8f7310e2052298a875fd5922fe0d7970.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/a143b9fb8df38b461273e4c48d09d07e.mp3"
+        ],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/b0cd53217f99f1c236f5e653217498da_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/b0cd53217f99f1c236f5e653217498da_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/b0cd53217f99f1c236f5e653217498da_big.jpg"
+        ]
+    },
+    "phonica-206606": {
+        "store": "phonica",
+        "id": "phonica-206606",
+        "title": "You Play Games EP",
+        "link": "https://www.phonicarecords.com/product/exit-to-tomorrow-you-play-games-ep-primordial-state/206606",
+        "artist": "EXIT TO TOMORROW",
+        "label": "PRIMORDIAL STATE",
+        "label_link": "https://www.phonicarecords.com/label/primordial-state/206606/all/latest/desc",
+        "cat": "",
+        "phonica-all-genres-new-releases": 15,
+        "store_tags": {
+            "out_of_stock": false,
+            "preorder": false
+        },
+        "track_names": [
+            "You Play Games",
+            "Reset Me",
+            "TRK 01",
+            "Patience"
+        ],
+        "track_urls": [
+            "https://dmpqep8cljqhc.cloudfront.net/ef4571e1a9ef34884173f612d03f4b51.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/d14016ace1e62f22ca56df276533dc45.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/7866dcb45339c200ba4beb0ff2d9b1e9.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/2339d32bfa2e65812f35d700fcff497f.mp3"
+        ],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/578514671562e8c2069b405043a0bf55_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/578514671562e8c2069b405043a0bf55_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/578514671562e8c2069b405043a0bf55_big.jpg"
+        ]
+    },
+    "phonica-206671": {
+        "store": "phonica",
+        "id": "phonica-206671",
+        "title": "Music For Desert Reboot LP",
+        "link": "https://www.phonicarecords.com/product/trii-music-for-desert-reboot-lp-world-of-echo/206671",
+        "artist": "TRII",
+        "label": "WORLD OF ECHO",
+        "label_link": "https://www.phonicarecords.com/label/world-of-echo/206671/all/latest/desc",
+        "cat": "",
+        "phonica-all-genres-new-releases": 16,
+        "store_tags": {
+            "out_of_stock": false,
+            "preorder": false
+        },
+        "track_names": [
+            "Scene 01 - Xyl, Tiz and Ore",
+            "Scene 02 - In The Mouth A Desert",
+            "Scene 03 - Animal Gathering",
+            "Scene 04 - Prospector Left ",
+            "Scene 05 - Image Superstition",
+            "Scene 06 - Second Abandoned Highway",
+            "Scene 07 - First Abandoned Highway ",
+            "Scene 08 - First Time Realising The Clock Is Absent ",
+            "Scene 09 - First Encounter - The Future Is Yellow ",
+            "Scene 10 - Good Calamity",
+            "Scene 11 - Tzama As Animal"
+        ],
+        "track_urls": [
+            "https://dmpqep8cljqhc.cloudfront.net/ffb510b8a95aece2eda0ce64a1ef24d5.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/5e9dbf7d724b6254347a7887128ae593.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/08b7a015c2f89db6286c693acf81b43e.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/40bef404fd4186bf2c1905f3b42cb055.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/bbe9fc59510c4b4887677dff9229c0e7.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/41ad9c162d632a7abd1c9bd6bf7b5b94.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/77b3b94416a2bda0799cbe287f2cd359.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/38f94dca8aa8f25afcb2b5c09f3ed1ca.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/8893ee2897081b459670172730894f3d.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/60dad459b5c99b3aa03059201fe3e470.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/21ef65da83ac34cbc985eb9c12e8b0bf.mp3"
+        ],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/214cfe2ff63c021701ccbf07a25f9b67_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/214cfe2ff63c021701ccbf07a25f9b67_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/214cfe2ff63c021701ccbf07a25f9b67_big.jpg"
+        ]
+    },
+    "phonica-206680": {
+        "store": "phonica",
+        "id": "phonica-206680",
+        "title": "Work",
+        "link": "https://www.phonicarecords.com/product/quince-sayne-work-nowhere/206680",
+        "artist": "QUINCE &amp; SAYNE",
+        "label": "NOWHERE",
+        "label_link": "https://www.phonicarecords.com/label/nowhere/206680/all/latest/desc",
+        "cat": "",
+        "phonica-all-genres-new-releases": 17,
+        "store_tags": {
+            "out_of_stock": false,
+            "preorder": false
+        },
+        "track_names": [
+            "Orange",
+            "Klonneplein 1",
+            "Work"
+        ],
+        "track_urls": [
+            "https://dmpqep8cljqhc.cloudfront.net/d606e6f6607c9f3450c94156739f372f.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/0f3947186ef9c8db0a5e6bf856983c7f.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/b66ef253e9f67514eeb0a5c51a80bbd4.mp3"
+        ],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/95f26e183566a989573dd4c53c00c866_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/95f26e183566a989573dd4c53c00c866_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/95f26e183566a989573dd4c53c00c866_big.jpg"
+        ]
+    },
+    "phonica-205320": {
+        "store": "phonica",
+        "id": "phonica-205320",
+        "title": "Duvet LP",
+        "link": "https://www.phonicarecords.com/product/ida-urd-ingri-hoyland-duvet-lp-balmat/205320",
+        "artist": "IDA URD &amp; INGRI HOYLAND",
+        "label": "BALMAT",
+        "label_link": "https://www.phonicarecords.com/label/balmat/205320/all/latest/desc",
+        "cat": "",
+        "phonica-all-genres-new-releases": 18,
+        "store_tags": {
+            "out_of_stock": true,
+            "preorder": false
+        },
+        "track_names": [
+            "Melting Cubes",
+            "Duvet ",
+            "Peaches ",
+            "Woe ",
+            "Nest",
+            "Show Hide",
+            "Chamber",
+            "Sono"
+        ],
+        "track_urls": [
+            "https://dmpqep8cljqhc.cloudfront.net/00c0a18f3cbd6b8973b434d550be23e7.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/b4089934f30d36c14667ec34da95cf39.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/13a085e50c14314669c7b52b5ccd1bd0.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/b1817d73c986755a8362b2827d1d25b2.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/123e113406f1aafc25b1819d3069c913.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/cfdd5a51ceb34ba12460f30e25209ef5.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/865d7e83c8b5c1ba0dc7b4bddda03899.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/c83c84fbdcac6d19017e92a7cbfd5723.mp3"
+        ],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/c5b290a6c26d0f7d6520423ca755c4b8_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/c5b290a6c26d0f7d6520423ca755c4b8_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/c5b290a6c26d0f7d6520423ca755c4b8_big.jpg"
+        ]
+    },
+    "phonica-205384": {
+        "store": "phonica",
+        "id": "phonica-205384",
+        "title": "Acid Puke EP",
+        "link": "https://www.phonicarecords.com/product/gesloten-cirkel-acid-puke-ep-selvamancer/205384",
+        "artist": "GESLOTEN CIRKEL",
+        "label": "SELVAMANCER",
+        "label_link": "https://www.phonicarecords.com/label/selvamancer/205384/all/latest/desc",
+        "cat": "",
+        "phonica-all-genres-new-releases": 19,
+        "store_tags": {
+            "out_of_stock": false,
+            "preorder": false
+        },
+        "track_names": [
+            "Heisinprison",
+            "Breaking The Lamp",
+            "Acid Puke",
+            "F-unkz3"
+        ],
+        "track_urls": [
+            "https://dmpqep8cljqhc.cloudfront.net/45af7aa199410b7a63afad3be76179d3.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/b3e3b1912e47caefe6fee8ba5415b691.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/d8b8a6f4a72f04b84812b762b7fc2f08.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/34a92428ddcd2f772d48fdee69cd1c68.mp3"
+        ],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/ebf32d23551ef5468d4c2cd7b4c21bfd_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/ebf32d23551ef5468d4c2cd7b4c21bfd_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/ebf32d23551ef5468d4c2cd7b4c21bfd_big.jpg"
+        ]
+    },
+    "phonica-193982": {
+        "store": "phonica",
+        "id": "phonica-193982",
+        "title": "Jah Children Invasion Vol. 6: Digital Dawn...",
+        "link": "https://www.phonicarecords.com/product/various-artists-jah-children-invasion-vol-6-digital-dawn-wackies/193982",
+        "artist": "VARIOUS ARTISTS",
+        "label": "WACKIES",
+        "label_link": "https://www.phonicarecords.com/label/wackies/193982/all/latest/desc",
+        "cat": "",
+        "phonica-all-genres-new-releases": 20,
+        "store_tags": {
+            "out_of_stock": false,
+            "preorder": false
+        },
+        "track_names": [
+            "Horace Andy - Drop Off",
+            "Wayne Chin - Won't Do For Love",
+            "Milton Henry - Make It Right",
+            "Jerry Harris - A Little Love We Need",
+            "Chris Wayne - Streets Of Africa",
+            "Horace Andy - Dub Out A Sound"
+        ],
+        "track_urls": [
+            "https://dmpqep8cljqhc.cloudfront.net/40fe2cc42250c20b85da8a4002a14ee9.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/050c68c228b52fa41e0d809da9a1cc11.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/dfd3c2788bf23402c4f71f80c47ebe58.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/b855289a7ec0836f8ceac30d6f410cee.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/ac7968288f44bd4a0a33aabd30b82b34.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/d1583b8a8c8dbd20863a248f8e696cd1.mp3"
+        ],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/a2dca4cbafe55db2a9df72fbfc381aba_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/a2dca4cbafe55db2a9df72fbfc381aba_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/a2dca4cbafe55db2a9df72fbfc381aba_big.jpg"
+        ]
+    },
+    "phonica-194629": {
+        "store": "phonica",
+        "id": "phonica-194629",
+        "title": "Big Mood (feat Justin Van Der Volgen Edit)",
+        "link": "https://www.phonicarecords.com/product/exo-fender-big-mood-feat-justin-van-der-volgen-edit-emotional-rescue/194629",
+        "artist": "EXO FENDER",
+        "label": "EMOTIONAL RESCUE",
+        "label_link": "https://www.phonicarecords.com/label/emotional-rescue/194629/all/latest/desc",
+        "cat": "",
+        "phonica-all-genres-new-releases": 21,
+        "store_tags": {
+            "out_of_stock": true,
+            "preorder": false
+        },
+        "track_names": [
+            "Big Mood",
+            "Big Mood (Justin Van Der Volgen edit)"
+        ],
+        "track_urls": [
+            "https://dmpqep8cljqhc.cloudfront.net/94a9f1561ae216fa3a9298dfcaebba59.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/39d9394aa7813dc20f591d67d27bc0c7.mp3"
+        ],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/1b633e70c4828ba24bb3157e144b2785_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/1b633e70c4828ba24bb3157e144b2785_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/1b633e70c4828ba24bb3157e144b2785_big.jpg"
+        ]
+    },
+    "phonica-194630": {
+        "store": "phonica",
+        "id": "phonica-194630",
+        "title": "Music In My Mind (feat Justin Van Der Volgen...",
+        "link": "https://www.phonicarecords.com/product/exo-fender-music-in-my-mind-feat-justin-van-der-volgen-emotional-rescue/194630",
+        "artist": "EXO FENDER",
+        "label": "EMOTIONAL RESCUE",
+        "label_link": "https://www.phonicarecords.com/label/emotional-rescue/194630/all/latest/desc",
+        "cat": "",
+        "phonica-all-genres-new-releases": 22,
+        "store_tags": {
+            "out_of_stock": false,
+            "preorder": false
+        },
+        "track_names": [
+            "Music In My Mind",
+            "Music In My Mind (feat Justin Van Der Volgen Edit)"
+        ],
+        "track_urls": [
+            "https://dmpqep8cljqhc.cloudfront.net/b6152464759f54ca03bdfca8d3dfbc35.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/8ef1df8b415290954afb24bcfca5b2ed.mp3"
+        ],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/5821dd1e5bab345678ad9fab32930c53_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/5821dd1e5bab345678ad9fab32930c53_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/5821dd1e5bab345678ad9fab32930c53_big.jpg"
+        ]
+    },
+    "phonica-205248": {
+        "store": "phonica",
+        "id": "phonica-205248",
+        "title": "Echo Chamber",
+        "link": "https://www.phonicarecords.com/product/shcuro-echo-chamber-paraiso/205248",
+        "artist": "SHCURO",
+        "label": "PARAISO",
+        "label_link": "https://www.phonicarecords.com/label/paraiso/205248/all/latest/desc",
+        "cat": "",
+        "phonica-all-genres-new-releases": 23,
+        "store_tags": {
+            "out_of_stock": false,
+            "preorder": false
+        },
+        "track_names": [
+            "No Expectations",
+            "Persistence",
+            "Deviation (Rework)",
+            "Suspension (Rework)",
+            "Persistence (MoMA Ready Remix)",
+            "Deviation (Mareena Remix)"
+        ],
+        "track_urls": [
+            "https://dmpqep8cljqhc.cloudfront.net/c58aec2bdbfb5258dd88b4829d859b8d.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/ffddad0c9bb376749ddad2ef27982b25.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/93e7db45ede898dabdf45383a3b287f6.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/3ae2f42637291b118c582637dfc7c455.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/bf1fc2aeb7687e1e3d5d9ab43bf678bd.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/657c5e749e5571331253f6ce2572e483.mp3"
+        ],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/9003411ff21707e5162fe7c0609287e9_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/9003411ff21707e5162fe7c0609287e9_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/9003411ff21707e5162fe7c0609287e9_big.jpg"
+        ]
+    },
+    "phonica-204785": {
+        "store": "phonica",
+        "id": "phonica-204785",
+        "title": "Balearic Breakfast Volume 4 LP",
+        "link": "https://www.phonicarecords.com/product/colleen-cosmo-murphy-various-artists-balearic-breakfast-volume-4-lp-heavenly-recordings/204785",
+        "artist": "COLLEEN 'COSMO' MURPHY / VARIOUS ARTISTS",
+        "label": "HEAVENLY RECORDINGS",
+        "label_link": "https://www.phonicarecords.com/label/heavenly-recordings/204785/all/latest/desc",
+        "cat": "",
+        "phonica-all-genres-new-releases": 24,
+        "store_tags": {
+            "out_of_stock": false,
+            "preorder": false
+        },
+        "track_names": [
+            "Paz - \"Kandeen Love Song\"",
+            "Santino Surfers - \"Freedom Surfers\"",
+            "Saint Etienne - \"Alone Together\" (Cosmodelica mix)",
+            "Paqua - \"Akaliko\"",
+            "Tar Blanche - \"Iguana\"",
+            "Bryony Jarman-Pinto - \"Moving Forward\" (Cosmodelica remix)",
+            "Troy Kingi - \"Chronophobic Disco\"",
+            "Ilya Santana - \"Cosmovision\" (Disco version)",
+            "Gloria Ann Taylor - \"Love Is A Hurtin' Thing\" (12\" version)"
+        ],
+        "track_urls": [
+            "https://dmpqep8cljqhc.cloudfront.net/09c199239e8a96790aa2ef802309d464.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/7519e046a2885ba15fc19f56203821d2.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/492f459ff3f4ee0543d842fee0f019ff.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/5adf5e80e18f3f601a7a24e731b4762b.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/c7257ec659af79f6f1004e1ce744dcc5.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/9a2209859d09ce8113d9b19a58a4b6bb.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/ebb56ff27e832d94246d7a7bdff27310.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/448597b9d808f3f1f19788c9391c413e.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/b63b6eb46b577c7e23db1efb2b74fe57.mp3"
+        ],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/541b421e7164692811eb035684b10d4f_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/541b421e7164692811eb035684b10d4f_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/541b421e7164692811eb035684b10d4f_big.jpg"
+        ]
+    },
+    "phonica-154598": {
+        "store": "phonica",
+        "id": "phonica-154598",
+        "title": "Gimme Your Love (Repress)",
+        "link": "https://www.phonicarecords.com/product/the-gongs-gang-gimme-your-love-repress-best-italy/154598",
+        "artist": "THE GONGS GANG",
+        "label": "BEST ITALY",
+        "label_link": "https://www.phonicarecords.com/label/best-italy/154598/all/latest/desc",
+        "cat": "",
+        "phonica-all-genres-new-releases": 25,
+        "store_tags": {
+            "out_of_stock": false,
+            "preorder": false
+        },
+        "track_names": [
+            "Gimme Your Love (Vocal)",
+            "Gimme Your Love (Instrumental)"
+        ],
+        "track_urls": [
+            "https://dmpqep8cljqhc.cloudfront.net/81b67464ea652946cf6bb9f4ed99e4d3.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/c3ea1542811b53316eccee4f7542f7a7.mp3"
+        ],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/5134c1861dd6ec407e1e44e37da2ff47_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/5134c1861dd6ec407e1e44e37da2ff47_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/5134c1861dd6ec407e1e44e37da2ff47_big.jpg"
+        ]
+    },
+    "phonica-111796": {
+        "store": "phonica",
+        "id": "phonica-111796",
+        "title": "Journey Of The Deep Sea Dweller III LP (2025...",
+        "link": "https://www.phonicarecords.com/product/drexciya-journey-of-the-deep-sea-dweller-iii-lp-2025-clone-classic-cuts/111796",
+        "artist": "DREXCIYA",
+        "label": "CLONE CLASSIC CUTS",
+        "label_link": "https://www.phonicarecords.com/label/clone-classic-cuts/111796/all/latest/desc",
+        "cat": "",
+        "phonica-all-genres-new-releases": 26,
+        "store_tags": {
+            "out_of_stock": false,
+            "preorder": false
+        },
+        "track_names": [
+            "Smokey's Illegitimate Report",
+            "The Countdown Has Begun",
+            "Aquabahn",
+            "Unknown Journey IV",
+            "Bubble Chamber",
+            "Sea Snake",
+            "Intensified Magnetron",
+            "The Mutant Gillmen",
+            "Aqua Worm Hole",
+            "Nautilus 12",
+            "Vampire Island",
+            "Flying Fish",
+            "You Don't Know"
+        ],
+        "track_urls": [
+            "https://dmpqep8cljqhc.cloudfront.net/fc87da395fe05ce1872714bb49dec200.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/d49bef0e444148d12aa6b9a30b5356ac.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/9e4b035eb3bc0e53ed011cbb7aa5c8df.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/bb833414c0ea035a125bfa7de2a897e1.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/eff767ed7fbbbd6c0a5e4290df3f9cfc.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/6acd815d7ffaba533b1e7dfb0cfc5754.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/fae50c3ddc2c79a019cdeff9bf1e750e.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/1f1cd0360eb1d8b40fdf8da84111b71f.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/f8aef4fb34d986ae3da27b8ad29927d0.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/0601a215a3ce3f2469a30676c6421399.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/6be5080e4cb35cae157b7fb649d6bfaa.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/8c5ccad49e0db7270f6548a6ac6df5d8.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/55695da34843d8bf95db450e8ef02e2f.mp3"
+        ],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/8145fcbb25e9ef66a1aa4bfd4e33e4f1_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/8145fcbb25e9ef66a1aa4bfd4e33e4f1_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/8145fcbb25e9ef66a1aa4bfd4e33e4f1_big.jpg"
+        ]
+    },
+    "phonica-118718": {
+        "store": "phonica",
+        "id": "phonica-118718",
+        "title": "Journey Of The Deep Sea Dweller IV LP (2025...",
+        "link": "https://www.phonicarecords.com/product/drexciya-journey-of-the-deep-sea-dweller-iv-lp-2025-clone-classic-cuts/118718",
+        "artist": "DREXCIYA",
+        "label": "CLONE CLASSIC CUTS",
+        "label_link": "https://www.phonicarecords.com/label/clone-classic-cuts/118718/all/latest/desc",
+        "cat": "",
+        "phonica-all-genres-new-releases": 27,
+        "store_tags": {
+            "out_of_stock": false,
+            "preorder": false
+        },
+        "track_names": [
+            "Intro (The Unknown Aquazone)",
+            "Depressurization",
+            "Water Walker",
+            "Mantaray",
+            "Unknown Journey VI",
+            "Unknown Journey VII",
+            "Unknown Journey VIII",
+            "Living on the Edge",
+            "Hydro Cubes",
+            "Unknown Journey IX",
+            "Unknown Journey X",
+            "Aquatic Bata Particles",
+            "(Unknown Interlude)",
+            "Black Sea",
+            "Sighting in the Abyss"
+        ],
+        "track_urls": [
+            "https://dmpqep8cljqhc.cloudfront.net/00c94ba25ccc59260d96b1039974eaee.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/2319260387a9fc364de6ba08e8307c7f.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/6ce0d70cbe9fb500125db0f1fa2c2a75.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/84cc25b861afded420d7ad773b6c7f97.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/cc19c61bcfe10a0bf844ef2304286979.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/8c14a86ebd31cb07d61bb37e5f8a004a.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/d3fd28e0b3d85e33108f949e519ba6cb.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/72f513f44b0c3de9d94e275efba093ff.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/14f3d116d06706f3f0df957397ec0779.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/ef688abc98010fb120b33bb824ae7d45.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/a0e78f1746b535faff2194dd38aec7a8.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/307f7f34eeb4d7a24ea4c32acf6c6fa6.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/1bcd4fdf013552f872af2383c2fc1c32.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/e33e1871e65b3b54ac8ea862ac2938c3.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/fdf7987efe4a967db5b3b8363471accf.mp3"
+        ],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/a5afca83a5d9d729910252afe151d4d2_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/a5afca83a5d9d729910252afe151d4d2_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/a5afca83a5d9d729910252afe151d4d2_big.jpg"
+        ]
+    },
+    "phonica-205003": {
+        "store": "phonica",
+        "id": "phonica-205003",
+        "title": "Mashup",
+        "link": "https://www.phonicarecords.com/product/boo-williams-mashup-booteck/205003",
+        "artist": "BOO WILLIAMS",
+        "label": "BOOTECK",
+        "label_link": "https://www.phonicarecords.com/label/booteck/205003/all/latest/desc",
+        "cat": "",
+        "phonica-all-genres-new-releases": 28,
+        "store_tags": {
+            "out_of_stock": false,
+            "preorder": false
+        },
+        "track_names": [
+            "Mashup",
+            "Mashup Ric DUB",
+            "T_Shock A Tribute to T-1000)",
+            "T-1000 (Ric DUB)"
+        ],
+        "track_urls": [
+            "https://dmpqep8cljqhc.cloudfront.net/e1eb36766ef6bef00ac44739294c2a69.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/b79d1b1837752be1caae2c7cb85fb0b6.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/fa1c4c3b21478b0d7015dcd944b566f1.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/2f346fbf2f41bda920367db440c3d103.mp3"
+        ],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/f272401400c81c9fbec5e69e629d3b61_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/f272401400c81c9fbec5e69e629d3b61_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/f272401400c81c9fbec5e69e629d3b61_big.jpg"
+        ]
+    },
+    "phonica-203945": {
+        "store": "phonica",
+        "id": "phonica-203945",
+        "title": "Every DJ Pt.1 &amp; 2 - The Unreleased Kenny Dope...",
+        "link": "https://www.phonicarecords.com/product/kenny-dope-every-dj-pt1-2-the-unreleased-kenny-dope-kay-dee-records/203945",
+        "artist": "KENNY DOPE",
+        "label": "KAY-DEE RECORDS",
+        "label_link": "https://www.phonicarecords.com/label/kay-dee-records/203945/all/latest/desc",
+        "cat": "",
+        "phonica-all-genres-new-releases": 29,
+        "store_tags": {
+            "out_of_stock": false,
+            "preorder": false
+        },
+        "track_names": [
+            "Every DJ Pt.1 ",
+            "Every DJ Pt.2"
+        ],
+        "track_urls": [
+            "https://dmpqep8cljqhc.cloudfront.net/65ef40c74b60554195078d85c6af7187.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/48fe8ba99fb03ab9c9be2a71e92d7d37.mp3"
+        ],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/4a314fd0dcb7f6b961e104b190d59119_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/4a314fd0dcb7f6b961e104b190d59119_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/4a314fd0dcb7f6b961e104b190d59119_big.jpg"
+        ]
+    },
+    "phonica-206009": {
+        "store": "phonica",
+        "id": "phonica-206009",
+        "title": "Xylem Tube EP",
+        "link": "https://www.phonicarecords.com/product/aphex-twin-xylem-tube-ep-r-s-records/206009",
+        "artist": "APHEX TWIN",
+        "label": "R &amp; S RECORDS",
+        "label_link": "https://www.phonicarecords.com/label/r-s-records/206009/all/latest/desc",
+        "cat": "",
+        "phonica-all-genres-new-releases": 30,
+        "store_tags": {
+            "out_of_stock": false,
+            "preorder": false
+        },
+        "track_names": [
+            "Polynomial-C  ",
+            "Tamphex (Headphuq Mix)  ",
+            "Phlange Phace  ",
+            "Dodeccaheedron"
+        ],
+        "track_urls": [
+            "https://dmpqep8cljqhc.cloudfront.net/50bc192e3207ff5c640f8b1b908ffe87.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/214f1308e2eeb76d347d4e139035d49d.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/0c89d6232a81889a4e56e225ad3b57e3.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/64d8d6a3cfa815118822067346ef0375.mp3"
+        ],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/417b7ed98018fed78249821fcd3eacd9_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/417b7ed98018fed78249821fcd3eacd9_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/417b7ed98018fed78249821fcd3eacd9_big.jpg"
+        ]
+    },
+    "phonica-205895": {
+        "store": "phonica",
+        "id": "phonica-205895",
+        "title": "Cross Passage",
+        "link": "https://www.phonicarecords.com/product/wata-igarashi-polygonia-cross-passage-reclaim-your-city/205895",
+        "artist": "WATA IGARASHI &amp; POLYGONIA",
+        "label": "RECLAIM YOUR CITY",
+        "label_link": "https://www.phonicarecords.com/label/reclaim-your-city/205895/all/latest/desc",
+        "cat": "",
+        "phonica-all-genres-new-releases": 31,
+        "store_tags": {
+            "out_of_stock": false,
+            "preorder": false
+        },
+        "track_names": [
+            "Wata Igarashi &amp; Polygonia - \"Cross Passage\"",
+            "Wata Igarashi &amp; Polygonia - \"Fibre Axis\"",
+            "Polygonia - \"Voltage Blues\"",
+            "Wata Igarashi - \"The Tunnel Dreams\""
+        ],
+        "track_urls": [
+            "https://dmpqep8cljqhc.cloudfront.net/eb7e04c929bb6b027dd2137fbb00bc2f.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/66ea186ad45ced8825896276f80e49c2.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/e4c384db2705b8a03f0d7ef623718744.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/eb5058dafb98771b0c449021e7eec4b6.mp3"
+        ],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/7da4e12dc1575e6b32159e6a8abec5a1_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/7da4e12dc1575e6b32159e6a8abec5a1_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/7da4e12dc1575e6b32159e6a8abec5a1_big.jpg"
+        ]
+    },
+    "phonica-206355": {
+        "store": "phonica",
+        "id": "phonica-206355",
+        "title": "Raindance",
+        "link": "https://www.phonicarecords.com/product/braiden-raindance-off-out/206355",
+        "artist": "BRAIDEN",
+        "label": "OFF OUT",
+        "label_link": "https://www.phonicarecords.com/label/off-out/206355/all/latest/desc",
+        "cat": "",
+        "phonica-all-genres-new-releases": 32,
+        "store_tags": {
+            "out_of_stock": false,
+            "preorder": false
+        },
+        "track_names": [
+            "Raindance",
+            "Touch The Sky [ft. KESH]",
+            "X5x",
+            "Lagrangian Point"
+        ],
+        "track_urls": [
+            "https://dmpqep8cljqhc.cloudfront.net/cf54cdd642a46b64f37cabf2be307e37.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/d46a6f26e906480a1ff77982c2f1e607.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/f294f81740ba69ba14e66a65801dc046.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/b0296f6ec0c16373544f438fab9db97c.mp3"
+        ],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/e279f72e807f3c225b6a5dc50e7ed3d1_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/e279f72e807f3c225b6a5dc50e7ed3d1_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/e279f72e807f3c225b6a5dc50e7ed3d1_big.jpg"
+        ]
+    },
+    "phonica-206024": {
+        "store": "phonica",
+        "id": "phonica-206024",
+        "title": "I'll Take You There",
+        "link": "https://www.phonicarecords.com/product/cassimm-ill-take-you-there-rekids/206024",
+        "artist": "CASSIMM",
+        "label": "REKIDS",
+        "label_link": "https://www.phonicarecords.com/label/rekids/206024/all/latest/desc",
+        "cat": "",
+        "phonica-all-genres-new-releases": 33,
+        "store_tags": {
+            "out_of_stock": false,
+            "preorder": false
+        },
+        "track_names": [
+            "Original",
+            "Club Mix",
+            "Club Instrumental Mix"
+        ],
+        "track_urls": [
+            "https://dmpqep8cljqhc.cloudfront.net/7fc37796a719dcb350b3f60f50f01dbb.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/d183a253240d2ec3c831925630b3e1fd.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/317c180b754c2fd202f7d9e1ec0c55b0.mp3"
+        ],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/3beeb389974385c28ddc2f0eb093c726_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/3beeb389974385c28ddc2f0eb093c726_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/3beeb389974385c28ddc2f0eb093c726_big.jpg"
+        ]
+    },
+    "phonica-206257": {
+        "store": "phonica",
+        "id": "phonica-206257",
+        "title": "Best of Air Liquide (1991 - 2001) LP",
+        "link": "https://www.phonicarecords.com/product/air-liquide-best-of-air-liquide-1991-2001-lp-muller-records/206257",
+        "artist": "AIR LIQUIDE",
+        "label": "MULLER RECORDS",
+        "label_link": "https://www.phonicarecords.com/label/muller-records/206257/all/latest/desc",
+        "cat": "",
+        "phonica-all-genres-new-releases": 36,
+        "store_tags": {
+            "out_of_stock": false,
+            "preorder": false
+        },
+        "track_names": [
+            "Tanz Der Lemminge ",
+            "Liquid Men With Liquid Hearts ",
+            "Eldorado ",
+            "Eat U Like Candy",
+            "The Increased Difficulty Of Concentration ",
+            "If There Was No Gravity ",
+            "Superfreaky ",
+            "Mandragora copy",
+            "Not A Mindtrip ",
+            "Spacebrothers 2001 ",
+            "Thats You On The Floor "
+        ],
+        "track_urls": [
+            "https://dmpqep8cljqhc.cloudfront.net/aabe016614d0760c617c1bbb6126d890.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/b0af45579f1e919adeca1d5e4321f96e.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/a659efbf9923edb487822dfe17f4e366.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/c0b688ac6e7b3f7a01d63036e5e00282.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/a4563be90a8fa259cc1884d99ec6e217.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/d8e7f9c7053bf6be41bab18bb242d60c.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/2b3982dce65ce3466340cea8eec3fc0f.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/844baf4c1cf06e0fdfdc1a8b142e1db0.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/b3f6a0df53424ff0cba84a7e213953db.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/960715e229f31e61404c4b23ed373182.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/c8f6720c3434a48011b343e0dbe89c0b.mp3"
+        ],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/6b45a246feab6fbf112fef547f74f39a_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/6b45a246feab6fbf112fef547f74f39a_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/6b45a246feab6fbf112fef547f74f39a_big.jpg"
+        ]
+    },
+    "phonica-205904": {
+        "store": "phonica",
+        "id": "phonica-205904",
+        "title": "Sanza Mibale Ya Bo Pemi",
+        "link": "https://www.phonicarecords.com/product/flash-atkins-all-stars-sanza-mibale-ya-bo-pemi-paper-recordings/205904",
+        "artist": "FLASH ATKINS ALL STARS",
+        "label": "PAPER RECORDINGS",
+        "label_link": "https://www.phonicarecords.com/label/paper-recordings/205904/all/latest/desc",
+        "cat": "",
+        "phonica-all-genres-new-releases": 37,
+        "store_tags": {
+            "out_of_stock": false,
+            "preorder": false
+        },
+        "track_names": [
+            "Sanza Mibale Ya Bo Pemi",
+            "Sanza Mibale Ya Bo Pemi (Flash dub)",
+            "Sanza Mibale Ya Bo Pemi (Bosq's Boogie Bounce remix)",
+            "Sanza Mibale Ya Bo Pemi (Bosq's Boogie Bounce dub)"
+        ],
+        "track_urls": [
+            "https://dmpqep8cljqhc.cloudfront.net/ade7de53b38d7bd6f013fdfc680fed0a.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/3acad6d684fee3a48eb181daff54ed6f.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/66f53a76fe5c50079537a8a34c8699ff.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/8ad4ef0d7f9b36602b1bc33d85977875.mp3"
+        ],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/8178c2271b717252b3f435c474f4f709_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/8178c2271b717252b3f435c474f4f709_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/8178c2271b717252b3f435c474f4f709_big.jpg"
+        ]
+    },
+    "phonica-206195": {
+        "store": "phonica",
+        "id": "phonica-206195",
+        "title": "AniaraWL07",
+        "link": "https://www.phonicarecords.com/product/dorisburg-efraim-kent-arkajo-aniarawl07-aniara-recordings/206195",
+        "artist": "DORISBURG &amp; EFRAIM KENT / ARKAJO",
+        "label": "ANIARA RECORDINGS",
+        "label_link": "https://www.phonicarecords.com/label/aniara-recordings/206195/all/latest/desc",
+        "cat": "",
+        "phonica-all-genres-new-releases": 38,
+        "store_tags": {
+            "out_of_stock": false,
+            "preorder": false
+        },
+        "track_names": [
+            "Dorisburg and Efraim Kent - Wired to the Mainframe ",
+            "Dorisburg and Efraim Kent - X-Files Groove ",
+            "Arkajo - Consequence 1 ",
+            "Arkajo - Consequence 2 "
+        ],
+        "track_urls": [
+            "https://dmpqep8cljqhc.cloudfront.net/31a7131b9da2fb2349479c4a22b4a1b8.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/56079348a2ac194a86a6781784c4e15b.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/82c25c6d9b1eaa0840c1968ac7e048ec.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/359139e32ab948d60f696a140b87eef7.mp3"
+        ],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/8667e09214848eb36afc033a707dcfd3_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/8667e09214848eb36afc033a707dcfd3_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/8667e09214848eb36afc033a707dcfd3_big.jpg"
+        ]
+    },
+    "phonica-205530": {
+        "store": "phonica",
+        "id": "phonica-205530",
+        "title": "Machines Awake EP",
+        "link": "https://www.phonicarecords.com/product/cem3340-2030-present-a-future-tribe-machines-awake-ep-metroplex/205530",
+        "artist": "CEM3340 &amp; 2030 PRESENT A FUTURE TRIBE",
+        "label": "METROPLEX",
+        "label_link": "https://www.phonicarecords.com/label/metroplex/205530/all/latest/desc",
+        "cat": "",
+        "phonica-all-genres-new-releases": 39,
+        "store_tags": {
+            "out_of_stock": false,
+            "preorder": false
+        },
+        "track_names": [
+            "Machines Awake ",
+            "Circuit Take Control ",
+            "Space 5000 ",
+            "Electric Streams ",
+            "Electric Tribe "
+        ],
+        "track_urls": [
+            "https://dmpqep8cljqhc.cloudfront.net/a443c6def9a678b28d4ca1124fda4d2d.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/bfc810b68928c7d9cbeca18db1492da9.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/302f8dc8cdf0e5c6a29c68406801fe9d.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/8521a112b41a0816d4dc7f9940041d6d.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/032703095003c5939de511640e87738c.mp3"
+        ],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/837dda224e5c58dfed0791e76a67f7f0_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/837dda224e5c58dfed0791e76a67f7f0_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/837dda224e5c58dfed0791e76a67f7f0_big.jpg"
+        ]
+    },
+    "phonica-205906": {
+        "store": "phonica",
+        "id": "phonica-205906",
+        "title": "Unknown Parts",
+        "link": "https://www.phonicarecords.com/product/eddie-c-unknown-parts-disko-universal/205906",
+        "artist": "EDDIE C",
+        "label": "DISKO UNIVERSAL",
+        "label_link": "https://www.phonicarecords.com/label/disko-universal/205906/all/latest/desc",
+        "cat": "",
+        "phonica-all-genres-new-releases": 40,
+        "store_tags": {
+            "out_of_stock": false,
+            "preorder": false
+        },
+        "track_names": [
+            "No Speak Evil",
+            "Catfish Haus (feat LJ Simon)",
+            "Need Sum",
+            "I Hear DAT",
+            "Take Chances",
+            "I've Tried"
+        ],
+        "track_urls": [
+            "https://dmpqep8cljqhc.cloudfront.net/ed0ce318a400d37693ad40728cf9c4d0.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/3a37e216e03d65cebbbc92a12a2cdf0a.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/8238eb213cf2fff43e467627cf83c659.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/0772d61d77ae77cde95bf9b6267f5663.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/6dd57670ec44c1b63deb4e571c0cfe15.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/e22434ae1f1f78bea518cd1d362a80cb.mp3"
+        ],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/c5b8f3a0f89783bd29455d97f7932fd1_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/c5b8f3a0f89783bd29455d97f7932fd1_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/c5b8f3a0f89783bd29455d97f7932fd1_big.jpg"
+        ]
+    },
+    "phonica-205749": {
+        "store": "phonica",
+        "id": "phonica-205749",
+        "title": "Bitter Better / Kindness Weakness LP",
+        "link": "https://www.phonicarecords.com/product/le-motel-magugu-bitter-better-kindness-weakness-lp-maloca/205749",
+        "artist": "LE MOTEL &amp; MAGUGU",
+        "label": "MALOCA",
+        "label_link": "https://www.phonicarecords.com/label/maloca/205749/all/latest/desc",
+        "cat": "",
+        "phonica-all-genres-new-releases": 41,
+        "store_tags": {
+            "out_of_stock": false,
+            "preorder": false
+        },
+        "track_names": [
+            "Bad From Day",
+            "Bitter Better",
+            "No Fear",
+            "Gal Dem",
+            "Believe",
+            "On Topper",
+            "Blend",
+            "Kindness Weakness",
+            "Let Me Down"
+        ],
+        "track_urls": [
+            "https://dmpqep8cljqhc.cloudfront.net/0bb56f6a48f7468eadc0038e10e0a55c.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/6898333f77f427dfd793a997fd2e0246.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/32f999106991228585d4b6f056703907.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/c12e57a5595258563d17a46dec2165b6.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/71aed41ca0f1ad1575a33c1c9ee03069.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/17d9a2a2f93729e725d8d0028c767829.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/95a8a6a37b622c4c81a59d7475c11d22.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/c8ed8a8da5ecbc95404518d41de65c98.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/19e16fc15a3fa668a158b8d7c68d0efc.mp3"
+        ],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/7a733762b8ebbbfcc7fd48653b16ddcd_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/7a733762b8ebbbfcc7fd48653b16ddcd_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/7a733762b8ebbbfcc7fd48653b16ddcd_big.jpg"
+        ]
+    },
+    "phonica-205910": {
+        "store": "phonica",
+        "id": "phonica-205910",
+        "title": "The Love / The Hurt",
+        "link": "https://www.phonicarecords.com/product/rawson-the-love-the-hurt-gamm/205910",
+        "artist": "RAWSON",
+        "label": "G.A.M.M",
+        "label_link": "https://www.phonicarecords.com/label/gamm/205910/all/latest/desc",
+        "cat": "",
+        "phonica-all-genres-new-releases": 42,
+        "store_tags": {
+            "out_of_stock": false,
+            "preorder": false
+        },
+        "track_names": [
+            "The Love",
+            "The Hurt"
+        ],
+        "track_urls": [
+            "https://dmpqep8cljqhc.cloudfront.net/1a196c7823af58c435e36fa9cf16fea5.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/66c31524d7ba9444915ed24bfea36d15.mp3"
+        ],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/369ad7d44c3e85c3d24a6aa426081110_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/369ad7d44c3e85c3d24a6aa426081110_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/369ad7d44c3e85c3d24a6aa426081110_big.jpg"
+        ]
+    },
+    "phonica-205909": {
+        "store": "phonica",
+        "id": "phonica-205909",
+        "title": "People Are Funky",
+        "link": "https://www.phonicarecords.com/product/ukokos-people-are-funky-white-label/205909",
+        "artist": "UKOKOS",
+        "label": "WHITE LABEL",
+        "label_link": "https://www.phonicarecords.com/label/white-label/205909/all/latest/desc",
+        "cat": "",
+        "phonica-all-genres-new-releases": 43,
+        "store_tags": {
+            "out_of_stock": true,
+            "preorder": false
+        },
+        "track_names": [
+            "People Are Funky"
+        ],
+        "track_urls": [
+            "https://dmpqep8cljqhc.cloudfront.net/b4ccd844f3042a640452732b42021617.mp3"
+        ],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/79864aea383d410708ec5b3922486250_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/79864aea383d410708ec5b3922486250_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/79864aea383d410708ec5b3922486250_big.jpg"
+        ]
+    },
+    "phonica-205996": {
+        "store": "phonica",
+        "id": "phonica-205996",
+        "title": "Robot Edits Vol 1",
+        "link": "https://www.phonicarecords.com/product/robot-84-robot-edits-vol-1-robot-84-records/205996",
+        "artist": "ROBOT 84",
+        "label": "ROBOT 84 RECORDS",
+        "label_link": "https://www.phonicarecords.com/label/robot-84-records/205996/all/latest/desc",
+        "cat": "",
+        "phonica-all-genres-new-releases": 44,
+        "store_tags": {
+            "out_of_stock": false,
+            "preorder": false
+        },
+        "track_names": [
+            "\u2018Pleasuredome\u2019 Ron\u2019s Tribute Mix",
+            "Fight the Power (Robot84 Jazztastic Edit)",
+            "Brotha (Robot84 Edit)",
+            "Robot84 vs King Supreme (Back to the Disco Edit)"
+        ],
+        "track_urls": [
+            "https://dmpqep8cljqhc.cloudfront.net/c80ca522d83a3b1a2da5e14560b44475.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/1a9260bc1d22e0b263033290f2f850bd.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/0f338bdd22da019c7f869fce581cb1f6.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/99075ba05e8a5146f6882668cef719e4.mp3"
+        ],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/23eb8bf5374e96f737378f3ff9dff168_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/23eb8bf5374e96f737378f3ff9dff168_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/23eb8bf5374e96f737378f3ff9dff168_big.jpg"
+        ]
+    },
+    "phonica-205990": {
+        "store": "phonica",
+        "id": "phonica-205990",
+        "title": "Montara LP (Tone Poet)",
+        "link": "https://www.phonicarecords.com/product/bobby-hutcherson-montara-lp-tone-poet-blue-note/205990",
+        "artist": "BOBBY HUTCHERSON",
+        "label": "BLUE NOTE",
+        "label_link": "https://www.phonicarecords.com/label/blue-note/205990/all/latest/desc",
+        "cat": "",
+        "phonica-all-genres-new-releases": 45,
+        "store_tags": {
+            "out_of_stock": true,
+            "preorder": false
+        },
+        "track_names": [
+            "Camel Rise",
+            "Montara",
+            "(Se Acabo) La Malanga",
+            "Love Song",
+            "Little Angel",
+            "Yuyo",
+            "Oye Como Va"
+        ],
+        "track_urls": [
+            "https://dmpqep8cljqhc.cloudfront.net/f3c9e5b25147feea33f67f9cab1ea8ad.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/63dbe542e6d63002b95ddbf2af3179e7.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/2ff9afe16d31c7ce43c3bbe746fb9c05.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/310894c46c2f2214374ebaf5beab1c99.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/484f10b250ddaa0f6e8106ff8a8a7566.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/b8534b0f71259f89e64dd8975596e995.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/975758bbd696e9ccaabc5cc1c213a9b0.mp3"
+        ],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/f687a26c861c2c96d04fd1c0ef420a93_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/f687a26c861c2c96d04fd1c0ef420a93_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/f687a26c861c2c96d04fd1c0ef420a93_big.jpg"
+        ]
+    },
+    "phonica-205418": {
+        "store": "phonica",
+        "id": "phonica-205418",
+        "title": "Out Of The Box EP (Cinthie &amp; Meat remix)",
+        "link": "https://www.phonicarecords.com/product/huxley-out-of-the-box-ep-cinthie-meat-remix-20-20-vision/205418",
+        "artist": "HUXLEY",
+        "label": "20/20 VISION",
+        "label_link": "https://www.phonicarecords.com/label/2020-vision/205418/all/latest/desc",
+        "cat": "",
+        "phonica-all-genres-new-releases": 46,
+        "store_tags": {
+            "out_of_stock": false,
+            "preorder": false
+        },
+        "track_names": [
+            "Box Clever",
+            "Atonement",
+            "Box Clever (Cinthie &amp; Meat remix)",
+            "Feel What You Want"
+        ],
+        "track_urls": [
+            "https://dmpqep8cljqhc.cloudfront.net/112b187d99f1f37088ab26b765aa0dc9.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/51128db0d5494ecd1efe77edcb0cf3b6.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/5a498fab04f3fe3a5f9de2972ded697e.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/6bea5582f4977fc29f010771227b70a2.mp3"
+        ],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/651165bb7d34c28c29f5055d644bf401_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/651165bb7d34c28c29f5055d644bf401_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/651165bb7d34c28c29f5055d644bf401_big.jpg"
+        ]
+    },
+    "phonica-205967": {
+        "store": "phonica",
+        "id": "phonica-205967",
+        "title": "Deep Into House Vol. 3",
+        "link": "https://www.phonicarecords.com/product/ricky-montanari-discoplex-luca-olivotto-deep-into-house-vol-3-groove-culture-deep/205967",
+        "artist": "RICKY MONTANARI &amp; DISCOPLEX / LUCA OLIVOTTO...",
+        "label": "GROOVE CULTURE DEEP",
+        "label_link": "https://www.phonicarecords.com/label/groove-culture-deep/205967/all/latest/desc",
+        "cat": "",
+        "phonica-all-genres-new-releases": 47,
+        "store_tags": {
+            "out_of_stock": false,
+            "preorder": false
+        },
+        "track_names": [
+            "Ricky Montanari, Discoplex - Good Day (Cecilia's Groove Mix)",
+            "Luca Olivotto \u2013 All Night",
+            "Memi P, Gisele Jackson - Make it on my own (Gianni Bini gold times dub)",
+            "Andrea Tomei \u2013 In My House"
+        ],
+        "track_urls": [
+            "https://dmpqep8cljqhc.cloudfront.net/342e44844bf5977d84c782c0a93c0612.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/ab3237c78757d9ba2859006ef677c9eb.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/a5b24bcc121103ce91acd34d7c0d435f.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/7d8eac2b93c22b3f7968f7669dd838c2.mp3"
+        ],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/686ba20ee861ffaddcd710d28bd618fe_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/686ba20ee861ffaddcd710d28bd618fe_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/686ba20ee861ffaddcd710d28bd618fe_big.jpg"
+        ]
+    },
+    "phonica-205575": {
+        "store": "phonica",
+        "id": "phonica-205575",
+        "title": "Clairvoyance / Love &amp; Unity (Reissue)",
+        "link": "https://www.phonicarecords.com/product/ominous-clairvoyance-love-unity-reissue-hot-plates/205575",
+        "artist": "OMINOUS",
+        "label": "HOT PLATES",
+        "label_link": "https://www.phonicarecords.com/label/hot-plates/205575/all/latest/desc",
+        "cat": "",
+        "phonica-all-genres-new-releases": 48,
+        "store_tags": {
+            "out_of_stock": false,
+            "preorder": false
+        },
+        "track_names": [
+            "Clairvoyance ",
+            "Love &amp; Unity "
+        ],
+        "track_urls": [
+            "https://dmpqep8cljqhc.cloudfront.net/8d766f2b6aabe941218cae1fce61ed88.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/099dca4cca8ad5c7f3094ab90c1decbb.mp3"
+        ],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/915ab0378976188ffcf0a196145a18cc_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/915ab0378976188ffcf0a196145a18cc_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/915ab0378976188ffcf0a196145a18cc_big.jpg"
+        ]
+    },
+    "phonica-205706": {
+        "store": "phonica",
+        "id": "phonica-205706",
+        "title": "Sgt Slick Vol. 6",
+        "link": "https://www.phonicarecords.com/product/sgt-slick-sgt-slick-vol-6-sgt-slick-recuts/205706",
+        "artist": "SGT SLICK",
+        "label": "SGT SLICK RECUTS",
+        "label_link": "https://www.phonicarecords.com/label/sgt-slick-recuts/205706/all/latest/desc",
+        "cat": "",
+        "phonica-all-genres-new-releases": 49,
+        "store_tags": {
+            "out_of_stock": false,
+            "preorder": false
+        },
+        "track_names": [
+            "Found Robert Smith",
+            "No Sitting Down",
+            "Bed Of XTC",
+            "Dovely Lay"
+        ],
+        "track_urls": [
+            "https://dmpqep8cljqhc.cloudfront.net/7c9f62f9a25d2c027b5abe25fe5085ad.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/8b8364e7d352d45483468a601ef7b16a.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/4f1c00b351c6c74b7cbc2feb13b07e33.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/3391630e1377e94d042a2ee59b2586cb.mp3"
+        ],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/26131ef039e97771fe1bd203ac18bb4d_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/26131ef039e97771fe1bd203ac18bb4d_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/26131ef039e97771fe1bd203ac18bb4d_big.jpg"
+        ]
+    },
+    "phonica-205885": {
+        "store": "phonica",
+        "id": "phonica-205885",
+        "title": "Hotline '84 (Black &amp; Blue Splatter Effect...",
+        "link": "https://www.phonicarecords.com/product/moontalk-hotline-84-black-blue-splatter-effect-planet-x/205885",
+        "artist": "MOONTALK",
+        "label": "PLANET X",
+        "label_link": "https://www.phonicarecords.com/label/planet-x/205885/all/latest/desc",
+        "cat": "",
+        "phonica-all-genres-new-releases": 50,
+        "store_tags": {
+            "out_of_stock": false,
+            "preorder": false
+        },
+        "track_names": [
+            "Hot Line 84",
+            "Hot Line 84_ (Ben Sterling Remix)"
+        ],
+        "track_urls": [
+            "https://dmpqep8cljqhc.cloudfront.net/e8da7792c74be31424219f6b3b13da23.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/4ece9aa6ab259ed6d895de84654abf30.mp3"
+        ],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/803d55f7e3e5d45a61120d62a1e0da32_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/803d55f7e3e5d45a61120d62a1e0da32_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/803d55f7e3e5d45a61120d62a1e0da32_big.jpg"
+        ]
+    },
+    "phonica-205785": {
+        "store": "phonica",
+        "id": "phonica-205785",
+        "title": "Yokai",
+        "link": "https://www.phonicarecords.com/product/the-mighty-zaf-linkwood-present-yokai-80s/205785",
+        "artist": "THE MIGHTY ZAF &amp; LINKWOOD PRESENT",
+        "label": "80S",
+        "label_link": "https://www.phonicarecords.com/label/80s/205785/all/latest/desc",
+        "cat": "",
+        "phonica-all-genres-new-releases": 51,
+        "store_tags": {
+            "out_of_stock": true,
+            "preorder": false
+        },
+        "track_names": [
+            "Yokai",
+            "Yokai (ControlRemote Mix)"
+        ],
+        "track_urls": [
+            "https://dmpqep8cljqhc.cloudfront.net/1cd1b86bbe65a68e799592b1ddf5879b.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/89435116e4053c603f5b35773dd9e232.mp3"
+        ],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/e3595f2b0c7b74a1dd1bbf945eed3d5e_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/e3595f2b0c7b74a1dd1bbf945eed3d5e_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/e3595f2b0c7b74a1dd1bbf945eed3d5e_big.jpg"
+        ]
+    },
+    "phonica-205836": {
+        "store": "phonica",
+        "id": "phonica-205836",
+        "title": "Moxy Edits 15 &amp; 16",
+        "link": "https://www.phonicarecords.com/product/moxy-edits-moxy-edits-15-16-moxy-muzik/205836",
+        "artist": "MOXY EDITS",
+        "label": "MOXY MUZIK",
+        "label_link": "https://www.phonicarecords.com/label/moxy-muzik/205836/all/latest/desc",
+        "cat": "",
+        "phonica-all-genres-new-releases": 52,
+        "store_tags": {
+            "out_of_stock": false,
+            "preorder": false
+        },
+        "track_names": [
+            "Untitled (Vocal)",
+            "Untitled (Vocal)"
+        ],
+        "track_urls": [
+            "https://dmpqep8cljqhc.cloudfront.net/9d14dd573120d453d8879a683f349c98.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/e3cab1b6571b27d1ed21a5b43e672fc6.mp3"
+        ],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/64be9fabe7c4438868a31c1c4ab3ec73_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/64be9fabe7c4438868a31c1c4ab3ec73_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/64be9fabe7c4438868a31c1c4ab3ec73_big.jpg"
+        ]
+    },
+    "phonica-206876": {
+        "store": "phonica",
+        "id": "phonica-206876",
+        "title": "Acid Thunder 7inch",
+        "link": "https://www.phonicarecords.com/product/cosmic-slide-acid-thunder-7inch-trueschool/206876",
+        "artist": "COSMIC SLIDE",
+        "label": "TRUESCHOOL",
+        "label_link": "https://www.phonicarecords.com/label/trueschool/206876/all/latest/desc",
+        "cat": "",
+        "phonica-all-genres-new-releases": 53,
+        "store_tags": {
+            "out_of_stock": false,
+            "preorder": false
+        },
+        "track_names": [
+            "Acid Thunder",
+            "Acid Thunder (instrumental)"
+        ],
+        "track_urls": [
+            "https://dmpqep8cljqhc.cloudfront.net/b319e007d5478a086666ce65b3e8df18.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/c3113fa3f5a23d38e1b1e846db47dc3a.mp3"
+        ],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/621d37c69451f1da07de700cefa5a04a_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/621d37c69451f1da07de700cefa5a04a_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/621d37c69451f1da07de700cefa5a04a_big.jpg"
+        ]
+    },
+    "phonica-206831": {
+        "store": "phonica",
+        "id": "phonica-206831",
+        "title": "Bishop88 Edits (Don't / You Never Come Clos...",
+        "link": "https://www.phonicarecords.com/product/bishop88-bishop88-edits-dont-you-never-come-clos-bishop88/206831",
+        "artist": "BISHOP88",
+        "label": "BISHOP88",
+        "label_link": "https://www.phonicarecords.com/label/bishop88/206831/all/latest/desc",
+        "cat": "",
+        "phonica-all-genres-new-releases": 54,
+        "store_tags": {
+            "out_of_stock": true,
+            "preorder": false
+        },
+        "track_names": [
+            "Don't",
+            "You Never Come Closer"
+        ],
+        "track_urls": [
+            "https://dmpqep8cljqhc.cloudfront.net/83008e2e9d0e046a72711ba567702c89.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/b8a3cc17fbe6e351e6356d53dbd56b35.mp3"
+        ],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/0bca1e080d3923a71657655fcdd18096_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/0bca1e080d3923a71657655fcdd18096_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/0bca1e080d3923a71657655fcdd18096_big.jpg"
+        ]
+    },
+    "phonica-206326": {
+        "store": "phonica",
+        "id": "phonica-206326",
+        "title": "Nu Groove Edits Vol. 7",
+        "link": "https://www.phonicarecords.com/product/sound-vandals-ny-housen-authority-avant-nu-groove-edits-vol-7-nu-groove-records/206326",
+        "artist": "SOUND VANDALS / N.Y. HOUSE'N AUTHORITY / AVANT...",
+        "label": "NU GROOVE RECORDS",
+        "label_link": "https://www.phonicarecords.com/label/nu-groove-records/206326/all/latest/desc",
+        "cat": "",
+        "phonica-all-genres-new-releases": 55,
+        "store_tags": {
+            "out_of_stock": false,
+            "preorder": false
+        },
+        "track_names": [
+            "The Sound Vandals \u2018Feel It\u2019 (NiCe7 Edit)",
+            "N.Y. House\u2019n Authority \u2018APT. 2B\u2019 (Steve Bug Edit)",
+            "Avant Garde \u2018C\u2019Mon\u2019 (Darius Syrossian Edit)",
+            "You Know Who! \u2018I\u2019ve Fallen And I Can\u2019t Get Up\u2019 (Make A Dance Edit)"
+        ],
+        "track_urls": [
+            "https://dmpqep8cljqhc.cloudfront.net/302ff36929e75e0fa6c7cc29e4e220bc.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/1c4a3bda91636f4f4bdb621d782cdaac.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/d10c9d814c48b0736c2cbb4ac20b1d85.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/b9dbaea19b6ccf795535d16a62c70286.mp3"
+        ],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/6deb2f4a8b4c56a02baac958f49427a6_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/6deb2f4a8b4c56a02baac958f49427a6_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/6deb2f4a8b4c56a02baac958f49427a6_big.jpg"
+        ]
+    },
+    "phonica-204910": {
+        "store": "phonica",
+        "id": "phonica-204910",
+        "title": "Plastik EP (feat Micky More &amp; Andy Tee rem...",
+        "link": "https://www.phonicarecords.com/product/marc-cotterell-plastik-ep-feat-micky-more-andy-tee-rem-plastik-people/204910",
+        "artist": "MARC COTTERELL",
+        "label": "PLASTIK PEOPLE",
+        "label_link": "https://www.phonicarecords.com/label/plastik-people/204910/all/latest/desc",
+        "cat": "",
+        "phonica-all-genres-new-releases": 56,
+        "store_tags": {
+            "out_of_stock": true,
+            "preorder": false
+        },
+        "track_names": [
+            "Key To Life - \"Find Our Way (Breakaway)\" (feat Kathleen Murphy - Marc Cotterell Plastik vocal mix)",
+            "Marc Cotterell, Dominic Balchin - \"The Trumpet Track\" (Micky More &amp; Andy Tee remix)",
+            "Marc Cotterell - \"Searching For Your Love\" (Plastik vocal mix)",
+            "Marc Cotterell - \"Get To It\" (original mix)"
+        ],
+        "track_urls": [
+            "https://dmpqep8cljqhc.cloudfront.net/1f0cc6f5c3a335bff78ee10c9f01ba72.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/073fe732b8eb40f5dc62177f302a61ac.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/a6cc1d1fdfd9820806799769a8dcb010.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/697f71b50dc9cbaaf7b8c98969ea6d25.mp3"
+        ],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/9f8b82485fcd161457ccea5b3bd66042_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/9f8b82485fcd161457ccea5b3bd66042_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/9f8b82485fcd161457ccea5b3bd66042_big.jpg"
+        ]
+    },
+    "phonica-204676": {
+        "store": "phonica",
+        "id": "phonica-204676",
+        "title": "The Me Inside",
+        "link": "https://www.phonicarecords.com/product/pal-joey-robert-owens-the-me-inside-adeen/204676",
+        "artist": "PAL JOEY / ROBERT OWENS",
+        "label": "ADEEN",
+        "label_link": "https://www.phonicarecords.com/label/adeen/204676/all/latest/desc",
+        "cat": "",
+        "phonica-all-genres-new-releases": 57,
+        "store_tags": {
+            "out_of_stock": false,
+            "preorder": false
+        },
+        "track_names": [
+            "\"The Me Inside\"",
+            "\"The Me Inside\" (instrumental)",
+            "\"The Me Inside\" (New Digital Fidelity Reshape)"
+        ],
+        "track_urls": [
+            "https://dmpqep8cljqhc.cloudfront.net/01e840a9ccf3355912e8b14570c6b655.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/75c26a139b5e38813d8ed9005cb3b49a.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/ef29838241156600d0a7fb57be366374.mp3"
+        ],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/db0ca8685ea7e21bcbeea10b1e1b6476_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/db0ca8685ea7e21bcbeea10b1e1b6476_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/db0ca8685ea7e21bcbeea10b1e1b6476_big.jpg"
+        ]
+    },
+    "phonica-204677": {
+        "store": "phonica",
+        "id": "phonica-204677",
+        "title": "DISCOLIFTING 04",
+        "link": "https://www.phonicarecords.com/product/pete-blaker-discolifting-04-funkyjaws-music/204677",
+        "artist": "PETE BLAKER",
+        "label": "FUNKYJAWS MUSIC",
+        "label_link": "https://www.phonicarecords.com/label/funkyjaws-music/204677/all/latest/desc",
+        "cat": "",
+        "phonica-all-genres-new-releases": 58,
+        "store_tags": {
+            "out_of_stock": false,
+            "preorder": false
+        },
+        "track_names": [
+            "Zulu",
+            "Instrumental",
+            "See The Light",
+            "Heaven"
+        ],
+        "track_urls": [
+            "https://dmpqep8cljqhc.cloudfront.net/6b03d6b6e9f79180f96cfa682bcfcada.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/dcd3a0d0f8265649c8723a4322bdd7a1.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/a4e61df793eae8082eb083aedb99a78b.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/95706a7daf968e3fde52526949348732.mp3"
+        ],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/229dd9ba4e848652469bb7eafb792e65_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/229dd9ba4e848652469bb7eafb792e65_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/229dd9ba4e848652469bb7eafb792e65_big.jpg"
+        ]
+    },
+    "phonica-204906": {
+        "store": "phonica",
+        "id": "phonica-204906",
+        "title": "Discoweey Hits Vol 1",
+        "link": "https://www.phonicarecords.com/product/hotmood-discoweey-hits-vol-1-discoweey/204906",
+        "artist": "HOTMOOD",
+        "label": "DISCOWEEY",
+        "label_link": "https://www.phonicarecords.com/label/discoweey/204906/all/latest/desc",
+        "cat": "",
+        "phonica-all-genres-new-releases": 59,
+        "store_tags": {
+            "out_of_stock": true,
+            "preorder": false
+        },
+        "track_names": [
+            "Ya Te Olvide",
+            "DDD",
+            "Funk Party",
+            "D.R.E.A.M.I.N.G"
+        ],
+        "track_urls": [
+            "https://dmpqep8cljqhc.cloudfront.net/21bb5bdb96947c1b26046352e8fdee72.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/46f142178cbccad72196de6999deafb3.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/5f47715ec27dc86bb3952203edb95ca1.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/71d9dd0280152a0a7f40705ba2d8e872.mp3"
+        ],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/44b34b05f6fa0fc2ece70c3ca4057f8c_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/44b34b05f6fa0fc2ece70c3ca4057f8c_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/44b34b05f6fa0fc2ece70c3ca4057f8c_big.jpg"
+        ]
+    },
+    "phonica-204681": {
+        "store": "phonica",
+        "id": "phonica-204681",
+        "title": "Fair Winds",
+        "link": "https://www.phonicarecords.com/product/lukas-visti-peter-visti-fair-winds-is-it-balearic/204681",
+        "artist": "LUKAS VISTI / PETER VISTI",
+        "label": "IS IT BALEARIC",
+        "label_link": "https://www.phonicarecords.com/label/is-it-balearic/204681/all/latest/desc",
+        "cat": "",
+        "phonica-all-genres-new-releases": 60,
+        "store_tags": {
+            "out_of_stock": false,
+            "preorder": false
+        },
+        "track_names": [
+            "Ocean View",
+            "Invisible Sun",
+            "A New World",
+            "Kathmandu",
+            "Fair Winds",
+            "Eternal Love",
+            "Lazy",
+            "The Last Supper"
+        ],
+        "track_urls": [
+            "https://dmpqep8cljqhc.cloudfront.net/93166e6ce4add7c82e9939887a82658a.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/0de1ddbb619ec1e5a26749f0d5576bd6.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/36428560d01d223c251b407a680a8110.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/742ab2bdb764d38895b3546da2b7553a.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/18a85188592f5d63adfd4f0cf2bf0d0c.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/2f64f741f7f80369dcfaec11ed8af2e8.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/5907039d8b553323d2e5289c96847698.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/fae8eb83232af9245ca7160c7fdd354e.mp3"
+        ],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/79c70976a8c77153de0b87b1e6d2c1a4_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/79c70976a8c77153de0b87b1e6d2c1a4_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/79c70976a8c77153de0b87b1e6d2c1a4_big.jpg"
+        ]
+    },
+    "phonica-204582": {
+        "store": "phonica",
+        "id": "phonica-204582",
+        "title": "Veronica Electronica (Clear vinyl)",
+        "link": "https://www.phonicarecords.com/product/madonna-veronica-electronica-clear-vinyl-warner/204582",
+        "artist": "MADONNA",
+        "label": "WARNER",
+        "label_link": "https://www.phonicarecords.com/label/warner/204582/all/latest/desc",
+        "cat": "",
+        "phonica-all-genres-new-releases": 61,
+        "store_tags": {
+            "out_of_stock": false,
+            "preorder": false
+        },
+        "track_names": [
+            "\"Drowned World/Substitute For Love\" (BT &amp; Sasha Bucklodge Ashram New edit)",
+            "\"Ray Of Light\" (Sasha Twilo mix edit)",
+            "\"Skin\" (The Collaboration remix edit)",
+            "\"Nothing Really Matters\" (club 69 Speed mix Meets The dub)",
+            "\"Sky Fits Heaven\" (Victor Calderone Future New edit)",
+            "\"Frozen\" (Widescreen mix &amp; Drums)",
+            "\"The Power Of Good-Bye\" (Fabien Good God mix edit)",
+            "\"Gone, Gone, Gone\" (original demo version)"
+        ],
+        "track_urls": [
+            "https://dmpqep8cljqhc.cloudfront.net/d2be2fb4e69cdb2367c5320e99c49880.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/34dda8f9cb6e1b0e62a344e6225e756a.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/7fd9c7eda910f1c675b3e616fabce783.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/00a883e430e3ce1e61c7ae0a3a289940.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/aa818e66f383634f619f1816586c7518.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/bf4d1f60a9545bf9db9d4a24247426d4.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/7589d890519221ae1d5d491b904b82cf.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/e401831a9cdf274fd68a7b9aff8bf456.mp3"
+        ],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/c027423ad1d0b7686fe2333d085d6410_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/c027423ad1d0b7686fe2333d085d6410_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/c027423ad1d0b7686fe2333d085d6410_big.jpg"
+        ]
+    },
+    "phonica-205076": {
+        "store": "phonica",
+        "id": "phonica-205076",
+        "title": "Caviar LP (Neon Green Vinyl)",
+        "link": "https://www.phonicarecords.com/product/moscoman-caviar-lp-neon-green-vinyl-disco-halal/205076",
+        "artist": "MOSCOMAN",
+        "label": "DISCO HALAL",
+        "label_link": "https://www.phonicarecords.com/label/disco-halal/205076/all/latest/desc",
+        "cat": "",
+        "phonica-all-genres-new-releases": 62,
+        "store_tags": {
+            "out_of_stock": false,
+            "preorder": false
+        },
+        "track_names": [
+            "\"Caviar\"",
+            "\"Ride\" (feat COMA)",
+            "\"Low Blood Sugar\" (feat SCUDFM)",
+            "\"In Stereo\" (feat Tom Sanders)",
+            "\"Going There\" (feat Justin Strauss)",
+            "\"Nevermind\" (feat The Golden Dreggs)",
+            "\"Eagle Rocks\"",
+            "\"Ends Well\" (feat Talee)",
+            "\"Reflecting On You\"",
+            "\"Outro\""
+        ],
+        "track_urls": [
+            "https://dmpqep8cljqhc.cloudfront.net/c8d1d869bc9f36ec9bc6f4db3c567835.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/37e39c36c6897a360da195d511a24689.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/2b084d705e95a643b40b2e16cc234e4c.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/3a001ae6efd3e34d618c30e6dd42c271.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/35a91247c57a834e7ed51c584a61e559.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/6d6dced9059385fc65d9371d1eaf10a8.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/271cac915fa744dd46a90484e0948b3a.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/17e621bf6c7c38047357b596cfab3b57.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/238b9a2019320027e243936c75c7ad3a.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/45f3b24a86f81e58cae474c54cad991a.mp3"
+        ],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/026bacb175d0020c3b175e737b857f25_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/026bacb175d0020c3b175e737b857f25_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/026bacb175d0020c3b175e737b857f25_big.jpg"
+        ]
+    },
+    "phonica-204771": {
+        "store": "phonica",
+        "id": "phonica-204771",
+        "title": "SKA From the Vaults of WIRL Records",
+        "link": "https://www.phonicarecords.com/product/various-artists-ska-from-the-vaults-of-wirl-records-kingston-sounds/204771",
+        "artist": "VARIOUS ARTISTS",
+        "label": "KINGSTON SOUNDS",
+        "label_link": "https://www.phonicarecords.com/label/kingston-sounds/204771/all/latest/desc",
+        "cat": "",
+        "phonica-all-genres-new-releases": 63,
+        "store_tags": {
+            "out_of_stock": true,
+            "preorder": false
+        },
+        "track_names": [
+            "The Skatalites - \"Chinatown\"",
+            "The Skatalites - \"The Reburial\"",
+            "Johnny Moore - \"South China Sea\"",
+            "Roland Alphonso - \"Determination\"",
+            "DonDrummond - \"Love In The Afternoon\"",
+            "The Skatalites - \"Confucius\"",
+            "The Skatalites - \"Live Wire\"",
+            "The Skatalites - \"Ska Boo Da Ba\"",
+            "The Skatalites - \"A Shot In The Dark\"",
+            "The Skatalites - \"El Pussycat\"",
+            "The Skatalites - \"Ska Ra Van\"",
+            "The Skatalites - \"Smiling\"",
+            "The Skatalites - \"Ringo Rides\"",
+            "Roland Alphonso - \"YC 10\""
+        ],
+        "track_urls": [
+            "https://dmpqep8cljqhc.cloudfront.net/498959f5b33d901c994ab515594cfba2.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/205ba564ff3046e488021055ac7e2070.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/5481b40d29a88e53246966b9d58bc02d.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/a74164d5f80eeb6ba7120a46b00c72a0.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/d622f1615588e7e97fc14c4a257871b5.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/9178e26e6f7fe6641c2967898e438945.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/71b1b228a3948f446717cfbdb851d263.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/346086d06a0712937e336eca7e518f53.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/d0c6b9c002fa28b856422e8126def187.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/6a30e1592f50e16ee7f0b06a9e3e8d69.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/740fe2aa041078c8f683f812eb8dad47.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/3776421c27ab55beb96eb0dbd4eabb18.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/d2932499d9b9e0ab5ae611e568d57126.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/02f24706a4bb6c480d84824ba44872da.mp3"
+        ],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/b964a87482a1c8be37026b66e9e6d5a7_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/b964a87482a1c8be37026b66e9e6d5a7_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/b964a87482a1c8be37026b66e9e6d5a7_big.jpg"
+        ]
+    },
+    "phonica-158336": {
+        "store": "phonica",
+        "id": "phonica-158336",
+        "title": "The Composer of Desafinado Plays LP",
+        "link": "https://www.phonicarecords.com/product/antonio-carlos-jobim-the-composer-of-desafinado-plays-lp-verve/158336",
+        "artist": "ANTONIO CARLOS JOBIM",
+        "label": "VERVE",
+        "label_link": "https://www.phonicarecords.com/label/verve/158336/all/latest/desc",
+        "cat": "",
+        "phonica-all-genres-new-releases": 65,
+        "store_tags": {
+            "out_of_stock": true,
+            "preorder": false
+        },
+        "track_names": [
+            "The Girl From Ipanema",
+            "Amor Em Paz (Once I Loved)",
+            "Agua De Beber",
+            "Vivo Sonhando (Dreamer)",
+            "Favela",
+            "Insensatez (How Insensitive)",
+            "Corcovado (Quiet Nights)",
+            "Samba De Uma Nota So (One Note Samba)",
+            "Meditation",
+            "So Danco Samba (Jazz Samba)",
+            "Chega De Saudade",
+            "Desafinado"
+        ],
+        "track_urls": [
+            "https://dmpqep8cljqhc.cloudfront.net/81c39acc72040ca59663f97978bef53e.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/f0c11434b8eaa4b74a3c7900fef3958a.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/1295e117f6a0f5f56ffbf0c592c45c79.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/13d9553fac472a386490cd01e1cc534a.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/5cddd6ccc8920b02eae32d2678eb81fb.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/e11bd573473507dcf664234abbb8e57d.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/e129fe9136687090303d3ce93fe446b3.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/c5426c8b78d2243f5e253bd94ddb3d09.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/7d33d6fa6a92263f1cb368feb4468e9a.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/f6acd4356bc011f848bb59037a44fc74.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/e221bd387530adc815856b6b5da6e746.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/e1e9e6fbddc27d667c4200d6b01e3424.mp3"
+        ],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/32d2040d3528ac945f2b5a6ba12e22bd_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/32d2040d3528ac945f2b5a6ba12e22bd_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/32d2040d3528ac945f2b5a6ba12e22bd_big.jpg"
+        ]
+    },
+    "phonica-206936": {
+        "store": "phonica",
+        "id": "phonica-206936",
+        "title": "SickElixir CD",
+        "link": "https://www.phonicarecords.com/product/blawan-sickelixir-cd-xl-recordings/206936",
+        "artist": "BLAWAN",
+        "label": "XL RECORDINGS",
+        "label_link": "https://www.phonicarecords.com/label/xl-recordings/206936/all/latest/desc",
+        "cat": "",
+        "phonica-all-genres-new-releases": 66,
+        "store_tags": {
+            "out_of_stock": false,
+            "preorder": false
+        },
+        "track_names": [
+            "\"The Gl Lights\"",
+            "\"NOS\"",
+            "\"Weirdos Unite\"",
+            "\"Rabbit Hole\" (feat Monstera Black)",
+            "\"WTF\"",
+            "\"Casch\"",
+            "\"Birf Song\"",
+            "\"During Elevation\"",
+            "\"Dont Worry We Happy\"",
+            "\"Style Teef\"",
+            "\"Sonkind\"",
+            "\"TCP Burn\"",
+            "\"Creature Brigade\"",
+            "\"SickElixir\""
+        ],
+        "track_urls": [
+            "https://dmpqep8cljqhc.cloudfront.net/725e48633a74950d9b6ddda16c1031fd.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/ac7c0761712619095132f56a5bee53a8.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/b4364de4881e52ec269c12b082723ce0.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/5cb7d790f3d4c2df109ca114cca03f37.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/d8b014afd82e55bf24faa744e478f7bf.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/1621115e06d2017d7634d7cc6cdb1cc8.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/ab499ad2dee3acd0508f976a5c7eb668.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/8e68f1efcf17e8ad46c9236500b13c29.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/a0d868d57b4df71f4e49e17c0cce5e5a.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/1abd3b895200a6ad8812b2c4420c4af2.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/1a2fffea99ec3fe3f51d8625f3737ec9.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/1a5e3ddb3982c3e4c71089b9d3293664.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/98db8aaac549e6ea648991336a09b683.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/004d2babe2ee022d0e0720b6f251fc48.mp3"
+        ],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/8fbb9bd5fadbd5e0f48cc558a035c284_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/8fbb9bd5fadbd5e0f48cc558a035c284_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/8fbb9bd5fadbd5e0f48cc558a035c284_big.jpg"
+        ]
+    },
+    "phonica-204772": {
+        "store": "phonica",
+        "id": "phonica-204772",
+        "title": "Natty Dread a Weh She Went",
+        "link": "https://www.phonicarecords.com/product/horace-andy-natty-dread-a-weh-she-went-kingston-sounds/204772",
+        "artist": "HORACE ANDY",
+        "label": "KINGSTON SOUNDS",
+        "label_link": "https://www.phonicarecords.com/label/kingston-sounds/204772/all/latest/desc",
+        "cat": "",
+        "phonica-all-genres-new-releases": 67,
+        "store_tags": {
+            "out_of_stock": false,
+            "preorder": false
+        },
+        "track_names": [
+            "Raggamuffin",
+            "Natty Dread A Weh She Want",
+            "If I Wasn't A Man",
+            "Love Me Baby",
+            "Treasure Of Love",
+            "Jah Rainbow Freedom",
+            "Freedom",
+            "This Must Be Hell",
+            "Run Babylon",
+            "(Stop Your) Brutality"
+        ],
+        "track_urls": [
+            "https://dmpqep8cljqhc.cloudfront.net/c238fd552f237df3de38e1038610fc43.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/e9503cde49a877a7fcf18ece65b424ae.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/2b75961938caa67d3124237151b88207.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/44c6b3885c9637ceb09ded709f0372d1.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/33275cefb193266b11a320e08ed6a08b.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/a14c0853d84307fa00e2aaabcf65cdfb.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/4fc3b787d7544e3198debd30358b41b8.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/24aa8423cf075e77d527bb8384de5352.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/cde3802e5e6985cb5279281ef85fcf42.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/51ba207f64e778e3e485b03fe56aba1f.mp3"
+        ],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/633f56c8cd8b228c540b4c2e4393b2c3_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/633f56c8cd8b228c540b4c2e4393b2c3_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/633f56c8cd8b228c540b4c2e4393b2c3_big.jpg"
+        ]
+    },
+    "phonica-205899": {
+        "store": "phonica",
+        "id": "phonica-205899",
+        "title": "Horses LP (50th Anniversary)",
+        "link": "https://www.phonicarecords.com/product/patti-smith-horses-lp-50th-anniversary-sony/205899",
+        "artist": "PATTI SMITH",
+        "label": "SONY",
+        "label_link": "https://www.phonicarecords.com/label/sony/205899/all/latest/desc",
+        "cat": "",
+        "phonica-all-genres-new-releases": 68,
+        "store_tags": {
+            "out_of_stock": false,
+            "preorder": false
+        },
+        "track_names": [
+            "Gloria: In Excelsis Deo (Gloria version)",
+            "Redondo Beach",
+            "Birdland",
+            "Free Money",
+            "Kimberley",
+            "Break It Up",
+            "LAND: Land Of A Thousand Dances/La Mer(de)",
+            "Elegie"
+        ],
+        "track_urls": [
+            "https://dmpqep8cljqhc.cloudfront.net/a0622dcc5d39374b5924ea0d65bde45d.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/5045c0128c22f60f36acfd80e413f949.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/86eb1da08b16979962859b12254c0400.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/b622a07cb5762a5658a34309a3e238ca.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/25d25ff1a14bc06e10b6972929ec3082.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/010daf09c78f44cb90176031ff593559.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/4d44e573d33cb7adcd051a1fcf25b444.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/a3657ccea6d82a2ac84ad225fa1a0052.mp3"
+        ],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/39a43b49ea7e141b680ee282a76e1ebc_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/39a43b49ea7e141b680ee282a76e1ebc_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/39a43b49ea7e141b680ee282a76e1ebc_big.jpg"
+        ]
+    },
+    "phonica-205803": {
+        "store": "phonica",
+        "id": "phonica-205803",
+        "title": "The Wyrding Way LP",
+        "link": "https://www.phonicarecords.com/product/eusebeia-the-wyrding-way-lp-livity-sound-recordings/205803",
+        "artist": "EUSEBEIA",
+        "label": "LIVITY SOUND RECORDINGS",
+        "label_link": "https://www.phonicarecords.com/label/livity-sound-recordings/205803/all/latest/desc",
+        "cat": "",
+        "phonica-all-genres-new-releases": 69,
+        "store_tags": {
+            "out_of_stock": false,
+            "preorder": false
+        },
+        "track_names": [
+            "Through The Darkness Of Future Past",
+            "Question Of Time",
+            "Elusive Nature",
+            "By The Light Of The Moon",
+            "Beyond The Vale",
+            "Through Thick &amp; Thin",
+            "Wyrding Way",
+            "Triumph"
+        ],
+        "track_urls": [
+            "https://dmpqep8cljqhc.cloudfront.net/05408c7c489c404cf5a9d26a052d86c2.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/9d3bacfc34255289ede3734853c35ed1.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/9a9dde1355f6921b6c0117426a1201d9.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/46121c100d1e01ad2b23eb9bb839f2e9.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/9ea5b048da65c7aa0f61285206d1959a.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/7017e46af219567e174b3c5513c67352.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/903d83af444cd65c4ef81271eb58a48f.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/3681f1a5b8ea39a091790b2b00063189.mp3"
+        ],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/f74a7a7d834d28801aa48f7aabf5224c_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/f74a7a7d834d28801aa48f7aabf5224c_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/f74a7a7d834d28801aa48f7aabf5224c_big.jpg"
+        ]
+    },
+    "phonica-205902": {
+        "store": "phonica",
+        "id": "phonica-205902",
+        "title": "Santino Surfers - An Introduction LP",
+        "link": "https://www.phonicarecords.com/product/santino-surfers-santino-surfers-an-introduction-lp-music-for-dreams/205902",
+        "artist": "SANTINO SURFERS",
+        "label": "MUSIC FOR DREAMS",
+        "label_link": "https://www.phonicarecords.com/label/music-for-dreams/205902/all/latest/desc",
+        "cat": "",
+        "phonica-all-genres-new-releases": 70,
+        "store_tags": {
+            "out_of_stock": false,
+            "preorder": false
+        },
+        "track_names": [
+            "Sun Rise Swell",
+            "Three Corners One View",
+            "Underwater Disco",
+            "Turtle Dance",
+            "Goodnight Mr Racoon",
+            "Moondancing",
+            "The Soul Echo",
+            "Mexican Blue"
+        ],
+        "track_urls": [
+            "https://dmpqep8cljqhc.cloudfront.net/e2335e2c274d2fb327539b02c6e348ba.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/9bcf2c3cc80c25a670b491f75a475f12.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/f99c354af58ba12c99ec50c262826814.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/039ecd5a633befe01a2363851cc7bbbe.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/ca03a52963423e76ebdccc01439040d4.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/b85a9e6efc37b87b168cc33b3670994d.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/d67a60142a6c0e5f731d3176caf46d87.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/37997299f86c121a775b797551ef84df.mp3"
+        ],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/6b0a1cc1603cb1deb5645395a11fd144_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/6b0a1cc1603cb1deb5645395a11fd144_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/6b0a1cc1603cb1deb5645395a11fd144_big.jpg"
+        ]
+    },
+    "phonica-205809": {
+        "store": "phonica",
+        "id": "phonica-205809",
+        "title": "93 'Til Infinity / Day One",
+        "link": "https://www.phonicarecords.com/product/benny-reid-93-til-infinity-day-one-benny-reid-productions/205809",
+        "artist": "BENNY REID",
+        "label": "BENNY REID PRODUCTIONS",
+        "label_link": "https://www.phonicarecords.com/label/benny-reid-productions/205809/all/latest/desc",
+        "cat": "",
+        "phonica-all-genres-new-releases": 71,
+        "store_tags": {
+            "out_of_stock": false,
+            "preorder": false
+        },
+        "track_names": [
+            "93 'Til Infinity ",
+            "Day One "
+        ],
+        "track_urls": [
+            "https://dmpqep8cljqhc.cloudfront.net/57558f29d22a966c432e164265f6297d.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/50b913898de701076c09b55a8ac77271.mp3"
+        ],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/3ab040c8c31fc4b611e4cf9dd637e332_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/3ab040c8c31fc4b611e4cf9dd637e332_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/3ab040c8c31fc4b611e4cf9dd637e332_big.jpg"
+        ]
+    },
+    "phonica-205472": {
+        "store": "phonica",
+        "id": "phonica-205472",
+        "title": "Love Dealer (Limited Pink vinyl)",
+        "link": "https://www.phonicarecords.com/product/lack-of-afro-love-dealer-limited-pink-vinyl-the-bastion-music-group/205472",
+        "artist": "LACK OF AFRO",
+        "label": "THE BASTION MUSIC GROUP",
+        "label_link": "https://www.phonicarecords.com/label/the-bastion-music-group/205472/all/latest/desc",
+        "cat": "",
+        "phonica-all-genres-new-releases": 72,
+        "store_tags": {
+            "out_of_stock": false,
+            "preorder": false
+        },
+        "track_names": [
+            "Keeping Me Strong",
+            "Need You Back",
+            "Where's Your Soul At",
+            "Walls Start Rockin",
+            "Make It Shine",
+            "Love Saves The Day",
+            "You Sexy Thing",
+            "Can I Dance With You",
+            "Heart &amp; Soul",
+            "Plain To See",
+            "Idolising People Like Madlib",
+            "It's Not Happening",
+            "Everybody",
+            "14 Your Love"
+        ],
+        "track_urls": [
+            "https://dmpqep8cljqhc.cloudfront.net/d04853061f9c131fd1d99ad3179e5258.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/4573773c35bc26a17d5d8ba469eec5b7.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/358d5f6e2180bfde9adebdcbc1ec097a.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/2a9ca1e50effd86f3c8de2ec9ba5e015.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/d529e0a3352b8a6e24cbaf6d380179b3.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/385290dbe29566d49818850c2bd63b5c.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/b91c3c35e450ce2a73e2bca520df44be.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/a75e39f298e43788576705b52b59616d.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/50b0aa3ae8bbd5a47d8ef12d52245239.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/dacce3aeeff58803d26940eaf24034a6.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/18d3ea714c4825cacfb7c89e49c62c6b.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/a3e770d2546f62182ad560f07bd473b6.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/788b447722b3a200f58f3ff4dbe8329a.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/38beea1f263d2bbedef44f7e9b16035c.mp3"
+        ],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/8258a354462af2d08a522013d3e62ddd_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/8258a354462af2d08a522013d3e62ddd_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/8258a354462af2d08a522013d3e62ddd_big.jpg"
+        ]
+    },
+    "phonica-205473": {
+        "store": "phonica",
+        "id": "phonica-205473",
+        "title": "Love Dealer LP (Black Vinyl)",
+        "link": "https://www.phonicarecords.com/product/lack-of-afro-love-dealer-lp-black-vinyl-the-bastion-music-group/205473",
+        "artist": "LACK OF AFRO",
+        "label": "THE BASTION MUSIC GROUP",
+        "label_link": "https://www.phonicarecords.com/label/the-bastion-music-group/205473/all/latest/desc",
+        "cat": "",
+        "phonica-all-genres-new-releases": 73,
+        "store_tags": {
+            "out_of_stock": false,
+            "preorder": false
+        },
+        "track_names": [
+            "Keeping Me Strong",
+            "Need You Back",
+            "Where's Your Soul At",
+            "Walls Start Rockin",
+            "Make It Shine",
+            "Love Saves The Day",
+            "You Sexy Thing",
+            "Can I Dance With You",
+            "Heart &amp; Soul",
+            "Plain To See",
+            "Idolising People Like Madlib",
+            "It's Not Happening",
+            "Everybody",
+            "14 Your Love"
+        ],
+        "track_urls": [
+            "https://dmpqep8cljqhc.cloudfront.net/b4a94fff92c4410024a60eb2f34206fa.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/ef97cd5149351df8371f0a1ee6c2cc81.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/f569649151eb865d21ded41d281dd850.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/c87f42bcebc0ee2ca299b371f4e4a62c.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/cfc2fdf61f5baf3b4f8b2d2bb2120b0a.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/a9b03cd29a834faf4337f441a91e508c.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/ad4f9e4acd7470d9b7df30bcf4a5802e.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/21abcbdb10f3c073cd45070fc89db6ee.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/27aff45cf44438b1314d813f8f734163.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/0e4f870920230a0eb139e58e2b6049ed.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/bf772a53d8cbc98c8c1a09a6e4823517.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/18e10df3a12d5537d14ee817cfa89abb.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/961d4bb3933c7f7a2a7d871bd52ff395.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/e939ebff37ba75dd6230e1fb54ad07ff.mp3"
+        ],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/fb7ca8f947f1bfb014acc1890b418c58_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/fb7ca8f947f1bfb014acc1890b418c58_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/fb7ca8f947f1bfb014acc1890b418c58_big.jpg"
+        ]
+    },
+    "phonica-205769": {
+        "store": "phonica",
+        "id": "phonica-205769",
+        "title": "Different Circles: Ping Volume One LP",
+        "link": "https://www.phonicarecords.com/product/mumdance-various-artists-different-circles-ping-volume-one-lp-different-circles/205769",
+        "artist": "MUMDANCE / VARIOUS ARTISTS",
+        "label": "DIFFERENT CIRCLES",
+        "label_link": "https://www.phonicarecords.com/label/different-circles/205769/all/latest/desc",
+        "cat": "",
+        "phonica-all-genres-new-releases": 74,
+        "store_tags": {
+            "out_of_stock": false,
+            "preorder": false
+        },
+        "track_names": [
+            "Mumdance - Ping Devil Meme",
+            "unearth - Faulty Client",
+            "6amsunset - Scroll of Doom",
+            "Logos - Red October",
+            "Lillia Betz - Boomerang",
+            "Meta &amp; Henry Greenleaf - Fault Line VIP",
+            "Klahrk - Sent Spinning",
+            "Beton Brut - Lime Bikes",
+            "CORIN - redux ",
+            "Cortical - Grated",
+            "Xen Chron - Q'omatose",
+            "AMIT - Dirt Doctor"
+        ],
+        "track_urls": [
+            "https://dmpqep8cljqhc.cloudfront.net/7bbd62cd4ad35fda063cb9df462f88cf.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/ec3edd5134facdd01492fd6614110ef1.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/366a27b24d7f3393efad6519affaf37b.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/57e80ef2e0459d8d8dc5870471e5d492.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/6f62b78941909271e9148044fd75cfb7.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/9bfaa3df2a4d8d36780c88e58ef2b5af.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/74b29aecb1388ea7b084ce35173505c5.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/887710e48d1972ef3683d7195f59e0a5.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/e36e8df4e2b7bfe37c4798c37d8c6c5e.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/f18da54eacd99fc460b431b4687eed9e.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/77114aa7c91e466470f3291d38175dae.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/fba3fb2fcb51a96a5c9254b0c0a11616.mp3"
+        ],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/a365c4dfe23a95c77e8a687dc5df6d30_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/a365c4dfe23a95c77e8a687dc5df6d30_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/a365c4dfe23a95c77e8a687dc5df6d30_big.jpg"
+        ]
+    },
+    "phonica-205666": {
+        "store": "phonica",
+        "id": "phonica-205666",
+        "title": "Step II (Clear Glitter Vinyl)",
+        "link": "https://www.phonicarecords.com/product/sylvester-step-ii-clear-glitter-vinyl-craft-recordings/205666",
+        "artist": "SYLVESTER",
+        "label": "CRAFT RECORDINGS",
+        "label_link": "https://www.phonicarecords.com/label/craft-recordings/205666/all/latest/desc",
+        "cat": "",
+        "phonica-all-genres-new-releases": 76,
+        "store_tags": {
+            "out_of_stock": false,
+            "preorder": false
+        },
+        "track_names": [
+            "You Make Me Feel (Mighty Real)",
+            "Dance (Disco Heat)",
+            "Epilogue",
+            "Grateful",
+            "I Took My Strength From You",
+            "Was It Something That I Said",
+            "Just You &amp; Me Forever"
+        ],
+        "track_urls": [
+            "https://dmpqep8cljqhc.cloudfront.net/f692e6b0e75b58c5c5fb968e2cdab0bc.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/26d00bac16c0ce2ee2bdbe158417a727.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/333018ccf0f44e1ba494fea55de3ebab.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/07b6ac689887f37b46760c4c3f191560.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/722621f08a8e7ae215dcedec4b7fc49c.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/3514013e46e55406053805777d4299c7.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/90abd306a7ee87048131409b76311b1b.mp3"
+        ],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/1b50f58f577cf20bb3b41e9724a659de_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/1b50f58f577cf20bb3b41e9724a659de_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/1b50f58f577cf20bb3b41e9724a659de_big.jpg"
+        ]
+    },
+    "phonica-205927": {
+        "store": "phonica",
+        "id": "phonica-205927",
+        "title": "Sayonara / The Recap",
+        "link": "https://www.phonicarecords.com/product/kneecap-sayonara-the-recap-heavenly-recordings/205927",
+        "artist": "KNEECAP",
+        "label": "HEAVENLY RECORDINGS",
+        "label_link": "https://www.phonicarecords.com/label/heavenly-recordings/205927/all/latest/desc",
+        "cat": "",
+        "phonica-all-genres-new-releases": 77,
+        "store_tags": {
+            "out_of_stock": false,
+            "preorder": false
+        },
+        "track_names": [
+            "Sayonara (feat Paul Hartnoll)",
+            "The Recap (feat Mozey)",
+            "Sayonara (feat Paul Hartnoll - instrumental)",
+            "The Recap (feat Mozey - instrumental)"
+        ],
+        "track_urls": [
+            "https://dmpqep8cljqhc.cloudfront.net/2c8e22db031759657db83b0133e647c9.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/5ddca60698741ed27214beead5e7b227.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/cec70b19ede149a9009dd3b57f092eb3.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/d51074c823492cfb2950f4ceb17213c3.mp3"
+        ],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/16561a372fc72505b6f2ff33318b63e8_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/16561a372fc72505b6f2ff33318b63e8_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/16561a372fc72505b6f2ff33318b63e8_big.jpg"
+        ]
+    },
+    "phonica-205926": {
+        "store": "phonica",
+        "id": "phonica-205926",
+        "title": "Liminal LP",
+        "link": "https://www.phonicarecords.com/product/brian-eno-beatie-wolfe-liminal-lp-verve/205926",
+        "artist": "BRIAN ENO &amp; BEATIE WOLFE",
+        "label": "VERVE",
+        "label_link": "https://www.phonicarecords.com/label/verve/205926/all/latest/desc",
+        "cat": "",
+        "phonica-all-genres-new-releases": 78,
+        "store_tags": {
+            "out_of_stock": false,
+            "preorder": false
+        },
+        "track_names": [
+            "Part Of Us",
+            "Ringing Ocean",
+            "The Last To Know",
+            "Procession",
+            "Little Boy",
+            "Flower Women",
+            "Shallow Form",
+            "Before Life",
+            "Laundry Room",
+            "Corona",
+            "Shudder Like Crows"
+        ],
+        "track_urls": [
+            "https://dmpqep8cljqhc.cloudfront.net/f1922b5df0bf222b1da0b8c347fcd260.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/30820ccb6311a9a8dbdab608c4920bd7.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/a53f42c32de33e5de78baebae12ad286.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/e4687c69296d6f61d29f451d08b96b68.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/c6061fb3f0d3a23558457a36c223c148.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/d8e460c7a48e4281c6fc67defa637b8f.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/273916c088fef9d3176f41b218ea4bcc.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/06d1e9cd80795691bd6fd207e00d7e02.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/a477bc77b0eef22c6705a8c82b7ef41c.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/1d266dfc5ef447355ad70a5b3cb6490e.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/8ce496813865c2083d37a5564263c043.mp3"
+        ],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/61b485ee52e0408b6ff824f71eebff50_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/61b485ee52e0408b6ff824f71eebff50_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/61b485ee52e0408b6ff824f71eebff50_big.jpg"
+        ]
+    },
+    "phonica-205925": {
+        "store": "phonica",
+        "id": "phonica-205925",
+        "title": "Sonny Side Up LP (Verve Vault Series)",
+        "link": "https://www.phonicarecords.com/product/dizzy-gillespie-sonny-side-up-lp-verve-vault-series-verve/205925",
+        "artist": "DIZZY GILLESPIE",
+        "label": "VERVE",
+        "label_link": "https://www.phonicarecords.com/label/verve/205925/all/latest/desc",
+        "cat": "",
+        "phonica-all-genres-new-releases": 79,
+        "store_tags": {
+            "out_of_stock": true,
+            "preorder": false
+        },
+        "track_names": [],
+        "track_urls": [],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/04b3906d714014af3c2958b21727eb91_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/04b3906d714014af3c2958b21727eb91_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/04b3906d714014af3c2958b21727eb91_big.jpg"
+        ]
+    },
+    "phonica-206920": {
+        "store": "phonica",
+        "id": "phonica-206920",
+        "title": "Shy Girl LP (Orange Vinyl)",
+        "link": "https://www.phonicarecords.com/product/hollie-cook-shy-girl-lp-orange-vinyl-mr-bongo/206920",
+        "artist": "HOLLIE COOK",
+        "label": "MR BONGO",
+        "label_link": "https://www.phonicarecords.com/label/mr-bongo/206920/all/latest/desc",
+        "cat": "",
+        "phonica-all-genres-new-releases": 80,
+        "store_tags": {
+            "out_of_stock": false,
+            "preorder": false
+        },
+        "track_names": [
+            "Shy Girl",
+            "Ooh Baby",
+            "Rockaway",
+            "Night Night",
+            "Holding On",
+            "In The Pictures",
+            "Frontline",
+            "Take Me In Your Arms",
+            "Crying Wolf",
+            "River Runs Deep",
+            "Hello Operator",
+            "We Share Love"
+        ],
+        "track_urls": [
+            "https://dmpqep8cljqhc.cloudfront.net/72381df95fa802416206a48921606480.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/9567c72a0f010e6c2501890f2b7c3e4b.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/3a39750992455067d3742d1611f4e94e.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/eafacccff99fc0fd8f053142bc52d492.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/ff291807d67bd4575735d62b04b1eaa9.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/6b812e007be4a687065e6a2d36bb625f.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/99966bc187433c2a7b5d1e740624eb5a.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/8e220284b47cd98dbc7e0f4f5bf02561.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/3a5794599ccccc9b5b9bd95151525c6b.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/8272fd14f787fe3893e915779a016802.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/379a30d2f72b46a6ddc20778b1d79f7d.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/d7f471150f9175e811ae8b1973e53702.mp3"
+        ],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/e6e453216b1de42a381a68be620c50e4_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/e6e453216b1de42a381a68be620c50e4_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/e6e453216b1de42a381a68be620c50e4_big.jpg"
+        ]
+    },
+    "phonica-206937": {
+        "store": "phonica",
+        "id": "phonica-206937",
+        "title": "Public Works &amp; Utilities LP (Red/Black Vin...",
+        "link": "https://www.phonicarecords.com/product/warrington-runcorn-new-town-development-p-public-works-utilities-lp-red-black-vin-castles-in-space/206937",
+        "artist": "WARRINGTON-RUNCORN NEW TOWN DEVELOPMENT P...",
+        "label": "CASTLES IN SPACE",
+        "label_link": "https://www.phonicarecords.com/label/castles-in-space/206937/all/latest/desc",
+        "cat": "",
+        "phonica-all-genres-new-releases": 81,
+        "store_tags": {
+            "out_of_stock": false,
+            "preorder": false
+        },
+        "track_names": [
+            "Swift, Safe &amp; Comfortable",
+            "Sunset Over Stanlow",
+            "800 Yards Down At Ince Six Feet",
+            "Water Treatment Works",
+            "Renewal &amp; Regeneration",
+            "The People Matter"
+        ],
+        "track_urls": [
+            "https://dmpqep8cljqhc.cloudfront.net/a5899422cce3c90298b30b903b10e555.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/afb59d08c94600a1eed3b2a27e39ebbe.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/aec10644a0e1b0a37ae31b6b984b32de.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/1bcc1541249faa46b6711cb84e3d884d.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/709be2ca28427962f6db45aa16859611.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/af2b56ffce2e0f5bb3e37f84646f8ad0.mp3"
+        ],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/f74c289f4b82dbe410e0944c42c6c377_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/f74c289f4b82dbe410e0944c42c6c377_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/f74c289f4b82dbe410e0944c42c6c377_big.jpg"
+        ]
+    },
+    "phonica-206938": {
+        "store": "phonica",
+        "id": "phonica-206938",
+        "title": "Run EP",
+        "link": "https://www.phonicarecords.com/product/madmadmad-run-ep-def-press/206938",
+        "artist": "MADMADMAD",
+        "label": "DEF PRESS\u00c9",
+        "label_link": "https://www.phonicarecords.com/label/def-press/206938/all/latest/desc",
+        "cat": "",
+        "phonica-all-genres-new-releases": 82,
+        "store_tags": {
+            "out_of_stock": false,
+            "preorder": false
+        },
+        "track_names": [
+            "Small Talk ",
+            "Hey! ",
+            "Run ",
+            "Spin Wave "
+        ],
+        "track_urls": [
+            "https://dmpqep8cljqhc.cloudfront.net/2b474ab5429565b184af8106dba70902.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/b15c0ec75dceb6b2360e9b2caf40fba8.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/3caf955897682ede5c8671a430362fd8.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/075db12f64ac8652bcd37ab5511c949d.mp3"
+        ],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/c121a1fcc05f266c0e5dbaaeb1e90485_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/c121a1fcc05f266c0e5dbaaeb1e90485_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/c121a1fcc05f266c0e5dbaaeb1e90485_big.jpg"
+        ]
+    },
+    "phonica-206939": {
+        "store": "phonica",
+        "id": "phonica-206939",
+        "title": "Soul Jamaica LP",
+        "link": "https://www.phonicarecords.com/product/various-artists-soul-jazz-records-soul-jamaica-lp-soul-jazz-records/206939",
+        "artist": "VARIOUS ARTISTS / SOUL JAZZ RECORDS",
+        "label": "SOUL JAZZ RECORDS",
+        "label_link": "https://www.phonicarecords.com/label/soul-jazz-records/206939/all/latest/desc",
+        "cat": "",
+        "phonica-all-genres-new-releases": 83,
+        "store_tags": {
+            "out_of_stock": false,
+            "preorder": false
+        },
+        "track_names": [],
+        "track_urls": [],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/3c155dbebab463cd0d3411d713e6b4c4_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/3c155dbebab463cd0d3411d713e6b4c4_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/3c155dbebab463cd0d3411d713e6b4c4_big.jpg"
+        ]
+    },
+    "phonica-206940": {
+        "store": "phonica",
+        "id": "phonica-206940",
+        "title": "Love Dealer CD",
+        "link": "https://www.phonicarecords.com/product/lack-of-afro-love-dealer-cd-the-bastion-music-group/206940",
+        "artist": "LACK OF AFRO",
+        "label": "THE BASTION MUSIC GROUP",
+        "label_link": "https://www.phonicarecords.com/label/the-bastion-music-group/206940/all/latest/desc",
+        "cat": "",
+        "phonica-all-genres-new-releases": 84,
+        "store_tags": {
+            "out_of_stock": false,
+            "preorder": false
+        },
+        "track_names": [
+            "Keeping Me Strong",
+            "Need You Back",
+            "Where's Your Soul At",
+            "Walls Start Rockin",
+            "Make It Shine",
+            "Love Saves The Day",
+            "You Sexy Thing",
+            "Can I Dance With You",
+            "Heart &amp; Soul",
+            "Plain To See",
+            "Idolising People Like Madlib",
+            "It's Not Happening",
+            "Everybody",
+            "14 Your Love"
+        ],
+        "track_urls": [
+            "https://dmpqep8cljqhc.cloudfront.net/c508f94b359cae0fa97e9fdc81624542.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/4a63568820c3321463d2b0cde65fc6d0.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/12feec7329bcf04e60eaf7b8e5ef72c2.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/d26423fc7a1210c0830c624b6439bfa1.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/15354d00f2d4a670143fe6d0a50bf4f6.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/50301dc8f2c19b2839e98dea0b1b68a2.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/5ddc03c85b904eeff3d46d235dacabdd.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/b6858942af72507988823477704d2bd8.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/52b0886cdcad6581cb92d8b673155343.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/0a9b1ce49593afb92ba7cb57a263d059.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/76cbd135602c4df4a52246423aa520dc.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/81e00cc41157f9a80d8032c63acb81ad.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/19285adbab1cea47844cfb4730b9ce44.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/83bdd382550fb440b096ac6d0a2564bc.mp3"
+        ],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/c4f327cc016ec32bb2974253155a1bf3_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/c4f327cc016ec32bb2974253155a1bf3_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/c4f327cc016ec32bb2974253155a1bf3_big.jpg"
+        ]
+    },
+    "phonica-206942": {
+        "store": "phonica",
+        "id": "phonica-206942",
+        "title": "Together for Awamu LP",
+        "link": "https://www.phonicarecords.com/product/various-artists-together-for-awamu-lp-awamu/206942",
+        "artist": "VARIOUS ARTISTS",
+        "label": "AWAMU",
+        "label_link": "https://www.phonicarecords.com/label/awamu/206942/all/latest/desc",
+        "cat": "",
+        "phonica-all-genres-new-releases": 85,
+        "store_tags": {
+            "out_of_stock": false,
+            "preorder": false
+        },
+        "track_names": [],
+        "track_urls": [],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/d308cb60d6e31f172a4b70aec6eee07f_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/d308cb60d6e31f172a4b70aec6eee07f_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/d308cb60d6e31f172a4b70aec6eee07f_big.jpg"
+        ]
+    },
+    "phonica-206577": {
+        "store": "phonica",
+        "id": "phonica-206577",
+        "title": "Praise EP",
+        "link": "https://www.phonicarecords.com/product/conrad-pack-praise-ep-seln/206577",
+        "artist": "CONRAD PACK",
+        "label": "SELN",
+        "label_link": "https://www.phonicarecords.com/label/seln/206577/all/latest/desc",
+        "cat": "",
+        "phonica-all-genres-new-releases": 86,
+        "store_tags": {
+            "out_of_stock": false,
+            "preorder": false
+        },
+        "track_names": [
+            "praise",
+            "guidance",
+            "grotto"
+        ],
+        "track_urls": [
+            "https://dmpqep8cljqhc.cloudfront.net/68dea2d33c144022982e8417dfd307bc.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/ae47c964f8b6348b070a2bae11044054.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/f1a3d455ee65d0b79966cb566fc27cb0.mp3"
+        ],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/0f5273545038ae668fd77909c446ee01_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/0f5273545038ae668fd77909c446ee01_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/0f5273545038ae668fd77909c446ee01_big.jpg"
+        ]
+    },
+    "phonica-206587": {
+        "store": "phonica",
+        "id": "phonica-206587",
+        "title": "Aste",
+        "link": "https://www.phonicarecords.com/product/-mika-vainio-aste-sahko/206587",
+        "artist": "\u00d8 (MIKA VAINIO)",
+        "label": "SAHKO",
+        "label_link": "https://www.phonicarecords.com/label/sahko/206587/all/latest/desc",
+        "cat": "",
+        "phonica-all-genres-new-releases": 87,
+        "store_tags": {
+            "out_of_stock": false,
+            "preorder": false
+        },
+        "track_names": [
+            "Spiraalit",
+            "Sukeltava",
+            "Pakkasherra",
+            "Kolmas",
+            "Ionos",
+            "Aaltovaihe",
+            "Maan Valossa",
+            "Siimes"
+        ],
+        "track_urls": [
+            "https://dmpqep8cljqhc.cloudfront.net/2acb17791d07bc40a487bb5dc0ce68a8.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/f86ab05ad0580a9583389bd303c8bbc6.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/b932310b07ff2a5bdd02f6655ebdc30e.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/da6a6fdc553f00bd61540ba82b929b5a.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/118d4e95e81f13c3cb95a0c90408d102.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/2ef67ee598332e0a98ec0137c139a5e9.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/09819b986d20d858d14530156d962b4a.mp3",
+            "https://dmpqep8cljqhc.cloudfront.net/f48453e66dac037114e7e02598b08bde.mp3"
+        ],
+        "artworks": [
+            "https://d1c4rk9le5opln.cloudfront.net/0683027aa140c4569286f9be22365087_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/0683027aa140c4569286f9be22365087_big.jpg",
+            "https://d1c4rk9le5opln.cloudfront.net/0683027aa140c4569286f9be22365087_big.jpg"
         ]
     }
 }

@@ -14,11 +14,13 @@
 #include "main.h"
 #include "audio/audio.h"
 #include "imgui_ext.h"
+#include "maths/maths.h"
+
+#define SIMPLEWEBP_IMPLEMENTATION
+#include "simplewebp.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb/stb_image.h"
-
-#include "maths/maths.h"
 
 #include <fstream>
 #include <thread>
@@ -460,16 +462,42 @@ Str download_and_cache_named(const Str& url, const Str& filename)
 
 pen::texture_creation_params load_texture_from_disk(const Str& filepath)
 {
+    // check type
+    FILE* ff = fopen(filepath.c_str(), "rb");
+    char cc[4];
+    fread(&cc[0], 1, 4, ff);
+    fclose(ff);
+    
     s32 w, h, c;
-    stbi_uc* rgba = stbi_load(filepath.c_str(), &w, &h, &c, 4);
-
-    c = 4;
-
+    stbi_uc* rgba = nullptr;
+    
+    if(cc[0] == 'R' && cc[1] == 'I' && cc[2] == 'F' && cc[3] == 'F')
+    {
+        // webp
+        size_t width, height;
+        simplewebp *swebp;
+        simplewebp_load_from_filename(filepath.c_str(), NULL, &swebp);
+        simplewebp_get_dimensions(swebp, &width, &height);
+        
+        rgba = (stbi_uc*)malloc(width * height * 4);
+        simplewebp_decode(swebp, rgba, NULL);
+        simplewebp_unload(swebp);
+        
+        w = (s32)width;
+        h = (s32)height;
+        c = 4;
+    }
+    else
+    {
+        // oldschool image
+        rgba = stbi_load(filepath.c_str(), &w, &h, &c, 4);
+        c = 4;
+    }
+    
     pen::texture_creation_params tcp;
     tcp.width = w;
     tcp.height = h;
     tcp.format = PEN_TEX_FORMAT_RGBA8_UNORM;
-    tcp.data = rgba;
     tcp.sample_count = 1;
     tcp.sample_quality = 0;
     tcp.num_arrays = 1;

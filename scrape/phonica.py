@@ -32,10 +32,6 @@ def execute_page(url, driver):
     wait = WebDriverWait(driver, 60)
     wait.until(lambda driver: driver.execute_script("return document.readyState") == "complete")
     html = driver.execute_script("return document.documentElement.outerHTML")
-
-    if url == "https://www.phonicarecords.com/new-releases/0":
-        cache_page(url, "new-releases.html")
-
     return html
 
 

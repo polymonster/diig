@@ -111,13 +111,17 @@ def get_redeye_snippit_urls(cdn, release_id):
     # check the releaseid exists, this is track-a
     try_url = f"{cdn}{release_id}.mp3"
     try:
-        if urllib.request.urlopen(try_url).code == 200:
+        request = urllib.request.Request(try_url, method='HEAD')
+        response = urllib.request.urlopen(request)
+        if response.status == 200:
             tracks.append(f"{cdn}{str(release_id)}.mp3")
             # now iterate until we find no more tracks
             l = 'b'
             while True:
                 try_url = f"{cdn}{release_id}{l}.mp3"
-                if urllib.request.urlopen(try_url).code == 200:
+                request = urllib.request.Request(try_url, method='HEAD')
+                response = urllib.request.urlopen(request)
+                if response.status == 200:
                     tracks.append(try_url)
                 else:
                     break
@@ -136,7 +140,9 @@ def get_redeye_artwork_urls(release_id):
     for i in range(0, 3):
         try:
             try_url = f"{cdn}{release_id}-{i}.jpg"
-            if urllib.request.urlopen(try_url).code == 200:
+            request = urllib.request.Request(try_url, method='HEAD')
+            response = urllib.request.urlopen(request)
+            if response.status == 200:
                 artworks.append(try_url)
         except urllib.error.HTTPError:
             pass
@@ -274,7 +280,7 @@ def scrape_page(url, store, view, section, counter, session_scraped_ids):
 
             if not has_tracks:
                 release_dict["track_urls"] = get_redeye_snippit_urls("https://redeye-391831.c.cdn77.org/", id)
-                if len(releases_dict[key]["track_urls"]) == 0:
+                if len(release_dict["track_urls"]) == 0:
                     dig.scrape_yield()
                     release_dict["track_urls"] = get_redeye_snippit_urls("https://sounds.redeyerecords.co.uk/", id)
 

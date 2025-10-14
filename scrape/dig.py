@@ -28,6 +28,7 @@ def display_help():
     print("  optional filters:")
     print("    -section <sectiom_name> - specify a single section to scrape ie. 'techno-electro'")
     print("    -view <store_name> - specify a single view to scrape ie. weekly-chart")
+    print("    -pages <integer> - specify a page limit to scrape")
     print("")
     print("  debug options:")
     print("    -fix-store <store_name> - specify a store run custom fixup code")
@@ -432,6 +433,8 @@ def scrape_store(stores, store_name):
                         continue
                 view_dict = store["views"][view]
                 page_count = view_dict["page_count"]
+                if "-pages" in sys.argv:
+                    page_count = int(sys.argv[sys.argv.index("-pages") + 1])
                 counter = 0
                 print("scraping: {} / {}".format(section, view))
                 for i in range(1, 1+page_count):
@@ -492,10 +495,3 @@ if __name__ == '__main__':
     elif "-update-stores" in sys.argv:
         # updates the store config into firebase
         update_stores()
-    else:
-        # grab single flags
-        get_urls = "-urls" in sys.argv
-        test_single = "-test_single" in sys.argv
-        verbose = "-verbose" in sys.argv
-        # scrape legacy
-        redeye.scrape_legacy(100, get_urls, test_single, verbose)

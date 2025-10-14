@@ -232,7 +232,9 @@ def scrape_page(url, store, view, section, counter, session_scraped_ids):
                     try:
                         # we need to check if exists
                         linear = f"{cdn}/{attempt}_{i+1}.mp3"
-                        if urllib.request.urlopen(linear).code == 200:
+                        request = urllib.request.Request(track_named, method='HEAD')
+                        response = urllib.request.urlopen(request)
+                        if response.status == 200:
                             print(f"use linear naming: {linear}", flush=True)
                             use_attempt = True
                             break
@@ -253,7 +255,9 @@ def scrape_page(url, store, view, section, counter, session_scraped_ids):
                             pp = max(pp, cp)
                         try:
                             track_named = f"{cdn}/{attempt}_{name[:pp]}.mp3"
-                            if urllib.request.urlopen(track_named).code == 200:
+                            request = urllib.request.Request(track_named, method='HEAD')
+                            response = urllib.request.urlopen(request)
+                            if response.status == 200:
                                 print(f"use track side naming: {name[:pp]}", flush=True)
                                 use_attempt = True
                                 use_named = True

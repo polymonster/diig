@@ -104,6 +104,7 @@ namespace curl
 
         if(curl) {
             struct curl_slist *headers = NULL;
+            
             headers = curl_slist_append(headers, "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36");
 
             curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
@@ -385,6 +386,15 @@ Str download_and_cache(const Str& url, Str releaseid, bool validate = false)
             free(db->data);
         }
     }
+    
+    /*
+    FILE* ff = fopen(filepath.c_str(), "r");
+    fseek(ff, 0, SEEK_END);
+    size_t ss = ftell(ff);
+    rewind(ff);
+    char* buf = (char*)malloc(ss);
+    fread((void*)buf, 1, ss, ff);
+    */
 
     return filepath;
 }
@@ -1077,7 +1087,15 @@ void* releases_view_loader(void* userdata)
         // assign artwork url
         if(release["artworks"].size() > 1)
         {
-            view->releases.artwork_url[ri] = release["artworks"][1];
+            int art_index = 0;
+            if(view->releases.store[ri] == "yoyaku")
+            {
+                art_index = 1;
+            }
+            
+            if(art_index < release["artworks"].size()) {
+                view->releases.artwork_url[ri] = release["artworks"][art_index];
+            }
         }
         else
         {

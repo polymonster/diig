@@ -1122,6 +1122,7 @@ void* releases_view_loader(void* userdata)
             }
             else if(view->releases.store[ri] == "redeye")
             {
+                // this is required to fixup the fact -0.jpg may not exist
                 // redeye <guid>-1.jpg is preferable
                 size_t i = 0;
                 for(auto& art : release["artworks"])

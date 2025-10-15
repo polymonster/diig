@@ -232,7 +232,7 @@ def scrape_page(url, store, view, section, counter, session_scraped_ids):
                     try:
                         # we need to check if exists
                         linear = f"{cdn}/{attempt}_{i+1}.mp3"
-                        request = urllib.request.Request(track_named, method='HEAD')
+                        request = urllib.request.Request(linear, method='HEAD')
                         response = urllib.request.urlopen(request)
                         if response.status == 200:
                             print(f"use linear naming: {linear}", flush=True)

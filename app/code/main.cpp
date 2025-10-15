@@ -1113,16 +1113,35 @@ void* releases_view_loader(void* userdata)
         view->releases.key[ri] = entry.index;
 
         // assign artwork url
-        if(release["artworks"].size() > 1)
+        if(release["artworks"].size() > 0)
         {
-            int art_index = 0;
+            size_t art_index = 0;
             if(view->releases.store[ri] == "yoyaku")
             {
-                art_index = 1;
+                art_index = 1; // 400x400
+            }
+            else if(view->releases.store[ri] == "redeye")
+            {
+                // redeye <guid>-1.jpg is preferable
+                size_t i = 0;
+                for(auto& art : release["artworks"])
+                {
+                    std::string url = art;
+                    if(url.find("-1.jpg") != -1)
+                    {
+                        art_index = i;
+                        break;
+                    }
+                    ++i;
+                }
             }
             
             if(art_index < release["artworks"].size()) {
                 view->releases.artwork_url[ri] = release["artworks"][art_index];
+            }
+            else
+            {
+                view->releases.artwork_url[ri] = "";
             }
         }
         else

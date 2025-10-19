@@ -5672,7 +5672,7 @@
         "label_link": "https://www.phonicarecords.com/label/elbow-grease/206426/all/latest/desc",
         "cat": "",
         "store_tags": {
-            "out_of_stock": false,
+            "out_of_stock": true,
             "preorder": false
         },
         "track_names": [
@@ -6450,7 +6450,7 @@
         "label_link": "https://www.phonicarecords.com/label/running-back/206213/all/latest/desc",
         "cat": "",
         "store_tags": {
-            "out_of_stock": false,
+            "out_of_stock": true,
             "preorder": false
         },
         "track_names": [
@@ -6805,7 +6805,6 @@
         "label": "NINE CHANNEL RECORDS",
         "label_link": "https://www.phonicarecords.com/label/nine-channel-records/207007/all/latest/desc",
         "cat": "",
-        "phonica-new-releases-new_releases": 0,
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
@@ -6822,7 +6821,8 @@
             "https://d1c4rk9le5opln.cloudfront.net/d746d1473f727b76439c0f21959e9558_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/d746d1473f727b76439c0f21959e9558_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/d746d1473f727b76439c0f21959e9558_big.jpg"
-        ]
+        ],
+        "phonica-new-releases-new_releases": 3
     },
     "phonica-206510": {
         "store": "phonica",
@@ -6833,7 +6833,6 @@
         "label": "REKIDS",
         "label_link": "https://www.phonicarecords.com/label/rekids/206510/all/latest/desc",
         "cat": "",
-        "phonica-new-releases-new_releases": 1,
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
@@ -6852,7 +6851,8 @@
             "https://d1c4rk9le5opln.cloudfront.net/61ab2f8b50b52ab2f5bb9f4704629b91_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/61ab2f8b50b52ab2f5bb9f4704629b91_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/61ab2f8b50b52ab2f5bb9f4704629b91_big.jpg"
-        ]
+        ],
+        "phonica-new-releases-new_releases": 4
     },
     "phonica-206981": {
         "store": "phonica",
@@ -6863,7 +6863,6 @@
         "label": "SOS",
         "label_link": "https://www.phonicarecords.com/label/sos/206981/all/latest/desc",
         "cat": "",
-        "phonica-new-releases-new_releases": 2,
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
@@ -6886,7 +6885,8 @@
             "https://d1c4rk9le5opln.cloudfront.net/a258ec718fa8db81ef311fe9c5262487_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/a258ec718fa8db81ef311fe9c5262487_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/a258ec718fa8db81ef311fe9c5262487_big.jpg"
-        ]
+        ],
+        "phonica-new-releases-new_releases": 5
     },
     "phonica-206735": {
         "store": "phonica",
@@ -6897,7 +6897,6 @@
         "label": "MATASUNA RECORDS",
         "label_link": "https://www.phonicarecords.com/label/matasuna-records/206735/all/latest/desc",
         "cat": "",
-        "phonica-new-releases-new_releases": 3,
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
@@ -6914,7 +6913,8 @@
             "https://d1c4rk9le5opln.cloudfront.net/7985612bb51a48bad85ae4584b344098_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/7985612bb51a48bad85ae4584b344098_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/7985612bb51a48bad85ae4584b344098_big.jpg"
-        ]
+        ],
+        "phonica-new-releases-new_releases": 0
     },
     "phonica-207039": {
         "store": "phonica",
@@ -6925,7 +6925,6 @@
         "label": "PHANTASY SOUND",
         "label_link": "https://www.phonicarecords.com/label/phantasy-sound/207039/all/latest/desc",
         "cat": "",
-        "phonica-new-releases-new_releases": 4,
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
@@ -6944,7 +6943,8 @@
             "https://d1c4rk9le5opln.cloudfront.net/c80531ed15bf00e8ba3dbd6148b8b7dc_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/c80531ed15bf00e8ba3dbd6148b8b7dc_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/c80531ed15bf00e8ba3dbd6148b8b7dc_big.jpg"
-        ]
+        ],
+        "phonica-new-releases-new_releases": 2
     },
     "phonica-206800": {
         "store": "phonica",
@@ -6955,7 +6955,6 @@
         "label": "CROSSTOWN REBELS",
         "label_link": "https://www.phonicarecords.com/label/crosstown-rebels/206800/all/latest/desc",
         "cat": "",
-        "phonica-new-releases-new_releases": 5,
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
@@ -6972,7 +6971,8 @@
             "https://d1c4rk9le5opln.cloudfront.net/523d5373c7ba1bcd5ef80b74ceca61f7_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/523d5373c7ba1bcd5ef80b74ceca61f7_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/523d5373c7ba1bcd5ef80b74ceca61f7_big.jpg"
-        ]
+        ],
+        "phonica-new-releases-new_releases": 1
     },
     "phonica-153134": {
         "store": "phonica",
@@ -6983,7 +6983,6 @@
         "label": "THE GRID",
         "label_link": "https://www.phonicarecords.com/label/the-grid/153134/all/latest/desc",
         "cat": "",
-        "phonica-new-releases-new_releases": 6,
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
@@ -7008,7 +7007,8 @@
             "https://d1c4rk9le5opln.cloudfront.net/39b99f21c6d008eb88d5256f690f7b2e_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/39b99f21c6d008eb88d5256f690f7b2e_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/39b99f21c6d008eb88d5256f690f7b2e_big.jpg"
-        ]
+        ],
+        "phonica-new-releases-new_releases": 6
     },
     "phonica-204323": {
         "store": "phonica",
@@ -7019,7 +7019,6 @@
         "label": "MUTE",
         "label_link": "https://www.phonicarecords.com/label/mute/204323/all/latest/desc",
         "cat": "",
-        "phonica-new-releases-new_releases": 7,
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
@@ -7030,7 +7029,8 @@
             "https://d1c4rk9le5opln.cloudfront.net/469c653fd6bc7a719d33832974ee19b0_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/469c653fd6bc7a719d33832974ee19b0_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/469c653fd6bc7a719d33832974ee19b0_big.jpg"
-        ]
+        ],
+        "phonica-new-releases-new_releases": 7
     },
     "phonica-204322": {
         "store": "phonica",
@@ -7041,7 +7041,6 @@
         "label": "MUTE",
         "label_link": "https://www.phonicarecords.com/label/mute/204322/all/latest/desc",
         "cat": "",
-        "phonica-new-releases-new_releases": 8,
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
@@ -7052,7 +7051,8 @@
             "https://d1c4rk9le5opln.cloudfront.net/8e15806c16e8b77f2f4a8c60ac86f10b_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/8e15806c16e8b77f2f4a8c60ac86f10b_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/8e15806c16e8b77f2f4a8c60ac86f10b_big.jpg"
-        ]
+        ],
+        "phonica-new-releases-new_releases": 8
     },
     "phonica-166794": {
         "store": "phonica",
@@ -7063,9 +7063,8 @@
         "label": "GROOVIN RECORDINGS",
         "label_link": "https://www.phonicarecords.com/label/groovin-recordings/166794/all/latest/desc",
         "cat": "",
-        "phonica-new-releases-new_releases": 9,
         "store_tags": {
-            "out_of_stock": false,
+            "out_of_stock": true,
             "preorder": false
         },
         "track_names": [
@@ -7080,7 +7079,8 @@
             "https://d1c4rk9le5opln.cloudfront.net/27461d4ea657d88b0b74be2af2dde7dd_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/27461d4ea657d88b0b74be2af2dde7dd_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/27461d4ea657d88b0b74be2af2dde7dd_big.jpg"
-        ]
+        ],
+        "phonica-new-releases-new_releases": 9
     },
     "phonica-193759": {
         "store": "phonica",
@@ -7091,7 +7091,6 @@
         "label": "GROOVIN RECORDINGS",
         "label_link": "https://www.phonicarecords.com/label/groovin-recordings/193759/all/latest/desc",
         "cat": "",
-        "phonica-new-releases-new_releases": 10,
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
@@ -7112,7 +7111,8 @@
             "https://d1c4rk9le5opln.cloudfront.net/43c745941354f7a59cb1db28df92b2cf_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/43c745941354f7a59cb1db28df92b2cf_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/43c745941354f7a59cb1db28df92b2cf_big.jpg"
-        ]
+        ],
+        "phonica-new-releases-new_releases": 10
     },
     "phonica-127054": {
         "store": "phonica",
@@ -7123,7 +7123,6 @@
         "label": "SONY",
         "label_link": "https://www.phonicarecords.com/label/sony/127054/all/latest/desc",
         "cat": "",
-        "phonica-new-releases-new_releases": 11,
         "store_tags": {
             "out_of_stock": true,
             "preorder": false
@@ -7160,7 +7159,8 @@
             "https://d1c4rk9le5opln.cloudfront.net/2f01ee3657575e9b97b490d5d9855c06_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/2f01ee3657575e9b97b490d5d9855c06_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/2f01ee3657575e9b97b490d5d9855c06_big.jpg"
-        ]
+        ],
+        "phonica-new-releases-new_releases": 11
     },
     "phonica-205746": {
         "store": "phonica",
@@ -7171,7 +7171,6 @@
         "label": "SOUL QUEST",
         "label_link": "https://www.phonicarecords.com/label/soul-quest/205746/all/latest/desc",
         "cat": "",
-        "phonica-new-releases-new_releases": 12,
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
@@ -7192,7 +7191,8 @@
             "https://d1c4rk9le5opln.cloudfront.net/f731bc5329b9baecf18c602bad9659ed_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/f731bc5329b9baecf18c602bad9659ed_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/f731bc5329b9baecf18c602bad9659ed_big.jpg"
-        ]
+        ],
+        "phonica-new-releases-new_releases": 12
     },
     "phonica-206188": {
         "store": "phonica",
@@ -7203,7 +7203,6 @@
         "label": "GROOVIN RECORDINGS",
         "label_link": "https://www.phonicarecords.com/label/groovin-recordings/206188/all/latest/desc",
         "cat": "",
-        "phonica-new-releases-new_releases": 13,
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
@@ -7220,7 +7219,8 @@
             "https://d1c4rk9le5opln.cloudfront.net/b496035564c5cfcdfe71f0d07fb298d7_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/b496035564c5cfcdfe71f0d07fb298d7_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/b496035564c5cfcdfe71f0d07fb298d7_big.jpg"
-        ]
+        ],
+        "phonica-new-releases-new_releases": 13
     },
     "phonica-205917": {
         "store": "phonica",
@@ -7231,9 +7231,8 @@
         "label": "PACIFIC COAST HOUSE RECORDINGS",
         "label_link": "https://www.phonicarecords.com/label/pacific-coast-house-recordings/205917/all/latest/desc",
         "cat": "",
-        "phonica-new-releases-new_releases": 14,
         "store_tags": {
-            "out_of_stock": false,
+            "out_of_stock": true,
             "preorder": false
         },
         "track_names": [
@@ -7250,7 +7249,8 @@
             "https://d1c4rk9le5opln.cloudfront.net/4046d321d2fce82e9833ee95f9a3ab3c_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/4046d321d2fce82e9833ee95f9a3ab3c_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/4046d321d2fce82e9833ee95f9a3ab3c_big.jpg"
-        ]
+        ],
+        "phonica-new-releases-new_releases": 14
     },
     "phonica-205888": {
         "store": "phonica",
@@ -7261,7 +7261,6 @@
         "label": "FREERANGE RECORDS",
         "label_link": "https://www.phonicarecords.com/label/freerange-records/205888/all/latest/desc",
         "cat": "",
-        "phonica-new-releases-new_releases": 16,
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
@@ -7282,7 +7281,8 @@
             "https://d1c4rk9le5opln.cloudfront.net/941e77ef7f6bb8d0a9ca98ee4fdd4302_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/941e77ef7f6bb8d0a9ca98ee4fdd4302_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/941e77ef7f6bb8d0a9ca98ee4fdd4302_big.jpg"
-        ]
+        ],
+        "phonica-new-releases-new_releases": 16
     },
     "phonica-205964": {
         "store": "phonica",
@@ -7293,7 +7293,6 @@
         "label": "TERRASOLARE",
         "label_link": "https://www.phonicarecords.com/label/terrasolare/205964/all/latest/desc",
         "cat": "",
-        "phonica-new-releases-new_releases": 17,
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
@@ -7310,7 +7309,8 @@
             "https://d1c4rk9le5opln.cloudfront.net/21cdba98b0f33a7fc04744c72f5ac3fc_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/21cdba98b0f33a7fc04744c72f5ac3fc_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/21cdba98b0f33a7fc04744c72f5ac3fc_big.jpg"
-        ]
+        ],
+        "phonica-new-releases-new_releases": 17
     },
     "phonica-205552": {
         "store": "phonica",
@@ -7321,7 +7321,6 @@
         "label": "DISCORING",
         "label_link": "https://www.phonicarecords.com/label/discoring/205552/all/latest/desc",
         "cat": "",
-        "phonica-new-releases-new_releases": 18,
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
@@ -7340,7 +7339,8 @@
             "https://d1c4rk9le5opln.cloudfront.net/365c55195a25c895c1c0f9ba1169a3eb_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/365c55195a25c895c1c0f9ba1169a3eb_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/365c55195a25c895c1c0f9ba1169a3eb_big.jpg"
-        ]
+        ],
+        "phonica-new-releases-new_releases": 18
     },
     "phonica-205757": {
         "store": "phonica",
@@ -7351,7 +7351,6 @@
         "label": "HUDD TRAXX",
         "label_link": "https://www.phonicarecords.com/label/hudd-traxx/205757/all/latest/desc",
         "cat": "",
-        "phonica-new-releases-new_releases": 20,
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
@@ -7378,6 +7377,7 @@
             "https://d1c4rk9le5opln.cloudfront.net/d4a3fd5b7119fb9cd27e84b2db9affd4_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/d4a3fd5b7119fb9cd27e84b2db9affd4_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/d4a3fd5b7119fb9cd27e84b2db9affd4_big.jpg"
-        ]
+        ],
+        "phonica-new-releases-new_releases": 20
     }
 }

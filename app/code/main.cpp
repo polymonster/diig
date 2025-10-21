@@ -389,15 +389,6 @@ Str download_and_cache(const Str& url, Str releaseid, bool validate = false)
         }
     }
     
-    /*
-    FILE* ff = fopen(filepath.c_str(), "r");
-    fseek(ff, 0, SEEK_END);
-    size_t ss = ftell(ff);
-    rewind(ff);
-    char* buf = (char*)malloc(ss);
-    fread((void*)buf, 1, ss, ff);
-    */
-
     return filepath;
 }
 
@@ -462,8 +453,30 @@ Str download_and_cache_named(const Str& url, const Str& filename)
 
 pen::texture_creation_params load_texture_from_disk(const Str& filepath)
 {
-    // check type
+    // check file exists
     FILE* ff = fopen(filepath.c_str(), "rb");
+    if(!ff)
+    {
+        PEN_LOG("failed to load texture file at: %s", filepath.c_str());
+        pen::texture_creation_params tcp = {};
+        tcp.data = nullptr;
+        return tcp;
+    }
+    
+    // check file size
+    fseek(ff, 0, SEEK_END);
+    size_t size = ftell(ff);
+    rewind(ff);
+    
+    if(size < 4)
+    {
+        PEN_LOG("texture has unexpected size: %s %zu", filepath.c_str(), size);
+        pen::texture_creation_params tcp = {};
+        tcp.data = nullptr;
+        return tcp;
+    }
+    
+    // check cc for webp
     char cc[4];
     fread(&cc[0], 1, 4, ff);
     fclose(ff);
@@ -493,7 +506,7 @@ pen::texture_creation_params load_texture_from_disk(const Str& filepath)
         rgba = stbi_load(filepath.c_str(), &w, &h, &c, 4);
         c = 4;
     }
-    
+        
     pen::texture_creation_params tcp;
     tcp.width = w;
     tcp.height = h;
@@ -1322,8 +1335,12 @@ void* data_loader(void* userdata)
                !(view->releases.flags[i] & EntityFlags::artwork_loaded) &&
                (view->releases.flags[i] & EntityFlags::artwork_requested)) {
                 view->releases.artwork_tcp[i] = load_texture_from_disk(view->releases.artwork_filepath[i]);
-                std::atomic_thread_fence(std::memory_order_release);
-                view->releases.flags[i] |= EntityFlags::artwork_loaded;
+                
+                if(view->releases.artwork_tcp[i].data)
+                {
+                    std::atomic_thread_fence(std::memory_order_release);
+                    view->releases.flags[i] |= EntityFlags::artwork_loaded;
+                }
             }
         }
 
@@ -2974,25 +2991,34 @@ namespace
             strlen(username_buf) &&
             strlen(email_buf) &&
             strlen(password_buf) &&
-            strlen(retype_buf) &&
-            strcmp(password_buf, retype_buf) == 0;
+            strlen(retype_buf);
 
         if(valid) {
             ImGui::SameLine();
             if(ImGui::Button("Sign Up")) {
-                pen::os_haptic_selection_feedback();
-                Str jstr;
-                jstr.appendf("{email: \"%s\", password: \"%s\", returnSecureToken: true}", email_buf, password_buf);
+                
+                nlohmann::json response = {};
+                
+                if(strcmp(password_buf, retype_buf) == 0)
+                {
+                    pen::os_haptic_selection_feedback();
+                    Str jstr;
+                    jstr.appendf("{email: \"%s\", password: \"%s\", returnSecureToken: true}", email_buf, password_buf);
 
-                CURLcode code;
-                auto response = curl::request(
-                    curl::url_with_key("https://identitytoolkit.googleapis.com/v1/accounts:signUp").c_str(),
-                    jstr.c_str(),
-                    code
-                );
-
-                error_message = unpack_error_response(code, response);
-
+                    CURLcode code;
+                    response = curl::request(
+                        curl::url_with_key("https://identitytoolkit.googleapis.com/v1/accounts:signUp").c_str(),
+                        jstr.c_str(),
+                        code
+                    );
+                    
+                    error_message = unpack_error_response(code, response);
+                }
+                else
+                {
+                    error_message = "error: passwords do not match";
+                }
+                
                 if(error_message.empty()) {
                     // stash credentials
                     pen::os_set_keychain_item("com.pmtech.dig", "email", email_buf);
@@ -3528,10 +3554,14 @@ void audio_player()
             audio_player_stop_existing();
             ctx.play_track_filepath = "";
         }
-
+                
         // play new
-        if(ctx.play_track_filepath.length() > 0 && ctx.invalidate_track)
+        if(ctx.play_track_filepath.length() > 0 &&
+           ctx.invalidate_track &&
+           pen::filesystem_file_exists(ctx.play_track_filepath.c_str()))
         {
+            size_t fs = pen::filesystem_getsize(ctx.play_track_filepath.c_str());
+            
             // stop existing
             audio_player_stop_existing();
             

@@ -26,6 +26,8 @@
 #include <thread>
 #include <chrono>
 
+constexpr bool k_force_login = false;
+
 using namespace put;
 using namespace pen;
 
@@ -326,6 +328,32 @@ bool check_cache_hit(const Str& url, Str releaseid)
         return false;
     }
 
+    return true;
+}
+
+bool check_audio_file(const Str& path)
+{
+    FILE* f = fopen(path.c_str(), "rb");
+    if(f)
+    {
+        fseek(f, 0, SEEK_END);
+        size_t size = ftell(f);
+        rewind(f);
+        
+        if(size >= 4)
+        {
+            char buf[4];
+            fread(&buf[0], 1, 4, f);
+            
+            if(buf[0] == '<' && buf[1] == '!')
+            {
+                return false;
+            }
+        }
+        
+        fclose(f);
+    }
+    
     return true;
 }
 
@@ -1296,7 +1324,15 @@ void* data_cache_fetch(void* userdata) {
                     for(u32 t = 0; t < view->releases.track_url_count[i]; ++t) {
                         view->releases.track_filepaths[i][t] = "";
                         Str fp = download_and_cache(view->releases.track_urls[i][t], view->releases.key[i], true);
-                        view->releases.track_filepaths[i][t] = fp;
+                        
+                        if(check_audio_file(fp))
+                        {
+                            view->releases.track_filepaths[i][t] = fp;
+                        }
+                        else
+                        {
+                            remove(fp.c_str());
+                        }
                     }
                     std::atomic_thread_fence(std::memory_order_release);
                     view->releases.flags[i] |= EntityFlags::tracks_cached;
@@ -2261,7 +2297,20 @@ namespace
             // tracks
             ImGui::SetWindowFontScale(k_text_size_dots);
             s32 tc = releases.track_filepath_count[r];
-            if(tc != 0)
+
+            s32 valid_audio = 0;
+            if(tc > 0)
+            {
+                for(u32 i = 0; i < releases.track_url_count[r]; ++i)
+                {
+                    if(!releases.track_filepaths[r][i].empty())
+                    {
+                        valid_audio++;
+                    }
+                }
+            }
+            
+            if(tc != 0 && valid_audio > 0)
             {
                 auto ww = ImGui::GetWindowSize().x;
                 auto tw = ImGui::CalcTextSize(ICON_FA_STOP_CIRCLE).x * releases.track_url_count[r] * 1.5f;
@@ -2276,6 +2325,24 @@ namespace
                     }
 
                     u32 sel = releases.select_track[r];
+                    
+                    // handle missing individual tracks
+                    auto icon = ICON_FA_STOP_CIRCLE;
+                    if(releases.track_filepaths[r][i].empty())
+                    {
+                        icon = ICON_FA_TIMES_CIRCLE;
+                    }
+                    
+                    // auto move to next track
+                    if(releases.track_filepaths[r][sel].empty())
+                    {
+                        sel++;
+                        if(sel >= releases.track_url_count[r])
+                        {
+                            sel = 0;
+                        }
+                    }
+                    
                     if(i == sel)
                     {
                         if(ctx.top == r)
@@ -2293,12 +2360,12 @@ namespace
                         }
                         else
                         {
-                            ImGui::Text("%s", ICON_FA_STOP_CIRCLE);
+                            ImGui::Text("%s", icon);
                         }
                     }
                     else
                     {
-                        ImGui::Text("%s", ICON_FA_STOP_CIRCLE);
+                        ImGui::Text("%s", icon);
                     }
                 }
             }
@@ -2726,6 +2793,31 @@ namespace
         return "";
     }
 
+    void get_input_box_sizes(ImVec2& boxsize, f32& padding)
+    {
+        ImGui::SetWindowFontScale(k_text_size_body);
+        
+        f32 textheight = ImGui::CalcTextSize("Ag").y;
+
+        f32 ypos = ImGui::GetWindowHeight() * 0.5f - ImGui::GetTextLineHeight() * 5.0f;
+        f32 width = ImGui::GetWindowWidth();
+        
+        ImGui::SetCursorPosY(ypos);
+
+        ImGui::Indent();
+        
+        ImGui::SetWindowFontScale(k_text_size_box);
+        
+        f32 cursorx = ImGui::GetCursorPosX();
+        f32 boxwidth = width - (cursorx * 2.0f);
+        f32 boxheight = ImGui::CalcTextSize("Ag").y;
+        
+        ImGui::SetWindowFontScale(k_text_size_body);
+        
+        padding = (boxheight - textheight) / 2.0f;
+        boxsize = ImVec2(boxwidth, boxheight);
+    }
+
     void forgotten_password_menu() {
         static c8  email_buf[k_login_buf_size] = {0};
         static Str error_message = "";
@@ -2742,26 +2834,35 @@ namespace
         ImGui::SetCursorPosY(ypos);
 
         bool return_pressed = pen::input_is_key_down(PK_RETURN);
-
         bool any_active = false;
 
-        ImGui::Indent();
-        if(ImGui::InputText("Email", &email_buf[0], k_login_buf_size)) {
+        f32 padding = 0.0;
+        ImVec2 boxsize = {};
+        get_input_box_sizes(boxsize, padding);
+
+        ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(padding, padding));
+                  
+        if(ImGui::InputTextEx("##Email", "Email", &email_buf[0], k_login_buf_size, boxsize, 0, nullptr, nullptr)) {
             error_message.clear();
         }
         if(ImGui::IsItemActive()) {
             any_active = true;
         }
-
+        
         if(return_pressed) {
             ImGui::SetWindowFocus(nullptr);
         }
+        
+        ImGui::PopStyleVar();
 
         ImGui::SetWindowFontScale(k_text_size_h2);
 
         if(ImGui::Button("Back")) {
             ctx.view->page = Page::login_or_signup;
             pen::os_haptic_selection_feedback();
+            
+            memset(&email_buf[0], 0x0, k_login_buf_size);
+            error_message = "";
         }
 
         // validate
@@ -2826,18 +2927,15 @@ namespace
         ImGui::SetCursorPosY(ypos);
 
         bool return_pressed = pen::input_is_key_down(PK_RETURN);
-
         bool any_active = false;
+        
+        f32 padding = 0.0;
+        ImVec2 boxsize = {};
+        get_input_box_sizes(boxsize, padding);
 
-        ImGui::Indent();
-        if(ImGui::InputText("Email", &email_buf[0], k_login_buf_size)) {
-            error_message.clear();
-        }
-        if(ImGui::IsItemActive()) {
-            any_active = true;
-        }
-
-        if(ImGui::InputText("Password", &password_buf[0], k_login_buf_size, ImGuiInputTextFlags_Password)) {
+        ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(padding, padding));
+                  
+        if(ImGui::InputTextEx("##Email", "Email", &email_buf[0], k_login_buf_size, boxsize, 0, nullptr, nullptr)) {
             error_message.clear();
         }
         if(ImGui::IsItemActive()) {
@@ -2848,15 +2946,36 @@ namespace
             return_pressed = false;
         }
 
+        if(ImGui::InputTextEx("##Password", "Password", &password_buf[0], k_login_buf_size, boxsize, ImGuiInputTextFlags_Password, nullptr, nullptr)) {
+            error_message.clear();
+        }
+        if(ImGui::IsItemActive()) {
+            any_active = true;
+        }
+        else if(return_pressed) {
+            ImGui::SetKeyboardFocusHere();
+            return_pressed = false;
+        }
+        else if(return_pressed) {
+            ImGui::SetKeyboardFocusHere();
+            return_pressed = false;
+        }
+
         if(return_pressed) {
             ImGui::SetWindowFocus(nullptr);
         }
+        
+        ImGui::PopStyleVar();
 
         ImGui::SetWindowFontScale(k_text_size_h2);
 
         if(ImGui::Button("Back")) {
             ctx.view->page = Page::login_or_signup;
             pen::os_haptic_selection_feedback();
+            
+            memset(&email_buf[0], 0x0, k_login_buf_size);
+            memset(&password_buf[0], 0x0, k_login_buf_size);
+            error_message = "";
         }
 
         // validate
@@ -2889,8 +3008,6 @@ namespace
             }
         }
 
-        ImGui::SetWindowFontScale(k_text_size_body);
-
         ImGui::Spacing();
         ImGui::Spacing();
 
@@ -2900,6 +3017,8 @@ namespace
         }
 
         ImGui::Spacing();
+        
+        ImGui::SetWindowFontScale(k_text_size_body);
 
         // error
         ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.5f, 0.0f, 0.0f, 1.0f));
@@ -2925,24 +3044,24 @@ namespace
 
         ImGui::Spacing();
         ImGui::TextCentred("Sign Up");
-
-        ImGui::SetWindowFontScale(k_text_size_body);
-
-        f32 ypos = ImGui::GetWindowHeight() * 0.5f - ImGui::GetTextLineHeight() * 5.0f;
-        ImGui::SetCursorPosY(ypos);
-
+        
         bool return_pressed = pen::input_is_key_down(PK_RETURN);
-
         bool any_active = false;
-        ImGui::Indent();
-        if(ImGui::InputText("Username", &username_buf[0], k_login_buf_size)) {
+        
+        f32 padding = 0.0;
+        ImVec2 boxsize = {};
+        get_input_box_sizes(boxsize, padding);
+
+        ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(padding, padding));
+        
+        if(ImGui::InputTextEx("##Username", "Username", &username_buf[0], k_login_buf_size, boxsize, 0, nullptr, nullptr)) {
             error_message.clear();
         }
         if(ImGui::IsItemActive()) {
             any_active = true;
         }
-
-        if(ImGui::InputText("Email", &email_buf[0], k_login_buf_size)) {
+          
+        if(ImGui::InputTextEx("##Email", "Email", &email_buf[0], k_login_buf_size, boxsize, 0, nullptr, nullptr)) {
             error_message.clear();
         }
         if(ImGui::IsItemActive()) {
@@ -2953,7 +3072,7 @@ namespace
             return_pressed = false;
         }
 
-        if(ImGui::InputText("Password", &password_buf[0], k_login_buf_size, ImGuiInputTextFlags_Password)) {
+        if(ImGui::InputTextEx("##Password", "Password", &password_buf[0], k_login_buf_size, boxsize, ImGuiInputTextFlags_Password, nullptr, nullptr)) {
             error_message.clear();
         }
         if(ImGui::IsItemActive()) {
@@ -2964,7 +3083,7 @@ namespace
             return_pressed = false;
         }
 
-        if(ImGui::InputText("Retype", &retype_buf[0], k_login_buf_size, ImGuiInputTextFlags_Password)) {
+        if(ImGui::InputTextEx("##Retype", "Retype", &retype_buf[0], k_login_buf_size, boxsize, ImGuiInputTextFlags_Password, nullptr, nullptr)) {
             error_message.clear();
         }
         if(ImGui::IsItemActive()) {
@@ -2978,17 +3097,25 @@ namespace
         if(return_pressed) {
             ImGui::SetWindowFocus(nullptr);
         }
-
+        
+        ImGui::PopStyleVar();
+        
         ImGui::SetWindowFontScale(k_text_size_h2);
 
         if(ImGui::Button("Back")) {
             pen::os_haptic_selection_feedback();
             ctx.view->page = Page::login_or_signup;
+            
+            memset(&username_buf[0], 0x0, k_login_buf_size);
+            memset(&email_buf[0], 0x0, k_login_buf_size);
+            memset(&password_buf[0], 0x0, k_login_buf_size);
+            memset(&retype_buf[0], 0x0, k_login_buf_size);
+            error_message = "";
         }
 
         // validate
         bool valid =
-            strlen(username_buf) &&
+            strlen(email_buf) &&
             strlen(email_buf) &&
             strlen(password_buf) &&
             strlen(retype_buf);
@@ -3056,7 +3183,7 @@ namespace
         ctx.data_ctx.auth.mutex.unlock();
 
         // from keychain
-        ctx.username = pen::os_get_keychain_item("com.pmtech.dig", "username");
+        // ctx.username = pen::os_get_keychain_item("com.pmtech.dig", "username");
 
         // trigger update of likes
         update_likes_registry();
@@ -3115,7 +3242,7 @@ namespace
         Str password = pen::os_get_keychain_item("com.pmtech.dig", "password");
         Str lastauth = pen::os_get_keychain_item("com.pmtech.dig", "lastauth");
 
-        if(!email_address.empty() && !password.empty()) {
+        if(!email_address.empty() && !password.empty() && !k_force_login) {
             Str jstr;
             jstr.appendf("{email: \"%s\", password: \"%s\", returnSecureToken: true}", email_address.c_str(), password.c_str());
 
@@ -3356,8 +3483,17 @@ namespace
 
         // intialise pmtech systems
         pen::jobs_create_job(put::audio_thread_function, 1024 * 10, nullptr, pen::e_thread_start_flags::detached);
-        dev_ui::init(dev_ui::default_pmtech_style(), font_pixel_size);
-
+        
+        // dev_ui::init(dev_ui::default_pmtech_style(), font_pixel_size);
+        
+        std::vector<dev_ui::font_options> fonts;
+        
+        // small font
+        fonts.push_back({"data/fonts/cousine-regular.ttf", font_pixel_size, 0, 0, false});
+        fonts.push_back({"data/fonts/cousine-regular.ttf", font_pixel_size, 0x2013, 0x2019, true});
+        fonts.push_back({"data/fonts/fontawesome-webfont.ttf", font_pixel_size, ICON_MIN_FA, ICON_MAX_FA, true});
+        init_ex(fonts);
+        
         curl::init();
 
         // init context

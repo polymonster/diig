@@ -285,7 +285,7 @@ def firebase_compliant_key(key: str):
 
 # grab rate, in seconds to proceed per item
 def get_scrape_rate():
-    rate = 1
+    rate = 10
     if "-rate" in sys.argv:
         rate = sys.argv[sys.argv.index("-rate") + 1]
     return int(rate)

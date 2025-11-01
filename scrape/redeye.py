@@ -112,7 +112,6 @@ def get_redeye_snippit_urls(release_url, cdn, release_id):
     release_html = dig.request_url_limited(release_url)
     if release_html == None:
         return -1
-    release_html = dig.fetch_cache_page(release_url, "references/redeye_release.html")
 
     play_div = dig.parse_div(release_html, 'class="play"')
     if len(play_div) > 0:

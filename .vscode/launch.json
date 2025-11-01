@@ -8,11 +8,15 @@
             "cwd": "${workspaceFolder}/scrape",
             "args": [
                 "-store",
-                "yoyaku",
+                "redeye",
                 "-verbose",
                 "-urls",
                 "-pages",
                 "1",
+                "-section",
+                "techno-electro",
+                "-view",
+                "new_releases"
             ]
         }
     ]

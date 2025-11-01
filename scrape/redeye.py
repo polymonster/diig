@@ -104,33 +104,31 @@ def parse_redeye_release_link(elem: str):
     return dig.get_value(elem, "href")
 
 
-# find snippit urls by trying id-track and returning when none are found
-def get_redeye_snippit_urls(cdn, release_id):
+# get redeye snippet urls inspecting the release page to get track count and assuming convention:
+# release_id, release_idb, release_idc...
+def get_redeye_snippit_urls(release_url, cdn, release_id):
     tracks = list()
 
-    # check the releaseid exists, this is track-a
-    try_url = f"{cdn}{release_id}.mp3"
-    try:
-        request = urllib.request.Request(try_url, method='HEAD')
-        response = urllib.request.urlopen(request)
-        if response.status == 200:
-            tracks.append(f"{cdn}{str(release_id)}.mp3")
-            # now iterate until we find no more tracks
-            l = 'b'
-            while True:
-                try_url = f"{cdn}{release_id}{l}.mp3"
-                request = urllib.request.Request(try_url, method='HEAD')
-                response = urllib.request.urlopen(request)
-                if response.status == 200:
-                    tracks.append(try_url)
-                else:
-                    break
-                l = chr(ord(l) + 1)
-    except urllib.error.HTTPError:
-        pass
+    release_html = dig.request_url_limited(release_url)
+    if release_html == None:
+        return -1
+    release_html = dig.fetch_cache_page(release_url, "references/redeye_release.html")
+
+    play_div = dig.parse_div(release_html, 'class="play"')
+    if len(play_div) > 0:
+        pos = 0
+        while True:
+            (pos, elem) = dig.find_parse_elem(play_div[0], pos, "<a class='btn-play'", "</a>")
+            if elem.find("></a><a class='btn-play-all'>") != -1:
+                break
+            else:
+                suffix = dig.get_value(elem, "data-sample")
+                if suffix == "a":
+                    suffix = ""
+                tracks.append(f"{cdn}{release_id}{suffix}.mp3")
 
     return tracks
-
+    
 
 # get red eye artwork urls trying releaseid-index for different sizes
 def get_redeye_artwork_urls(release_id):
@@ -138,14 +136,7 @@ def get_redeye_artwork_urls(release_id):
     cdn = "https://www.redeyerecords.co.uk/imagery/"
     # check the artwork exists
     for i in range(0, 3):
-        try:
-            try_url = f"{cdn}{release_id}-{i}.jpg"
-            request = urllib.request.Request(try_url, method='HEAD')
-            response = urllib.request.urlopen(request)
-            if response.status == 200:
-                artworks.append(try_url)
-        except urllib.error.HTTPError:
-            pass
+        artworks.append(f"{cdn}{release_id}-{i}.jpg")
     return artworks
 
 
@@ -186,11 +177,8 @@ def scrape_page(url, store, view, section, counter, session_scraped_ids):
     verbose = "verbose" in sys.argv
     get_urls = "-urls" in sys.argv
 
-    # try and then continue if the page does not exist
-    try:
-        html_file = urllib.request.urlopen(url)
-    except urllib.error.HTTPError:
-        print("error: url not found {}".format(url))
+    html_file = dig.request_url_limited(url)
+    if html_file == None:
         return -1
 
     # store release entries in dict
@@ -279,10 +267,7 @@ def scrape_page(url, store, view, section, counter, session_scraped_ids):
                         has_artworks = True
 
             if not has_tracks:
-                release_dict["track_urls"] = get_redeye_snippit_urls("https://redeye-391831.c.cdn77.org/", id)
-                if len(release_dict["track_urls"]) == 0:
-                    dig.scrape_yield()
-                    release_dict["track_urls"] = get_redeye_snippit_urls("https://sounds.redeyerecords.co.uk/", id)
+                release_dict["track_urls"] = get_redeye_snippit_urls(release_dict["link"], "https://sounds.redeyerecords.co.uk/", id)
 
             if not has_artworks:
                 release_dict["artworks"] = get_redeye_artwork_urls(id)

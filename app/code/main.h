@@ -135,6 +135,7 @@ constexpr f32       k_text_size_h1 = 2.25f;
 constexpr f32       k_text_size_h2 = 1.5f;
 constexpr f32       k_text_size_h3 = 1.25f;
 constexpr f32       k_text_size_body = 1.0f;
+constexpr f32       k_text_size_box = 3.0f;
 constexpr f32       k_text_size_track = 0.75f;
 constexpr f32       k_text_size_nerds = 0.7f;
 constexpr f32       k_text_size_dots = 0.8f;

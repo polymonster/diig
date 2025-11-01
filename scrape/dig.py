@@ -33,6 +33,37 @@ def display_help():
     print("  debug options:")
     print("    -fix-store <store_name> - specify a store run custom fixup code")
 
+
+# request to url with time limiting defined by robots.txt, head_only can check if the url exists.
+# None is return if url does not exists, html is returned if it does and response is returned if head_only
+def request_url_limited(url, head_only = False):
+    # static attributes
+    if not hasattr(request_url_limited, "start_time"):
+        request_url_limited.start_time = time.time() + get_scrape_rate()
+
+    # sleep wait
+    while time.time() - request_url_limited.start_time < get_scrape_rate():
+        time.sleep(1)
+
+    # reset request timer
+    request_url_limited.start_time = time.time()
+
+    # try and then continue if the page does not exist
+    safe_url = urllib.parse.quote(url, safe=':/?=&')
+    try:
+        if head_only:
+            request = urllib.request.Request(safe_url, method='HEAD')
+            response = urllib.request.urlopen(request)
+            if response.status == 200:
+                return response
+            else:
+                return None
+        else:
+            return urllib.request.urlopen(safe_url)
+    except urllib.error.HTTPError:
+        print("error: url not found {}".format(safe_url))
+        return None
+
     
 # fetch html from a cached file if present or request the file
 def fetch_cache_page(url, cache_file):

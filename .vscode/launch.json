@@ -8,13 +8,13 @@
             "cwd": "${workspaceFolder}/scrape",
             "args": [
                 "-store",
-                "redeye",
+                "yoyaku",
                 "-verbose",
                 "-urls",
                 "-pages",
                 "1",
                 "-section",
-                "techno-electro",
+                "breaks",
                 "-view",
                 "new_releases"
             ]

@@ -34,20 +34,26 @@ def display_help():
     print("    -fix-store <store_name> - specify a store run custom fixup code")
 
 
-# request to url with time limiting defined by robots.txt, head_only can check if the url exists.
-# None is return if url does not exists, html is returned if it does and response is returned if head_only
-def request_url_limited(url, head_only = False):
+# call this function to regulate scraper speed
+def rate_limiter():
     # static attributes
-    if not hasattr(request_url_limited, "start_time"):
-        request_url_limited.start_time = time.time() + get_scrape_rate()
+    if not hasattr(rate_limiter, "start_time"):
+        rate_limiter.start_time = time.time() - get_scrape_rate()
 
     # sleep wait
-    while time.time() - request_url_limited.start_time < get_scrape_rate():
+    while time.time() - rate_limiter.start_time < get_scrape_rate():
         time.sleep(1)
 
     # reset request timer
-    request_url_limited.start_time = time.time()
+    rate_limiter.start_time = time.time()
 
+
+# request to url with time limiting defined by robots.txt, head_only can check if the url exists.
+# None is return if url does not exists, html is returned if it does and response is returned if head_only
+def request_url_limited(url, head_only = False):
+
+    rate_limiter()
+    
     # try and then continue if the page does not exist
     safe_url = urllib.parse.quote(url, safe=':/?=&')
     try:
@@ -285,7 +291,7 @@ def firebase_compliant_key(key: str):
 
 # grab rate, in seconds to proceed per item
 def get_scrape_rate():
-    rate = 10
+    rate = 5
     if "-rate" in sys.argv:
         rate = sys.argv[sys.argv.index("-rate") + 1]
     return int(rate)
@@ -435,6 +441,14 @@ def scrape_store(stores, store_name):
     if store_name in stores:
         # collapse store
         store = stores[store_name]
+
+        if "-rate" not in sys.argv:
+            if "scrape_rate" in store:
+                rate = int(store["scrape_rate"])
+                sys.argv.append("-rate")
+                sys.argv.append(rate)
+                print(f"setting scrape rate to: {rate}s")
+
         # validate
         if "sections" not in store:
             print('error: "sections" missing from store config')

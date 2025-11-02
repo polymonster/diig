@@ -495,7 +495,7 @@ def scrape_store(stores, store_name):
                     )
                     # if the scrape takes 6hrs GH actions will timeout
                     # return here and patch any updates
-                    if time.time() - start_time > 2100:
+                    if time.time() - start_time > 21000:
                         return
                     if counter == -1:
                         break

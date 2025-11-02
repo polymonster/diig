@@ -10,7 +10,7 @@ It provides a record store agnostic audio player with a familiar social media in
 The aim is to be extensible so more record stores, genre sections and views can be added from different sources. The current scope of the sites and sections that are being monitored is opinionated and targeted to a small group of friends, but the overall goal is to allow community contribution and expand the project.
 
 <p align="center">
-    <img src="https://github.com/polymonster/dig/raw/main/media/dig.gif"/>
+    <img src="https://github.com/polymonster/polymonster.github.io/blob/master/images/diig/diig.gif?raw=true"/>
 </p>
 
 ## Scrapers
@@ -31,7 +31,7 @@ The you can run locally with command lines such as:
 ```
 cd scrape
 dig.py -urls -store juno -clear-trackers -key "{}" -verbose
-python3 
+python3
 ```
 
 Where key should be a valid auth key for a firebase database.

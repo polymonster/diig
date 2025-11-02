@@ -14,7 +14,8 @@
                 "page_count": 2,
                 "display_name": "Latest"
             }
-        }
+        },
+        "scrape_rate": 10
     },
     "juno": {
         "sections": [
@@ -52,7 +53,8 @@
                 "page_count": 100,
                 "display_name": "Preorders"
             }
-        }
+        },
+        "scrape_rate": 5
     },
     "redeye": {
         "sections": [
@@ -86,7 +88,8 @@
                 "page_count": 100,
                 "display_name": "Back Catalogue"
             }
-        }
+        },
+        "scrape_rate": 10
     },
     "yoyaku": {
         "sections": [
@@ -104,7 +107,7 @@
         "views": {
             "new_releases": {
                 "url": "https://www.yoyaku.io/style/${{section}}/page/${{page}}/?orderby=date",
-                "page_count": 30,
+                "page_count": 100,
                 "display_name": "Latest"
             },
             "weekly_chart": {
@@ -112,6 +115,7 @@
                 "page_count": 1,
                 "display_name": "Weekly Chart"
             }
-        }
+        },
+        "scrape_rate": 5
     }
 }

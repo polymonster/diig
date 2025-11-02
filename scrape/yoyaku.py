@@ -1,4 +1,5 @@
 import urllib.request
+import requests
 import http
 import dig
 import cgu
@@ -7,6 +8,29 @@ import json
 import datetime
 import sys
 import html
+
+
+def fetch_product_json(product_id: int):
+
+    dig.rate_limiter()
+
+    url = "https://yoyaku.io/wp-json/yoyaku/v1/track"
+    headers = {
+        "Accept": "application/json",
+        "Origin": "https://yoyaku.io",
+        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64)",
+    }
+    
+    # The endpoint accepts form-encoded: id=623892
+    resp = requests.post(url, data={"id": product_id}, headers=headers, timeout=20)
+    resp.raise_for_status()
+
+    payload = resp.json()
+    if not payload.get("success"):
+        return dict()
+    
+    return json.loads(json.dumps(payload))
+    
 
 def debug(url):
     req = urllib.request.Request(
@@ -36,20 +60,11 @@ def debug(url):
 def scrape_page(url, store, view, section, counter, session_scraped_ids):
     print(f"scraping page: {url}", flush=True)
 
-    req = urllib.request.Request(
-        url=url,
-        headers={'User-Agent': 'Mozilla/5.0'}
-    )
-
-    # try and then continue if the page does not exist
-    try:
-        html_file = urllib.request.urlopen(req)
-    except urllib.error.HTTPError:
-        print("error: url not found {}".format(url))
-        return -1
-
     # parse releases from page
-    html_str = html_file.read().decode("utf8")
+    html_response = dig.request_url_limited(url)
+    if html_response == None:
+        return -1
+    html_str = html_response.read().decode("utf8")
 
     # find the charts
     sidebar = html_str.find("woocommerce-bestsellers")
@@ -73,13 +88,14 @@ def scrape_page(url, store, view, section, counter, session_scraped_ids):
     if os.path.exists(reg_filepath):
         releases_dict = json.loads(open(reg_filepath, "r").read())
 
+    releases_ex = dig.parse_class(html_str, 'class="product type-product', "li")
+
     for release in releases:
         # basic info
         release_dict = dict()
         release_dict["store"] = "yoyaku"
         release_dict["link"] = dig.get_value(release, "href")
         release_dict["id"] = os.path.basename(release_dict["link"].strip("/"))
-        key = f'{release_dict["store"]}-{release_dict["id"]}'
 
         # assign pos per section
         release_dict[f"{store}-{section}-{view}"] = int(counter)
@@ -98,8 +114,27 @@ def scrape_page(url, store, view, section, counter, session_scraped_ids):
         elif "-verbose" in sys.argv:
             print(f"parsing release: {key}", flush=True)
 
+        # first implementation did not get the actual internal id
+        ii = releases.index(release)
+        product_info = releases_ex[ii][:releases_ex[ii].find(">") + 1]
+        post_id_start = product_info.find("post-") + len("post-")
+        post_id_end = product_info.find(" ", post_id_start)
+        internal_id = product_info[post_id_start: post_id_end]
+        release_dict["internal_id"] = internal_id
+
         # main page info
         release_dict["store_tags"] = dict()
+
+        # store tags:  out of stock
+        release_dict["store_tags"]["out_of_stock"] = False
+        if product_info.find("product_cat-out-of-stock") != -1:
+            release_dict["store_tags"]["out_of_stock"] = True
+            release_dict["store_tags"]["has_been_out_of_stock"] = True
+
+        # store tags:  out of stock
+        release_dict["store_tags"]["preorder"] = False
+        if product_info.find("product_cat-forthcoming") != -1:
+            release_dict["store_tags"]["preorder"] = True
 
         # check existing tracks
         track_url_count = 0
@@ -107,198 +142,76 @@ def scrape_page(url, store, view, section, counter, session_scraped_ids):
             if "track_urls" in releases_dict[key]:
                 track_url_count = len(releases_dict[key]["track_urls"])
 
-        # look for src set
-        srcset = dig.get_value(release, "srcset")
-        if srcset != None:
-            # images order
-            target_w = [
-                "100w",
-                "400w",
-                "600w",
-                "768w"
-            ]
+        # check eisting images
+        img_url_count = 0
+        if key in releases_dict:
+            if "artworks" in releases_dict[key]:
+                img_url_count = len(releases_dict[key]["artworks"])
 
-            release_dict["artworks"] = list()
-            imgs = srcset.split(",")
-            for w in target_w:
-                for img in imgs:
-                    if img.endswith(w):
-                        release_dict["artworks"].append(img.strip(w).strip())
-        else:
-            # might have single image
-            img = dig.get_value(release, "src")
-            if img != None:
-                # splat 3
+        # if we have no tracks or images, request product info 
+        if track_url_count == 0 or img_url_count == 0:
+            # based on this id we can get json by doing a post request to the API
+            product_json = fetch_product_json(release_dict["internal_id"])
+
+            # data and track names
+            if "data" in product_json:
+                # track names and urls
+                release_dict["track_names"] = list()
+                release_dict["track_urls"] = list()
                 release_dict["artworks"] = list()
-                for i in range(0, 3):
-                    release_dict["artworks"].append(img)
+                image_path = ""
+                for track in product_json["data"]:
+                    if "title" in track:
+                        release_dict["track_names"].append(track["title"])
+                    else:
+                        release_dict["track_names"].append("")
+                    if "mp3" in track:
+                        release_dict["track_urls"].append(track["mp3"])
+                    else:
+                        release_dict["track_urls"].append("")
+                    if "image" in track:
+                        image_path = track["image"]
 
-        # detail info
-        try:
-            req = urllib.request.Request(
-                url=release_dict["link"],
-                headers={'User-Agent': 'Mozilla/5.0'}
-            )
-            release_html_file = urllib.request.urlopen(req)
-        except urllib.error.HTTPError:
-            print("error: url not found {}".format(url))
-            continue
+                # infer image set
+                if len("image") > 0:
+                    release_dict["artworks"].append(image_path)
+                    release_dict["artworks"].append(image_path.replace("100x100", "400x400"))
+                    release_dict["artworks"].append(image_path.replace("100x100", ""))
+                
+            # detail info
+            release_html_response = dig.request_url_limited(release_dict["link"])
+            if release_html_response == None:
+                return -1
+            release_html_str = release_html_response.read().decode("utf8")
 
-        # parse release page
-        release_html_str = release_html_file.read().decode("utf8")
+            # strip related
+            related = release_html_str.find('<section class="related products')
+            if related != -1:
+                release_html_str = release_html_str[:related]
 
-        # strip related
-        related = release_html_str.find('<section class="related products')
-        if related != -1:
-            release_html_str = release_html_str[:related]
+            # title
+            title = dig.parse_class_single(release_html_str, "product_title entry-title", "h1")
+            title = dig.parse_strip_body(title)
+            release_dict["title"] = html.unescape(title)
 
-        # title
-        title = dig.parse_class_single(release_html_str, "product_title entry-title", "h1")
-        title = dig.parse_strip_body(title)
-        release_dict["title"] = html.unescape(title)
+            # artist info
+            pp = release_html_str.find("class=\"product-artists\"")
+            pe = release_html_str.find("</span>", pp)
+            release_dict["artist"] = dig.parse_strip_body(release_html_str[pp:pe])
+            release_dict["artist"] = html.unescape(release_dict["artist"])
 
-        # artist info
-        pp = release_html_str.find("class=\"product-artists\"")
-        pe = release_html_str.find("</span>", pp)
-        release_dict["artist"] = dig.parse_strip_body(release_html_str[pp:pe])
-        release_dict["artist"] = html.unescape(release_dict["artist"])
+            # label info
+            pp = release_html_str.find("class=\"product-labels\"")
+            pe = release_html_str.find("</span>", pp)
+            release_dict["label"] = dig.parse_strip_body(release_html_str[pp:pe])
+            release_dict["label_link"] = dig.get_value(release_html_str[pp:pe], "href")
+            release_dict["label"] = html.unescape(release_dict["label"])
 
-        # label info
-        pp = release_html_str.find("class=\"product-labels\"")
-        pe = release_html_str.find("</span>", pp)
-        release_dict["label"] = dig.parse_strip_body(release_html_str[pp:pe])
-        release_dict["label_link"] = dig.get_value(release_html_str[pp:pe], "href")
-        release_dict["label"] = html.unescape(release_dict["label"])
-
-        # cat
-        pp = release_html_str.find("class=\"sku\"")
-        pe = release_html_str.find("</span>", pp)
-        release_dict["cat"] = dig.parse_strip_body(release_html_str[pp:pe])
-        release_dict["cat"] = html.unescape(release_dict["cat"])
-
-        # tracklist
-        release_dict["track_names"] = list()
-        tracklist = dig.parse_class(release_html_str, "class=\"track fwap-play\"", "a")
-        for track in tracklist:
-            track = dig.parse_strip_body(track)
-            track = html.unescape(track)
-            release_dict["track_names"].append(track)
-
-        # store tags: preorder / out of stock
-        release_dict["store_tags"]["out_of_stock"] = False
-        release_dict["store_tags"]["preorder"] = False
-        if release_html_str.find("stock out-of-stock") != -1:
-            stock = dig.parse_class_single(release_html_str, "stock out-of-stock", "p")
-            if stock:
-                stock = dig.parse_strip_body(stock).lower()
-                if stock == "out of stock":
-                    release_dict["store_tags"]["out_of_stock"] = True
-                    release_dict["store_tags"]["has_been_out_of_stock"] = True
-                else:
-                    release_dict["store_tags"]["preorder"] = True
-
-        # store tags: low stock..,
-        release_dict["store_tags"]["low_stock"] = False
-        if release_html_str.find("last-copies") != -1:
-            low = dig.parse_class_single(release_html_str, "last-copies", "p")
-            if low:
-                low = dig.parse_strip_body(low).lower()
-                if low == "last copies" or low == "last copy":
-                    release_dict["store_tags"]["low_stock"] = True
-
-        # track urls
-        if "-urls" in sys.argv and track_url_count != len(tracklist):
-            cdn = "https://yydistribution.ams3.digitaloceanspaces.com/yyplayer/mp3"
-            cdn_id = release_dict["cat"]
-
-            id_start = release_dict["id"].rfind("_")
-            id_id = release_dict["id"][id_start+1:]
-
-            attempts = [
-                cdn_id,
-                cdn_id.upper(),
-                cdn_id.lower(),
-                id_id,
-                id_id.upper()
-            ]
-
-            release_dict["track_urls"] = list()
-
-            for attempt in attempts:
-                attempt_list = list()
-                use_attempt = False
-                use_named = False
-                for i in range(0, len(tracklist)):
-                    try:
-                        # we need to check if exists
-                        linear = f"{cdn}/{attempt}_{i+1}.mp3"
-                        request = urllib.request.Request(linear, method='HEAD')
-                        response = urllib.request.urlopen(request)
-                        if response.status == 200:
-                            print(f"use linear naming: {linear}", flush=True)
-                            use_attempt = True
-                            break
-                    except http.client.InvalidURL:
-                            break
-                    except UnicodeEncodeError:
-                            break
-                    except urllib.error.HTTPError:
-                        # or use the track prefix
-                        name = release_dict["track_names"][i]
-                        pp = name.find(".")
-                        cp = name.find(":")
-                        if pp != -1 and cp != -1:
-                            pp = min(pp, cp)
-                        if pp == -1 and cp == -1:
-                            break
-                        else:
-                            pp = max(pp, cp)
-                        try:
-                            track_named = f"{cdn}/{attempt}_{name[:pp]}.mp3"
-                            request = urllib.request.Request(track_named, method='HEAD')
-                            response = urllib.request.urlopen(request)
-                            if response.status == 200:
-                                print(f"use track side naming: {name[:pp]}", flush=True)
-                                use_attempt = True
-                                use_named = True
-                                break
-                        except urllib.error.HTTPError:
-                            break
-                        except http.client.InvalidURL:
-                            break
-                        except UnicodeEncodeError:
-                            break
-                    dig.scrape_yield()
-
-                # if we found compatible urls just assume the rest
-                if use_attempt:
-                    for i in range(0, len(tracklist)):
-                        if use_named:
-                            name = release_dict["track_names"][i]
-                            pp = name.find(".")
-                            cp = name.find(":")
-                            if pp != -1 and cp != -1:
-                                pp = min(pp, cp)
-                            else:
-                                pp = max(pp, cp)
-                            print(f"{cdn}/{attempt}_{name[:pp]}.mp3")
-                            attempt_list.append(f"{cdn}/{attempt}_{name[:pp]}.mp3")
-                        else:
-                            print(f"{cdn}/{attempt}_{i+1}.mp3")
-                            attempt_list.append(f"{cdn}/{attempt}_{i+1}.mp3")
-                    if len(attempt_list) > len(release_dict["track_urls"]):
-                        release_dict["track_urls"] = list(attempt_list)
-                    break
-
-            # print status on missing tracks
-            ll = release_dict["link"]
-            if "-verbose" in sys.argv:
-                if "track_urls" in release_dict:
-                    if len(release_dict["track_urls"]) == 0:
-                        print(attempts)
-                        print(f"didn't find tracks for {ll}", flush=True)
-                    elif "-verbose" in sys.argv:
-                        print(f"found tracks for {ll}", flush=True)
+            # cat
+            pp = release_html_str.find("class=\"sku\"")
+            pe = release_html_str.find("</span>", pp)
+            release_dict["cat"] = dig.parse_strip_body(release_html_str[pp:pe])
+            release_dict["cat"] = html.unescape(release_dict["cat"])
 
         # track this as scraped already this session
         session_scraped_ids.append(key)

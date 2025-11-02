@@ -16174,7 +16174,7 @@
         "label_link": "https://www.phonicarecords.com/label/vega-records/207412/all/latest/desc",
         "cat": "",
         "store_tags": {
-            "out_of_stock": false,
+            "out_of_stock": true,
             "preorder": false
         },
         "track_names": [
@@ -16808,7 +16808,7 @@
         "label_link": "https://www.phonicarecords.com/label/cyphon/206258/all/latest/desc",
         "cat": "",
         "store_tags": {
-            "out_of_stock": false,
+            "out_of_stock": true,
             "preorder": false
         },
         "track_names": [

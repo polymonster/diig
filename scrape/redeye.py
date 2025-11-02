@@ -117,15 +117,17 @@ def get_redeye_snippit_urls(release_url, cdn, release_id):
     play_div = dig.parse_div(html_str, 'class="play"')
     if len(play_div) > 0:
         pos = 0
-        while True:
-            (pos, elem) = dig.find_parse_elem(play_div[0], pos, "<a class='btn-play'", "</a>")
-            if elem.find("></a><a class='btn-play-all'>") != -1:
-                break
-            else:
-                suffix = dig.get_value(elem, "data-sample")
-                if suffix == "a":
-                    suffix = ""
-                tracks.append(f"{cdn}{release_id}{suffix}.mp3")
+        button = "<a class='btn-play'"
+        if play_div[0].find(button) != -1:
+            while True:
+                (pos, elem) = dig.find_parse_elem(play_div[0], pos, button, "</a>")
+                if elem.find("></a><a class='btn-play-all'>") != -1:
+                    break
+                else:
+                    suffix = dig.get_value(elem, "data-sample")
+                    if suffix == "a":
+                        suffix = ""
+                    tracks.append(f"{cdn}{release_id}{suffix}.mp3")
 
     return tracks
     

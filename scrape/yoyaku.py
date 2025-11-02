@@ -23,13 +23,14 @@ def fetch_product_json(product_id: int):
     
     # The endpoint accepts form-encoded: id=623892
     resp = requests.post(url, data={"id": product_id}, headers=headers, timeout=20)
-    resp.raise_for_status()
-
-    payload = resp.json()
-    if not payload.get("success"):
-        return dict()
+    if resp.status_code == 200:
+        payload = resp.json()
+        if not payload.get("success"):
+            return dict()
     
-    return json.loads(json.dumps(payload))
+        return json.loads(json.dumps(payload))
+    
+    return dict()
     
 
 def debug(url):

@@ -16949,7 +16949,6 @@
         "label": "NATURAL ELEMENT",
         "label_link": "https://www.phonicarecords.com/label/natural-element/206950/all/latest/desc",
         "cat": "",
-        "phonica-new-releases-new_releases": 0,
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
@@ -16976,7 +16975,8 @@
             "https://d1c4rk9le5opln.cloudfront.net/e43f85423b40f1a275ed1f2b69cecd9a_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/e43f85423b40f1a275ed1f2b69cecd9a_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/e43f85423b40f1a275ed1f2b69cecd9a_big.jpg"
-        ]
+        ],
+        "phonica-new-releases-new_releases": 0
     },
     "phonica-207159": {
         "store": "phonica",
@@ -16987,7 +16987,6 @@
         "label": "MR BONGO",
         "label_link": "https://www.phonicarecords.com/label/mr-bongo/207159/all/latest/desc",
         "cat": "",
-        "phonica-new-releases-new_releases": 1,
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
@@ -17004,7 +17003,8 @@
             "https://d1c4rk9le5opln.cloudfront.net/5048c5d6ca12b15ebcbc9e79066af73a_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/5048c5d6ca12b15ebcbc9e79066af73a_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/5048c5d6ca12b15ebcbc9e79066af73a_big.jpg"
-        ]
+        ],
+        "phonica-new-releases-new_releases": 1
     },
     "phonica-184111": {
         "store": "phonica",
@@ -17015,7 +17015,6 @@
         "label": "NOUS KLAER AUDIO",
         "label_link": "https://www.phonicarecords.com/label/nous-klaer-audio/184111/all/latest/desc",
         "cat": "",
-        "phonica-new-releases-new_releases": 20,
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
@@ -17038,7 +17037,8 @@
             "https://d1c4rk9le5opln.cloudfront.net/d861c8ac2641222a1c553fcb053ec32c_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/d861c8ac2641222a1c553fcb053ec32c_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/d861c8ac2641222a1c553fcb053ec32c_big.jpg"
-        ]
+        ],
+        "phonica-new-releases-new_releases": 20
     },
     "phonica-177022": {
         "store": "phonica",
@@ -17049,7 +17049,6 @@
         "label": "MORNING TRIP",
         "label_link": "https://www.phonicarecords.com/label/morning-trip/177022/all/latest/desc",
         "cat": "",
-        "phonica-new-releases-new_releases": 22,
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
@@ -17068,6 +17067,7 @@
             "https://d1c4rk9le5opln.cloudfront.net/f10be0bf9b1186f3f6ea166091d6b63d_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/f10be0bf9b1186f3f6ea166091d6b63d_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/f10be0bf9b1186f3f6ea166091d6b63d_big.jpg"
-        ]
+        ],
+        "phonica-new-releases-new_releases": 22
     }
 }

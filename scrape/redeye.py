@@ -109,11 +109,12 @@ def parse_redeye_release_link(elem: str):
 def get_redeye_snippit_urls(release_url, cdn, release_id):
     tracks = list()
 
-    release_html = dig.request_url_limited(release_url)
-    if release_html == None:
+    html_file = dig.request_url_limited(release_url)
+    if html_file == None:
         return -1
 
-    play_div = dig.parse_div(release_html, 'class="play"')
+    html_str = html_file.read().decode("utf8")
+    play_div = dig.parse_div(html_str, 'class="play"')
     if len(play_div) > 0:
         pos = 0
         while True:

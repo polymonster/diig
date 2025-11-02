@@ -92,6 +92,9 @@ def scrape_page(url, store, view, section, counter, session_scraped_ids):
 
     # gets products
     products = dig.parse_div(html_str, 'class="product-list"')
+    
+    if len(products) == 0:
+        return -1
 
     # separate into items
     releases = dig.parse_div(products[0], 'class="dv-item"')

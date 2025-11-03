@@ -111,7 +111,7 @@ def get_redeye_snippit_urls(release_url, cdn, release_id):
 
     html_file = dig.request_url_limited(release_url)
     if html_file == None:
-        return -1
+        return tracks
 
     html_str = html_file.read().decode("utf8")
     play_div = dig.parse_div(html_str, 'class="play"')

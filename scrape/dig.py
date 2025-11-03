@@ -53,7 +53,7 @@ def rate_limiter():
 def request_url_limited(url, head_only = False):
 
     rate_limiter()
-    
+
     # try and then continue if the page does not exist
     safe_url = urllib.parse.quote(url, safe=':/?=&')
     try:
@@ -70,7 +70,7 @@ def request_url_limited(url, head_only = False):
         print("error: url not found {}".format(safe_url))
         return None
 
-    
+
 # fetch html from a cached file if present or request the file
 def fetch_cache_page(url, cache_file):
     if not os.path.exists(cache_file):
@@ -149,7 +149,7 @@ def find_parse_nested_elems(text: str, pos: int, ident: str, start_str: str, end
                 break
 
     elem = text[pos:end]
-    return (end, elem) 
+    return (end, elem)
 
 # get the value of a html element, ie <a href="value"
 def get_value(elem: str, ident: str):
@@ -438,10 +438,10 @@ def fix_store(store):
 # scrape a store based on rules defined in stores.json config
 def scrape_store(stores, store_name):
     page_function = getattr(__import__(store_name), "scrape_page")
+    start_time = time.time()
     if store_name in stores:
         # collapse store
         store = stores[store_name]
-
         if "-rate" not in sys.argv:
             if "scrape_rate" in store:
                 rate = int(store["scrape_rate"])
@@ -493,6 +493,10 @@ def scrape_store(stores, store_name):
                         counter,
                         session_scraped_ids
                     )
+                    # if the scrape takes 6hrs GH actions will timeout
+                    # return here and patch any updates
+                    if time.time() - start_time > 21000:
+                        return
                     if counter == -1:
                         break
     else:

@@ -130,7 +130,7 @@ def get_redeye_snippit_urls(release_url, cdn, release_id):
                     tracks.append(f"{cdn}{release_id}{suffix}.mp3")
 
     return tracks
-    
+
 
 # get red eye artwork urls trying releaseid-index for different sizes
 def get_redeye_artwork_urls(release_id):
@@ -176,7 +176,7 @@ def scrape_page(url, store, view, section, counter, session_scraped_ids):
     print(f"scraping page: {url}", flush=True)
 
     # grab var args
-    verbose = "verbose" in sys.argv
+    verbose = "-verbose" in sys.argv
     get_urls = "-urls" in sys.argv
 
     html_file = dig.request_url_limited(url)

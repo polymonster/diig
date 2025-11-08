@@ -8,15 +8,11 @@
             "cwd": "${workspaceFolder}/scrape",
             "args": [
                 "-store",
-                "yoyaku",
+                "phonica",
                 "-verbose",
-                "-urls",
-                "-pages",
-                "2",
-                "-section",
-                "breaks",
                 "-view",
-                "new_releases"
+                "essentials",
+                "-clear-trackers"
             ]
         }
     ]

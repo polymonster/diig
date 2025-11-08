@@ -1,18 +1,29 @@
 {
     "phonica": {
         "sections": [
-            "new-releases",
-            "essentials"
+            "tech-house",
+            "techno"
         ],
         "section_display_names": [
-            "New Releases",
-            "Essentials"
+            "Tech House / Minimal",
+            "Techno / Electro"
         ],
         "views": {
             "new_releases": {
-                "url": "https://www.phonicarecords.com/${{section}}/${{counter}}",
-                "page_count": 2,
+                "url": "https://www.phonicarecords.com/genre/90/${{section}}/all/latest/desc/${{counter}}",
+                "page_count": 10,
                 "display_name": "Latest"
+            },
+            "bestsellers": {
+                "url": "https://www.phonicarecords.com/genre/90/${{section}}/all/bestsellers/desc/${{counter}}",
+                "page_count": 2,
+                "display_name": "Bestsellers"
+            },
+            "essentials": {
+                "url": "https://www.phonicarecords.com/essentials/${{counter}}",
+                "page_count": 2,
+                "display_name": "Essentials",
+                "sectionless": true
             }
         },
         "scrape_rate": 10

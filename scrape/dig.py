@@ -363,6 +363,13 @@ def update_stores():
                 if index not in release_indexes:
                     release_indexes.append(index)
                     print(f"added new search index: {index}")
+        # sectionless views for things like 'featured'
+        for view in store["views"]:
+            if "sectionless" in store["views"][view]:
+                index = f"{store_name}-sectionless-{view}"
+                if index not in release_indexes:
+                    release_indexes.append(index)
+                    print(f"added new search index: {index}")
 
     # patch rules
     rules_str = json.dumps(rules, indent=4)
@@ -448,7 +455,6 @@ def scrape_store(stores, store_name):
                 sys.argv.append("-rate")
                 sys.argv.append(rate)
                 print(f"setting scrape rate to: {rate}s")
-
         # validate
         if "sections" not in store:
             print('error: "sections" missing from store config')
@@ -463,6 +469,9 @@ def scrape_store(stores, store_name):
             for section in store["sections"]:
                 for view in store["views"]:
                     view_tracker_keys.append(f"{store_name}-{section}-{view}")
+            for view in store["views"]:
+                if "sectionless" in store["views"][view]:
+                    view_tracker_keys.append(f"{store_name}-sectionless-{view}")
             clear_tracker_keys(store_name, view_tracker_keys)
         session_scraped_ids = list()
         # iterate per section, per view
@@ -481,6 +490,13 @@ def scrape_store(stores, store_name):
                 if "-pages" in sys.argv:
                     page_count = int(sys.argv[sys.argv.index("-pages") + 1])
                 counter = 0
+                # ignore sections for sectionless views.
+                # TODO: this is a hack just because section is the outer loop
+                # really we should loop view, section
+                if "sectionless" in view_dict:
+                    if store["sections"].index(section) > 0:
+                        continue
+                    section = "sectionless"
                 print("scraping: {} / {}".format(section, view))
                 for i in range(1, 1+page_count):
                     view_url = view_dict["url"]

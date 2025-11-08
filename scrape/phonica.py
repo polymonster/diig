@@ -84,7 +84,7 @@ def scrape_page(url, store, view, section, counter, session_scraped_ids):
     options.add_argument('--headless')
     driver = webdriver.Chrome(options)
     driver.minimize_window()
-    
+
     # grab registry
     releases_dict = dict()
     reg_filepath = f"registry/{store}.json"
@@ -143,7 +143,8 @@ def scrape_page(url, store, view, section, counter, session_scraped_ids):
                 link = release["link"]
                 if "-verbose" in sys.argv:
                     print(f"scrape product page: {link}")
-                scrape_product(release, link, driver)
+                if "-urls" in sys.argv:
+                    scrape_product(release, link, driver)
                 releases_dict[release["id"]] = release
 
             session_scraped_ids.append(release["id"])

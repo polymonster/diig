@@ -20,18 +20,18 @@ def fetch_product_json(product_id: int):
         "Origin": "https://yoyaku.io",
         "User-Agent": "Mozilla/5.0 (X11; Linux x86_64)",
     }
-    
+
     # The endpoint accepts form-encoded: id=623892
     resp = requests.post(url, data={"id": product_id}, headers=headers, timeout=20)
     if resp.status_code == 200:
         payload = resp.json()
         if not payload.get("success"):
             return dict()
-    
+
         return json.loads(json.dumps(payload))
-    
+
     return dict()
-    
+
 
 def debug(url):
     req = urllib.request.Request(
@@ -149,8 +149,8 @@ def scrape_page(url, store, view, section, counter, session_scraped_ids):
             if "artworks" in releases_dict[key]:
                 img_url_count = len(releases_dict[key]["artworks"])
 
-        # if we have no tracks or images, request product info 
-        if track_url_count == 0 or img_url_count == 0:
+        # if we have no tracks or images, request product info
+        if (track_url_count == 0 or img_url_count == 0) and "-urls" in sys.argv:
             # based on this id we can get json by doing a post request to the API
             product_json = fetch_product_json(release_dict["internal_id"])
 
@@ -178,7 +178,7 @@ def scrape_page(url, store, view, section, counter, session_scraped_ids):
                     release_dict["artworks"].append(image_path)
                     release_dict["artworks"].append(image_path.replace("100x100", "400x400"))
                     release_dict["artworks"].append(image_path.replace("100x100", ""))
-                
+
             # detail info
             release_html_response = dig.request_url_limited(release_dict["link"])
             if release_html_response == None:

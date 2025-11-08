@@ -107,13 +107,15 @@
             "breaks",
             "dub-techno",
             "minimal",
-            "electro"
+            "electro",
+            "house"
         ],
         "section_display_names": [
             "Breaks",
             "Dub Techno",
             "Minimal",
-            "Electro"
+            "Electro",
+            "House"
         ],
         "views": {
             "new_releases": {

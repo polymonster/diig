@@ -19,7 +19,7 @@ def display_help():
     print("  -help - display this message")
     print("  -store <store_name> - specify a store to scrape")
     print("  -key - auth token json string for firebase. if not present will ook for a local file diig-auth.json")
-    print("  -rate <in seconds> - duration at which to yield inbetween requests")
+    print("  -rate <in seconds> - duration at which to yield inbetween requests, this will override the rate specified in the store config")
     print("  -urls - flag selects whether extra urls such as artwork or mp3s are scraped")
     print("  -verbose - print more info")
     print("  -update-stores - synchronises local stores.json with the database")

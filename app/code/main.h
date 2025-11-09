@@ -316,6 +316,7 @@ struct Store
     Str              name;
     std::vector<Str> view_search_names;
     std::vector<Str> view_display_names;
+    std::vector<u32> view_sectionless;
     std::vector<Str> section_search_names;
     std::vector<Str> sections_display_names;
     u32              selected_view_index = 0;
@@ -330,6 +331,9 @@ struct AudioPlayerContext
     u32     gi = -1;
     bool    started = false;
     u32     read_tex_data_handle = 0;
+    Str     play_track_filepath = "";
+    bool    invalidate_track = false;
+    bool    play_bg = false;
 };
 
 struct AppContext
@@ -341,16 +345,8 @@ struct AppContext
     f32                     dt;
     f32                     releases_scroll_maxy = 0.0f;
     void*                   releases_window = nullptr;
-    bool                    show_debug = false;
-    Str                     play_track_filepath = "";
-    bool                    invalidate_track = false;
-    bool                    mute = false;
-    bool                    scroll_lock_y = false;
-    bool                    scroll_lock_x = false;
-    bool                    side_drag = false;
     vec2f                   scroll_delta = vec2f::zero();
     f32                     scroll_pos_y = 0.0f;
-    bool                    touch_down = false;
     vec2f                   tap_pos = vec2f(FLT_MAX, FLT_MAX);
     s32                     top = -1;
     Str                     open_url_request = "";
@@ -370,6 +366,14 @@ struct AppContext
     Str                     username = "";
     Str                     last_response_message = "";
     u32                     last_response_code = 0;
+    
+    bool                    backgrounded = false;
+    bool                    show_debug = false;
+    bool                    mute = false;
+    bool                    scroll_lock_y = false;
+    bool                    scroll_lock_x = false;
+    bool                    side_drag = false;
+    bool                    touch_down = false;
 };
 
 // os callbacks

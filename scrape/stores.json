@@ -8,6 +8,11 @@
             "Tech House / Minimal",
             "Techno / Electro"
         ],
+        "view_order": [
+            "new_releases",
+            "bestsellers",
+            "essentials"
+        ],
         "views": {
             "new_releases": {
                 "url": "https://www.phonicarecords.com/genre/90/${{section}}/all/latest/desc/${{counter}}",
@@ -20,7 +25,8 @@
                 "display_name": "Bestsellers"
             },
             "essentials": {
-                "url": "https://www.phonicarecords.com/essentials/${{counter}}",
+
+                "url": "https://www.phonicarecords.com/essentials/6/all/${{counter}}",
                 "page_count": 2,
                 "display_name": "Essentials",
                 "sectionless": true
@@ -42,6 +48,11 @@
             "Techno",
             "Breakbeat",
             "Electro"
+        ],
+        "view_order": [
+            "new_releases",
+            "weekly_chart",
+            "monthly_chart"
         ],
         "views": {
             "new_releases": {
@@ -77,6 +88,11 @@
             "Techno / Electro",
             "House / Disco",
             "Bass Music"
+        ],
+        "view_order": [
+            "new_releases",
+            "weekly_chart",
+            "monthly_chart"
         ],
         "views": {
             "new_releases": {
@@ -116,6 +132,10 @@
             "Minimal",
             "Electro",
             "House"
+        ],
+        "view_order": [
+            "new_releases",
+            "weekly_chart"
         ],
         "views": {
             "new_releases": {

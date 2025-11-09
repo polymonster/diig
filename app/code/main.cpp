@@ -1418,6 +1418,25 @@ namespace
     u32         clear_screen;
     AppContext  ctx;
 
+    template<typename T>
+    T get_user_setting(const c8* key, T default_value) {
+        T return_value = default_value;
+        ctx.data_ctx.user_data.mutex.lock();
+        if(ctx.data_ctx.user_data.dict.contains(key)) {
+            return_value = ctx.data_ctx.user_data.dict[key];
+        }
+        ctx.data_ctx.user_data.mutex.unlock();
+        return return_value;
+    }
+
+    template<typename T>
+    void set_user_setting(const c8* key, T value) {
+        ctx.data_ctx.user_data.mutex.lock();
+        ctx.data_ctx.user_data.dict[key] = value;
+        ctx.data_ctx.user_data.mutex.unlock();
+        ctx.data_ctx.user_data.status = Status::e_invalidated;
+    }
+
     ReleasesView* new_view(Page_t page, StoreView store_view) {
         ReleasesView* view = new ReleasesView;
         view->data_ctx = &ctx.data_ctx;
@@ -1444,10 +1463,18 @@ namespace
             view.selected_view = store.view_search_names[store.selected_view_index];
         }
 
-        // sections
-        for(u32 i = 0; i < store.section_search_names.size(); ++i) {
-            if(store.selected_sections_mask & (1<<i)) {
-                view.selected_sections.push_back(store.section_search_names[i]);
+        // sections or sectionless
+        if(store.view_sectionless[store.selected_view_index])
+        {
+            view.selected_sections.push_back("sectionless");
+        }
+        else
+        {
+            // sections
+            for(u32 i = 0; i < store.section_search_names.size(); ++i) {
+                if(store.selected_sections_mask & (1<<i)) {
+                    view.selected_sections.push_back(store.section_search_names[i]);
+                }
             }
         }
 
@@ -1479,7 +1506,7 @@ namespace
     void change_store_view(Page_t page, const Store& store) {
         StoreView view = store_view_from_store(page, store);
 
-        if(!view.store_name.empty() && !view.selected_view.empty() && view.selected_sections.size() > 0) {
+        if(!view.store_name.empty() && !view.selected_view.empty()) {
             // first we add the current view into background views
             if(ctx.view && ctx.view->page == Page::feed) {
                 ctx.back_view = ctx.view;
@@ -1516,6 +1543,34 @@ namespace
             std::string view_preference;
             if (store_prefs.contains("view")) {
                 view_preference = ctx.data_ctx.user_data.dict["stores"][store_name.c_str()]["view"];
+            }
+            
+            // check sections are valid and still exist
+            for(ssize_t i = section_preference.size() - 1; i >= 0; --i)
+            {
+                bool found = false;
+                for(auto& sec : store.section_search_names)
+                {
+                    if(sec == section_preference[i])
+                    {
+                        found = true;
+                        break;
+                    }
+                }
+                
+                if(!found)
+                {
+                    section_preference.erase(section_preference.begin() + i);
+                }
+            }
+            
+            // add all sections
+            if(section_preference.size() == 0)
+            {
+                for(auto& sec : store.section_search_names)
+                {
+                    section_preference.push_back(sec.c_str());
+                }
             }
 
             // set section mask
@@ -1568,13 +1623,28 @@ namespace
                 "weekly_chart",
                 "monthly_chart"
             };
+            
+            std::vector<std::string> store_view_order;
+            if(store.contains("view_order"))
+            {
+                store_view_order = store["view_order"];
+            }
+            else
+            {
+                for(auto v : k_view_order)
+                    store_view_order.push_back(v);
+            }
 
             // add view priority order
-            for(auto v : k_view_order) {
+            for(auto v : store_view_order) {
                 if(views.contains(v)) {
                     output.view_search_names.push_back(v);
                     std::string dn = views[v]["display_name"];
                     output.view_display_names.push_back(dn.c_str());
+                    
+                    views[v].contains("sectionless") ?
+                        output.view_sectionless.push_back(1):
+                        output.view_sectionless.push_back(0);
                 }
             }
 
@@ -1583,7 +1653,7 @@ namespace
             {
                 // skip prioritised
                 bool exists = false;
-                for(auto& v : k_view_order) {
+                for(auto& v : store_view_order) {
                     if(std::string(v) == view.key()) {
                         exists = true;
                     }
@@ -1596,6 +1666,10 @@ namespace
                 output.view_search_names.push_back(view.key());
                 std::string dn = view.value()["display_name"];
                 output.view_display_names.push_back(dn.c_str());
+                
+                view.value().contains("sectionless") ?
+                    output.view_sectionless.push_back(1):
+                    output.view_sectionless.push_back(0);
             }
 
             for(auto& section : section_display_names)
@@ -1846,62 +1920,66 @@ namespace
                     ImGui::EndPopup();
                 }
 
-                // create a string by concatonating sections
-                Str sections_string = "";
-                u32 concatonated = 0;
-                for(u32 section = 0; section < store.sections_display_names.size(); ++section) {
-                    if(store.selected_sections_mask & (1<<section))
-                    {
-                        if(++concatonated > 2)
+                // sections
+                if(!store.view_sectionless[store.selected_view_index])
+                {
+                    // create a string by concatonating sections
+                    Str sections_string = "";
+                    u32 concatonated = 0;
+                    for(u32 section = 0; section < store.sections_display_names.size(); ++section) {
+                        if(store.selected_sections_mask & (1<<section))
                         {
-                            sections_string.append(" + More...");
-                            break;
-                        }
-
-                        if(!sections_string.empty()) {
-                            sections_string.append(" / ");
-                        }
-                        sections_string.append(store.sections_display_names[section].c_str());
-                    }
-                }
-
-                // section name
-                ImGui::Dummy(ImVec2(k_indent1, 0.0f));
-                ImGui::SameLine();
-
-                ImGui::SetWindowFontScale(k_text_size_body);
-                ImGui::Text("%s", sections_string.c_str());
-                ImVec2 section_menu_pos = ImGui::GetItemRectMin();
-                section_menu_pos.y = ImGui::GetItemRectMax().y;
-                if(ImGui::IsItemClicked()) {
-                    ImGui::OpenPopup("Section Select");
-                }
-
-                // section menu
-                ImGui::SetNextWindowPos(section_menu_pos);
-                if(ImGui::BeginPopup("Section Select")) {
-                    ImGui::SetWindowFontScale(k_text_size_h2);
-                    for(u32 v = 0; v < store.sections_display_names.size(); ++v) {
-                        Str menu_item_str = "";
-                        u32 store_bit = (1<<v);
-
-                        // check mark
-                        bool selected = store.selected_sections_mask & store_bit;
-
-                        // menu item
-                        menu_item_str.append(store.sections_display_names[v].c_str());
-                        if(ImGui::Checkbox(menu_item_str.c_str(), &selected)) {
-                            if(store.selected_sections_mask & store_bit) {
-                                store.selected_sections_mask &= ~store_bit;
-                            }
-                            else {
-                                store.selected_sections_mask |= store_bit;
+                            if(++concatonated > 2)
+                            {
+                                sections_string.append(" + More...");
+                                break;
                             }
 
-                            change_store_view(Page::feed, store);
+                            if(!sections_string.empty()) {
+                                sections_string.append(" / ");
+                            }
+                            sections_string.append(store.sections_display_names[section].c_str());
                         }
                     }
-                    ImGui::EndPopup();
+
+                    // section name
+                    ImGui::Dummy(ImVec2(k_indent1, 0.0f));
+                    ImGui::SameLine();
+
+                    ImGui::SetWindowFontScale(k_text_size_body);
+                    ImGui::Text("%s", sections_string.c_str());
+                    ImVec2 section_menu_pos = ImGui::GetItemRectMin();
+                    section_menu_pos.y = ImGui::GetItemRectMax().y;
+                    if(ImGui::IsItemClicked()) {
+                        ImGui::OpenPopup("Section Select");
+                    }
+
+                    // section menu
+                    ImGui::SetNextWindowPos(section_menu_pos);
+                    if(ImGui::BeginPopup("Section Select")) {
+                        ImGui::SetWindowFontScale(k_text_size_h2);
+                        for(u32 v = 0; v < store.sections_display_names.size(); ++v) {
+                            Str menu_item_str = "";
+                            u32 store_bit = (1<<v);
+
+                            // check mark
+                            bool selected = store.selected_sections_mask & store_bit;
+
+                            // menu item
+                            menu_item_str.append(store.sections_display_names[v].c_str());
+                            if(ImGui::Checkbox(menu_item_str.c_str(), &selected)) {
+                                if(store.selected_sections_mask & store_bit) {
+                                    store.selected_sections_mask &= ~store_bit;
+                                }
+                                else {
+                                    store.selected_sections_mask |= store_bit;
+                                }
+
+                                change_store_view(Page::feed, store);
+                            }
+                        }
+                        ImGui::EndPopup();
+                    }
                 }
 
                 ImGui::SetWindowFontScale(k_text_size_body);
@@ -2157,7 +2235,15 @@ namespace
 
             ImGui::Dummy(ImVec2(k_indent1, 0.0f));
             ImGui::SameLine();
-            ImGui::TextWrapped("%s: %s", releases.label[r].c_str(), releases.cat[r].c_str());
+            
+            if(releases.cat[r].empty())
+            {
+                ImGui::TextWrapped("%s", releases.label[r].c_str());
+            }
+            else
+            {
+                ImGui::TextWrapped("%s: %s", releases.label[r].c_str(), releases.cat[r].c_str());
+            }
 
             // TODO: open label link on tap
             /*
@@ -2352,10 +2438,10 @@ namespace
                             ImGui::PopStyleColor();
 
                             // load up the track
-                            if(!(ctx.play_track_filepath == releases.track_filepaths[r][sel]))
+                            if(!(ctx.audio_ctx.play_track_filepath == releases.track_filepaths[r][sel]))
                             {
-                                ctx.play_track_filepath = releases.track_filepaths[r][sel];
-                                ctx.invalidate_track = true;
+                                ctx.audio_ctx.play_track_filepath = releases.track_filepaths[r][sel];
+                                ctx.audio_ctx.invalidate_track = true;
                             }
                         }
                         else
@@ -2721,6 +2807,8 @@ namespace
         ImGui::SetWindowFontScale(k_text_size_nerds);
 
         ImGui::Indent();
+        
+        ImGui::Text("frame time %f (ms)", 1.0 / ctx.dt);
 
         if(ctx.view)
         {
@@ -3183,7 +3271,7 @@ namespace
         ctx.data_ctx.auth.mutex.unlock();
 
         // from keychain
-        // ctx.username = pen::os_get_keychain_item("com.pmtech.dig", "username");
+        ctx.username = pen::os_get_keychain_item("com.pmtech.dig", "username");
 
         // trigger update of likes
         update_likes_registry();
@@ -3405,7 +3493,7 @@ namespace
 
     loop_t user_update() {
 
-        if(os_is_backgrounded()) {
+        if(ctx.backgrounded && !ctx.audio_ctx.play_bg) {
             pen::thread_sleep_ms(1000);
             pen_main_loop_continue();
         }
@@ -3461,7 +3549,7 @@ namespace
         pen::os_ignore_slient();
 
         // allow background and lock screen audio
-        pen::os_enable_background_audio();
+        pen::os_enable_background_audio(get_user_setting("setting_play_backgrounded", true));
 
         // support background control and info display
         pen::music_player_remote remote;
@@ -3621,8 +3709,8 @@ void audio_player_next(bool prev)
         }
 
         if(sel < releases.track_filepath_count[r]) {
-            ctx.play_track_filepath = releases.track_filepaths[r][sel];
-            ctx.invalidate_track = true;
+            ctx.audio_ctx.play_track_filepath = releases.track_filepaths[r][sel];
+            ctx.audio_ctx.invalidate_track = true;
         }
 
         // assign
@@ -3673,6 +3761,12 @@ void audio_player()
 {
     auto& releases = ctx.view->releases;
     auto& audio_ctx = ctx.audio_ctx;
+    
+    if(ctx.backgrounded && !audio_ctx.play_bg)
+    {
+        ctx.audio_ctx.invalidate_track = true;
+        return;
+    }
 
     // audio player
     if(!ctx.mute)
@@ -3688,20 +3782,18 @@ void audio_player()
         {
             // stop existing
             audio_player_stop_existing();
-            ctx.play_track_filepath = "";
+            audio_ctx.play_track_filepath = "";
         }
                 
         // play new
-        if(ctx.play_track_filepath.length() > 0 &&
-           ctx.invalidate_track &&
-           pen::filesystem_file_exists(ctx.play_track_filepath.c_str()))
+        if(audio_ctx.play_track_filepath.length() > 0 &&
+           audio_ctx.invalidate_track &&
+           pen::filesystem_file_exists(audio_ctx.play_track_filepath.c_str()))
         {
-            size_t fs = pen::filesystem_getsize(ctx.play_track_filepath.c_str());
-            
             // stop existing
             audio_player_stop_existing();
             
-            audio_ctx.si = put::audio_create_stream(ctx.play_track_filepath.c_str());
+            audio_ctx.si = put::audio_create_stream(audio_ctx.play_track_filepath.c_str());
             audio_ctx.ci = put::audio_create_channel_for_sound(audio_ctx.si);
             audio_ctx.gi = put::audio_create_channel_group();
 
@@ -3718,9 +3810,7 @@ void audio_player()
                 releases.artist[r], releases.title[r], track_name);
 
             audio_ctx.read_tex_data_handle = 0;
-
-            ctx.invalidate_track = false; // TODO: move to audio ctx
-
+            audio_ctx.invalidate_track = false;
             audio_ctx.started = false;
         }
 
@@ -3791,8 +3881,8 @@ void audio_player()
 
                     if(os_is_backgrounded())
                     {
-                        ctx.play_track_filepath = releases.track_filepaths[ctx.top][releases.select_track[ctx.top]];
-                        ctx.invalidate_track = true;
+                        ctx.audio_ctx.play_track_filepath = releases.track_filepaths[ctx.top][releases.select_track[ctx.top]];
+                        ctx.audio_ctx.invalidate_track = true;
                     }
                 }
                 else {
@@ -3809,8 +3899,8 @@ void audio_player()
                         u32 sel = releases.select_track[ctx.top];
                         if(sel < releases.track_filepath_count[ctx.top])
                         {
-                            ctx.play_track_filepath = releases.track_filepaths[ctx.top][sel];
-                            ctx.invalidate_track = true;
+                            ctx.audio_ctx.play_track_filepath = releases.track_filepaths[ctx.top][sel];
+                            ctx.audio_ctx.invalidate_track = true;
                         }
                     }
                 }
@@ -3971,25 +4061,6 @@ void update_store_prefs(const Str& store_name, const Str& view, const std::vecto
     ctx.data_ctx.user_data.status = Status::e_invalidated;
 }
 
-template<typename T>
-T get_user_setting(const c8* key, T default_value) {
-    T return_value = default_value;
-    ctx.data_ctx.user_data.mutex.lock();
-    if(ctx.data_ctx.user_data.dict.contains(key)) {
-        return_value = ctx.data_ctx.user_data.dict[key];
-    }
-    ctx.data_ctx.user_data.mutex.unlock();
-    return return_value;
-}
-
-template<typename T>
-void set_user_setting(const c8* key, T value) {
-    ctx.data_ctx.user_data.mutex.lock();
-    ctx.data_ctx.user_data.dict[key] = value;
-    ctx.data_ctx.user_data.mutex.unlock();
-    ctx.data_ctx.user_data.status = Status::e_invalidated;
-}
-
 void settings_menu()
 {
     ImGui::SetWindowFontScale(k_text_size_h3);
@@ -4016,6 +4087,7 @@ void settings_menu()
     if(ImGui::Combo("##Background Audio", &i_playbg, k_play_bg_options)) {
         s_play_backgrounded_setting = i_playbg;
         set_user_setting("setting_play_backgrounded", s_play_backgrounded_setting);
+        pen::os_enable_background_audio(s_play_backgrounded_setting);
     }
 
     ImGui::Unindent();
@@ -4156,14 +4228,23 @@ void* data_cache_enumerate(void* userdata) {
 }
 
 void enter_background(bool backgrounded) {
-    bool play_bg = get_user_setting("setting_play_backgrounded", true);
-    if(!play_bg)
+    ctx.audio_ctx.play_bg = get_user_setting("setting_play_backgrounded", true);
+    if(!ctx.audio_ctx.play_bg)
     {
         if(backgrounded) {
-            audio_player_pause(true);
+            audio_suspend();
         }
         else {
-            audio_player_pause(false);
+            audio_resume();
         }
     }
+    else
+    {
+        // this is required to reinit the audio system after we have been interrupted
+        if(os_require_audio_reinit(true)) {
+            audio_reinit();
+        }
+    }
+    
+    ctx.backgrounded = backgrounded;
 }

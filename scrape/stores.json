@@ -13,20 +13,27 @@
             "bestsellers",
             "essentials"
         ],
+        "category_id": {
+            "tech-house": "90",
+            "techno": "9",
+            "essentials": "6"
+        },
         "views": {
             "new_releases": {
-                "url": "https://www.phonicarecords.com/genre/90/${{section}}/all/latest/desc/${{counter}}",
+                "url": "https://www.phonicarecords.com/genre/${{category_id}}/${{section}}/all/latest/desc/${{counter}}",
+                "api_url":  "https://www.phonicarecords.com/api/product/json_category",
                 "page_count": 10,
                 "display_name": "Latest"
             },
             "bestsellers": {
-                "url": "https://www.phonicarecords.com/genre/90/${{section}}/all/bestsellers/desc/${{counter}}",
+                "url": "https://www.phonicarecords.com/genre/${{category_id}}/${{section}}/all/bestsellers/desc/${{counter}}",
+                "api_url":  "https://www.phonicarecords.com/api/product/json_category",
                 "page_count": 2,
                 "display_name": "Bestsellers"
             },
             "essentials": {
-
                 "url": "https://www.phonicarecords.com/essentials/6/all/${{counter}}",
+                "api_url":  "https://www.phonicarecords.com/api/product/json_category_essentials",
                 "page_count": 2,
                 "display_name": "Essentials",
                 "sectionless": true

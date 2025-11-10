@@ -172,7 +172,7 @@ def parse_redeye_grid_elems(html_str):
 
 
 # scrape an individual page for a view (weekly chart, new releases) and section (techno-electro etc)
-def scrape_page(url, store, view, section, counter, session_scraped_ids):
+def scrape_page(url, store, store_dict, view, section, counter, session_scraped_ids):
     print(f"scraping page: {url}", flush=True)
 
     # grab var args

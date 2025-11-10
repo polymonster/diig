@@ -12,7 +12,7 @@
                 "-verbose",
                 "-view",
                 "essentials",
-                "-clear-trackers"
+                "-urls"
             ]
         }
     ]

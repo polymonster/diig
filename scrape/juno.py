@@ -72,7 +72,7 @@ def parse_tracks(tracks):
 
 
 # scape a single page with counter tracking
-def scrape_page(url, store, view, section, counter, session_scraped_ids):
+def scrape_page(url, store, store_dict, view, section, counter, session_scraped_ids):
     print("scraping: juno ", url, flush=True)
 
     # try and then continue if the page does not exist
@@ -92,7 +92,7 @@ def scrape_page(url, store, view, section, counter, session_scraped_ids):
 
     # gets products
     products = dig.parse_div(html_str, 'class="product-list"')
-    
+
     if len(products) == 0:
         return -1
 

@@ -504,6 +504,7 @@ def scrape_store(stores, store_name):
                     counter = page_function(
                         page_url,
                         store_name,
+                        store,
                         view,
                         section,
                         counter,

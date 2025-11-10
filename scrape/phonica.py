@@ -3,6 +3,7 @@ import os
 import json
 import time
 import sys
+import requests
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -29,11 +30,48 @@ def cache_page(url, cache_file):
 # fetch html execuing script
 def execute_page(url, driver):
     driver.get(url)
+
     wait = WebDriverWait(driver, 60)
     wait.until(lambda driver: driver.execute_script("return document.readyState") == "complete")
     html = driver.execute_script("return document.documentElement.outerHTML")
+
     return html
 
+
+# fetch html execuing script
+def get_json(driver, url, api_url, id, offset):
+    driver.get(url)
+
+    wait = WebDriverWait(driver, 60)
+    wait.until(lambda driver: driver.execute_script("return document.readyState") == "complete")
+    driver.execute_script("return document.documentElement.outerHTML")
+
+    # Extract cookies from Selenium
+    cookies = driver.get_cookies()
+    session = requests.Session()
+    for cookie in cookies:
+        session.cookies.set(cookie['name'], cookie['value'])
+
+    # Prepare headers and payload
+    url = api_url
+    payload = {
+        "id": id,
+        "href": url,
+        "offset": str(offset)
+    }
+    headers = {
+        "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+        "X-Requested-With": "XMLHttpRequest",
+        "Referer": url,
+        "Origin": "https://www.phonicarecords.com",
+        "User-Agent": driver.execute_script("return navigator.userAgent;")
+    }
+
+    # Make the request using the same session
+    response = session.post(url, data=payload, headers=headers)
+    j = json.loads(response.text)
+
+    return j
 
 # scrape detail info for a single product,obtaining mp3 links and image links
 def scrape_product(release, url, driver):
@@ -76,7 +114,17 @@ def scrape_product(release, url, driver):
 
 
 # scrape an individual page for a view (essentials, new releases)
-def scrape_page(url, store, view, section, counter, session_scraped_ids):
+def scrape_page(url, store, store_dict, view, section, counter, session_scraped_ids):
+    # replace category id
+    category_id = "0"
+    if "category_id" in store_dict:
+        if section in store_dict["category_id"]:
+            category_id = store_dict["category_id"][section]
+        elif view in store_dict["category_id"]:
+            category_id = store_dict["category_id"][view]
+
+    url = url.replace("${{category_id}}", category_id)
+
     print(f"scraping phonica: {section} {url}")
 
     # spin up a driver for the session
@@ -92,6 +140,82 @@ def scrape_page(url, store, view, section, counter, session_scraped_ids):
         releases_dict = json.loads(open(reg_filepath, "r").read())
 
     pos = counter
+
+    api_url = store_dict["views"][view]["api_url"]
+    products = get_json(driver, url, api_url, category_id, pos)
+
+    store_url = "https://www.phonicarecords.com"
+
+    for (key, product) in products.items():
+        # dict is not pure releases
+        if not key.isdigit():
+            continue
+
+        # progress log
+        id = f"{store}-" + product["id_web"]
+
+        if "-verbose" in sys.argv:
+            print(f"parsing: {id}")
+
+        if id in session_scraped_ids:
+            continue
+
+        slug = product.get("slug", "")
+        release = dict()
+        release["store"] = store
+        release["id"] = id
+        release["label_link"] = ""
+        release["cat"] = ""
+        release["title"] = product.get("album", "")
+        release["link"] = f"{store_url}/{slug}"
+        release["artist"] = product.get("artist", "")
+        release["label"] = product.get("label", "")
+
+        if "-urls" in sys.argv:
+            # audio / tracknames
+            cdn = "https://dmpqep8cljqhc.cloudfront.net/"
+            release["track_names"] = list()
+            release["track_urls"] = list()
+            if "product_playlist" in product:
+                for track in product["product_playlist"]:
+                    if "trackname" in track:
+                        release["track_names"].append(track["trackname"])
+                    if "filename" in track:
+                        release["track_urls"].append(f"{cdn}{track["filename"]}")
+            # artworks
+            if "cover" in product:
+                audio_cdn = "https://d1c4rk9le5opln.cloudfront.net/"
+                release["artworks"] = [
+                    f"{audio_cdn}{product["cover"]}",
+                    f"{audio_cdn}{product["cover"]}",
+                    f"{audio_cdn}{product["cover"]}",
+                ]
+
+        release[f"{store}-{section}-{view}"] = int(pos)
+
+        release["store_tags"] = {
+            "out_of_stock": product.get("has_stock", "0") == "0",
+            "preorder": product.get("is_preorder", "0") == "1"
+        }
+
+        # merge or scrape deeper
+        if id in releases_dict:
+            merge = dict()
+            merge[id] = release
+            dig.merge_dicts(releases_dict, merge)
+
+        session_scraped_ids.append(release["id"])
+        pos += 1
+
+    # write to file
+    release_registry = (json.dumps(releases_dict, indent=4))
+    open(reg_filepath, "w+").write(release_registry)
+
+    dig.scrape_yield()
+    return counter + 18
+
+
+def legacy_phonica(driver, releases_dict, reg_filepath, url, store, view, section, counter, session_scraped_ids):
     porducts_html = execute_page(url, driver)
     product_group = dig.parse_div(porducts_html, 'id="archive-grid-view"')
     for group in product_group:

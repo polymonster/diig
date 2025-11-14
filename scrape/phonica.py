@@ -53,7 +53,6 @@ def get_json(driver, url, api_url, id, offset):
         session.cookies.set(cookie['name'], cookie['value'])
 
     # Prepare headers and payload
-    url = api_url
     payload = {
         "id": id,
         "href": url,
@@ -68,7 +67,7 @@ def get_json(driver, url, api_url, id, offset):
     }
 
     # Make the request using the same session
-    response = session.post(url, data=payload, headers=headers)
+    response = session.post(api_url, data=payload, headers=headers)
     j = json.loads(response.text)
 
     return j
@@ -189,14 +188,16 @@ def scrape_page(url, store, store_dict, view, section, counter, session_scraped_
                     if "trackname" in track:
                         release["track_names"].append(track["trackname"])
                     if "filename" in track:
-                        release["track_urls"].append(f"{cdn}{track["filename"]}")
+                        fn = track["filename"]
+                        release["track_urls"].append(f"{cdn}{fn}")
             # artworks
             if "cover" in product:
                 audio_cdn = "https://d1c4rk9le5opln.cloudfront.net/"
+                cover = product["cover"]
                 release["artworks"] = [
-                    f"{audio_cdn}{product["cover"]}",
-                    f"{audio_cdn}{product["cover"]}",
-                    f"{audio_cdn}{product["cover"]}",
+                    f"{audio_cdn}{cover}",
+                    f"{audio_cdn}{cover}",
+                    f"{audio_cdn}{cover}",
                 ]
 
         # stock tracker

@@ -147,21 +147,29 @@ def scrape_page(url, store, store_dict, view, section, counter, session_scraped_
     store_url = "https://www.phonicarecords.com"
 
     for (key, product) in products.items():
-        # dict is not pure releases
+        # phonica dict is not pure releases, we only care about digits
         if not key.isdigit():
             continue
 
         # progress log
         id = f"{store}-" + product["id_web"]
-
         if "-verbose" in sys.argv:
             print(f"parsing: {id}")
 
+        # asign tracker
+        release = dict()
+        release[f"{store}-{section}-{view}"] = int(pos)
+
+        # skip already processed
         if id in session_scraped_ids:
+            if id in releases_dict:
+                merge = dict()
+                merge[id] = release
+                dig.merge_dicts(releases_dict, merge)
             continue
 
+        # asign info
         slug = product.get("slug", "")
-        release = dict()
         release["store"] = store
         release["id"] = id
         release["label_link"] = ""
@@ -171,8 +179,8 @@ def scrape_page(url, store, store_dict, view, section, counter, session_scraped_
         release["artist"] = product.get("artist", "")
         release["label"] = product.get("label", "")
 
+        # audio / tracknames
         if "-urls" in sys.argv:
-            # audio / tracknames
             cdn = "https://dmpqep8cljqhc.cloudfront.net/"
             release["track_names"] = list()
             release["track_urls"] = list()
@@ -191,14 +199,13 @@ def scrape_page(url, store, store_dict, view, section, counter, session_scraped_
                     f"{audio_cdn}{product["cover"]}",
                 ]
 
-        release[f"{store}-{section}-{view}"] = int(pos)
-
+        # stock tracker
         release["store_tags"] = {
             "out_of_stock": product.get("has_stock", "0") == "0",
             "preorder": product.get("is_preorder", "0") == "1"
         }
 
-        # merge or scrape deeper
+        # merge
         if id in releases_dict:
             merge = dict()
             merge[id] = release

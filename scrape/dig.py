@@ -497,7 +497,7 @@ def scrape_store(stores, store_name):
                     if store["sections"].index(section) > 0:
                         continue
                     section = "sectionless"
-                print("scraping: {} / {}".format(section, view))
+                print("scraping: {}: {} / {}".format(store_name, section, view))
                 for i in range(1, 1+page_count):
                     view_url = view_dict["url"]
                     page_url = view_url.replace("${{section}}", section).replace("${{page}}", str(i)).replace("${{counter}}", str(counter))

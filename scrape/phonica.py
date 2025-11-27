@@ -211,6 +211,8 @@ def scrape_page(url, store, store_dict, view, section, counter, session_scraped_
             merge = dict()
             merge[id] = release
             dig.merge_dicts(releases_dict, merge)
+        else:
+            releases_dict[release["id"]] = release
 
         session_scraped_ids.append(release["id"])
         pos += 1

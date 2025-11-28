@@ -206,4 +206,35 @@ import "pmtech/tools/pmbuild_ext/pmbuild_init.jsn"
             ]
         }
     }
+
+    android(base):
+    {
+        jsn_vars: {
+            data_dir: "bin/android/assets/data"
+            build_dir: "build/android"
+            bin_dir: "bin/android"
+        }
+
+        premake: {
+            args: [
+                "android-studio"
+                "--renderer=opengl"
+                "--platform_dir=android"
+                "--pmtech_dir=../"
+            ]
+        }
+        pmfx: {
+            args: [
+                "-v1"
+                "-shader_platform gles"
+                "-shader_version 300"
+                "-i ${pmtech_dir}/assets/shaders"
+                "-o ${data_dir}/pmfx/glsl"
+                "-h shader_structs"
+                "-t build/temp/shaders"
+                "-v_flip"
+                "-source"
+            ]
+        }
+    }
 }

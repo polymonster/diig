@@ -1,0 +1,7 @@
+{
+    "user_vars": {
+        "vs_latest": "vs2022",
+        "vcvarsall_dir": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Auxiliary\\Build",
+        "windows_sdk_version": "10.0.22000.0"
+    }
+}

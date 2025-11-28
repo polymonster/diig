@@ -18,6 +18,7 @@ if platform == "android" then
 	defines {
 		"PEN_PLATFORM_ANDROID"
 	}
+	androidmanifest "dist\\android\\AndroidManifest.xml"
 	androidnamespace "com.pmtech.diig"
 	androidabis { "armeabi-v7a", "arm64-v8a" }
 	gradleversion "com.android.tools.build:gradle:8.2.2"
@@ -77,6 +78,7 @@ configuration{}
 -- app
 create_app("diig", "", script_path())
 
+
 -- ios dist overrides
 configuration{}
 if platform == "ios" then
@@ -104,6 +106,5 @@ if platform == "ios" then
 		"-ld_classic"
 	}
 end
-
 
 

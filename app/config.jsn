@@ -220,7 +220,7 @@ import "pmtech/tools/pmbuild_ext/pmbuild_init.jsn"
                 "android-studio"
                 "--renderer=opengl"
                 "--platform_dir=android"
-                "--pmtech_dir=../"
+                "--pmtech_dir=${pmtech_dir}"
             ]
         }
         pmfx: {

@@ -42,6 +42,11 @@ if platform == "android" then
 	assetdirs {
 		"bin/android/assets",
 	}
+	linkoptions {
+		"max-page-size=16384",
+		"-Wl",
+		"-z",
+	}
 end
 
 -- engine

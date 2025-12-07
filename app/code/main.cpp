@@ -594,9 +594,16 @@ bool fetch_json_cache(const c8* url, const c8* cache_filename, AsyncDict& async_
         // cache async
         std::thread cache_thread([j, filepath]() {
             FILE* fp = fopen(filepath.c_str(), "wb");
-            fwrite(j.data, j.size, 1, fp);
-            fclose(fp);
-            free(j.data); // cleanup
+            if(fp)
+            {
+                fwrite(j.data, j.size, 1, fp);
+                fclose(fp);
+                free(j.data); // cleanup
+            }
+            else
+            {
+                PEN_LOG("failed to write: %s", filepath.c_str());
+            }
         });
         cache_thread.detach();
     }
@@ -2072,7 +2079,9 @@ namespace
         // likes button on same line
         ImGui::SameLine();
 
-        f32 offset = ImGui::GetTextLineHeight() * 3.0f + k_indent1;
+        f32 spacing = ImGui::GetStyle().ItemSpacing.x;
+        f32 text_size = ImGui::CalcTextSize(ICON_FA_HEART).x;
+        f32 offset = ((text_size + spacing) * 2.0) + k_indent1;
 
         ImGui::SetCursorPosX(ctx.w - offset);
         ImGui::Text("%s", ctx.view->page == Page::likes ? ICON_FA_HEART : ICON_FA_HEART_O);
@@ -2887,9 +2896,9 @@ namespace
         
         f32 textheight = ImGui::CalcTextSize("Ag").y;
 
-        f32 ypos = ImGui::GetWindowHeight() * 0.5f - ImGui::GetTextLineHeight() * 5.0f;
+        f32 ypos = ImGui::GetWindowHeight() * 0.175f;
         f32 width = ImGui::GetWindowWidth();
-        
+
         ImGui::SetCursorPosY(ypos);
 
         ImGui::Indent();
@@ -2911,8 +2920,8 @@ namespace
         static Str error_message = "";
         static Str success_message = "";
 
-        ImGui::SetWindowFontScale(k_text_size_h1);
-
+        // title
+        ImGui::SetWindowFontScale(k_text_size_h2);
         ImGui::Spacing();
         ImGui::TextCentred("Forgotten Password");
 
@@ -2936,19 +2945,19 @@ namespace
         if(ImGui::IsItemActive()) {
             any_active = true;
         }
-        
         if(return_pressed) {
             ImGui::SetWindowFocus(nullptr);
         }
         
         ImGui::PopStyleVar();
 
+        ImGui::Dummy(ImVec2(0.0, padding));
         ImGui::SetWindowFontScale(k_text_size_h2);
+        ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(padding * 0.5, padding * 0.5));
 
         if(ImGui::Button("Back")) {
             ctx.view->page = Page::login_or_signup;
             pen::os_haptic_selection_feedback();
-            
             memset(&email_buf[0], 0x0, k_login_buf_size);
             error_message = "";
         }
@@ -2980,17 +2989,15 @@ namespace
             }
         }
 
-        ImGui::Spacing();
-
-        ImGui::SetWindowFontScale(k_text_size_body);
+        ImGui::PopStyleVar();
 
         // error
+        ImGui::Dummy(ImVec2(0.0, padding));
+        ImGui::SetWindowFontScale(k_text_size_body);
         ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.5f, 0.0f, 0.0f, 1.0f));
         ImGui::TextWrapped("%s", error_message.c_str());
         ImGui::PopStyleColor();
-
         ImGui::TextWrapped("%s", success_message.c_str());
-
         ImGui::Unindent();
 
         // OSK
@@ -2999,20 +3006,63 @@ namespace
         pen::input_set_key_up(PK_RETURN);
     }
 
+    bool password_box(const c8* label, const c8* hint, c8* password_buf, bool& return_pressed, bool& active, Str& error_message, ImVec2 size)
+    {
+        bool next = false;
+        f32 spacing = ImGui::GetStyle().ItemSpacing.x;
+
+        // password input
+        static bool show_password = false;
+        if(ImGui::InputTextEx(
+                label,
+                hint,
+                &password_buf[0],
+                k_login_buf_size,
+                {size.x - size.y - spacing, size.y},
+                show_password ? 0 : ImGuiInputTextFlags_Password,
+                nullptr, nullptr))
+        {
+            error_message.clear();
+        }
+
+        // handle active and move to next
+        if(ImGui::IsItemActive()) {
+            active = true;
+        }
+        else if(return_pressed) {
+            if(ImGui::IsItemFocused())
+            {
+                ImGui::SetKeyboardFocusHere();
+                return_pressed = false;
+                next = true;
+            }
+        }
+
+        // password visibility
+        size_t addr = (size_t)password_buf;
+        ImGui::PushID(addr);
+        ImGui::SameLine();
+        if(ImGui::Button(show_password ? ICON_FA_EYE_SLASH : ICON_FA_EYE,
+                         {size.y, size.y}))
+        {
+            show_password = !show_password;
+        }
+        ImGui::PopID();
+
+        return next;
+    }
+
     void login_menu() {
         static c8  email_buf[k_login_buf_size] = {0};
         static c8  password_buf[k_login_buf_size] = {0};
         static Str error_message = "";
 
-        ImGui::SetWindowFontScale(k_text_size_h1);
-
+        // title
+        ImGui::SetWindowFontScale(k_text_size_h2);
         ImGui::Spacing();
         ImGui::TextCentred("Log In");
 
         ImGui::SetWindowFontScale(k_text_size_body);
-
-        f32 ypos = ImGui::GetWindowHeight() * 0.5f - ImGui::GetTextLineHeight() * 5.0f;
-        ImGui::SetCursorPosY(ypos);
 
         bool return_pressed = pen::input_is_key_down(PK_RETURN);
         bool any_active = false;
@@ -3020,9 +3070,9 @@ namespace
         f32 padding = 0.0;
         ImVec2 boxsize = {};
         get_input_box_sizes(boxsize, padding);
-
         ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(padding, padding));
-                  
+
+        // email
         if(ImGui::InputTextEx("##Email", "Email", &email_buf[0], k_login_buf_size, boxsize, 0, nullptr, nullptr)) {
             error_message.clear();
         }
@@ -3030,32 +3080,22 @@ namespace
             any_active = true;
         }
         else if(return_pressed) {
-            ImGui::SetKeyboardFocusHere();
-            return_pressed = false;
+            if(ImGui::IsItemFocused())
+            {
+                ImGui::SetKeyboardFocusHere();
+                return_pressed = false;
+            }
         }
 
-        if(ImGui::InputTextEx("##Password", "Password", &password_buf[0], k_login_buf_size, boxsize, ImGuiInputTextFlags_Password, nullptr, nullptr)) {
-            error_message.clear();
-        }
-        if(ImGui::IsItemActive()) {
-            any_active = true;
-        }
-        else if(return_pressed) {
-            ImGui::SetKeyboardFocusHere();
-            return_pressed = false;
-        }
-        else if(return_pressed) {
-            ImGui::SetKeyboardFocusHere();
-            return_pressed = false;
-        }
+        // password
+        bool next = password_box("##Password", "Password", password_buf, return_pressed, any_active, error_message, boxsize);
 
-        if(return_pressed) {
-            ImGui::SetWindowFocus(nullptr);
-        }
-        
         ImGui::PopStyleVar();
 
+        // BACK / LOGIN
+        ImGui::Dummy(ImVec2(0.0, padding));
         ImGui::SetWindowFontScale(k_text_size_h2);
+        ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(padding * 0.5, padding * 0.5));
 
         if(ImGui::Button("Back")) {
             ctx.view->page = Page::login_or_signup;
@@ -3068,10 +3108,9 @@ namespace
 
         // validate
         bool valid = strlen(email_buf) && strlen(password_buf);
-
         if(valid) {
             ImGui::SameLine();
-            if(ImGui::Button("Log In")) {
+            if(ImGui::Button("Log In") || next) {
                 pen::os_haptic_selection_feedback();
                 Str jstr;
                 jstr.appendf("{email: \"%s\", password: \"%s\", returnSecureToken: true}", email_buf, password_buf);
@@ -3095,20 +3134,19 @@ namespace
                 }
             }
         }
+        ImGui::PopStyleVar();
 
-        ImGui::Spacing();
-        ImGui::Spacing();
-
+        // Forgotten password
+        ImGui::Dummy(ImVec2(0.0, padding));
+        ImGui::SetWindowFontScale(k_text_size_h3);
         ImGui::Text("Forgot Password?");
         if(ImGui::IsItemClicked()) {
             ctx.view->page = Page::forgotten_password;
         }
 
-        ImGui::Spacing();
-        
-        ImGui::SetWindowFontScale(k_text_size_body);
-
         // error
+        ImGui::Dummy(ImVec2(0.0, padding));
+        ImGui::SetWindowFontScale(k_text_size_body);
         ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.5f, 0.0f, 0.0f, 1.0f));
         ImGui::TextWrapped("%s", error_message.c_str());
         ImGui::PopStyleColor();
@@ -3128,14 +3166,16 @@ namespace
         static c8 retype_buf[k_login_buf_size] = {0};
         static Str error_message = "";
 
-        ImGui::SetWindowFontScale(k_text_size_h1);
-
+        // title
+        ImGui::SetWindowFontScale(k_text_size_h2);
         ImGui::Spacing();
         ImGui::TextCentred("Sign Up");
         
         bool return_pressed = pen::input_is_key_down(PK_RETURN);
         bool any_active = false;
-        
+
+        ImGui::SetWindowFontScale(k_text_size_body);
+
         f32 padding = 0.0;
         ImVec2 boxsize = {};
         get_input_box_sizes(boxsize, padding);
@@ -3148,6 +3188,13 @@ namespace
         if(ImGui::IsItemActive()) {
             any_active = true;
         }
+        else if(return_pressed) {
+            if(ImGui::IsItemFocused())
+            {
+                ImGui::SetKeyboardFocusHere();
+                return_pressed = false;
+            }
+        }
           
         if(ImGui::InputTextEx("##Email", "Email", &email_buf[0], k_login_buf_size, boxsize, 0, nullptr, nullptr)) {
             error_message.clear();
@@ -3156,39 +3203,28 @@ namespace
             any_active = true;
         }
         else if(return_pressed) {
-            ImGui::SetKeyboardFocusHere();
-            return_pressed = false;
+            if(ImGui::IsItemFocused())
+            {
+                ImGui::SetKeyboardFocusHere();
+                return_pressed = false;
+            }
         }
 
-        if(ImGui::InputTextEx("##Password", "Password", &password_buf[0], k_login_buf_size, boxsize, ImGuiInputTextFlags_Password, nullptr, nullptr)) {
-            error_message.clear();
-        }
-        if(ImGui::IsItemActive()) {
-            any_active = true;
-        }
-        else if(return_pressed) {
+        bool next = password_box("##Password", "Password", password_buf, return_pressed, any_active, error_message, boxsize);
+        if(next)
+        {
             ImGui::SetKeyboardFocusHere();
-            return_pressed = false;
+            next = false;
         }
 
-        if(ImGui::InputTextEx("##Retype", "Retype", &retype_buf[0], k_login_buf_size, boxsize, ImGuiInputTextFlags_Password, nullptr, nullptr)) {
-            error_message.clear();
-        }
-        if(ImGui::IsItemActive()) {
-            any_active = true;
-        }
-        else if(return_pressed) {
-            ImGui::SetKeyboardFocusHere();
-            return_pressed = false;
-        }
+        next = password_box("##Retype", "Retype", retype_buf, return_pressed, any_active, error_message, boxsize);
 
-        if(return_pressed) {
-            ImGui::SetWindowFocus(nullptr);
-        }
-        
         ImGui::PopStyleVar();
-        
+
+        // Buttons
+        ImGui::Dummy(ImVec2(0.0, padding));
         ImGui::SetWindowFontScale(k_text_size_h2);
+        ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(padding * 0.5, padding * 0.5));
 
         if(ImGui::Button("Back")) {
             pen::os_haptic_selection_feedback();
@@ -3210,7 +3246,7 @@ namespace
 
         if(valid) {
             ImGui::SameLine();
-            if(ImGui::Button("Sign Up")) {
+            if(ImGui::Button("Sign Up") || next) {
                 
                 nlohmann::json response = {};
                 
@@ -3246,11 +3282,11 @@ namespace
             }
         }
 
-        ImGui::Spacing();
-
-        ImGui::SetWindowFontScale(k_text_size_body);
+        ImGui::PopStyleVar();
 
         // error
+        ImGui::Dummy(ImVec2(0.0, padding));
+        ImGui::SetWindowFontScale(k_text_size_body);
         ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.5f, 0.0f, 0.0f, 1.0f));
         ImGui::TextWrapped("%s", error_message.c_str());
         ImGui::PopStyleColor();

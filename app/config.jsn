@@ -221,6 +221,8 @@ import "pmtech/tools/pmbuild_ext/pmbuild_init.jsn"
                 "--renderer=opengl"
                 "--platform_dir=android"
                 "--pmtech_dir=${pmtech_dir}"
+                "--android_app_activity=code/android/diig_app_activity.java"
+                "--android_manifest=dist/android/AndroidManifest.xml"
             ]
         }
         pmfx: {

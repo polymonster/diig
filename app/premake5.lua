@@ -14,13 +14,8 @@ solution ("diig_" .. platform_dir)
 
 -- android dist overrides
 if platform == "android" then
-	system "linux"
-	defines {
-		"PEN_PLATFORM_ANDROID"
-	}
 	androidmanifest "dist\\android\\AndroidManifest.xml"
 	androidnamespace "com.pmtech.diig"
-	androidabis { "armeabi-v7a", "arm64-v8a" }
 	gradleversion "com.android.tools.build:gradle:8.2.2"
 	androidsdkversion "34"
 	androidndkversion "25.1.8937393"
@@ -34,7 +29,8 @@ if platform == "android" then
 	}
 	androiddependencies {
 		"androidx.appcompat:appcompat:1.7.0",
-		"com.google.android.material:material:1.12.0"
+		"com.google.android.material:material:1.12.0",
+		"androidx.security:security-crypto:1.1.0-alpha06"
 	}
 	gradleproperties {
 		"org.gradle.jvmargs=-Xmx4608m --add-exports=java.base/sun.nio.ch=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.lang.reflect=ALL-UNNAMED --add-opens=java.base/java.io=ALL-UNNAMED --add-exports=jdk.unsupported/sun.misc=ALL-UNNAMED",

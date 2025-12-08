@@ -344,7 +344,6 @@ bool check_audio_file(const Str& path)
         {
             char buf[4];
             fread(&buf[0], 1, 4, f);
-            
             if(buf[0] == '<' && buf[1] == '!')
             {
                 return false;
@@ -361,6 +360,8 @@ Str download_and_cache(const Str& url, Str releaseid, bool validate = false)
 {
     Str url2 = pen::str_replace_string(url, "MED-MED", "MED");
     url2 = pen::str_replace_string(url2, "MED-BIG", "BIG");
+
+    // url2 = pen::str_replace_string(url2, "https://redeye-391831.c.cdn77.org/", "https://sounds.redeyerecords.co.uk/");
 
     Str filepath = pen::str_replace_string(url, "https://", "");
     filepath = pen::str_replace_chars(filepath, '/', '_');
@@ -393,9 +394,15 @@ Str download_and_cache(const Str& url, Str releaseid, bool validate = false)
         if(validate) {
             if(db->data) {
                 if(strncmp((const c8*)db->data, "error code", 10) == 0) {
-                    PEN_LOG("%s: %s\n", db->data, url.c_str());
+                    PEN_LOG("error with url: %s\n", url2.c_str());
                     error_response = true;
                 }
+                /*
+                if(strncmp((const c8*)db->data, "<!DOCTYPE html>", 15) == 0) {
+                    PEN_LOG("error with url: %s\n", url2.c_str());
+                    error_response = true;
+                }
+                */
             }
         }
 
@@ -2428,16 +2435,23 @@ namespace
                         icon = ICON_FA_TIMES_CIRCLE;
                     }
                     
-                    // auto move to next track
-                    if(releases.track_filepaths[r][sel].empty())
+                    // auto move to next track if one is empty or invalid
+                    if(ctx.top == r)
                     {
-                        sel++;
-                        if(sel >= releases.track_url_count[r])
+                        if(releases.track_filepaths[r][sel].empty())
                         {
-                            sel = 0;
+                            sel++;
+                            ctx.audio_ctx.invalidate_track = true;
+
+                            if(sel >= releases.track_url_count[r])
+                            {
+                                sel = 0;
+                            }
+
+                            releases.select_track[r] = sel;
                         }
                     }
-                    
+
                     if(i == sel)
                     {
                         if(ctx.top == r)

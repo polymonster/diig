@@ -397,12 +397,9 @@ Str download_and_cache(const Str& url, Str releaseid, bool validate = false)
                     PEN_LOG("error with url: %s\n", url2.c_str());
                     error_response = true;
                 }
-                /*
                 if(strncmp((const c8*)db->data, "<!DOCTYPE html>", 15) == 0) {
                     PEN_LOG("error with url: %s\n", url2.c_str());
-                    error_response = true;
                 }
-                */
             }
         }
 

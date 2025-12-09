@@ -47,6 +47,7 @@ if platform == "android" then
 		"-Wl",
 		"-z",
 	}
+	androiduselegacypackaging "false"
 end
 
 -- engine
@@ -78,7 +79,6 @@ configuration{}
 
 -- app
 create_app("diig", "", script_path())
-
 
 -- ios dist overrides
 configuration{}

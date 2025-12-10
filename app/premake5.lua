@@ -14,6 +14,8 @@ solution ("diig_" .. platform_dir)
 
 -- android dist overrides
 if platform == "android" then
+    androidversioncode "1"
+    androidversionname "1.0"
 	androidmanifest "dist\\android\\AndroidManifest.xml"
 	androidnamespace "com.pmtech.diig"
 	gradleversion "com.android.tools.build:gradle:8.2.2"

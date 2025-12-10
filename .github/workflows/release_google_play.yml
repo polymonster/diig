@@ -10,10 +10,10 @@ jobs:
         submodules: recursive
     - name: setup_env
       run: |
-        echo "$ANDROID_HOME/platform-tools" >> $GITHUB_ENV
-        echo "$ANDROID_HOME/tools" >> $GITHUB_ENV
-        echo "$ANDROID_HOME/tools/bin" >> $GITHUB_ENV
-        echo "$ANDROID_HOME/build-tools/34.0.0" >> $GITHUB_ENV
+        echo "PATH=$env:PATH;$ANDROID_HOME/platform-tools" >> $GITHUB_ENV
+        echo "PATH=$env:PATH;$ANDROID_HOME/tools" >> $GITHUB_ENV
+        echo "PATH=$env:PATH;$ANDROID_HOME/tools/bin" >> $GITHUB_ENV
+        echo "PATH=$env:PATH;$ANDROID_HOME/build-tools/34.0.0" >> $GITHUB_ENV
         adb --version
         java -version
     - name: build

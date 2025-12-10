@@ -10,9 +10,9 @@
     <application
         android:icon="@mipmap/ic_launcher"
         android:allowBackup="true"
-        android:label="com.pmtech.diig">
+        android:label="diig">
         <activity
-            android:name="diig.app.android.diig_app_activity"
+            android:name="pmtech.diig.diig_app_activity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"
             android:exported="true"
             android:label="diig"

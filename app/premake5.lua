@@ -14,10 +14,11 @@ solution ("diig_" .. platform_dir)
 
 -- android dist overrides
 if platform == "android" then
-    androidversioncode "1"
+	androidnamespace "pmtech.diig"
+	androidappid "pmtech.diig"
+	androidversioncode "1"
     androidversionname "1.0"
 	androidmanifest "dist\\android\\AndroidManifest.xml"
-	androidnamespace "com.pmtech.diig"
 	gradleversion "com.android.tools.build:gradle:8.2.2"
 	androidsdkversion "34"
 	androidndkversion "25.1.8937393"
@@ -84,9 +85,6 @@ configuration{}
 
 -- app
 create_app("diig", "", script_path())
-if platform == "android" then
-	androidappid "pmtech.diig"
-end
 
 -- ios dist overrides
 configuration{}

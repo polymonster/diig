@@ -139,6 +139,7 @@ constexpr f32       k_text_size_box = 3.0f;
 constexpr f32       k_text_size_track = 0.75f;
 constexpr f32       k_text_size_nerds = 0.7f;
 constexpr f32       k_text_size_dots = 0.8f;
+constexpr f32       k_text_size_small = 0.66f;
 constexpr f32       k_release_button_tap_radius_ratio = 64.0f / k_promax_11_w;
 constexpr f32       k_page_button_press_radius_ratio = 94.0f / k_promax_11_w;
 constexpr u32       k_num_threads_per_view = 4;

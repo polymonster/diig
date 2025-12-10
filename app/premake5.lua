@@ -1,3 +1,5 @@
+require "pmtech/third_party/pmbuild/scripts/premake-android-studio/android_studio"
+
 dofile "pmtech/tools/premake/options.lua"
 dofile "pmtech/tools/premake/globals.lua"
 dofile "pmtech/tools/premake/app_template.lua"
@@ -9,6 +11,47 @@ solution ("diig_" .. platform_dir)
 	startproject "diig"
 	buildoptions { build_cmd }
 	linkoptions { link_cmd }
+
+-- android dist overrides
+if platform == "android" then
+	androidmanifest "dist\\android\\AndroidManifest.xml"
+	androidnamespace "com.pmtech.diig"
+	gradleversion "com.android.tools.build:gradle:8.2.2"
+	androidsdkversion "34"
+	androidndkversion "25.1.8937393"
+	androidminsdkversion "21"
+	gradlewrapper {
+		"distributionUrl=https\\://services.gradle.org/distributions/gradle-8.6-all.zip"
+	}
+	androidrepositories {
+		"google()",
+		"mavenCentral()"
+	}
+	androiddependencies {
+		"androidx.appcompat:appcompat:1.7.0",
+		"com.google.android.material:material:1.12.0",
+		"androidx.security:security-crypto:1.1.0-alpha06"
+	}
+	gradleproperties {
+		"org.gradle.jvmargs=-Xmx4608m --add-exports=java.base/sun.nio.ch=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.lang.reflect=ALL-UNNAMED --add-opens=java.base/java.io=ALL-UNNAMED --add-exports=jdk.unsupported/sun.misc=ALL-UNNAMED",
+		"org.gradle.parallel=true",
+		"org.gradle.daemon=true",
+		"android.useAndroidX=true",
+		"android.enableJetifier=true"
+	}
+	assetdirs {
+		"bin/android/assets",
+	}
+	linkoptions {
+		"max-page-size=16384",
+		"-Wl",
+		"-z",
+	}
+	androiduselegacypackaging "false"
+	files {
+		"dist/android/res/**.*"
+	}
+end
 
 -- engine
 dofile "pmtech/core/pen/project.lua"
@@ -67,6 +110,5 @@ if platform == "ios" then
 		"-ld_classic"
 	}
 end
-
 
 

@@ -22,7 +22,7 @@ jobs:
       upload_url: ${{ steps.create_release.outputs.upload_url }}
   release_tesflight:
     needs: setup
-    runs-on: self-hosted
+    runs-on: [self-hosted, macOS]
     steps:
     - uses: actions/checkout@v3
       with:

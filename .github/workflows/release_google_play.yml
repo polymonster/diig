@@ -12,10 +12,6 @@ jobs:
       run: |
         echo $env:ANDROID_HOME
         echo $env:JAVA_HOME
-        echo "PATH=$env:PATH;$ANDROID_HOME/platform-tools" >> $GITHUB_ENV
-        echo "PATH=$env:PATH;$ANDROID_HOME/tools" >> $GITHUB_ENV
-        echo "PATH=$env:PATH;$ANDROID_HOME/tools/bin" >> $GITHUB_ENV
-        echo "PATH=$env:PATH;$ANDROID_HOME/build-tools/34.0.0" >> $GITHUB_ENV
         echo $env:PATH
         adb --version
         java -version

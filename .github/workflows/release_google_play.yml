@@ -13,7 +13,6 @@ jobs:
         echo $env:ANDROID_HOME
         echo $env:JAVA_HOME
         echo $env:PATH
-        adb --version
         java -version
     - name: build
       run: |

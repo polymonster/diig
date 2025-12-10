@@ -13,6 +13,15 @@ jobs:
         cd app
         pmbuild android
         cd build/android
-        ./gradle.bat wrapper
+        gradle.bat wrapper
         ./gradlew.bat bundleRelease
+    - name: upload
+      if: false
+      uses: r0adkll/upload-google-play@v1
+      with:
+        serviceAccountJsonPlainText: ${{secrets.SERVICE_ACCOUNT_JSON}}
+        packageName: pmtech.diig
+        releaseFiles: "app/build/android/diig/build/outputs/bundle/release/diig-release.aab"
+        track: internal
+        status: completed
 

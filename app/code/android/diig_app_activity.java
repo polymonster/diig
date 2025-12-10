@@ -1,4 +1,4 @@
-package diig.app.android;
+package pmtech.diig;
 
 import cc.pmtech.pen_activity;
 

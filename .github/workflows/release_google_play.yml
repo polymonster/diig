@@ -8,16 +8,14 @@ jobs:
     - uses: actions/checkout@v3
       with:
         submodules: recursive
-    - name: check_env
-      run: |
-        adb --version
-        java -version
-    - name: setup_path
+    - name: setup_env
       run: |
         echo "$ANDROID_HOME/platform-tools" >> $GITHUB_ENV
         echo "$ANDROID_HOME/tools" >> $GITHUB_ENV
         echo "$ANDROID_HOME/tools/bin" >> $GITHUB_ENV
         echo "$ANDROID_HOME/build-tools/34.0.0" >> $GITHUB_ENV
+        adb --version
+        java -version
     - name: build
       run: |
         cd app

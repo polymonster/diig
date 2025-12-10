@@ -10,7 +10,7 @@ jobs:
         submodules: recursive
     - name: check_env
       run: |
-        abd --version
+        adb --version
         java -version
     - name: setup_path
       run: |

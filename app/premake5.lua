@@ -48,6 +48,9 @@ if platform == "android" then
 		"-z",
 	}
 	androiduselegacypackaging "false"
+	files {
+		"dist/android/res/**.*"
+	}
 end
 
 -- engine

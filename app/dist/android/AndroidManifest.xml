@@ -8,6 +8,7 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     
     <application
+        android:icon="@mipmap/ic_launcher"
         android:allowBackup="true"
         android:label="com.pmtech.diig">
         <activity

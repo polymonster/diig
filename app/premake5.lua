@@ -14,6 +14,7 @@ solution ("diig_" .. platform_dir)
 
 -- android dist overrides
 if platform == "android" then
+	androidappid "pmtech.diig"
     androidversioncode "1"
     androidversionname "1.0"
 	androidmanifest "dist\\android\\AndroidManifest.xml"

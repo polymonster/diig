@@ -16,7 +16,7 @@ solution ("diig_" .. platform_dir)
 if platform == "android" then
 	androidnamespace "pmtech.diig"
 	androidappid "pmtech.diig"
-	androidversioncode "2"
+	androidversioncode "3"
     androidversionname "1.0"
 
 	androidmanifest "dist\\android\\AndroidManifest.xml"
@@ -41,7 +41,8 @@ if platform == "android" then
 		"org.gradle.parallel=true",
 		"org.gradle.daemon=true",
 		"android.useAndroidX=true",
-		"android.enableJetifier=true"
+		"android.enableJetifier=true",
+		"android.bundle.enableUncompressedNativeLibs=true"
 	}
 	assetdirs {
 		"bin/android/assets",

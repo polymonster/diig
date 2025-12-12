@@ -16,7 +16,7 @@ solution ("diig_" .. platform_dir)
 if platform == "android" then
 	androidnamespace "pmtech.diig"
 	androidappid "pmtech.diig"
-	androidversioncode "1"
+	androidversioncode "2"
     androidversionname "1.0"
 
 	androidmanifest "dist\\android\\AndroidManifest.xml"

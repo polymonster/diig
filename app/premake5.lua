@@ -18,6 +18,7 @@ if platform == "android" then
 	androidappid "pmtech.diig"
 	androidversioncode "1"
     androidversionname "1.0"
+
 	androidmanifest "dist\\android\\AndroidManifest.xml"
 	gradleversion "com.android.tools.build:gradle:8.2.2"
 	androidsdkversion "34"

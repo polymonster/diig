@@ -21,7 +21,7 @@ if platform == "android" then
 
 	androidmanifest "dist\\android\\AndroidManifest.xml"
 	gradleversion "com.android.tools.build:gradle:8.2.2"
-	androidsdkversion "34"
+	androidsdkversion "35"
 	androidndkversion "25.1.8937393"
 	androidminsdkversion "21"
 	gradlewrapper {

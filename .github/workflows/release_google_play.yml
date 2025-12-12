@@ -18,7 +18,6 @@ jobs:
       run: |
         $absPath = Resolve-Path app/dist/android/upload-keystore.jks
         echo "ABS_KEYSTORE_PATH=$absPath" >> $env:GITHUB_ENV
-      shell: pwsh
     - name: build
       run: |
         cd app

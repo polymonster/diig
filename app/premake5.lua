@@ -16,9 +16,8 @@ solution ("diig_" .. platform_dir)
 if platform == "android" then
 	androidnamespace "pmtech.diig"
 	androidappid "pmtech.diig"
-	androidversioncode "3"
+	androidversioncode "4"
     androidversionname "1.0"
-
 	androidmanifest "dist\\android\\AndroidManifest.xml"
 	gradleversion "com.android.tools.build:gradle:8.2.2"
 	androidsdkversion "35"
@@ -52,7 +51,7 @@ if platform == "android" then
 		"-Wl",
 		"-z",
 	}
-	androiduselegacypackaging "false"
+	androiduselegacypackaging "true"
 	files {
 		"dist/android/res/**.*"
 	}

@@ -18,9 +18,10 @@ jobs:
       run: |
         cd app
         pmbuild android
+        cp dist/android/upload-keystore.jks build/android/upload-keystore.jks
         cd build/android
         gradle.bat wrapper
-        ./gradlew.bat bundleRelease "-Pandroid.injected.signing.store.file=../../../dist/android/upload-keystore.jks" "-Pandroid.injected.signing.store.password=${{secrets.GOOGLE_PLAY_SIGNING_KEYSTORE_PASSWORD}}" "-Pandroid.injected.signing.key.alias=upload-key" "-Pandroid.injected.signing.key.password=${{secrets.GOOGLE_PLAY_SIGNING_KEYSTORE_PASSWORD}}"
+        ./gradlew.bat bundleRelease "-Pandroid.injected.signing.store.file=upload-keystore.jks" "-Pandroid.injected.signing.store.password=${{secrets.GOOGLE_PLAY_SIGNING_KEYSTORE_PASSWORD}}" "-Pandroid.injected.signing.key.alias=upload-key" "-Pandroid.injected.signing.key.password=${{secrets.GOOGLE_PLAY_SIGNING_KEYSTORE_PASSWORD}}"
     - name: upload
       uses: r0adkll/upload-google-play@v1
       with:

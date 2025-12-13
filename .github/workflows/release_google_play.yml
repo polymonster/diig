@@ -14,14 +14,14 @@ jobs:
         echo $env:JAVA_HOME
         echo $env:PATH
         java -version
-    - name: resolve_keystore_path
+    - name: resolve_secrets
       run: |
         $absPath = Resolve-Path app/dist/android/upload-keystore.jks
         echo "ABS_KEYSTORE_PATH=$absPath" >> $env:GITHUB_ENV
+        Set-Content -Path app/code/api_key.h -Value '${{secrets.ANDROID_API_KEY_H}}' -Encoding utf8
     - name: build
       run: |
         cd app
-        Set-Content -Path app/code/api_key.h -Value '${{secrets.ANDROID_API_KEY_H}}' -Encoding utf8
         pmbuild android
         cd build/android
         gradle.bat wrapper

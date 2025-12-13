@@ -16,12 +16,11 @@ solution ("diig_" .. platform_dir)
 if platform == "android" then
 	androidnamespace "pmtech.diig"
 	androidappid "pmtech.diig"
-	androidversioncode "1"
+	androidversioncode "6"
     androidversionname "1.0"
-
 	androidmanifest "dist\\android\\AndroidManifest.xml"
 	gradleversion "com.android.tools.build:gradle:8.2.2"
-	androidsdkversion "34"
+	androidsdkversion "35"
 	androidndkversion "25.1.8937393"
 	androidminsdkversion "21"
 	gradlewrapper {
@@ -41,7 +40,8 @@ if platform == "android" then
 		"org.gradle.parallel=true",
 		"org.gradle.daemon=true",
 		"android.useAndroidX=true",
-		"android.enableJetifier=true"
+		"android.enableJetifier=true",
+		"android.bundle.enableUncompressedNativeLibs=true"
 	}
 	assetdirs {
 		"bin/android/assets",
@@ -51,7 +51,7 @@ if platform == "android" then
 		"-Wl",
 		"-z",
 	}
-	androiduselegacypackaging "false"
+	androiduselegacypackaging "true"
 	files {
 		"dist/android/res/**.*"
 	}

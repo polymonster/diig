@@ -15,14 +15,13 @@ jobs:
         echo $env:JAVA_HOME
         echo $env:PATH
         java -version
+        exit 1
     - name: resolve_secrets
-      if false:
       run: |
         $absPath = Resolve-Path app/dist/android/upload-keystore.jks
         echo "ABS_KEYSTORE_PATH=$absPath" >> $env:GITHUB_ENV
         Set-Content -Path app/code/api_key.h -Value '${{secrets.ANDROID_API_KEY_H}}' -Encoding utf8
     - name: build
-      if false:
       run: |
         cd app
         pmbuild android
@@ -30,7 +29,6 @@ jobs:
         gradle.bat wrapper
         ./gradlew.bat bundleRelease "-Pandroid.injected.signing.store.file=${env:ABS_KEYSTORE_PATH}" "-Pandroid.injected.signing.store.password=${{secrets.GOOGLE_PLAY_SIGNING_KEYSTORE_PASSWORD}}" "-Pandroid.injected.signing.key.alias=upload-key" "-Pandroid.injected.signing.key.password=${{secrets.GOOGLE_PLAY_SIGNING_KEYSTORE_PASSWORD}}"
     - name: upload
-      if false:
       uses: r0adkll/upload-google-play@v1
       with:
         serviceAccountJsonPlainText: ${{secrets.SERVICE_ACCOUNT_JSON}}

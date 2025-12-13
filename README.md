@@ -131,14 +131,6 @@ A store config can specify parts of a record store website to track. `store` is 
 }
 ```
 
-## Firebase
-
-Data is uploaded and synchronised to firebase with data publicly readable. For a dump of the entire releases database you can use:
-
-```text
-curl https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app/releases.json
-```
-
 ## App
 
 ### Beta

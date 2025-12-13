@@ -21,6 +21,7 @@ jobs:
     - name: build
       run: |
         cd app
+        echo "${{secrets.ANDROID_API_KEY_H}}" >> code/api_key.h
         pmbuild android
         cd build/android
         gradle.bat wrapper

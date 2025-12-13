@@ -1,4 +1,4 @@
-name: release_google_play
+name: release_google_play_gh
 on:
   workflow_dispatch:
 jobs:

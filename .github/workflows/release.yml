@@ -82,3 +82,50 @@ jobs:
         xcodebuild archive -workspace build/ios/diig_ios.xcworkspace -configuration Release -scheme diig -archivePath build/ios/diig_ios OTHER_CODE_SIGN_FLAGS="--keychain $KEYCHAIN_PATH" PROVISIONING_PROFILE_SPECIFIER="digiosdev" CODE_SIGN_STYLE="Manual"
         xcodebuild -exportArchive -archivePath build/ios/diig_ios.xcarchive -exportPath build/ios/export -exportOptionsPlist dist/ios/ExportOptionsAgent.plist OTHER_CODE_SIGN_FLAGS="--keychain $KEYCHAIN_PATH" PROVISIONING_PROFILE_SPECIFIER="digiosdist" CODE_SIGN_STYLE="Manual"
         xcrun altool --upload-app -f build/ios/export/diig.ipa -t ios -u ${{secrets.APP_EMAIL}} -p ${{secrets.APP_PASSWORD}}
+  release_google_play:
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        submodules: recursive
+    - name: setup_jdk
+      uses: actions/setup-java@v1
+      with:
+        java-version: 21.0
+    - name: setup_gradle
+      uses: gradle/actions/setup-gradle@v3
+      with:
+          gradle-version: 8.14.3 
+    - name: setup_env
+      run: |
+        echo $env:ANDROID_HOME
+        echo $env:JAVA_HOME
+        echo $env:PATH
+        java -version
+    - name: resolve_secrets
+      run: |
+        absPath=$(realpath app/dist/android/upload-keystore.jks)
+        echo "ABS_KEYSTORE_PATH=$absPath" >> "$GITHUB_ENV"
+        echo '${{secrets.ANDROID_API_KEY_H}}' >> app/code/api_key.h
+    - name: bump_version
+      run: |
+        VERSION=$(echo "$REFS_VERSION" | cut -d'/' -f 3)
+        VERSION=$(echo "$VERSION" | cut -d'.' -f 3)
+        echo "Version code: $VERSION"
+        sed -i "s/androidversioncode \"[0-9]*\"/androidversioncode \"$VERSION\"/g" app/premake5.lua
+    - name: build
+      run: |
+        cd app
+        pmtech/pmbuild android
+        cd build/android
+        gradle wrapper
+        ./gradlew bundleRelease "-Pandroid.injected.signing.store.file=$ABS_KEYSTORE_PATH" "-Pandroid.injected.signing.store.password=${{secrets.GOOGLE_PLAY_SIGNING_KEYSTORE_PASSWORD}}" "-Pandroid.injected.signing.key.alias=upload-key" "-Pandroid.injected.signing.key.password=${{secrets.GOOGLE_PLAY_SIGNING_KEYSTORE_PASSWORD}}"
+    - name: upload
+      uses: r0adkll/upload-google-play@v1
+      with:
+        serviceAccountJsonPlainText: ${{secrets.SERVICE_ACCOUNT_JSON}}
+        packageName: pmtech.diig
+        releaseFiles: "app/build/android/diig/build/outputs/bundle/release/diig-release.aab"
+        track: internal
+        status: draft

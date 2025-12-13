@@ -34,5 +34,5 @@ jobs:
         packageName: pmtech.diig
         releaseFiles: "app/build/android/diig/build/outputs/bundle/release/diig-release.aab"
         track: internal
-        status: completed
+        status: draft
 

@@ -21,7 +21,7 @@ jobs:
     - name: build
       run: |
         cd app
-        echo "${{secrets.ANDROID_API_KEY_H}}" >> code/api_key.h
+        Set-Content -Path app/code/api_key.h -Value ${{secrets.ANDROID_API_KEY_H}} -Encoding utf8
         pmbuild android
         cd build/android
         gradle.bat wrapper

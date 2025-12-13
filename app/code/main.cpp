@@ -62,6 +62,13 @@ namespace pen
 #define CURL_STATICLIB
 #include "curl/curl.h"
 
+// yes hacky
+static Str s_tokenid = "";
+Str append_auth(Str url) {
+    url.appendf("&auth=%s", s_tokenid.c_str());
+    return url;
+}
+
 namespace curl
 {
     constexpr size_t k_min_alloc = 1024;
@@ -361,8 +368,6 @@ Str download_and_cache(const Str& url, Str releaseid, bool validate = false)
     Str url2 = pen::str_replace_string(url, "MED-MED", "MED");
     url2 = pen::str_replace_string(url2, "MED-BIG", "BIG");
 
-    // url2 = pen::str_replace_string(url2, "https://redeye-391831.c.cdn77.org/", "https://sounds.redeyerecords.co.uk/");
-
     Str filepath = pen::str_replace_string(url, "https://", "");
     filepath = pen::str_replace_chars(filepath, '/', '_');
 
@@ -655,10 +660,13 @@ bool fetch_json_cache(const c8* url, const c8* cache_filename, AsyncDict& async_
 void* registry_loader(void* userdata)
 {
     DataContext* ctx = (DataContext*)userdata;
+    
+    Str store_url = "https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app/stores.json?&timeout=5s";
+    store_url = append_auth(store_url);
 
     // fetch stores
     fetch_json_cache(
-        "https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app/stores.json?&timeout=5s",
+        store_url.c_str(),
         "stores.json",
         ctx->stores
     );
@@ -713,6 +721,7 @@ void* user_data_thread(void* userdata)
                     // set tokens
                     userid = ((std::string)ctx->auth.dict["localId"]).c_str();
                     tokenid = ((std::string)ctx->auth.dict["idToken"]).c_str();
+                    s_tokenid = tokenid; // set this to use globally
                     auth_cloud = true;
                 }
             }
@@ -731,7 +740,11 @@ void* user_data_thread(void* userdata)
                 Str url = "https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app/likes.json";
                 url.appendf("?auth=%s", tokenid.c_str());
 
-                auto global_likes = curl::request(url.c_str(), nullptr, code);
+                auto global_likes = curl::request(
+                    url.c_str(),
+                    nullptr,
+                    code
+                );
 
                 for(auto& like : global_likes.items()) {
                     for(auto& user : like.value().items()) {
@@ -867,6 +880,7 @@ void update_likes_registry() {
             if(like_true) {
                 Str search_url = "https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app/releases.json";
                 search_url.appendf("?orderBy=\"$key\"&equalTo=\"%s\"&timeout=1s", like.key().c_str());
+                search_url = append_auth(search_url);
 
                 auto db = curl::download(search_url.c_str());
                 if(db.data)
@@ -928,6 +942,7 @@ void* releases_view_loader(void* userdata)
             // ordered search
             Str search_url = "https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app/releases.json";
             search_url.appendf("?orderBy=\"%s\"&startAt=0&timeout=10s", index_on.c_str());
+            search_url = append_auth(search_url);
 
             AsyncDict async_registry;
             fetch_json_cache(
@@ -1016,6 +1031,7 @@ void* releases_view_loader(void* userdata)
                 if(like_true) {
                     Str search_url = "https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app/releases.json";
                     search_url.appendf("?orderBy=\"$key\"&equalTo=\"%s\"&timeout=1s", like.key().c_str());
+                    search_url = append_auth(search_url);
 
                     auto db = curl::download(search_url.c_str());
                     if(db.data)
@@ -1236,19 +1252,19 @@ void* releases_view_loader(void* userdata)
             view->releases.flags[ri] |= EntityFlags::liked;
         }
 
-        // count cloud likes
+        // count cloud likes... removing feature, needs improving
+        /*
         Str like_release_url = likes_url;
         like_release_url.appendf("%s.json?timeout=25ms", view->releases.key[ri].c_str());
-
         CURLcode code;
         auto likes = curl::request(like_release_url.c_str(), nullptr, code);
-
         view->releases.like_count[ri] = 0;
         for(auto& like : likes) {
             if(like > 0) {
                 view->releases.like_count[ri]++;
             }
         }
+        */
 
         // store tags
         if(release.contains("store_tags"))
@@ -3356,7 +3372,7 @@ namespace
                     }
                     else
                     {
-                        ctx.store = change_store("redeye");
+                        ctx.store = change_store("juno");
                     }
 
                     ctx.data_ctx.user_data.mutex.unlock();
@@ -4019,6 +4035,7 @@ void add_like(const Str& id)
         // grab the release info
         Str search_url = "https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app/releases.json";
         search_url.appendf("?orderBy=\"$key\"&equalTo=\"%s\"&timeout=1s", id.c_str());
+        search_url = append_auth(search_url);
 
         auto db = curl::download(search_url.c_str());
         if(db.data)

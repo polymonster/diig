@@ -77,13 +77,23 @@ def scrape_page(url, store, store_dict, view, section, counter, session_scraped_
 
     # try and then continue if the page does not exist
     try:
+        headers = {
+            "User-Agent": (
+                "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+                "AppleWebKit/537.36 (KHTML, like Gecko) "
+                "Chrome/120.0.0.0 Safari/537.36"
+            ),
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+            "Accept-Language": "en-US,en;q=0.5",
+            "Referer": "https://www.juno.co.uk/",
+        }
         req = urllib.request.Request(
             url=url,
-            headers={'User-Agent': 'Mozilla/5.0'}
+            headers=headers
         )
         html_file = urllib.request.urlopen(req)
-    except urllib.error.HTTPError:
-        return -1
+    except urllib.error.HTTPError as e:
+        print("error:", e.code, e.reason)
 
     html_str = html_file.read().decode("utf8")
 

@@ -8,10 +8,10 @@
             "cwd": "${workspaceFolder}/scrape",
             "args": [
                 "-store",
-                "phonica",
+                "juno",
                 "-verbose",
                 "-view",
-                "bestsellers",
+                "weekly_chart",
                 "-urls"
             ]
         }

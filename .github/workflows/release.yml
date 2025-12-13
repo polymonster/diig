@@ -109,6 +109,8 @@ jobs:
         echo "ABS_KEYSTORE_PATH=$absPath" >> "$GITHUB_ENV"
         echo '${{secrets.ANDROID_API_KEY_H}}' >> app/code/api_key.h
     - name: bump_version
+      env:
+        REFS_VERSION: ${{github.ref}}
       run: |
         VERSION=$(echo "$REFS_VERSION" | cut -d'/' -f 3)
         VERSION=$(echo "$VERSION" | cut -d'.' -f 3)

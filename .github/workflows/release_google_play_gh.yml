@@ -26,7 +26,7 @@ jobs:
       run: |
         absPath=$(realpath app/dist/android/upload-keystore.jks)
         echo "ABS_KEYSTORE_PATH=$absPath" >> "$GITHUB_ENV"
-        echo '${{secrets.ANDROID_API_KEY_H}} >> app/code/api_key.h
+        echo '${{secrets.ANDROID_API_KEY_H}}' >> app/code/api_key.h
     - name: build
       run: |
         cd app

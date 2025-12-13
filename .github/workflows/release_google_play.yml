@@ -10,7 +10,7 @@ jobs:
         submodules: recursive
     - name: setup_env
       run: |
-        echo ${{secrets.SERVICE_ACCOUNT_JSON}}
+        Set-Content -Path app/service-account.json -Value '${{secrets.SERVICE_ACCOUNT_JSON}}' -Encoding utf8
         echo $env:ANDROID_HOME
         echo $env:JAVA_HOME
         echo $env:PATH

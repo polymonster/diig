@@ -1176,8 +1176,7 @@ void* releases_view_loader(void* userdata)
         view->releases.select_track[ri] = 0; // reset
         memset(&view->releases.artwork_tcp[ri], 0x0, sizeof(pen::texture_creation_params));
 
-        std::string id = release["id"];
-        view->releases.id[ri] = id.c_str();
+        view->releases.id[ri] = safe_str(release, "id", "");
         view->releases.key[ri] = entry.index;
 
         // assign artwork url

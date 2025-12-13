@@ -1,25 +1,32 @@
-name: release_google_play
+name: release_google_play_gh
 on:
   workflow_dispatch:
 jobs:
   release_google_play:
-    runs-on: [self-hosted, Windows]
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
       with:
         submodules: recursive
+    - name: setup_jdk
+      uses: actions/setup-java@v1
+      with:
+        java-version: 21.0
+    - name: setup_gradle
+      uses: gradle/actions/setup-gradle@v3
+      with:
+          gradle-version: 8.5.0
     - name: setup_env
       run: |
-        Set-Content -Path service-account.json -Value '${{secrets.SERVICE_ACCOUNT_JSON}}'
         echo $env:ANDROID_HOME
         echo $env:JAVA_HOME
         echo $env:PATH
         java -version
     - name: resolve_secrets
       run: |
-        $absPath = Resolve-Path app/dist/android/upload-keystore.jks
-        echo "ABS_KEYSTORE_PATH=$absPath" >> $env:GITHUB_ENV
-        Set-Content -Path app/code/api_key.h -Value '${{secrets.ANDROID_API_KEY_H}}' -Encoding utf8
+        absPath=$(realpath app/dist/android/upload-keystore.jks)
+        echo "ABS_KEYSTORE_PATH=$absPath" >> "$GITHUB_ENV"
+        echo '${{secrets.ANDROID_API_KEY_H}} >> app/code/api_key.h
     - name: build
       run: |
         cd app
@@ -30,7 +37,7 @@ jobs:
     - name: upload
       uses: r0adkll/upload-google-play@v1
       with:
-        serviceAccountJson: service-account.json
+        serviceAccountJsonPlainText: ${{secrets.SERVICE_ACCOUNT_JSON}}
         packageName: pmtech.diig
         releaseFiles: "app/build/android/diig/build/outputs/bundle/release/diig-release.aab"
         track: internal

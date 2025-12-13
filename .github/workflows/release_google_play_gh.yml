@@ -1,4 +1,4 @@
-name: release_google_play_gh
+name: release_google_play
 on:
   workflow_dispatch:
 jobs:
@@ -15,7 +15,7 @@ jobs:
     - name: setup_gradle
       uses: gradle/actions/setup-gradle@v3
       with:
-          gradle-version: 8.5.0
+          gradle-version: 8.14.3 
     - name: setup_env
       run: |
         echo $env:ANDROID_HOME

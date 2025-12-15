@@ -117,6 +117,8 @@ def scrape_page(url, store, store_dict, view, section, counter, session_scraped_
 
         # first implementation did not get the actual internal id
         ii = releases.index(release)
+        if(ii == -1):
+            continue
         product_info = releases_ex[ii][:releases_ex[ii].find(">") + 1]
         post_id_start = product_info.find("post-") + len("post-")
         post_id_end = product_info.find(" ", post_id_start)

@@ -1178,7 +1178,7 @@ void* releases_view_loader(void* userdata)
 
         view->releases.id[ri] = safe_str(release, "id", "");
         view->releases.key[ri] = entry.index;
-
+        
         // assign artwork url
         if(release["artworks"].size() > 0)
         {
@@ -3555,7 +3555,7 @@ namespace
 
     loop_t user_update() {
 
-        if(ctx.backgrounded && !ctx.audio_ctx.play_bg) {
+        if(ctx.backgrounded) {
             pen::thread_sleep_ms(1000);
             pen_main_loop_continue();
         }

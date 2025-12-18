@@ -1,6 +1,9 @@
+<script lang="ts">
+  console.log('Done')
+</script>
+
 <template>
   <div>
-    <NuxtRouteAnnouncer />
-    <NuxtWelcome />
+    <h1>Diig</h1>
   </div>
 </template>

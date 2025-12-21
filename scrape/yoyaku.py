@@ -64,7 +64,7 @@ def scrape_page(url, store, store_dict, view, section, counter, session_scraped_
     # parse releases from page
     html_response = dig.request_url_limited(url)
     if html_response == None:
-        return -1
+        return counter + 1
     html_str = html_response.read().decode("utf8")
 
     # find the charts
@@ -117,25 +117,26 @@ def scrape_page(url, store, store_dict, view, section, counter, session_scraped_
 
         # first implementation did not get the actual internal id
         ii = releases.index(release)
-        product_info = releases_ex[ii][:releases_ex[ii].find(">") + 1]
-        post_id_start = product_info.find("post-") + len("post-")
-        post_id_end = product_info.find(" ", post_id_start)
-        internal_id = product_info[post_id_start: post_id_end]
-        release_dict["internal_id"] = internal_id
+        if ii < len(releases_ex):
+            product_info = releases_ex[ii][:releases_ex[ii].find(">") + 1]
+            post_id_start = product_info.find("post-") + len("post-")
+            post_id_end = product_info.find(" ", post_id_start)
+            internal_id = product_info[post_id_start: post_id_end]
+            release_dict["internal_id"] = internal_id
 
-        # main page info
-        release_dict["store_tags"] = dict()
+            # main page info
+            release_dict["store_tags"] = dict()
 
-        # store tags:  out of stock
-        release_dict["store_tags"]["out_of_stock"] = False
-        if product_info.find("product_cat-out-of-stock") != -1:
-            release_dict["store_tags"]["out_of_stock"] = True
-            release_dict["store_tags"]["has_been_out_of_stock"] = True
+            # store tags:  out of stock
+            release_dict["store_tags"]["out_of_stock"] = False
+            if product_info.find("product_cat-out-of-stock") != -1:
+                release_dict["store_tags"]["out_of_stock"] = True
+                release_dict["store_tags"]["has_been_out_of_stock"] = True
 
-        # store tags:  out of stock
-        release_dict["store_tags"]["preorder"] = False
-        if product_info.find("product_cat-forthcoming") != -1:
-            release_dict["store_tags"]["preorder"] = True
+            # store tags:  out of stock
+            release_dict["store_tags"]["preorder"] = False
+            if product_info.find("product_cat-forthcoming") != -1:
+                release_dict["store_tags"]["preorder"] = True
 
         # check existing tracks
         track_url_count = 0

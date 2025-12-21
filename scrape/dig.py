@@ -65,7 +65,20 @@ def request_url_limited(url, head_only = False):
             else:
                 return None
         else:
-            return urllib.request.urlopen(safe_url)
+            headers = {
+                "User-Agent": (
+                    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+                    "AppleWebKit/537.36 (KHTML, like Gecko) "
+                    "Chrome/120.0.0.0 Safari/537.36"
+                ),
+                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+                "Accept-Language": "en-US,en;q=0.5",
+            }
+            req = urllib.request.Request(
+                url=safe_url,
+                headers=headers
+            )
+            return urllib.request.urlopen(req)
     except urllib.error.HTTPError:
         print("error: url not found {}".format(safe_url))
         return None
@@ -329,7 +342,6 @@ def patch_releases(entries: str, throw_assert=False):
     response = authed_session.patch(
         "https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app/releases.json", entries)
     if throw_assert:
-        # print(response.text)
         print(response.reason)
         assert(response.status_code == 200)
     if "-verbose" in sys.argv:

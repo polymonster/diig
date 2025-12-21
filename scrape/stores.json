@@ -146,12 +146,12 @@
         ],
         "views": {
             "new_releases": {
-                "url": "https://www.yoyaku.io/style/${{section}}/page/${{page}}/?orderby=date",
+                "url": "https://yoyaku.io/style/${{section}}/page/${{page}}/?orderby=date",
                 "page_count": 100,
                 "display_name": "Latest"
             },
             "weekly_chart": {
-                "url": "https://www.yoyaku.io/style/${{section}}/page/${{page}}/?orderby=date",
+                "url": "https://yoyaku.io/style/${{section}}/page/${{page}}/?orderby=date",
                 "page_count": 1,
                 "display_name": "Weekly Chart"
             }

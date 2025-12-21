@@ -1,7 +1,7 @@
 # diig
 
 [![scrape](https://github.com/polymonster/diig/actions/workflows/scrape.yml/badge.svg)](https://github.com/polymonster/diig/actions/workflows/scrape.yml)
-[![tests](https://github.com/polymonster/diig/actions/workflows/release_testflight.yml/badge.svg)](https://github.com/polymonster/diig/actions/workflows/release_testflight.yml)
+[![tests](https://github.com/polymonster/diig/actions/workflows/release.yml/badge.svg)](https://github.com/polymonster/diig/actions/workflows/release_testflight.yml)
 
 diig is a record digging app that provides a high performance audio player and ergonomic user interface to make digging through record snippets rapid, responsive and enjoyable.
 
@@ -130,6 +130,23 @@ A store config can specify parts of a record store website to track. `store` is 
     }
 }
 ```
+
+## Requests / Urls
+
+Auth is required to access the database. Which requires a registered user and a json json payload.
+
+```text
+https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword
+{email: "<user email>", password: "<user pass>", returnSecureToken: true}
+```
+
+The you can request access to releases as follows:
+
+```text
+https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app/releases.json?orderBy=\"<index_on>"&startAt=0&timeout=10s&auth=<auth_key>
+```
+
+Where valid options for `<index_on>` can be found in the realtime data base rules and `<auth_key>` is obtained from the auth step.
 
 ## App
 

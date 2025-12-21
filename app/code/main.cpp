@@ -721,7 +721,6 @@ void* user_data_thread(void* userdata)
                     // set tokens
                     userid = ((std::string)ctx->auth.dict["localId"]).c_str();
                     tokenid = ((std::string)ctx->auth.dict["idToken"]).c_str();
-                    s_tokenid = tokenid; // set this to use globally
                     auth_cloud = true;
                 }
             }
@@ -1176,10 +1175,9 @@ void* releases_view_loader(void* userdata)
         view->releases.select_track[ri] = 0; // reset
         memset(&view->releases.artwork_tcp[ri], 0x0, sizeof(pen::texture_creation_params));
 
-        std::string id = release["id"];
-        view->releases.id[ri] = id.c_str();
+        view->releases.id[ri] = safe_str(release, "id", "");
         view->releases.key[ri] = entry.index;
-
+        
         // assign artwork url
         if(release["artworks"].size() > 0)
         {
@@ -3335,6 +3333,12 @@ namespace
 
         // from keychain
         ctx.username = pen::os_get_keychain_item("com.pmtech.dig", "username");
+        
+        // set this to use globally
+        s_tokenid = ((std::string)ctx.data_ctx.auth.dict["idToken"]).c_str();
+        
+        // kick off reg loader now we have auth
+        pen::thread_create(registry_loader, 10 * 1024 * 1024, &ctx.data_ctx, pen::e_thread_start_flags::detached);
 
         // trigger update of likes
         update_likes_registry();
@@ -3556,7 +3560,7 @@ namespace
 
     loop_t user_update() {
 
-        if(ctx.backgrounded && !ctx.audio_ctx.play_bg) {
+        if(ctx.backgrounded) {
             pen::thread_sleep_ms(1000);
             pen_main_loop_continue();
         }
@@ -3649,9 +3653,6 @@ namespace
 
         // init context
         ctx.status_bar_height = pen::os_get_status_bar_portrait_height();
-
-        // permanent workers
-        pen::thread_create(registry_loader, 10 * 1024 * 1024, &ctx.data_ctx, pen::e_thread_start_flags::detached);
 
         // timer
         frame_timer = pen::timer_create();
@@ -3822,6 +3823,9 @@ void audio_player_stop_existing() {
 
 void audio_player()
 {
+    if(!ctx.view)
+        return;
+    
     auto& releases = ctx.view->releases;
     auto& audio_ctx = ctx.audio_ctx;
     

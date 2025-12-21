@@ -27,6 +27,7 @@
 #include <chrono>
 
 constexpr bool k_force_login = false;
+constexpr bool k_force_streamed_audio = false;
 
 using namespace put;
 using namespace pen;
@@ -351,7 +352,11 @@ bool check_audio_file(const Str& path)
         {
             char buf[4];
             fread(&buf[0], 1, 4, f);
-            if(buf[0] == '<' && buf[1] == '!')
+            if(buf[0] == '<' && buf[1] == '!') //html
+            {
+                return false;
+            }
+            if(buf[0] == '<' && buf[1] == '?') //xml
             {
                 return false;
             }
@@ -1348,15 +1353,23 @@ void* data_cache_fetch(void* userdata) {
                     view->releases.track_filepaths[i] = new Str[view->releases.track_url_count[i]];
                     for(u32 t = 0; t < view->releases.track_url_count[i]; ++t) {
                         view->releases.track_filepaths[i][t] = "";
-                        Str fp = download_and_cache(view->releases.track_urls[i][t], view->releases.key[i], true);
-                        
-                        if(check_audio_file(fp))
+                        if(!k_force_streamed_audio)
                         {
-                            view->releases.track_filepaths[i][t] = fp;
+                            Str fp = download_and_cache(view->releases.track_urls[i][t], view->releases.key[i], true);
+                            
+                            if(check_audio_file(fp))
+                            {
+                                view->releases.track_filepaths[i][t] = fp;
+                            }
+                            else
+                            {
+                                remove(fp.c_str());
+                            }
                         }
                         else
                         {
-                            remove(fp.c_str());
+                            //
+                            view->releases.track_filepaths[i][t] = view->releases.track_urls[i][t];
                         }
                     }
                     std::atomic_thread_fence(std::memory_order_release);
@@ -1364,6 +1377,7 @@ void* data_cache_fetch(void* userdata) {
                     view->releases.track_filepath_count[i] = view->releases.track_url_count[i];
                 }
             }
+
 
             // early out
             if(view->terminate) {
@@ -2078,11 +2092,12 @@ namespace
     void header_menu()
     {
         ImGui::SetWindowFontScale(k_text_size_h1);
-        ImGui::Dummy(ImVec2(k_indent1, 0.0f));
-        ImGui::SameLine();
 
         if(ctx.view->page == Page::likes || ctx.view->page == Page::settings)
         {
+            ImGui::Dummy(ImVec2(k_indent2, 0.0f));
+            ImGui::SameLine();
+            
             ImGui::Text("%s %s", ICON_FA_CHEVRON_LEFT, ctx.view->page == Page::likes ? "Likes" : "Settings");
             if(ImGui::IsItemClicked())
             {
@@ -2091,6 +2106,8 @@ namespace
         }
         else
         {
+            ImGui::Dummy(ImVec2(k_indent1, 0.0f));
+            ImGui::SameLine();
             ImGui::Text("diig");
         }
 
@@ -2099,7 +2116,7 @@ namespace
 
         f32 spacing = ImGui::GetStyle().ItemSpacing.x;
         f32 text_size = ImGui::CalcTextSize(ICON_FA_HEART).x;
-        f32 offset = ((text_size + spacing) * 2.0) + k_indent1;
+        f32 offset = ((text_size + spacing) * 2.0) + k_indent2;
 
         ImGui::SetCursorPosX(ctx.w - offset);
         ImGui::Text("%s", ctx.view->page == Page::likes ? ICON_FA_HEART : ICON_FA_HEART_O);
@@ -2493,7 +2510,7 @@ namespace
             {
                 auto ww = ImGui::GetWindowSize().x;
 
-                if(releases.track_url_count[r] == 0)
+                if(releases.track_url_count[r] == 0 || valid_audio == 0)
                 {
                     // no audio
                     ImGui::SetCursorPosX(ww * 0.5f);
@@ -3809,16 +3826,30 @@ void audio_player_stop_existing() {
     // stop existing
     if(is_valid(audio_ctx.si))
     {
-        // release existing
-        put::audio_channel_stop(audio_ctx.ci);
         put::audio_release_resource(audio_ctx.si);
-        put::audio_release_resource(audio_ctx.ci);
-        put::audio_release_resource(audio_ctx.gi);
         audio_ctx.si = -1;
-        audio_ctx.ci = -1;
-        audio_ctx.gi = -1;
-        audio_ctx.started = false;
     }
+    
+    if(is_valid(audio_ctx.ci))
+    {
+        put::audio_channel_stop(audio_ctx.ci);
+        put::audio_release_resource(audio_ctx.ci);
+        audio_ctx.ci = -1;
+    }
+    
+    if(is_valid(audio_ctx.si))
+    {
+        put::audio_release_resource(audio_ctx.si);
+        audio_ctx.si = -1;
+    }
+    
+    if(is_valid(audio_ctx.gi))
+    {
+        put::audio_release_resource(audio_ctx.gi);
+        audio_ctx.gi = -1;
+    }
+
+    audio_ctx.started = false;
 }
 
 void audio_player()
@@ -3850,37 +3881,82 @@ void audio_player()
             // stop existing
             audio_player_stop_existing();
             audio_ctx.play_track_filepath = "";
+            audio_ctx.play_track_url = "";
         }
                 
         // play new
-        if(audio_ctx.play_track_filepath.length() > 0 &&
-           audio_ctx.invalidate_track &&
-           pen::filesystem_file_exists(audio_ctx.play_track_filepath.c_str()))
+        if(!k_force_streamed_audio)
         {
-            // stop existing
-            audio_player_stop_existing();
-            
-            audio_ctx.si = put::audio_create_stream(audio_ctx.play_track_filepath.c_str());
-            audio_ctx.ci = put::audio_create_channel_for_sound(audio_ctx.si);
-            audio_ctx.gi = put::audio_create_channel_group();
-
-            put::audio_add_channel_to_group(audio_ctx.ci, audio_ctx.gi);
-            put::audio_group_set_volume(audio_ctx.gi, 1.0f);
-
-            u32 t = releases.select_track[ctx.top];
-            Str track_name = "";
-            if(t < releases.track_name_count[r]) {
-                track_name = releases.track_names[r][t];
+            if(audio_ctx.play_track_filepath.length() > 0 &&
+               audio_ctx.invalidate_track &&
+               pen::filesystem_file_exists(audio_ctx.play_track_filepath.c_str()))
+            {
+                // stop existing
+                audio_player_stop_existing();
+                
+                audio_ctx.si = put::audio_create_stream(audio_ctx.play_track_filepath.c_str());
+                audio_ctx.ci = put::audio_create_channel_for_sound(audio_ctx.si);
+                audio_ctx.gi = put::audio_create_channel_group();
+                
+                put::audio_add_channel_to_group(audio_ctx.ci, audio_ctx.gi);
+                put::audio_group_set_volume(audio_ctx.gi, 1.0f);
+                
+                u32 t = releases.select_track[ctx.top];
+                Str track_name = "";
+                if(t < releases.track_name_count[r]) {
+                    track_name = releases.track_names[r][t];
+                }
+                
+                pen::music_set_now_playing(releases.artist[r], releases.title[r], track_name);
+                
+                audio_ctx.read_tex_data_handle = 0;
+                audio_ctx.invalidate_track = false;
+                audio_ctx.started = false;
             }
-
-            pen::music_set_now_playing(
-                releases.artist[r], releases.title[r], track_name);
-
-            audio_ctx.read_tex_data_handle = 0;
-            audio_ctx.invalidate_track = false;
-            audio_ctx.started = false;
         }
-
+        else
+        {
+            if(audio_ctx.play_track_filepath.length() > 0 &&
+               audio_ctx.invalidate_track &&
+               pen::filesystem_file_exists(audio_ctx.play_track_filepath.c_str()))
+            {
+                // stop existing
+                audio_player_stop_existing();
+                audio_ctx.si = put::audio_create_sound_url(audio_ctx.play_track_filepath.c_str());
+                audio_ctx.invalidate_track = false;
+            }
+            
+            // defer the play
+            if(!is_valid(audio_ctx.ci))
+            {
+                if(is_valid(audio_ctx.si))
+                {
+                    f32 buffered = put::audio_sound_get_buffered_percentage(audio_ctx.si);
+                    
+                    if(buffered > 10.0f)
+                    {
+                        audio_ctx.ci = put::audio_create_channel_for_sound(audio_ctx.si);
+                        audio_ctx.gi = put::audio_create_channel_group();
+                        
+                        put::audio_add_channel_to_group(audio_ctx.ci, audio_ctx.gi);
+                        put::audio_group_set_volume(audio_ctx.gi, 1.0f);
+                        
+                        u32 t = releases.select_track[ctx.top];
+                        Str track_name = "";
+                        if(t < releases.track_name_count[r]) {
+                            track_name = releases.track_names[r][t];
+                        }
+                        
+                        pen::music_set_now_playing(releases.artist[r], releases.title[r], track_name);
+                        
+                        audio_ctx.read_tex_data_handle = 0;
+                        audio_ctx.invalidate_track = false;
+                        audio_ctx.started = false;
+                    }
+                }
+            }
+        }
+        
         // playing
         if(is_valid(audio_ctx.ci))
         {

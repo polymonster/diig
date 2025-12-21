@@ -129,6 +129,7 @@ constexpr f32       k_inertia = 0.96f;
 constexpr f32       k_inertia_cutoff = 3.33f;
 constexpr f32       k_snap_lerp = 0.3f;
 constexpr f32       k_indent1 = 2.0f;
+constexpr f32       k_indent2 = 36.0f;
 constexpr f32       k_top_pull_pad = 1.5f;
 constexpr f32       k_top_pull_reload = 1.25f;
 constexpr f32       k_text_size_h1 = 2.25f;
@@ -333,6 +334,7 @@ struct AudioPlayerContext
     bool    started = false;
     u32     read_tex_data_handle = 0;
     Str     play_track_filepath = "";
+    Str     play_track_url = "";
     bool    invalidate_track = false;
     bool    play_bg = false;
 };

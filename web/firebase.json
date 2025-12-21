@@ -1,0 +1,13 @@
+{
+  "apphosting": {
+    "backendId": "diig-web",
+    "rootDir": ".output/public",
+    "ignore": [
+      "node_modules",
+      ".git",
+      "firebase-debug.log",
+      "firebase-debug.*.log",
+      "functions"
+    ]
+  }
+}

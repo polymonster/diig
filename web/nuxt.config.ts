@@ -32,5 +32,8 @@ export default defineNuxtConfig({
       appId:process.env.NUXT_PUBLIC_FIREBASE_APP_ID,
       measurementId: process.env.NUXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
     },
+    admin: {
+      serviceAccount: false, // Let App Hosting handle this
+    },
   },
 })

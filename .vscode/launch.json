@@ -7,11 +7,10 @@
             "program": "dig.py",
             "cwd": "${workspaceFolder}/scrape",
             "args": [
-                "-store",
-                "juno",
+                "-store", "yoyaku",
                 "-verbose",
-                "-view",
-                "weekly_chart",
+                "-view", "weekly_chart",
+                "-section", "breaks",
                 "-urls"
             ]
         }

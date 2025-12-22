@@ -2510,14 +2510,9 @@ namespace
             {
                 auto ww = ImGui::GetWindowSize().x;
 
-                if(releases.track_url_count[r] == 0 || valid_audio == 0)
+                if(!(releases.flags[r] & EntityFlags::tracks_cached))
                 {
-                    // no audio
-                    ImGui::SetCursorPosX(ww * 0.5f);
-                    ImGui::Text("%s", ICON_FA_TIMES_CIRCLE);
-                }
-                else
-                {
+                    // loading
                     f32 tw = ImGui::CalcTextSize("....").x;
                     ImGui::SetCursorPosX((ww - tw) * 0.5f);
 
@@ -2527,6 +2522,13 @@ namespace
                     }
                     ImGui::Text("%s", dd.c_str());
                 }
+                else if(releases.track_url_count[r] == 0 || valid_audio == 0)
+                {
+                    // no audio
+                    ImGui::SetCursorPosX(ww * 0.5f);
+                    ImGui::Text("%s", ICON_FA_TIMES_CIRCLE);
+                }
+ 
             }
 
             // likes / buy

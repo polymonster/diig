@@ -1376,6 +1376,12 @@ void* data_cache_fetch(void* userdata) {
                     view->releases.flags[i] |= EntityFlags::tracks_cached;
                     view->releases.track_filepath_count[i] = view->releases.track_url_count[i];
                 }
+                else
+                {
+                    std::atomic_thread_fence(std::memory_order_release);
+                    view->releases.flags[i] |= EntityFlags::tracks_cached;
+                    view->releases.track_filepath_count[i] = 0;
+                }
             }
 
 
@@ -1439,6 +1445,35 @@ vec2f touch_screen_mouse_wheel()
 
     vec2f delta = (cur - prev);
     prev = cur;
+    
+    static constexpr bool k_use_smooth_delta = true;
+    if(k_use_smooth_delta)
+    {
+        static constexpr u32 k_max_history = 4;
+        static u32 history_pos = 0;
+        static u32 history_len = 0;
+        static vec2f delta_history[k_max_history];
+        if(ms.buttons[PEN_MOUSE_L])
+        {
+            delta_history[history_pos] = delta;
+            history_pos = (history_pos + 1) % k_max_history;
+            history_len = std::min(++history_len, k_max_history);
+            
+            vec2f smooth_delta = vec2f::zero();
+            for(u32 d = 0; d < history_len; ++d)
+            {
+                smooth_delta += delta_history[d];
+            }
+            
+            smooth_delta /= (f32)history_len;
+            delta = smooth_delta;
+        }
+        else
+        {
+            history_pos = 0;
+            history_len = 0;
+        }
+    }
 
     if(ms.buttons[PEN_MOUSE_L])
     {
@@ -2398,9 +2433,29 @@ namespace
                         }
                         else
                         {
-                            if(abs(scaled_vel) < 5.0)
+                            static constexpr bool k_snappier_swipe = true; // newer experimental
+                            if(k_snappier_swipe)
                             {
-                                releases.scrollx[r] = lerp(ssx, target, k_snap_lerp);
+                                f32 dir = (ssx - target);
+                                
+                                f32 diff = std::min(abs(releases.scrollx[r] - lerp(ssx, target, k_snap_lerp)), 7.5f);
+                                
+                                if(dir < 0.0)
+                                {
+                                    releases.scrollx[r] = std::max(releases.scrollx[r] + diff, target);
+                                }
+                                else if(dir > 0.0)
+                                {
+                                    releases.scrollx[r] = std::min(releases.scrollx[r] - diff, target);
+                                }
+                            }
+                            else
+                            {
+                                // old version had a bit fo sluggish drift, but keeping code for reference
+                                if(abs(scaled_vel) < 5.0)
+                                {
+                                    releases.scrollx[r] = lerp(ssx, target, k_snap_lerp);
+                                }
                             }
                         }
                     }
@@ -3084,7 +3139,7 @@ namespace
 
         // password visibility
         size_t addr = (size_t)password_buf;
-        ImGui::PushID(addr);
+        ImGui::PushID((int)addr);
         ImGui::SameLine();
         if(ImGui::Button(show_password ? ICON_FA_EYE_SLASH : ICON_FA_EYE,
                          {size.y, size.y}))

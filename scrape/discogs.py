@@ -127,8 +127,8 @@ def throttled_search(func, **kwargs):
 
 def check_search_limit(count):
     if "-searches" in sys.argv:
-        i = sys.argv.index("-limit") + 1
-        if count < sys.argv[i]:
+        i = sys.argv.index("-searches") + 1
+        if count < int(sys.argv[i]):
             return False
         else:
             return True
@@ -137,8 +137,8 @@ def check_search_limit(count):
 
 def check_release_limit(count):
     if "-releases" in sys.argv:
-        i = sys.argv.index("-limit") + 1
-        if count < sys.argv[i]:
+        i = sys.argv.index("-releases") + 1
+        if count < int(sys.argv[i]):
             return False
         else:
             return True
@@ -276,21 +276,22 @@ def collection_dump(discogs):
 
 
 def populate_discogs_links(discogs, store):
-    reg_file = "registry/{store}.json"
+    reg_file = f"registry/{store}.json"
     reg = json.loads(open(reg_file, "r").read())
     count = 0
     for entry in reg:
-        if "discogs_link" not in reg[entry] or "-recheck" in sys.argv:
+        if "discogs" not in reg[entry] or "-recheck" in sys.argv:
             print(f"{entry} - {concat_title(reg[entry])}")
-            result = release_search(discogs, reg[entry])
-            if "discogs_link" in reg[entry]:
-                if reg[entry]["discogs_link"] == result:
-                    print("matching!")
-            if result != None:
-                reg[entry]["discogs"] = result
-                count = count + 1
-                if check_release_limit(count):
-                    break
+            try:
+                result = release_search(discogs, reg[entry])
+                if result != None:
+                    reg[entry]["discogs"] = result
+                    count = count + 1
+                    if check_release_limit(count):
+                        break
+            except:
+                time.sleep(1)
+                continue
         else:
             print(f"{entry} {reg[entry]['cat']} - already exists")
     open(reg_file, "w").write(json.dumps(reg, indent=4))
@@ -300,6 +301,7 @@ def populate_discogs_links(discogs, store):
 def main():
     token = json.loads(open("discogs-auth.json", "r").read())["token"]
     discogs = discogs_client.Client('MyDiscogsApp/1.0', user_token=token)
+    dig.setup_firebase_auth()
 
     user = discogs.identity()
     print("logged in as:", user)

@@ -542,17 +542,22 @@ def test():
     assert(response.status_code == 200)
 
 
+def setup_firebase_auth():
+    global auth_key
+    # service key for firebase writes
+    if "-key" in sys.argv:
+        auth_key = json.loads(sys.argv[sys.argv.index("-key") + 1])
+    else:
+        auth_key = json.loads(open("diig-auth.json").read())
+
+
 # main
 if __name__ == '__main__':
     if "-help"  in sys.argv:
         display_help()
         exit(0)
 
-    # service key for firebase writes
-    if "-key" in sys.argv:
-        auth_key = json.loads(sys.argv[sys.argv.index("-key") + 1])
-    else:
-        auth_key = json.loads(open("diig-auth.json").read())
+    setup_firebase_auth()
 
     # run the fix-store function with custom code
     if "-fix-store" in sys.argv:

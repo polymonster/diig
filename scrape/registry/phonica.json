@@ -21594,7 +21594,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/84c2c68e86857d538ea1bb3af182db42.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/84c2c68e86857d538ea1bb3af182db42.jpg"
         ],
-        "phonica-tech-house-new_releases": 126
+        "phonica-tech-house-new_releases": 126,
+        "discogs": {
+            "url": "https://www.discogs.com/release/35549407-Nicolas-Duque-We-Drift-In-Pieces-",
+            "id": 35549407
+        }
     },
     "phonica-205948": {
         "store": "phonica",

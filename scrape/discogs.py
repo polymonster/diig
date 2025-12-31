@@ -345,6 +345,7 @@ def main():
     else:
         token = json.loads(open("discogs-auth.json", "r").read())["token"]
 
+    print("logging in to discogs")
     discogs = discogs_client.Client('MyDiscogsApp/1.0', user_token=token)
     dig.setup_firebase_auth()
 

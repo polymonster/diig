@@ -13878,7 +13878,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/86f72a3dfc39968dff9a402fd7e6a0db.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/86f72a3dfc39968dff9a402fd7e6a0db.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/86f72a3dfc39968dff9a402fd7e6a0db.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "/release/35427076-Henryg-Picnic-011",
+            "id": 35427076
+        }
     },
     "phonica-205894": {
         "store": "phonica",

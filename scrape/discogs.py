@@ -118,7 +118,23 @@ def tracklist_match_unordered(db, discogs, threshold=60):
 
 
 def search_title(title):
-    return re.sub(r'\s*\b\d+\s*(x)?\s*(LP|12|7|CD|CASS|CASSETTE|EP)\b\s*$', '', title, flags=re.IGNORECASE)
+    # Remove things like "2xLP", "12", "CD", "Cassette", etc. at the end
+    title = re.sub(
+        r'\s*\b\d+\s*(x)?\s*(LP|12|7|CD|CASS|CASSETTE|EP)\b\s*$',
+        '',
+        title,
+        flags=re.IGNORECASE
+    )
+
+    # Remove a trailing parenthetical block: "(Reissue)", "(Blue Vinyl)", etc.
+    title = re.sub(
+        r'\s*\([^)]*\)\s*$',
+        '',
+        title
+    )
+
+    return title
+
 
 
 def throttled_search(func, **kwargs):

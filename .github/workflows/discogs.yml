@@ -21,6 +21,7 @@ jobs:
         python3 -m pip install --upgrade pip
         python3 -m pip install --upgrade google-auth
         python3 -m pip install --upgrade python3-discogs-client
+        python3 -m pip install --upgrade yt-dlp
     - name: populate_discogs
       run: |
         cd scrape

@@ -2669,16 +2669,12 @@ namespace
                 ImGui::SameLine();
                 ImGui::Text("%s", ICON_FA_CIRCLE_O);
                 if(!scrolling && lenient_button_tap(rad)) {
-                    if(str_find("https://discogs.com", releases.discogs_url[r].c_str()) != -1)
-                    {
-                        ctx.open_url_request = releases.discogs_url[r];
-                    }
-                    else
-                    {
-                        Str link = "https://discogs.com";
-                        link.append(releases.discogs_url[r].c_str());
-                        ctx.open_url_request = link;
-                    }
+                    Str link = releases.discogs_url[r];
+                    link = str_replace_string(link, "https//www.discogs.com", "");
+                    link = str_replace_string(link, "https://www.discogs.com", "");
+                    Str url = "https://discogs.com";
+                    url.append(link.c_str());
+                    ctx.open_url_request = url;
                 }
             }
             ImGui::PopID();

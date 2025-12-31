@@ -551,6 +551,14 @@ def setup_firebase_auth():
         auth_key = json.loads(open("diig-auth.json").read())
 
 
+def load_combined_registries(reg_dir):
+    reg = dict()
+    for file in os.listdir(reg_dir):
+        if file.endswith(".json"):
+            store_reg = json.loads(open(f"{reg_dir}/{file}", "r").read())
+            merge_dicts(reg, store_reg)
+    return reg
+
 # main
 if __name__ == '__main__':
     if "-help"  in sys.argv:

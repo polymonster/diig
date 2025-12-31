@@ -249,9 +249,9 @@ def release_search(discogs, release):
             break
         time.sleep(1)
     if score > 0:
-        print(f"{release['link']} -> https://www.discogs.com{result.url}")
+        print(f"{release['link']} -> {result.url}")
         return {
-            "url": f"https://www.discogs.com{result.url}",
+            "url": f"{result.url}",
             "id": result.id
         }
     print(f"No results found for: {concat_title(release)} ({release['cat']})")
@@ -299,15 +299,37 @@ def populate_discogs_links(discogs, store):
     dig.patch_releases(json.dumps(reg))
 
 
-def populate_discogs_likes(likes_file):
+def populate_discogs_likes(discogs, likes_file):
+    count = 0
     likes = json.loads(open(likes_file, "r").read())
-    reg = dig.load_combined_registries("registry")
-    for like in likes:
-        print(like)
+    for file in os.listdir("registry"):
+        if file.endswith(".json"):
+            reg_file = f"registry/{file}"
+            reg = json.loads(open(reg_file, "r").read())
+            for entry in likes:
+                if entry in reg:
+                    if "discogs" not in reg[entry] or "-recheck" in sys.argv:
+                        print(f"{entry} - {concat_title(reg[entry])}")
+                        try:
+                            result = release_search(discogs, reg[entry])
+                            if result != None:
+                                reg[entry]["discogs"] = result
+                                count = count + 1
+                                if check_release_limit(count):
+                                    break
+                        except:
+                            time.sleep(1)
+                            continue
+            open(reg_file, "w").write(json.dumps(reg, indent=4))
+            dig.patch_releases(json.dumps(reg))
 
 
 def main():
-    token = json.loads(open("discogs-auth.json", "r").read())["token"]
+    if "-discogs-key" in sys.argv:
+        token = sys.argv[sys.argv.index("-discogs-key") + 1]
+    else:
+        token = json.loads(open("discogs-auth.json", "r").read())["token"]
+
     discogs = discogs_client.Client('MyDiscogsApp/1.0', user_token=token)
     dig.setup_firebase_auth()
 
@@ -318,7 +340,7 @@ def main():
         store = sys.argv[sys.argv.index("-store") + 1]
         populate_discogs_links(discogs, store)
     elif "-likes" in sys.argv:
-        populate_discogs_likes(sys.argv[sys.argv.index("-likes") + 1])
+        populate_discogs_likes(discogs, sys.argv[sys.argv.index("-likes") + 1])
 
 
     # genre_search(discogs, style='Tech House', year=2023)

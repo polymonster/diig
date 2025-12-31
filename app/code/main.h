@@ -262,6 +262,7 @@ struct soa
     cmp_array<StoreTags_t>                  store_tags;
     cmp_array<Str>                          store;
     cmp_array<u32>                          like_count;
+    cmp_array<Str>                          discogs_url;
     std::atomic<size_t>                     available_entries = {0};
     std::atomic<size_t>                     soa_size = {0};
 };

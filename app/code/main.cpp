@@ -851,6 +851,19 @@ void* user_data_thread(void* userdata)
     return nullptr;
 }
 
+inline Str safe_discogs_url(nlohmann::json& j, const Str& default_value)
+{
+    if(j.contains("discogs"))
+    {
+        if(j["discogs"].contains("url"))
+        {
+            return ((std::string)j["discogs"]["url"]).c_str();
+        }
+    }
+    
+    return default_value;
+}
+
 inline Str safe_str(nlohmann::json& j, const c8* key, const Str& default_value)
 {
     if(j.contains(key))
@@ -1167,7 +1180,10 @@ void* releases_view_loader(void* userdata)
         view->releases.cat[ri] = safe_str(release, "cat", "");
         view->releases.store[ri] = safe_str(release, "store", "");
         view->releases.label_link[ri] = safe_str(release, "label_link", "");
-
+        
+        // discogs info
+        view->releases.discogs_url[ri] = safe_discogs_url(release, "");
+        
         // clear
         view->releases.artwork_filepath[ri] = "";
         view->releases.artwork_texture[ri] = 0;
@@ -2655,6 +2671,10 @@ namespace
 
             if(releases.store_tags[r] & StoreTags::low_stock) {
                 hype_icons.append(ICON_FA_THERMOMETER_QUARTER);
+            }
+            
+            if(!releases.discogs_url[r].empty()) {
+                hype_icons.append(ICON_FA_CIRCLE);
             }
 
             if(!(releases.store_tags[r] & StoreTags::out_of_stock)) {

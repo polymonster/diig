@@ -5,6 +5,7 @@ import yt_dlp
 import re
 import sys
 import dig
+import os
 from rapidfuzz import fuzz
 
 def hyperlink(text, url):
@@ -298,6 +299,13 @@ def populate_discogs_links(discogs, store):
     dig.patch_releases(json.dumps(reg))
 
 
+def populate_discogs_likes(likes_file):
+    likes = json.loads(open(likes_file, "r").read())
+    reg = dig.load_combined_registries("registry")
+    for like in likes:
+        print(like)
+
+
 def main():
     token = json.loads(open("discogs-auth.json", "r").read())["token"]
     discogs = discogs_client.Client('MyDiscogsApp/1.0', user_token=token)
@@ -309,6 +317,9 @@ def main():
     if "-store" in sys.argv:
         store = sys.argv[sys.argv.index("-store") + 1]
         populate_discogs_links(discogs, store)
+    elif "-likes" in sys.argv:
+        populate_discogs_likes(sys.argv[sys.argv.index("-likes") + 1])
+
 
     # genre_search(discogs, style='Tech House', year=2023)
     # collection_dump(discogs)

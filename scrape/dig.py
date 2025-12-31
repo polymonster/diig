@@ -565,6 +565,7 @@ if __name__ == '__main__':
         display_help()
         exit(0)
 
+    # auth
     setup_firebase_auth()
 
     # run the fix-store function with custom code

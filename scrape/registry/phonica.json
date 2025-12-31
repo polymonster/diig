@@ -9042,7 +9042,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/2f4bdee34a427ccb14f10e07c47a967c.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/2f4bdee34a427ccb14f10e07c47a967c.jpg"
         ],
-        "phonica-tech-house-new_releases": 162
+        "phonica-tech-house-new_releases": 162,
+        "discogs": {
+            "url": "https://www.discogs.com/release/35644546-Various-Full-Circle-Vol-Two",
+            "id": 35644546
+        }
     },
     "phonica-205934": {
         "store": "phonica",
@@ -20358,7 +20362,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/c13d391f820b84a68563af56657f1881.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/c13d391f820b84a68563af56657f1881.jpg"
         ],
-        "phonica-new-releases-new_releases": 24
+        "phonica-new-releases-new_releases": 24,
+        "discogs": {
+            "url": "https://www.discogs.com/release/35620540-S-Moreira-Where-We-Left-Off",
+            "id": 35620540
+        }
     },
     "phonica-206640": {
         "store": "phonica",
@@ -42312,7 +42320,11 @@
             "out_of_stock": true,
             "preorder": false
         },
-        "phonica-tech-house-bestsellers": 11
+        "phonica-tech-house-bestsellers": 11,
+        "discogs": {
+            "url": "https://www.discogs.com/release/35427967-Mich-20-Lullaby-",
+            "id": 35427967
+        }
     },
     "phonica-207053": {
         "store": "phonica",

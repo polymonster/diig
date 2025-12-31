@@ -22090,7 +22090,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/268b7f4bc7a5bbdf80019a583b81e491.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/268b7f4bc7a5bbdf80019a583b81e491.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/268b7f4bc7a5bbdf80019a583b81e491.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "/release/35525878-Wilba-Retracing-The-Steps",
+            "id": 35525878
+        }
     },
     "phonica-206475": {
         "store": "phonica",

@@ -2660,6 +2660,28 @@ namespace
                 ImGui::SameLine();
                 ImGui::Text("%s", ICON_FA_EXCLAMATION);
             }
+            
+            ImGui::PushID("discogs");
+            if(!releases.discogs_url[r].empty()) {
+                ImGui::SameLine();
+                ImGui::Spacing();
+                
+                ImGui::SameLine();
+                ImGui::Text("%s", ICON_FA_CIRCLE_O);
+                if(!scrolling && lenient_button_tap(rad)) {
+                    if(str_find("https://discogs.com", releases.discogs_url[r].c_str()) != -1)
+                    {
+                        ctx.open_url_request = releases.discogs_url[r];
+                    }
+                    else
+                    {
+                        Str link = "https://discogs.com";
+                        link.append(releases.discogs_url[r].c_str());
+                        ctx.open_url_request = link;
+                    }
+                }
+            }
+            ImGui::PopID();
 
             // mini hype icons
             ImGui::SetWindowFontScale(k_text_size_body);
@@ -2673,9 +2695,14 @@ namespace
                 hype_icons.append(ICON_FA_THERMOMETER_QUARTER);
             }
             
+            /*
             if(!releases.discogs_url[r].empty()) {
+                if(!hype_icons.empty()) {
+                    hype_icons.append(" ");
+                }
                 hype_icons.append(ICON_FA_CIRCLE);
             }
+            */
 
             if(!(releases.store_tags[r] & StoreTags::out_of_stock)) {
                 if(releases.store_tags[r] & StoreTags::has_been_out_of_stock) {

@@ -22,6 +22,7 @@ jobs:
         python3 -m pip install --upgrade google-auth
         python3 -m pip install --upgrade python3-discogs-client
         python3 -m pip install --upgrade yt-dlp
+        python3 -m pip install --upgrade rapidfuzz
     - name: populate_discogs
       run: |
         cd scrape

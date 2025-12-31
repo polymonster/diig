@@ -4370,7 +4370,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/0ca016ca90979b69cab28a7c6570b2ad.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/0ca016ca90979b69cab28a7c6570b2ad.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/0ca016ca90979b69cab28a7c6570b2ad.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/35186659-Children-Of-The-Sun-16-Tidal-Disruption",
+            "id": 35186659
+        }
     },
     "phonica-206279": {
         "store": "phonica",
@@ -20402,7 +20406,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/c57a46bfe56a96e24a9823d43076c08a.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/c57a46bfe56a96e24a9823d43076c08a.jpg"
         ],
-        "phonica-new-releases-new_releases": 30
+        "phonica-new-releases-new_releases": 30,
+        "discogs": {
+            "url": "https://www.discogs.com/release/35620174-b0n-Bass-Flexx-EP",
+            "id": 35620174
+        }
     },
     "phonica-206716": {
         "store": "phonica",
@@ -20751,7 +20759,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/708758b3be107bc8446ab7f5df5e6723.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/708758b3be107bc8446ab7f5df5e6723.jpg"
         ],
-        "phonica-new-releases-new_releases": 22
+        "phonica-new-releases-new_releases": 22,
+        "discogs": {
+            "url": "https://www.discogs.com/release/35116760-Various-Family-Trip-Disc-1",
+            "id": 35116760
+        }
     },
     "phonica-206302": {
         "store": "phonica",
@@ -21666,7 +21678,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/f6b0bf0ec24d8d5c82df1ff836f4d933.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/f6b0bf0ec24d8d5c82df1ff836f4d933.jpg"
         ],
-        "phonica-tech-house-new_releases": 24
+        "phonica-tech-house-new_releases": 24,
+        "discogs": {
+            "url": "https://www.discogs.com/release/35105573-Various-Unsilenced-VA-Vol3",
+            "id": 35105573
+        }
     },
     "phonica-207544": {
         "store": "phonica",
@@ -21698,7 +21714,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/127152bb575cf3607095da4cc1bc7b38.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/127152bb575cf3607095da4cc1bc7b38.jpg"
         ],
-        "phonica-tech-house-bestsellers": 15
+        "phonica-tech-house-bestsellers": 15,
+        "discogs": {
+            "url": "/release/35935459-Mihai-Popoviciu-What-I-Need",
+            "id": 35935459
+        }
     },
     "phonica-206268": {
         "store": "phonica",
@@ -21887,7 +21907,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/1335f8236a5b53999c3472dfc740e191.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/1335f8236a5b53999c3472dfc740e191.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/1335f8236a5b53999c3472dfc740e191.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "/release/35635267-Body-Clinic-The-Righteous-EP",
+            "id": 35635267
+        }
     },
     "phonica-200188": {
         "store": "phonica",
@@ -24827,7 +24851,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/0947069059eb315f034165f0156cc904.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/0947069059eb315f034165f0156cc904.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/0947069059eb315f034165f0156cc904.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "/release/35722765-NTFO-Special-Edition-EP",
+            "id": 35722765
+        }
     },
     "phonica-207373": {
         "store": "phonica",
@@ -25320,6 +25348,10 @@
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
+        },
+        "discogs": {
+            "url": "https://www.discogs.com/release/2886929-Maya-Jane-Coles-Focus-Now",
+            "id": 2886929
         }
     },
     "phonica-206928": {
@@ -25417,7 +25449,11 @@
             "out_of_stock": false,
             "preorder": false
         },
-        "phonica-tech-house-new_releases": 89
+        "phonica-tech-house-new_releases": 89,
+        "discogs": {
+            "url": "/release/32016320-Basic7-Time-EP",
+            "id": 32016320
+        }
     },
     "phonica-208095": {
         "store": "phonica",
@@ -32027,6 +32063,10 @@
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
+        },
+        "discogs": {
+            "url": "/release/35465272-FFriend-Fated-Friendship",
+            "id": 35465272
         }
     },
     "phonica-205358": {
@@ -34503,6 +34543,10 @@
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
+        },
+        "discogs": {
+            "url": "https://www.discogs.com/release/35941768-Various-Il-\u00e9tait-une-fois-Le-Bien-Le-Mal",
+            "id": 35941768
         }
     },
     "phonica-207695": {
@@ -40282,7 +40326,11 @@
             "preorder": false
         },
         "phonica-tech-house-new_releases": 20,
-        "phonica-tech-house-bestsellers": 11
+        "phonica-tech-house-bestsellers": 11,
+        "discogs": {
+            "url": "/release/35399557-Cosmjn-Nights-in-Itaewon",
+            "id": 35399557
+        }
     },
     "phonica-191712": {
         "store": "phonica",
@@ -40588,7 +40636,11 @@
             "out_of_stock": false,
             "preorder": false
         },
-        "phonica-techno-new_releases": 41
+        "phonica-techno-new_releases": 41,
+        "discogs": {
+            "url": "https://www.discogs.com/release/35919676-Another-Channel-Aphelion",
+            "id": 35919676
+        }
     },
     "phonica-207186": {
         "store": "phonica",
@@ -42402,7 +42454,11 @@
             "preorder": false
         },
         "phonica-tech-house-new_releases": 3,
-        "phonica-techno-new_releases": 7
+        "phonica-techno-new_releases": 7,
+        "discogs": {
+            "url": "https://www.discogs.com/release/35387956-Pankiun-Omar-Akhrif-Rufo-4-ROTO-CQTR006",
+            "id": 35387956
+        }
     },
     "phonica-207054": {
         "store": "phonica",

@@ -332,6 +332,10 @@ def populate_discogs_likes(discogs, likes_file):
                                 count = count + 1
                                 if check_release_limit(count):
                                     break
+                            else:
+                                reg[entry]["discogs"] = {
+                                    "attempted": True
+                                }
                         except:
                             time.sleep(1)
                             continue

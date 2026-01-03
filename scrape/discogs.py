@@ -305,11 +305,18 @@ def populate_discogs_links(discogs, store):
                     count = count + 1
                     if check_release_limit(count):
                         break
+                else:
+                    reg[entry]["discogs"] = {
+                        "attempted": True
+                    }
             except:
                 time.sleep(1)
                 continue
         else:
-            print(f"{entry} {reg[entry]['cat']} - already exists")
+            if "attempted" in reg[entry]["discogs"]:
+                print(f"{entry} {reg[entry]['cat']} - previously attempted and failed to find")
+            else:
+                print(f"{entry} {reg[entry]['cat']} - already exists")
     open(reg_file, "w").write(json.dumps(reg, indent=4))
     dig.patch_releases(json.dumps(reg))
 
@@ -339,6 +346,11 @@ def populate_discogs_likes(discogs, likes_file):
                         except:
                             time.sleep(1)
                             continue
+                else:
+                    if "attempted" in reg[entry]["discogs"]:
+                        print(f"{entry} {reg[entry]['cat']} - previously attempted and failed to find")
+                    else:
+                        print(f"{entry} {reg[entry]['cat']} - already exists")
             open(reg_file, "w").write(json.dumps(reg, indent=4))
             dig.patch_releases(json.dumps(reg))
 
@@ -361,7 +373,6 @@ def main():
         populate_discogs_links(discogs, store)
     elif "-likes" in sys.argv:
         populate_discogs_likes(discogs, sys.argv[sys.argv.index("-likes") + 1])
-
 
     # genre_search(discogs, style='Tech House', year=2023)
     # collection_dump(discogs)

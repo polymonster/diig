@@ -208,6 +208,15 @@ def release_search(discogs, release):
     searches = sorted(searches, key=lambda x: len(x["search"]))
     for search in searches:
         for result in search["search"]:
+            # handle missing release or forward a rate limit exception
+            try:
+                hasattr(result, "labels")
+                time.sleep(1)
+            except discogs_client.exceptions.HTTPError as e:
+                if e.status_code == 404:
+                    continue
+                else:
+                    raise
             count += 1
             if check_search_limit(count):
                 print(f"No results found for (after {count} attempts): {concat_title(release)} ({release['cat']})")
@@ -295,28 +304,36 @@ def populate_discogs_links(discogs, store):
     reg_file = f"registry/{store}.json"
     reg = json.loads(open(reg_file, "r").read())
     count = 0
+    hits = 0
+    prev_attemps = 0
+    failures = 0
     for entry in reg:
         if "discogs" not in reg[entry] or "-recheck" in sys.argv:
-            print(f"{entry} - {concat_title(reg[entry])}")
-            try:
-                result = release_search(discogs, reg[entry])
-                if result != None:
-                    reg[entry]["discogs"] = result
-                    count = count + 1
-                    if check_release_limit(count):
-                        break
-                else:
-                    reg[entry]["discogs"] = {
-                        "attempted": True
-                    }
-            except:
-                time.sleep(1)
-                continue
+            if not check_release_limit(count):
+                print(f"{entry} - {concat_title(reg[entry])}")
+                try:
+                    result = release_search(discogs, reg[entry])
+                    if result != None:
+                        reg[entry]["discogs"] = result
+                        count = count + 1
+                        hits += 1
+                    else:
+                        reg[entry]["discogs"] = {
+                            "attempted": True
+                        }
+                except:
+                    failures += 1
+                    print("failed with exception")
+                    time.sleep(1)
+                    continue
         else:
             if "attempted" in reg[entry]["discogs"]:
                 print(f"{entry} {reg[entry]['cat']} - previously attempted and failed to find")
+                prev_attemps += 1
             else:
                 print(f"{entry} {reg[entry]['cat']} - already exists")
+                hits += 1
+    print(f"Job complete: {count} new additions, {hits} have info, {prev_attemps} previously attempted, {failures} failures")
     open(reg_file, "w").write(json.dumps(reg, indent=4))
     dig.patch_releases(json.dumps(reg))
 

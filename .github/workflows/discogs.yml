@@ -26,7 +26,7 @@ jobs:
     - name: populate_discogs
       run: |
         cd scrape
-        python3 discogs.py -store ${{ github.event.inputs.store }} -key '${{secrets.SERVICE_ACCOUNT}}' -discogs-key '${{secrets.DISCOGS_KEY}}' -releases 512 -searches 100 -verbose
+        python3 discogs.py -store ${{ github.event.inputs.store }} -key '${{secrets.SERVICE_ACCOUNT}}' -discogs-key '${{secrets.DISCOGS_KEY}}' -releases 1024 -searches 100
         git config user.name github-actions
         git config user.email github-actions@github.com
         git add .

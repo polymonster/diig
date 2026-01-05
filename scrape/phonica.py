@@ -112,7 +112,7 @@ def scrape_page(url, store, store_dict, view, section, counter, session_scraped_
             attempts += 1
             if attempts > 5:
                 raise
-            print(f"Failed to get URL, with exception retrying after {attempts} attempts")
+            print(f"Failed to get_json with exception. retrying after {attempts} attempts")
             dig.scrape_yield()
 
     store_url = "https://www.phonicarecords.com"

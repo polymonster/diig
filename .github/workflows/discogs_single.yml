@@ -1,13 +1,18 @@
-name: discogs
+name: discogs_single
 on:
-  schedule:
-    - cron: "0 6 * * *"
   workflow_dispatch:
+    inputs:
+      store:
+        description: 'Select a record store'
+        required: true
+        type: choice
+        options:
+          - juno
+          - redeye
+          - phonica
+          - yoyaku
 jobs:
   scrape-discogs:
-    strategy:
-      matrix:
-        store: [redeye, juno, phonica, yoyaku]
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -21,10 +26,10 @@ jobs:
     - name: populate_discogs
       run: |
         cd scrape
-        python3 discogs.py -store '${{matrix.store}}' -key '${{secrets.SERVICE_ACCOUNT}}' -discogs-key '${{secrets.DISCOGS_KEY}}' -releases 512 -searches 100
+        python3 discogs.py -store ${{ github.event.inputs.store }} -key '${{secrets.SERVICE_ACCOUNT}}' -discogs-key '${{secrets.DISCOGS_KEY}}' -releases 1024 -searches 100
         git config user.name github-actions
         git config user.email github-actions@github.com
         git add .
-        git commit -m "- update '${{matrix.store}}' releases" || true
+        git commit -m "- update ${{ github.event.inputs.store }} releases" || true
         git pull --rebase
         git push origin HEAD:main

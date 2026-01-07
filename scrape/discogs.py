@@ -162,20 +162,26 @@ def check_release_limit(count):
 
 
 def release_search(discogs, release):
-    searches = [
-        {
-            "search": throttled_search(discogs.search,
-                catno=release['cat'],
-                type='release'
-            ),
-            "search_keys": ['catno'],
-        },
-        {
-            "search": throttled_search(discogs.search,
-                q=search_title(release['cat'])
-            ),
-            "search_keys": [],
-        },
+    searches = list()
+    # searches based on catno, if we have one
+    if len(release['cat']) > 0:
+        searches.extend([
+            {
+                "search": throttled_search(discogs.search,
+                    catno=release['cat'],
+                    type='release'
+                ),
+                "search_keys": ['catno'],
+            },
+            {
+                "search": throttled_search(discogs.search,
+                    q=search_title(release['cat'])
+                ),
+                "search_keys": [],
+            }
+        ])
+    # searches based on title
+    searches.extend([
         {
             "search": throttled_search(discogs.search,
                 q=search_title(release['title'])
@@ -197,7 +203,7 @@ def release_search(discogs, release):
             ),
             "search_keys": ['title'],
         }
-    ]
+    ])
     if "-verbose" in sys.argv:
         counts = []
         for search in searches:
@@ -223,9 +229,9 @@ def release_search(discogs, release):
                 return None
             if "-verbose" in sys.argv:
                 if hasattr(result, "title"):
-                    print(f"{result.title}: https://www.discogs.com{result.url}")
+                    print(f"{result.title}: {result.url}")
                 else:
-                    print(f"https://www.discogs.com{result.url}")
+                    print(f"{result.url}")
             # match title, this gives us the best / most reliable
             if hasattr(result, "title"):
                 if caseless_cmp(release['title'], result.title):
@@ -307,7 +313,15 @@ def populate_discogs_links(discogs, store):
     hits = 0
     prev_attemps = 0
     failures = 0
+
+    # time limit of 5.5hs so we can push any improvements before GH actions kills us
+    deadline = time.monotonic() + 5.5 * 60 * 60
+
+    # iterate over all entries
     for entry in reg:
+        if time.monotonic() >= deadline:
+            print("terminating early to beat deadline")
+            break
         if "discogs" not in reg[entry] or "-recheck" in sys.argv:
             if not check_release_limit(count):
                 print(f"{entry} - {concat_title(reg[entry])}")
@@ -333,7 +347,7 @@ def populate_discogs_links(discogs, store):
             else:
                 print(f"{entry} {reg[entry]['cat']} - already exists")
                 hits += 1
-    print(f"Job complete: {count} new additions, {hits} have info, {prev_attemps} previously attempted, {failures} failures")
+    print(f"Job complete: {count} new additions, {hits} have info / {len(reg)}, {prev_attemps} previously attempted, {failures} failures")
     open(reg_file, "w").write(json.dumps(reg, indent=4))
     dig.patch_releases(json.dumps(reg))
 

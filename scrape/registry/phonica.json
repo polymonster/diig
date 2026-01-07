@@ -23,7 +23,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/a6624d92479bdc72219832eb4d750af2.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/a6624d92479bdc72219832eb4d750af2.jpg"
         ],
-        "phonica-essentials-essentials": 10
+        "phonica-essentials-essentials": 10,
+        "discogs": {
+            "url": "https://www.discogs.com/release/35209948-LCD-Soundsystem-Home-Tom-Sharkett-Edit",
+            "id": 35209948
+        }
     },
     "phonica-205440": {
         "store": "phonica",
@@ -49,7 +53,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/d2c5ee5c33dca3d56b97e5c49d082597_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/d2c5ee5c33dca3d56b97e5c49d082597_big.jpg"
         ],
-        "phonica-essentials-essentials": 2
+        "phonica-essentials-essentials": 2,
+        "discogs": {
+            "url": "https://www.discogs.com/release/35848369-Four-Tet-Into-Dust-Still-Falling",
+            "id": 35848369
+        }
     },
     "phonica-205493": {
         "store": "phonica",
@@ -77,7 +85,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/0fdcad77e51e1a5bfeb275cc448e979f_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/0fdcad77e51e1a5bfeb275cc448e979f_big.jpg"
         ],
-        "phonica-essentials-essentials": 4
+        "phonica-essentials-essentials": 4,
+        "discogs": {
+            "url": "https://www.discogs.com/release/34733937-Burial-Comafields-Imaginary-Festival",
+            "id": 34733937
+        }
     },
     "phonica-206264": {
         "store": "phonica",
@@ -117,7 +129,10 @@
             "https://d1c4rk9le5opln.cloudfront.net/ad604393e8af94c6c0b61951a7c8aa80.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/ad604393e8af94c6c0b61951a7c8aa80.jpg"
         ],
-        "phonica-essentials-essentials": 5
+        "phonica-essentials-essentials": 5,
+        "discogs": {
+            "attempted": true
+        }
     },
     "phonica-206521": {
         "store": "phonica",
@@ -149,7 +164,10 @@
             "https://d1c4rk9le5opln.cloudfront.net/5d6378bc1d30a0714177b3de7c4313e7.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/5d6378bc1d30a0714177b3de7c4313e7.jpg"
         ],
-        "phonica-essentials-essentials": 7
+        "phonica-essentials-essentials": 7,
+        "discogs": {
+            "attempted": true
+        }
     },
     "phonica-205373": {
         "store": "phonica",
@@ -181,7 +199,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/b2a0bcd2c3d8a53594e58c8ecffcccf2.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/b2a0bcd2c3d8a53594e58c8ecffcccf2.jpg"
         ],
-        "phonica-essentials-essentials": 6
+        "phonica-essentials-essentials": 6,
+        "discogs": {
+            "url": "https://www.discogs.com/release/35170684-Bushwacka-House-Sounds-Vol-2",
+            "id": 35170684
+        }
     },
     "phonica-205808": {
         "store": "phonica",
@@ -214,7 +236,10 @@
             "https://d1c4rk9le5opln.cloudfront.net/7105896ce4c73690bcbe6424f1df4c2c.jpg"
         ],
         "phonica-essentials-essentials": 9,
-        "phonica-tech-house-new_releases": 175
+        "phonica-tech-house-new_releases": 175,
+        "discogs": {
+            "attempted": true
+        }
     },
     "phonica-205736": {
         "store": "phonica",
@@ -244,7 +269,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/da58a71f2db69d6dc9a298c5ab39ff1a_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/da58a71f2db69d6dc9a298c5ab39ff1a_big.jpg"
         ],
-        "phonica-essentials-essentials": 8
+        "phonica-essentials-essentials": 8,
+        "discogs": {
+            "url": "https://www.discogs.com/release/35254219-Jamie-326-Dancefloor-Damage-Vol-3",
+            "id": 35254219
+        }
     },
     "phonica-205828": {
         "store": "phonica",
@@ -276,7 +305,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/5a6c2b4f4cdce96ddd207b495bfb3ffe.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/5a6c2b4f4cdce96ddd207b495bfb3ffe.jpg"
         ],
-        "phonica-essentials-essentials": 13
+        "phonica-essentials-essentials": 13,
+        "discogs": {
+            "url": "https://www.discogs.com/release/34134184-DOC-N-P1LL-RX-Prescriptions-Volume-2",
+            "id": 34134184
+        }
     },
     "phonica-206180": {
         "store": "phonica",
@@ -304,7 +337,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/a6468eb950ed9b62034e2f64b1f2fe20_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/a6468eb950ed9b62034e2f64b1f2fe20_big.jpg"
         ],
-        "phonica-essentials-essentials": 14
+        "phonica-essentials-essentials": 14,
+        "discogs": {
+            "url": "https://www.discogs.com/release/35007938-Murrin-King-Puck-Remixes",
+            "id": 35007938
+        }
     },
     "phonica-205230": {
         "store": "phonica",
@@ -336,7 +373,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/d77ae472c956fa669b35cb6a520a8ad8.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/d77ae472c956fa669b35cb6a520a8ad8.jpg"
         ],
-        "phonica-essentials-essentials": 12
+        "phonica-essentials-essentials": 12,
+        "discogs": {
+            "url": "https://www.discogs.com/release/35129753-Alexis-Cabrera-Sweely-Nonchalantly-Ep",
+            "id": 35129753
+        }
     },
     "phonica-205777": {
         "store": "phonica",
@@ -368,7 +409,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/7bfb60b7a8dc6e86bdb3d101d0482aa1_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/7bfb60b7a8dc6e86bdb3d101d0482aa1_big.jpg"
         ],
-        "phonica-essentials-essentials": 16
+        "phonica-essentials-essentials": 16,
+        "discogs": {
+            "url": "https://www.discogs.com/release/35127668-Inner-Lakes-Showyu",
+            "id": 35127668
+        }
     },
     "phonica-205662": {
         "store": "phonica",
@@ -396,7 +441,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/deeab4d705d353f8a69970da8f8b4505_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/deeab4d705d353f8a69970da8f8b4505_big.jpg"
         ],
-        "phonica-essentials-essentials": 11
+        "phonica-essentials-essentials": 11,
+        "discogs": {
+            "url": "https://www.discogs.com/release/35069345-Quiet-Village-Vanessa-Daou-Naked-Hunger",
+            "id": 35069345
+        }
     },
     "phonica-205162": {
         "store": "phonica",
@@ -442,7 +491,11 @@
         ],
         "phonica-essentials-essentials": 0,
         "phonica-all-genres-new-releases": 64,
-        "phonica-sectionless-essentials": 29
+        "phonica-sectionless-essentials": 29,
+        "discogs": {
+            "url": "https://www.discogs.com/release/35328664-Moodymann-Black-Mahogani",
+            "id": 35328664
+        }
     },
     "phonica-206028": {
         "store": "phonica",
@@ -495,7 +548,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/b91dd325af679b63cab4181eb3a0cb8c.jpg"
         ],
         "phonica-essentials-essentials": 1,
-        "phonica-all-genres-new-releases": 75
+        "phonica-all-genres-new-releases": 75,
+        "discogs": {
+            "url": "https://www.discogs.com/release/35328892-Blawan-SickElixir",
+            "id": 35328892
+        }
     },
     "phonica-206019": {
         "store": "phonica",
@@ -523,7 +580,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/a14d3f667b08021024e52e8cbf009c98.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/a14d3f667b08021024e52e8cbf009c98.jpg"
         ],
-        "phonica-all-genres-new-releases": 8
+        "phonica-all-genres-new-releases": 8,
+        "discogs": {
+            "url": "https://www.discogs.com/release/35347717-Arp-Frique-The-Perpetual-Singers-Save-Your-Soul",
+            "id": 35347717
+        }
     },
     "phonica-206275": {
         "store": "phonica",
@@ -556,7 +617,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/1fcee4b9033b6cdb3a84284d93af345d.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/1fcee4b9033b6cdb3a84284d93af345d.jpg"
         ],
-        "phonica-tech-house-new_releases": 167
+        "phonica-tech-house-new_releases": 167,
+        "discogs": {
+            "url": "https://www.discogs.com/release/35325751-Odopt-Wired",
+            "id": 35325751
+        }
     },
     "phonica-63603": {
         "store": "phonica",
@@ -586,7 +651,10 @@
             "https://d1c4rk9le5opln.cloudfront.net/a0f01ed9629136dd597bdf19142cbc33_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/a0f01ed9629136dd597bdf19142cbc33_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/a0f01ed9629136dd597bdf19142cbc33_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "attempted": true
+        }
     },
     "phonica-204533": {
         "store": "phonica",
@@ -618,7 +686,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/6afaa748b6d58f2ea445bd419f5bffbd_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/6afaa748b6d58f2ea445bd419f5bffbd_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/6afaa748b6d58f2ea445bd419f5bffbd_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/35068721-Various-Various-Vol2",
+            "id": 35068721
+        }
     },
     "phonica-203696": {
         "store": "phonica",
@@ -650,7 +722,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/634cda836ff26c69262cbf2f4b508105_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/634cda836ff26c69262cbf2f4b508105_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/634cda836ff26c69262cbf2f4b508105_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/35089256-DJ-Steaw-Midnight-Soul-EP",
+            "id": 35089256
+        }
     },
     "phonica-203053": {
         "store": "phonica",
@@ -682,7 +758,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/b60ddbaeca939b4d8c88cdb704647acc_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/b60ddbaeca939b4d8c88cdb704647acc_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/b60ddbaeca939b4d8c88cdb704647acc_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/35368675-Ron-Hardy-Ron-Hardy-58",
+            "id": 35368675
+        }
     },
     "phonica-169837": {
         "store": "phonica",
@@ -738,7 +818,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/cce0216d58caee2f5c122b3faadd5b2d.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/cce0216d58caee2f5c122b3faadd5b2d.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/cce0216d58caee2f5c122b3faadd5b2d.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/16817958-Various-Virtual-Dreams-Ambient-Explorations-In-The-House-Techno-Age-1993-1997",
+            "id": 16817958
+        }
     },
     "phonica-205270": {
         "store": "phonica",
@@ -782,7 +866,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/dfbabb58952a861f4638d54bef611971_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/dfbabb58952a861f4638d54bef611971_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/dfbabb58952a861f4638d54bef611971_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/35338477-The-Orb-Buddhist-Hipsters",
+            "id": 35338477
+        }
     },
     "phonica-204535": {
         "store": "phonica",
@@ -814,7 +902,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/d234e590a6d1c29195b34546313e83a7_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/d234e590a6d1c29195b34546313e83a7_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/d234e590a6d1c29195b34546313e83a7_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/35068796-Fred-P-Distant-Travels-EP",
+            "id": 35068796
+        }
     },
     "phonica-206327": {
         "store": "phonica",
@@ -848,7 +940,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/1683647e6ea2ed70c5368a75a3c297c3_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/1683647e6ea2ed70c5368a75a3c297c3_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/1683647e6ea2ed70c5368a75a3c297c3_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/35345026-Amaliah-Hypnosis-EP",
+            "id": 35345026
+        }
     },
     "phonica-206919": {
         "store": "phonica",
@@ -870,7 +966,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/7680d2fb7a8838eb0d1315b3b406d363_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/7680d2fb7a8838eb0d1315b3b406d363_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/7680d2fb7a8838eb0d1315b3b406d363_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/35267068-Dean-Blunt-Elias-R\u00f8nnenfelt-Lucre",
+            "id": 35267068
+        }
     },
     "phonica-206975": {
         "store": "phonica",
@@ -902,7 +1002,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/4e32fb8a7da2a983b68d46a2c233296a.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/4e32fb8a7da2a983b68d46a2c233296a.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/4e32fb8a7da2a983b68d46a2c233296a.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/35325940-Various-Eel-Sounds-2",
+            "id": 35325940
+        }
     },
     "phonica-206914": {
         "store": "phonica",
@@ -934,7 +1038,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/238221984e5040630c958a4a3ea5436a_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/238221984e5040630c958a4a3ea5436a_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/238221984e5040630c958a4a3ea5436a_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/35309449-Nico-Lahs-Do-What-U-Feel",
+            "id": 35309449
+        }
     },
     "phonica-206588": {
         "store": "phonica",
@@ -962,7 +1070,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/60f9c78b7cf3ce80b80c7d7735eeeb7b_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/60f9c78b7cf3ce80b80c7d7735eeeb7b_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/60f9c78b7cf3ce80b80c7d7735eeeb7b_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/35261395-Charlotte-De-Witte-Feat-Comma-Dee-The-Heads-That-Know",
+            "id": 35261395
+        }
     },
     "phonica-206778": {
         "store": "phonica",
@@ -1000,7 +1112,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/b0cd53217f99f1c236f5e653217498da_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/b0cd53217f99f1c236f5e653217498da_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/b0cd53217f99f1c236f5e653217498da_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/35172790-Byron-The-Aquarius-The-Global-Caress-EP",
+            "id": 35172790
+        }
     },
     "phonica-206606": {
         "store": "phonica",
@@ -1032,7 +1148,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/578514671562e8c2069b405043a0bf55.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/578514671562e8c2069b405043a0bf55.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/578514671562e8c2069b405043a0bf55.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/35246470-Exit-To-Tomorrow-You-Play-Games-EP",
+            "id": 35246470
+        }
     },
     "phonica-206671": {
         "store": "phonica",
@@ -1078,7 +1198,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/214cfe2ff63c021701ccbf07a25f9b67_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/214cfe2ff63c021701ccbf07a25f9b67_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/214cfe2ff63c021701ccbf07a25f9b67_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/35410612-TRj-Music-For-Desert-Reboot",
+            "id": 35410612
+        }
     },
     "phonica-206680": {
         "store": "phonica",
@@ -1108,7 +1232,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/95f26e183566a989573dd4c53c00c866.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/95f26e183566a989573dd4c53c00c866.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/95f26e183566a989573dd4c53c00c866.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/35331460-Quince-Sayne-Work",
+            "id": 35331460
+        }
     },
     "phonica-205320": {
         "store": "phonica",
@@ -1148,7 +1276,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/c5b290a6c26d0f7d6520423ca755c4b8_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/c5b290a6c26d0f7d6520423ca755c4b8_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/c5b290a6c26d0f7d6520423ca755c4b8_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/35309749-Ida-Urd-Ingri-H\u00f8yland-Duvet",
+            "id": 35309749
+        }
     },
     "phonica-205384": {
         "store": "phonica",
@@ -1180,7 +1312,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/ebf32d23551ef5468d4c2cd7b4c21bfd_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/ebf32d23551ef5468d4c2cd7b4c21bfd_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/ebf32d23551ef5468d4c2cd7b4c21bfd_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/35248144-Gesloten-Cirkel-Acid-Puke-EP",
+            "id": 35248144
+        }
     },
     "phonica-193982": {
         "store": "phonica",
@@ -1216,7 +1352,10 @@
             "https://d1c4rk9le5opln.cloudfront.net/a2dca4cbafe55db2a9df72fbfc381aba_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/a2dca4cbafe55db2a9df72fbfc381aba_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/a2dca4cbafe55db2a9df72fbfc381aba_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "attempted": true
+        }
     },
     "phonica-194629": {
         "store": "phonica",
@@ -1244,7 +1383,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/1b633e70c4828ba24bb3157e144b2785_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/1b633e70c4828ba24bb3157e144b2785_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/1b633e70c4828ba24bb3157e144b2785_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/30933918-Exo-Fender-Big-Mood",
+            "id": 30933918
+        }
     },
     "phonica-194630": {
         "store": "phonica",
@@ -1272,7 +1415,10 @@
             "https://d1c4rk9le5opln.cloudfront.net/5821dd1e5bab345678ad9fab32930c53_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/5821dd1e5bab345678ad9fab32930c53_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/5821dd1e5bab345678ad9fab32930c53_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "attempted": true
+        }
     },
     "phonica-205248": {
         "store": "phonica",
@@ -1308,7 +1454,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/9003411ff21707e5162fe7c0609287e9_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/9003411ff21707e5162fe7c0609287e9_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/9003411ff21707e5162fe7c0609287e9_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/35361514-Shcuro-Echo-Chamber",
+            "id": 35361514
+        }
     },
     "phonica-204785": {
         "store": "phonica",
@@ -1350,7 +1500,10 @@
             "https://d1c4rk9le5opln.cloudfront.net/541b421e7164692811eb035684b10d4f_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/541b421e7164692811eb035684b10d4f_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/541b421e7164692811eb035684b10d4f_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "attempted": true
+        }
     },
     "phonica-154598": {
         "store": "phonica",
@@ -1378,7 +1531,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/5134c1861dd6ec407e1e44e37da2ff47_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/5134c1861dd6ec407e1e44e37da2ff47_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/5134c1861dd6ec407e1e44e37da2ff47_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/24546968-The-Gongs-Gang-Gimme-Your-Love",
+            "id": 24546968
+        }
     },
     "phonica-111796": {
         "store": "phonica",
@@ -1428,7 +1585,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/8145fcbb25e9ef66a1aa4bfd4e33e4f1_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/8145fcbb25e9ef66a1aa4bfd4e33e4f1_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/8145fcbb25e9ef66a1aa4bfd4e33e4f1_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/35458582-Drexciya-Journey-Of-The-Deep-Sea-Dweller-III",
+            "id": 35458582
+        }
     },
     "phonica-118718": {
         "store": "phonica",
@@ -1482,7 +1643,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/a5afca83a5d9d729910252afe151d4d2_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/a5afca83a5d9d729910252afe151d4d2_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/a5afca83a5d9d729910252afe151d4d2_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/35462500-Drexciya-Journey-Of-The-Deep-Sea-Dweller-IV",
+            "id": 35462500
+        }
     },
     "phonica-205003": {
         "store": "phonica",
@@ -1514,7 +1679,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/f272401400c81c9fbec5e69e629d3b61_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/f272401400c81c9fbec5e69e629d3b61_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/f272401400c81c9fbec5e69e629d3b61_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/35325901-Boo-Williams-Mashup",
+            "id": 35325901
+        }
     },
     "phonica-203945": {
         "store": "phonica",
@@ -1542,7 +1711,10 @@
             "https://d1c4rk9le5opln.cloudfront.net/4a314fd0dcb7f6b961e104b190d59119_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/4a314fd0dcb7f6b961e104b190d59119_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/4a314fd0dcb7f6b961e104b190d59119_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "attempted": true
+        }
     },
     "phonica-206009": {
         "store": "phonica",
@@ -1574,7 +1746,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/417b7ed98018fed78249821fcd3eacd9.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/417b7ed98018fed78249821fcd3eacd9.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/417b7ed98018fed78249821fcd3eacd9.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/16085779-\u30a8\u30a4\u30d5\u30a7\u30c3\u30af\u30b9\u30c4\u30a4\u30f3-Xylem-Tube-EP",
+            "id": 16085779
+        }
     },
     "phonica-205895": {
         "store": "phonica",
@@ -1606,7 +1782,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/7da4e12dc1575e6b32159e6a8abec5a1_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/7da4e12dc1575e6b32159e6a8abec5a1_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/7da4e12dc1575e6b32159e6a8abec5a1_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/35351134-Wata-Igarashi-Polygonia-Cross-Passage",
+            "id": 35351134
+        }
     },
     "phonica-206355": {
         "store": "phonica",
@@ -1638,7 +1818,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/e279f72e807f3c225b6a5dc50e7ed3d1_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/e279f72e807f3c225b6a5dc50e7ed3d1_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/e279f72e807f3c225b6a5dc50e7ed3d1_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/35522803-Braiden-Raindance-EP",
+            "id": 35522803
+        }
     },
     "phonica-206024": {
         "store": "phonica",
@@ -1669,7 +1853,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/3beeb389974385c28ddc2f0eb093c726.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/3beeb389974385c28ddc2f0eb093c726.jpg"
         ],
-        "phonica-tech-house-new_releases": 168
+        "phonica-tech-house-new_releases": 168,
+        "discogs": {
+            "url": "https://www.discogs.com/release/35524210-CASSIMM-Ill-Take-You-There",
+            "id": 35524210
+        }
     },
     "phonica-206257": {
         "store": "phonica",
@@ -1715,7 +1903,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/6b45a246feab6fbf112fef547f74f39a_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/6b45a246feab6fbf112fef547f74f39a_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/6b45a246feab6fbf112fef547f74f39a_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/145098-Air-Liquide-Best-Of-Air-Liquide-1991-2001",
+            "id": 145098
+        }
     },
     "phonica-205904": {
         "store": "phonica",
@@ -1747,7 +1939,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/8178c2271b717252b3f435c474f4f709_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/8178c2271b717252b3f435c474f4f709_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/8178c2271b717252b3f435c474f4f709_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/35584012-Flash-Atkins-All-Stars-EP1",
+            "id": 35584012
+        }
     },
     "phonica-206195": {
         "store": "phonica",
@@ -1779,7 +1975,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/8667e09214848eb36afc033a707dcfd3_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/8667e09214848eb36afc033a707dcfd3_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/8667e09214848eb36afc033a707dcfd3_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/35231656-Various-AniaraWL07",
+            "id": 35231656
+        }
     },
     "phonica-205530": {
         "store": "phonica",
@@ -1813,7 +2013,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/837dda224e5c58dfed0791e76a67f7f0_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/837dda224e5c58dfed0791e76a67f7f0_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/837dda224e5c58dfed0791e76a67f7f0_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/35202973-CEM3340-2030-Present-A-Future-Tribe-Machines-Awake-EP",
+            "id": 35202973
+        }
     },
     "phonica-205906": {
         "store": "phonica",
@@ -1849,7 +2053,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/c5b8f3a0f89783bd29455d97f7932fd1_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/c5b8f3a0f89783bd29455d97f7932fd1_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/c5b8f3a0f89783bd29455d97f7932fd1_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/35388985-Eddie-C-Unknown-Parts",
+            "id": 35388985
+        }
     },
     "phonica-205749": {
         "store": "phonica",
@@ -1891,7 +2099,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/7a733762b8ebbbfcc7fd48653b16ddcd_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/7a733762b8ebbbfcc7fd48653b16ddcd_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/7a733762b8ebbbfcc7fd48653b16ddcd_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/35325571-Magugu-Le-Motel-Bitter-Better-Kindness-Weakness",
+            "id": 35325571
+        }
     },
     "phonica-205910": {
         "store": "phonica",
@@ -1919,7 +2131,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/369ad7d44c3e85c3d24a6aa426081110_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/369ad7d44c3e85c3d24a6aa426081110_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/369ad7d44c3e85c3d24a6aa426081110_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/35337166-Rawson-The-Love-The-Hurt",
+            "id": 35337166
+        }
     },
     "phonica-205909": {
         "store": "phonica",
@@ -1945,7 +2161,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/79864aea383d410708ec5b3922486250_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/79864aea383d410708ec5b3922486250_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/79864aea383d410708ec5b3922486250_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/35324248-Ukokos-People-Are-Funky",
+            "id": 35324248
+        }
     },
     "phonica-205996": {
         "store": "phonica",
@@ -1977,7 +2197,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/23eb8bf5374e96f737378f3ff9dff168_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/23eb8bf5374e96f737378f3ff9dff168_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/23eb8bf5374e96f737378f3ff9dff168_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/35425972-Robot-84-Robot-Edits-Vol-1",
+            "id": 35425972
+        }
     },
     "phonica-205990": {
         "store": "phonica",
@@ -2015,7 +2239,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/f687a26c861c2c96d04fd1c0ef420a93_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/f687a26c861c2c96d04fd1c0ef420a93_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/f687a26c861c2c96d04fd1c0ef420a93_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/1064213-Bobby-Hutcherson-Montara",
+            "id": 1064213
+        }
     },
     "phonica-205418": {
         "store": "phonica",
@@ -2047,7 +2275,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/651165bb7d34c28c29f5055d644bf401_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/651165bb7d34c28c29f5055d644bf401_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/651165bb7d34c28c29f5055d644bf401_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/4864255-Huxley-Out-Of-The-Box-EP",
+            "id": 4864255
+        }
     },
     "phonica-205967": {
         "store": "phonica",
@@ -2079,7 +2311,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/686ba20ee861ffaddcd710d28bd618fe_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/686ba20ee861ffaddcd710d28bd618fe_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/686ba20ee861ffaddcd710d28bd618fe_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/35310790-Various-Deep-Into-House-Vol3",
+            "id": 35310790
+        }
     },
     "phonica-205575": {
         "store": "phonica",
@@ -2107,7 +2343,10 @@
             "https://d1c4rk9le5opln.cloudfront.net/915ab0378976188ffcf0a196145a18cc_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/915ab0378976188ffcf0a196145a18cc_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/915ab0378976188ffcf0a196145a18cc_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "attempted": true
+        }
     },
     "phonica-205706": {
         "store": "phonica",
@@ -2139,7 +2378,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/26131ef039e97771fe1bd203ac18bb4d_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/26131ef039e97771fe1bd203ac18bb4d_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/26131ef039e97771fe1bd203ac18bb4d_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/35310409-Sgt-Slick-Sgt-Slick-ReCuts-Vol-6",
+            "id": 35310409
+        }
     },
     "phonica-205885": {
         "store": "phonica",
@@ -2168,7 +2411,10 @@
             "https://d1c4rk9le5opln.cloudfront.net/803d55f7e3e5d45a61120d62a1e0da32.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/803d55f7e3e5d45a61120d62a1e0da32.jpg"
         ],
-        "phonica-tech-house-new_releases": 169
+        "phonica-tech-house-new_releases": 169,
+        "discogs": {
+            "attempted": true
+        }
     },
     "phonica-205785": {
         "store": "phonica",
@@ -2196,7 +2442,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/e3595f2b0c7b74a1dd1bbf945eed3d5e_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/e3595f2b0c7b74a1dd1bbf945eed3d5e_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/e3595f2b0c7b74a1dd1bbf945eed3d5e_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/33318912-The-Mighty-Zaf-And-Linkwood-Yokai",
+            "id": 33318912
+        }
     },
     "phonica-205836": {
         "store": "phonica",
@@ -2225,7 +2475,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/64be9fabe7c4438868a31c1c4ab3ec73.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/64be9fabe7c4438868a31c1c4ab3ec73.jpg"
         ],
-        "phonica-tech-house-new_releases": 170
+        "phonica-tech-house-new_releases": 170,
+        "discogs": {
+            "url": "https://www.discogs.com/release/86883-DJs-Unknown-Vol3",
+            "id": 86883
+        }
     },
     "phonica-206876": {
         "store": "phonica",
@@ -2253,7 +2507,10 @@
             "https://d1c4rk9le5opln.cloudfront.net/621d37c69451f1da07de700cefa5a04a_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/621d37c69451f1da07de700cefa5a04a_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/621d37c69451f1da07de700cefa5a04a_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "attempted": true
+        }
     },
     "phonica-206831": {
         "store": "phonica",
@@ -2281,7 +2538,10 @@
             "https://d1c4rk9le5opln.cloudfront.net/0bca1e080d3923a71657655fcdd18096_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/0bca1e080d3923a71657655fcdd18096_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/0bca1e080d3923a71657655fcdd18096_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "attempted": true
+        }
     },
     "phonica-206326": {
         "store": "phonica",
@@ -2313,7 +2573,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/6deb2f4a8b4c56a02baac958f49427a6_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/6deb2f4a8b4c56a02baac958f49427a6_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/6deb2f4a8b4c56a02baac958f49427a6_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/29037106-Various-Nu-Groove-Edits-Volume-3",
+            "id": 29037106
+        }
     },
     "phonica-204910": {
         "store": "phonica",
@@ -2345,7 +2609,10 @@
             "https://d1c4rk9le5opln.cloudfront.net/9f8b82485fcd161457ccea5b3bd66042_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/9f8b82485fcd161457ccea5b3bd66042_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/9f8b82485fcd161457ccea5b3bd66042_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "attempted": true
+        }
     },
     "phonica-204676": {
         "store": "phonica",
@@ -2375,7 +2642,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/db0ca8685ea7e21bcbeea10b1e1b6476_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/db0ca8685ea7e21bcbeea10b1e1b6476_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/db0ca8685ea7e21bcbeea10b1e1b6476_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/35417866-Pal-Joey-Feat-Robert-Owens-The-Me-Inside",
+            "id": 35417866
+        }
     },
     "phonica-204677": {
         "store": "phonica",
@@ -2407,7 +2678,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/229dd9ba4e848652469bb7eafb792e65.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/229dd9ba4e848652469bb7eafb792e65.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/229dd9ba4e848652469bb7eafb792e65.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/34781366-Pete-Blaker-Discolifting-04",
+            "id": 34781366
+        }
     },
     "phonica-204906": {
         "store": "phonica",
@@ -2439,7 +2714,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/44b34b05f6fa0fc2ece70c3ca4057f8c_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/44b34b05f6fa0fc2ece70c3ca4057f8c_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/44b34b05f6fa0fc2ece70c3ca4057f8c_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/35353906-Hotmood-Discoweey-Hits-Vol-1",
+            "id": 35353906
+        }
     },
     "phonica-204681": {
         "store": "phonica",
@@ -2479,7 +2758,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/79c70976a8c77153de0b87b1e6d2c1a4_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/79c70976a8c77153de0b87b1e6d2c1a4_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/79c70976a8c77153de0b87b1e6d2c1a4_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/35379808-Lukas-Visti-x-Peter-Visti-Fair-Winds",
+            "id": 35379808
+        }
     },
     "phonica-204582": {
         "store": "phonica",
@@ -2519,7 +2802,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/c027423ad1d0b7686fe2333d085d6410_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/c027423ad1d0b7686fe2333d085d6410_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/c027423ad1d0b7686fe2333d085d6410_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/34622221-Madonna-Veronica-Electronica",
+            "id": 34622221
+        }
     },
     "phonica-205076": {
         "store": "phonica",
@@ -2563,7 +2850,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/026bacb175d0020c3b175e737b857f25_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/026bacb175d0020c3b175e737b857f25_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/026bacb175d0020c3b175e737b857f25_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/35416393-Moscoman-Caviar",
+            "id": 35416393
+        }
     },
     "phonica-204771": {
         "store": "phonica",
@@ -2615,7 +2906,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/b964a87482a1c8be37026b66e9e6d5a7_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/b964a87482a1c8be37026b66e9e6d5a7_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/b964a87482a1c8be37026b66e9e6d5a7_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/6803246-Various-Ska-From-The-Vaults-Of-WIRL-Records",
+            "id": 6803246
+        }
     },
     "phonica-158336": {
         "store": "phonica",
@@ -2663,7 +2958,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/32d2040d3528ac945f2b5a6ba12e22bd_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/32d2040d3528ac945f2b5a6ba12e22bd_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/32d2040d3528ac945f2b5a6ba12e22bd_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/1924941-Antonio-Carlos-Jobim-The-Composer-Of-Desafinado-Plays",
+            "id": 1924941
+        }
     },
     "phonica-206936": {
         "store": "phonica",
@@ -2715,7 +3014,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/8fbb9bd5fadbd5e0f48cc558a035c284_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/8fbb9bd5fadbd5e0f48cc558a035c284_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/8fbb9bd5fadbd5e0f48cc558a035c284_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/35420923-Blawan-SickElixir",
+            "id": 35420923
+        }
     },
     "phonica-204772": {
         "store": "phonica",
@@ -2759,7 +3062,10 @@
             "https://d1c4rk9le5opln.cloudfront.net/633f56c8cd8b228c540b4c2e4393b2c3_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/633f56c8cd8b228c540b4c2e4393b2c3_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/633f56c8cd8b228c540b4c2e4393b2c3_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "attempted": true
+        }
     },
     "phonica-205899": {
         "store": "phonica",
@@ -2799,7 +3105,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/39a43b49ea7e141b680ee282a76e1ebc_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/39a43b49ea7e141b680ee282a76e1ebc_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/39a43b49ea7e141b680ee282a76e1ebc_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/7325939-Patti-Smith-Horses",
+            "id": 7325939
+        }
     },
     "phonica-205803": {
         "store": "phonica",
@@ -2839,7 +3149,10 @@
             "https://d1c4rk9le5opln.cloudfront.net/f74a7a7d834d28801aa48f7aabf5224c_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/f74a7a7d834d28801aa48f7aabf5224c_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/f74a7a7d834d28801aa48f7aabf5224c_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "attempted": true
+        }
     },
     "phonica-205902": {
         "store": "phonica",
@@ -2879,7 +3192,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/6b0a1cc1603cb1deb5645395a11fd144_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/6b0a1cc1603cb1deb5645395a11fd144_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/6b0a1cc1603cb1deb5645395a11fd144_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/35354458-Santino-Surfers-An-Introduction",
+            "id": 35354458
+        }
     },
     "phonica-205809": {
         "store": "phonica",
@@ -2907,7 +3224,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/3ab040c8c31fc4b611e4cf9dd637e332_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/3ab040c8c31fc4b611e4cf9dd637e332_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/3ab040c8c31fc4b611e4cf9dd637e332_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/34223812-Benny-Reid-93-Til-Infinity",
+            "id": 34223812
+        }
     },
     "phonica-205472": {
         "store": "phonica",
@@ -2959,7 +3280,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/8258a354462af2d08a522013d3e62ddd_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/8258a354462af2d08a522013d3e62ddd_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/8258a354462af2d08a522013d3e62ddd_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/35401846-Lack-Of-Afro-Love-Dealer",
+            "id": 35401846
+        }
     },
     "phonica-205473": {
         "store": "phonica",
@@ -3011,7 +3336,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/fb7ca8f947f1bfb014acc1890b418c58_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/fb7ca8f947f1bfb014acc1890b418c58_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/fb7ca8f947f1bfb014acc1890b418c58_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/35401846-Lack-Of-Afro-Love-Dealer",
+            "id": 35401846
+        }
     },
     "phonica-205769": {
         "store": "phonica",
@@ -3059,7 +3388,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/a365c4dfe23a95c77e8a687dc5df6d30_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/a365c4dfe23a95c77e8a687dc5df6d30_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/a365c4dfe23a95c77e8a687dc5df6d30_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/35012375-Various-Ping-Volume-One",
+            "id": 35012375
+        }
     },
     "phonica-205666": {
         "store": "phonica",
@@ -3097,7 +3430,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/1b50f58f577cf20bb3b41e9724a659de_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/1b50f58f577cf20bb3b41e9724a659de_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/1b50f58f577cf20bb3b41e9724a659de_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/15530128-Sylvester-Step-II",
+            "id": 15530128
+        }
     },
     "phonica-205927": {
         "store": "phonica",
@@ -3129,7 +3466,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/16561a372fc72505b6f2ff33318b63e8_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/16561a372fc72505b6f2ff33318b63e8_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/16561a372fc72505b6f2ff33318b63e8_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/35373865-Kneecap-2-Say\u014dnara-The-Recap",
+            "id": 35373865
+        }
     },
     "phonica-205926": {
         "store": "phonica",
@@ -3175,7 +3516,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/61b485ee52e0408b6ff824f71eebff50_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/61b485ee52e0408b6ff824f71eebff50_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/61b485ee52e0408b6ff824f71eebff50_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/35341645-Beatie-Wolfe-Brian-Eno-Liminal",
+            "id": 35341645
+        }
     },
     "phonica-205925": {
         "store": "phonica",
@@ -3197,7 +3542,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/04b3906d714014af3c2958b21727eb91_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/04b3906d714014af3c2958b21727eb91_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/04b3906d714014af3c2958b21727eb91_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/6824326-Dizzy-Gillespie-Sonny-Stitt-Sonny-Rollins-Sonny-Side-Up",
+            "id": 6824326
+        }
     },
     "phonica-206920": {
         "store": "phonica",
@@ -3245,7 +3594,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/e6e453216b1de42a381a68be620c50e4_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/e6e453216b1de42a381a68be620c50e4_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/e6e453216b1de42a381a68be620c50e4_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/35335135-Hollie-Cook-Shy-Girl",
+            "id": 35335135
+        }
     },
     "phonica-206937": {
         "store": "phonica",
@@ -3281,7 +3634,10 @@
             "https://d1c4rk9le5opln.cloudfront.net/f74c289f4b82dbe410e0944c42c6c377_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/f74c289f4b82dbe410e0944c42c6c377_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/f74c289f4b82dbe410e0944c42c6c377_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "attempted": true
+        }
     },
     "phonica-206938": {
         "store": "phonica",
@@ -3313,7 +3669,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/c121a1fcc05f266c0e5dbaaeb1e90485_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/c121a1fcc05f266c0e5dbaaeb1e90485_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/c121a1fcc05f266c0e5dbaaeb1e90485_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/6636720-Ecano-Run-EP",
+            "id": 6636720
+        }
     },
     "phonica-206939": {
         "store": "phonica",
@@ -3335,7 +3695,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/3c155dbebab463cd0d3411d713e6b4c4_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/3c155dbebab463cd0d3411d713e6b4c4_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/3c155dbebab463cd0d3411d713e6b4c4_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/617417-Sound-Dimension-Jamaica-Soul-Shake-Vol-1",
+            "id": 617417
+        }
     },
     "phonica-206940": {
         "store": "phonica",
@@ -3387,7 +3751,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/c4f327cc016ec32bb2974253155a1bf3_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/c4f327cc016ec32bb2974253155a1bf3_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/c4f327cc016ec32bb2974253155a1bf3_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/35363872-Lack-Of-Afro-Love-Dealer",
+            "id": 35363872
+        }
     },
     "phonica-206942": {
         "store": "phonica",
@@ -3409,7 +3777,10 @@
             "https://d1c4rk9le5opln.cloudfront.net/d308cb60d6e31f172a4b70aec6eee07f_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/d308cb60d6e31f172a4b70aec6eee07f_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/d308cb60d6e31f172a4b70aec6eee07f_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "attempted": true
+        }
     },
     "phonica-206577": {
         "store": "phonica",
@@ -3439,7 +3810,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/0f5273545038ae668fd77909c446ee01_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/0f5273545038ae668fd77909c446ee01_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/0f5273545038ae668fd77909c446ee01_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/35252896-Conrad-Pack-Praise-EP",
+            "id": 35252896
+        }
     },
     "phonica-206587": {
         "store": "phonica",
@@ -3479,7 +3854,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/0683027aa140c4569286f9be22365087_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/0683027aa140c4569286f9be22365087_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/0683027aa140c4569286f9be22365087_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/680088-\u00d8-Aste",
+            "id": 680088
+        }
     },
     "phonica-206796": {
         "store": "phonica",
@@ -3511,7 +3890,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/795d0a2be44934c24899b2c0929aaf09_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/795d0a2be44934c24899b2c0929aaf09_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/795d0a2be44934c24899b2c0929aaf09_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/35373901-Bearface-Remakes-Raw-Cuts-Volume-1",
+            "id": 35373901
+        }
     },
     "phonica-206592": {
         "store": "phonica",
@@ -3533,7 +3916,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/70ff7489a7238ca04d6e0e7385855ba9_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/70ff7489a7238ca04d6e0e7385855ba9_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/70ff7489a7238ca04d6e0e7385855ba9_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/1176928-Carlos-Garnett-Cosmos-Nucleus",
+            "id": 1176928
+        }
     },
     "phonica-206594": {
         "store": "phonica",
@@ -3555,7 +3942,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/07415a4fb7261a6a2bca22f27c8bf20d_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/07415a4fb7261a6a2bca22f27c8bf20d_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/07415a4fb7261a6a2bca22f27c8bf20d_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/1155417-Roy-Brooks-The-Free-Slave",
+            "id": 1155417
+        }
     },
     "phonica-206596": {
         "store": "phonica",
@@ -3577,7 +3968,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/83ff6cbbf6b28563f6b91e468b5e2b36_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/83ff6cbbf6b28563f6b91e468b5e2b36_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/83ff6cbbf6b28563f6b91e468b5e2b36_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/35390494-Sudan-Archives-The-BPM",
+            "id": 35390494
+        }
     },
     "phonica-204306": {
         "store": "phonica",
@@ -3609,7 +4004,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/5d26229689872b481778d4c5f310ac6e_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/5d26229689872b481778d4c5f310ac6e_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/5d26229689872b481778d4c5f310ac6e_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/20952-Rick-Wade-Night-Trackin",
+            "id": 20952
+        }
     },
     "phonica-204732": {
         "store": "phonica",
@@ -3643,7 +4042,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/35dea22cc023485e0701b40a13824371_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/35dea22cc023485e0701b40a13824371_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/35dea22cc023485e0701b40a13824371_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/1761906-Bonnie-Tyler-Say-Goodbye",
+            "id": 1761906
+        }
     },
     "phonica-203564": {
         "store": "phonica",
@@ -3671,7 +4074,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/438d4d267c003468a9220fb62f63667c_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/438d4d267c003468a9220fb62f63667c_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/438d4d267c003468a9220fb62f63667c_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/35429215-The-5th-Dimension-Unknown-Artist-Let-The-Sunshine-In-123-Mr-K-Edits",
+            "id": 35429215
+        }
     },
     "phonica-205100": {
         "store": "phonica",
@@ -3699,7 +4106,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/2386b42eba7cb87b9c3cc788e1606ec0_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/2386b42eba7cb87b9c3cc788e1606ec0_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/2386b42eba7cb87b9c3cc788e1606ec0_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/30326837-Critical-Mass-Burnin-Love",
+            "id": 30326837
+        }
     },
     "phonica-204225": {
         "store": "phonica",
@@ -3731,7 +4142,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/f081450400adbc3018a9f6271d2a32f5_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/f081450400adbc3018a9f6271d2a32f5_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/f081450400adbc3018a9f6271d2a32f5_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/35073431-Minimal-Vision-Unreleased-Chronicles",
+            "id": 35073431
+        }
     },
     "phonica-201914": {
         "store": "phonica",
@@ -3763,7 +4178,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/2a98bee67553d40cf29e8343f226ebd2_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/2a98bee67553d40cf29e8343f226ebd2_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/2a98bee67553d40cf29e8343f226ebd2_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/1137615-Boo-Williams-Nuclear-Transit-EP",
+            "id": 1137615
+        }
     },
     "phonica-206265": {
         "store": "phonica",
@@ -3797,7 +4216,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/823007a37d2f3f6939f8eb109d1fe46e.jpg"
         ],
         "phonica-tech-house-new_releases": 129,
-        "phonica-sectionless-essentials": 12
+        "phonica-sectionless-essentials": 12,
+        "discogs": {
+            "url": "https://www.discogs.com/release/35436070-Roman-Fl\u00fcgel-Cooking-The-Books-EP",
+            "id": 35436070
+        }
     },
     "phonica-205912": {
         "store": "phonica",
@@ -3829,7 +4252,10 @@
             "https://d1c4rk9le5opln.cloudfront.net/e2ba03ce1361c4167d84138560286577_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/e2ba03ce1361c4167d84138560286577_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/e2ba03ce1361c4167d84138560286577_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "attempted": true
+        }
     },
     "phonica-205911": {
         "store": "phonica",
@@ -3857,7 +4283,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/0015fde808ac7f553a89e5867bf82ea0.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/0015fde808ac7f553a89e5867bf82ea0.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/0015fde808ac7f553a89e5867bf82ea0.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/35389513-Unknown-Artist-Thinkin-BoutChu-Future",
+            "id": 35389513
+        }
     },
     "phonica-205546": {
         "store": "phonica",
@@ -3889,7 +4319,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/392474f26ac761065b44992c2b6f3d22_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/392474f26ac761065b44992c2b6f3d22_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/392474f26ac761065b44992c2b6f3d22_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/35289010-DJ-Soch-Remember-Panorama-Moments-EP",
+            "id": 35289010
+        }
     },
     "phonica-205526": {
         "store": "phonica",
@@ -3917,7 +4351,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/4f3f8c301f07a1ff2d87be987ee98218.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/4f3f8c301f07a1ff2d87be987ee98218.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/4f3f8c301f07a1ff2d87be987ee98218.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/35373262-Unknown-Artist-All-Over-the-World",
+            "id": 35373262
+        }
     },
     "phonica-205922": {
         "store": "phonica",
@@ -3939,7 +4377,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/4035dd4bab927224310b869084b6dfc2_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/4035dd4bab927224310b869084b6dfc2_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/4035dd4bab927224310b869084b6dfc2_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/35346295-Seefeel-Pure-Impure",
+            "id": 35346295
+        }
     },
     "phonica-205951": {
         "store": "phonica",
@@ -3961,7 +4403,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/52e857eb292aa7c28a22005f3825cb0f_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/52e857eb292aa7c28a22005f3825cb0f_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/52e857eb292aa7c28a22005f3825cb0f_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/33678363-Various-Blue-Note-Alts-N-Outs",
+            "id": 33678363
+        }
     },
     "phonica-206254": {
         "store": "phonica",
@@ -3993,7 +4439,10 @@
             "https://d1c4rk9le5opln.cloudfront.net/665b02e6ea21291dd09331e72b12aa16_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/665b02e6ea21291dd09331e72b12aa16_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/665b02e6ea21291dd09331e72b12aa16_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "attempted": true
+        }
     },
     "phonica-205889": {
         "store": "phonica",
@@ -4025,7 +4474,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/63c9e57ef477d77c5be289b9dbd57f40_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/63c9e57ef477d77c5be289b9dbd57f40_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/63c9e57ef477d77c5be289b9dbd57f40_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/35070779-Various-Ohm-Series-15",
+            "id": 35070779
+        }
     },
     "phonica-205960": {
         "store": "phonica",
@@ -4047,7 +4500,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/8a653bbb5e876b9f45cfa8350bbcaf62_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/8a653bbb5e876b9f45cfa8350bbcaf62_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/8a653bbb5e876b9f45cfa8350bbcaf62_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/35389726-The-Bongolian-Indian-Summer-Of-Love",
+            "id": 35389726
+        }
     },
     "phonica-206034": {
         "store": "phonica",
@@ -4079,7 +4536,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/e3dabae3752aa6ec4d26390231ce0e8c_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/e3dabae3752aa6ec4d26390231ce0e8c_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/e3dabae3752aa6ec4d26390231ce0e8c_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/35373361-Dr-Packer-Yogi-63-David-Penn-Kurtis-Mantronik-Kpd-Heavy-Vibes-Get-Down",
+            "id": 35373361
+        }
     },
     "phonica-205979": {
         "store": "phonica",
@@ -4111,7 +4572,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/bc43bf278ab69148e6186700cc3de99c_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/bc43bf278ab69148e6186700cc3de99c_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/bc43bf278ab69148e6186700cc3de99c_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/22192213-Krewcial-Discosaurs-Vol-1",
+            "id": 22192213
+        }
     },
     "phonica-205980": {
         "store": "phonica",
@@ -4147,7 +4612,10 @@
             "https://d1c4rk9le5opln.cloudfront.net/86775aae22acbf15ef13acf3ae017792_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/86775aae22acbf15ef13acf3ae017792_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/86775aae22acbf15ef13acf3ae017792_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "attempted": true
+        }
     },
     "phonica-205831": {
         "store": "phonica",
@@ -4175,7 +4643,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/a9a63da456b0de699123795cc8eb17cc_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/a9a63da456b0de699123795cc8eb17cc_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/a9a63da456b0de699123795cc8eb17cc_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/2779933-Bobby-Reed-If-I-Dont-Love-You-The-Time-Is-Right-For-Love",
+            "id": 2779933
+        }
     },
     "phonica-205811": {
         "store": "phonica",
@@ -4209,7 +4681,10 @@
             "https://d1c4rk9le5opln.cloudfront.net/e1e092300bcebf29d9117c542b4762f2_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/e1e092300bcebf29d9117c542b4762f2_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/e1e092300bcebf29d9117c542b4762f2_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "attempted": true
+        }
     },
     "phonica-205770": {
         "store": "phonica",
@@ -4231,7 +4706,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/fc59aa49f935b52ee96e211e79b8652a_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/fc59aa49f935b52ee96e211e79b8652a_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/fc59aa49f935b52ee96e211e79b8652a_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/15710980-Jose-Gonzalez-Heartbeats",
+            "id": 15710980
+        }
     },
     "phonica-206016": {
         "store": "phonica",
@@ -4253,7 +4732,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/ad47be33b49f47466e8451c5bb1522b8_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/ad47be33b49f47466e8451c5bb1522b8_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/ad47be33b49f47466e8451c5bb1522b8_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/830-The-Aphex-Twin-Classics",
+            "id": 830
+        }
     },
     "phonica-206108": {
         "store": "phonica",
@@ -4282,7 +4765,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/b080b8ad51a63ce49b957e2613416db1.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/b080b8ad51a63ce49b957e2613416db1.jpg"
         ],
-        "phonica-tech-house-new_releases": 164
+        "phonica-tech-house-new_releases": 164,
+        "discogs": {
+            "url": "https://www.discogs.com/release/33693882-Ricardo-Villalobos-Salvador",
+            "id": 33693882
+        }
     },
     "phonica-205742": {
         "store": "phonica",
@@ -4314,7 +4801,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/2094d315551a082e885f19dece88cfc7_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/2094d315551a082e885f19dece88cfc7_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/2094d315551a082e885f19dece88cfc7_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/498987-Raze-Break-4-Love",
+            "id": 498987
+        }
     },
     "phonica-206286": {
         "store": "phonica",
@@ -4343,7 +4834,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/c0db705c5ef26bd8ba06aadc6219b0f6.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/c0db705c5ef26bd8ba06aadc6219b0f6.jpg"
         ],
-        "phonica-tech-house-new_releases": 128
+        "phonica-tech-house-new_releases": 128,
+        "discogs": {
+            "url": "https://www.discogs.com/release/35270509-Various-DMA-Friends-001",
+            "id": 35270509
+        }
     },
     "phonica-206285": {
         "store": "phonica",
@@ -4401,7 +4896,10 @@
             "https://d1c4rk9le5opln.cloudfront.net/media_product3_big.png",
             "https://d1c4rk9le5opln.cloudfront.net/media_product3_big.png",
             "https://d1c4rk9le5opln.cloudfront.net/media_product3_big.png"
-        ]
+        ],
+        "discogs": {
+            "attempted": true
+        }
     },
     "phonica-206187": {
         "store": "phonica",
@@ -4423,7 +4921,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/53f13aba6d687b36ec1c2fa74f4f5b06_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/53f13aba6d687b36ec1c2fa74f4f5b06_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/53f13aba6d687b36ec1c2fa74f4f5b06_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/1045002-Terry-Callier-The-New-Folk-Sound-Of-Terry-Callier",
+            "id": 1045002
+        }
     },
     "phonica-205921": {
         "store": "phonica",
@@ -4455,7 +4957,10 @@
             "https://d1c4rk9le5opln.cloudfront.net/d1eb58b1dc492167e85034c55b144d14_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/d1eb58b1dc492167e85034c55b144d14_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/d1eb58b1dc492167e85034c55b144d14_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "attempted": true
+        }
     },
     "phonica-206218": {
         "store": "phonica",
@@ -4487,7 +4992,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/473a973e6e9bf4e28da89077b3ffafb5_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/473a973e6e9bf4e28da89077b3ffafb5_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/473a973e6e9bf4e28da89077b3ffafb5_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/35310199-Vardae-The-Power-Of-Intention",
+            "id": 35310199
+        }
     },
     "phonica-206157": {
         "store": "phonica",
@@ -4509,7 +5018,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/1ab6655fe4d7e265a241b9a68cac56b3_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/1ab6655fe4d7e265a241b9a68cac56b3_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/1ab6655fe4d7e265a241b9a68cac56b3_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/35381431-Tame-Impala-Deadbeat",
+            "id": 35381431
+        }
     },
     "phonica-207090": {
         "store": "phonica",
@@ -4530,7 +5043,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/f19f02d85a67439060a1b651a3a14004_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/f19f02d85a67439060a1b651a3a14004_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/f19f02d85a67439060a1b651a3a14004_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/35344315-bar-italia-Some-Like-It-Hot",
+            "id": 35344315
+        }
     },
     "phonica-206348": {
         "store": "phonica",
@@ -4562,7 +5079,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/68ec1859461dfef20c480c597ab31ade.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/68ec1859461dfef20c480c597ab31ade.jpg"
         ],
-        "phonica-tech-house-new_releases": 166
+        "phonica-tech-house-new_releases": 166,
+        "discogs": {
+            "url": "https://www.discogs.com/release/35410711-Juan-Ferreyra-I-Didnt-Buy-My-Dr-M\u00e4rtens",
+            "id": 35410711
+        }
     },
     "phonica-206349": {
         "store": "phonica",
@@ -4591,7 +5112,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/61112a92f4e5eb428a260e1d0b2c90a1_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/61112a92f4e5eb428a260e1d0b2c90a1_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/61112a92f4e5eb428a260e1d0b2c90a1_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/35364088-Hisashi-The-Snapouts-Squad-Day3-Called-The-Place-2-B-Ep",
+            "id": 35364088
+        }
     },
     "phonica-206430": {
         "store": "phonica",
@@ -4626,7 +5151,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/cdbc2df170982fcf264dd153bb199f18.jpg"
         ],
         "phonica-tech-house-new_releases": 74,
-        "phonica-techno-new_releases": 150
+        "phonica-techno-new_releases": 150,
+        "discogs": {
+            "url": "https://www.discogs.com/release/35227975-Chlo\u00e9-Caillet-Here-To-Make-You-Smile",
+            "id": 35227975
+        }
     },
     "phonica-206598": {
         "store": "phonica",
@@ -4657,7 +5186,10 @@
             "https://d1c4rk9le5opln.cloudfront.net/4b18ab68c15fad23a59f245aa9c82160_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/4b18ab68c15fad23a59f245aa9c82160_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/4b18ab68c15fad23a59f245aa9c82160_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "attempted": true
+        }
     },
     "phonica-206573": {
         "store": "phonica",
@@ -4684,7 +5216,10 @@
             "https://d1c4rk9le5opln.cloudfront.net/75d4253561560d2d469d83b394da6d9f_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/75d4253561560d2d469d83b394da6d9f_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/75d4253561560d2d469d83b394da6d9f_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "attempted": true
+        }
     },
     "phonica-206918": {
         "store": "phonica",
@@ -4705,7 +5240,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/4b87e9f0ccf3baf97fae197a2a72a0c1_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/4b87e9f0ccf3baf97fae197a2a72a0c1_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/4b87e9f0ccf3baf97fae197a2a72a0c1_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/35517367-The-Offline-Nikonos-V-Le-Trip",
+            "id": 35517367
+        }
     },
     "phonica-206547": {
         "store": "phonica",
@@ -4734,7 +5273,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/3fe7dd3b7c574d9dc9ec0c6efb87962b_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/3fe7dd3b7c574d9dc9ec0c6efb87962b_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/3fe7dd3b7c574d9dc9ec0c6efb87962b_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/35305771-Various-Florilegium-Vol-1",
+            "id": 35305771
+        }
     },
     "phonica-206546": {
         "store": "phonica",
@@ -4765,7 +5308,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/6e37ae368e8d9d7d82fa946c7816d944_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/6e37ae368e8d9d7d82fa946c7816d944_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/6e37ae368e8d9d7d82fa946c7816d944_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/34917164-Wildbox-Hot-Classic-EP",
+            "id": 34917164
+        }
     },
     "phonica-206947": {
         "store": "phonica",
@@ -4792,7 +5339,10 @@
             "https://d1c4rk9le5opln.cloudfront.net/50902bb8763370781e9487d6569b646c_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/50902bb8763370781e9487d6569b646c_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/50902bb8763370781e9487d6569b646c_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "attempted": true
+        }
     },
     "phonica-207005": {
         "store": "phonica",
@@ -4813,7 +5363,10 @@
             "https://d1c4rk9le5opln.cloudfront.net/f93481527eb98508ab46d4ee858167dd_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/f93481527eb98508ab46d4ee858167dd_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/f93481527eb98508ab46d4ee858167dd_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "attempted": true
+        }
     },
     "phonica-206676": {
         "store": "phonica",
@@ -4845,7 +5398,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/a84a3ff93981d4c51d146129effc971f.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/a84a3ff93981d4c51d146129effc971f.jpg"
         ],
-        "phonica-tech-house-new_releases": 159
+        "phonica-tech-house-new_releases": 159,
+        "discogs": {
+            "url": "https://www.discogs.com/release/35962258-Photonz-Out-Of-Time-EP",
+            "id": 35962258
+        }
     },
     "phonica-206501": {
         "store": "phonica",
@@ -4876,7 +5433,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/bb77d1109bfd4a9ad0915fdc24f4841a.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/bb77d1109bfd4a9ad0915fdc24f4841a.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/bb77d1109bfd4a9ad0915fdc24f4841a.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/35403928-Unknown-Disco-MR021",
+            "id": 35403928
+        }
     },
     "phonica-206984": {
         "store": "phonica",
@@ -4905,7 +5466,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/3a371d29142035d9a038f3c3500be13b_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/3a371d29142035d9a038f3c3500be13b_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/3a371d29142035d9a038f3c3500be13b_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/35398402-Unknown-Artist-Home-Of-Dance-Music",
+            "id": 35398402
+        }
     },
     "phonica-207035": {
         "store": "phonica",
@@ -4926,7 +5491,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/a6d04103b2c669ca709dc0b4c9304653_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/a6d04103b2c669ca709dc0b4c9304653_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/a6d04103b2c669ca709dc0b4c9304653_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/34665505-Spacekid-3-Receptor-Ep",
+            "id": 34665505
+        }
     },
     "phonica-207021": {
         "store": "phonica",
@@ -4957,7 +5526,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/95e5ea66372bac881990a206be5cfb65.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/95e5ea66372bac881990a206be5cfb65.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/95e5ea66372bac881990a206be5cfb65.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/35320057-DJ-Fett-Burger-Stiletti-Ana-Werkmaister",
+            "id": 35320057
+        }
     },
     "phonica-207024": {
         "store": "phonica",
@@ -4998,7 +5571,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/15629adbec29d3cb76ecec67f191864c_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/15629adbec29d3cb76ecec67f191864c_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/15629adbec29d3cb76ecec67f191864c_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/35664316-Rubel-Beleza-Mas-Agora-A-Gente-Faz-O-Que-Com-Isso",
+            "id": 35664316
+        }
     },
     "phonica-207019": {
         "store": "phonica",
@@ -5029,7 +5606,10 @@
             "https://d1c4rk9le5opln.cloudfront.net/0ce275e0a87ca69d3c7f762284684e79_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/0ce275e0a87ca69d3c7f762284684e79_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/0ce275e0a87ca69d3c7f762284684e79_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "attempted": true
+        }
     },
     "phonica-207099": {
         "store": "phonica",
@@ -5050,7 +5630,10 @@
             "https://d1c4rk9le5opln.cloudfront.net/73db087086b91646810b466b2c81f232_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/73db087086b91646810b466b2c81f232_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/73db087086b91646810b466b2c81f232_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "attempted": true
+        }
     },
     "phonica-207016": {
         "store": "phonica",
@@ -5071,7 +5654,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/251c4b1c0d2ca3b86afc3c6e9a936051_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/251c4b1c0d2ca3b86afc3c6e9a936051_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/251c4b1c0d2ca3b86afc3c6e9a936051_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/35401702-Jo\u00e3o-Do-Pife-Garoto-Do-Pife",
+            "id": 35401702
+        }
     },
     "phonica-205156": {
         "store": "phonica",
@@ -5122,7 +5709,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/4c2416944d20e52c746922c8c3d88b85_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/4c2416944d20e52c746922c8c3d88b85_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/4c2416944d20e52c746922c8c3d88b85_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/35344060-Soulwax-All-Systems-Are-Lying",
+            "id": 35344060
+        }
     },
     "phonica-206018": {
         "store": "phonica",
@@ -5153,7 +5744,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/5567abb55f6a48b202167a8ad0e930a2_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/5567abb55f6a48b202167a8ad0e930a2_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/5567abb55f6a48b202167a8ad0e930a2_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/35360866-Luca-Olivotto-Say-Who-EP",
+            "id": 35360866
+        }
     },
     "phonica-204853": {
         "store": "phonica",
@@ -5182,7 +5777,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/3ec9a849590ba6375af0b70f6c7f7a0b_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/3ec9a849590ba6375af0b70f6c7f7a0b_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/3ec9a849590ba6375af0b70f6c7f7a0b_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/3304205-Dani-Roz-Rafael-Osmo-Central-Park-EP",
+            "id": 3304205
+        }
     },
     "phonica-205221": {
         "store": "phonica",
@@ -5203,7 +5802,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/04693a902fce2938de944a1e51996c12_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/04693a902fce2938de944a1e51996c12_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/04693a902fce2938de944a1e51996c12_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/35443351-Rochelle-Jordan-Through-The-Wall",
+            "id": 35443351
+        }
     },
     "phonica-205188": {
         "store": "phonica",
@@ -5234,7 +5837,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/73ac512c4b89d5bf5b7447d349e2f309_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/73ac512c4b89d5bf5b7447d349e2f309_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/73ac512c4b89d5bf5b7447d349e2f309_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/35432182-Azaad-4-Caliente-EP",
+            "id": 35432182
+        }
     },
     "phonica-206783": {
         "store": "phonica",
@@ -5255,7 +5862,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/4b65a99df5f5e6512936a039b619bf5b_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/4b65a99df5f5e6512936a039b619bf5b_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/4b65a99df5f5e6512936a039b619bf5b_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/1179757-Grant-Green-Solid",
+            "id": 1179757
+        }
     },
     "phonica-195107": {
         "store": "phonica",
@@ -5283,7 +5894,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/23ca6909a852da47841343bbbfd8889b.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/23ca6909a852da47841343bbbfd8889b.jpg"
         ],
-        "phonica-tech-house-new_releases": 160
+        "phonica-tech-house-new_releases": 160,
+        "discogs": {
+            "url": "https://www.discogs.com/release/30803079-Smooth-Simmonds-Climax",
+            "id": 30803079
+        }
     },
     "phonica-204083": {
         "store": "phonica",
@@ -5314,7 +5929,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/aa9d172c040590e54ba14845cd0b7b37.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/aa9d172c040590e54ba14845cd0b7b37.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/aa9d172c040590e54ba14845cd0b7b37.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/35463526-Kitchen-Crew-Secret-Ingredient-EP",
+            "id": 35463526
+        }
     },
     "phonica-205155": {
         "store": "phonica",
@@ -5365,7 +5984,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/756bc619f436bbfdcdd6c5e3098b6aa8_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/756bc619f436bbfdcdd6c5e3098b6aa8_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/756bc619f436bbfdcdd6c5e3098b6aa8_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/35400127-Soulwax-All-Systems-Are-Lying",
+            "id": 35400127
+        }
     },
     "phonica-205119": {
         "store": "phonica",
@@ -5390,7 +6013,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/b164017cd35fb66e8a3f703fcae65883_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/b164017cd35fb66e8a3f703fcae65883_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/b164017cd35fb66e8a3f703fcae65883_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/35380375-Vick-Lavender-Haunted",
+            "id": 35380375
+        }
     },
     "phonica-204911": {
         "store": "phonica",
@@ -5419,7 +6046,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/1ea97f34c87cecc329bb5abf5b6b69d4_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/1ea97f34c87cecc329bb5abf5b6b69d4_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/1ea97f34c87cecc329bb5abf5b6b69d4_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/35625154-Luke-Dean-2-Get-Busy",
+            "id": 35625154
+        }
     },
     "phonica-114840": {
         "store": "phonica",
@@ -5451,7 +6082,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/1dd9aa9f0b6a982d8bc01c565cfe835b.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/1dd9aa9f0b6a982d8bc01c565cfe835b.jpg"
         ],
-        "phonica-tech-house-new_releases": 161
+        "phonica-tech-house-new_releases": 161,
+        "discogs": {
+            "url": "https://www.discogs.com/release/27772950-Gemini-Gemini-Traxx-Part-One",
+            "id": 27772950
+        }
     },
     "phonica-202258": {
         "store": "phonica",
@@ -5482,7 +6117,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/af5fa532a73c1e9f86794a1bed807e34.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/af5fa532a73c1e9f86794a1bed807e34.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/af5fa532a73c1e9f86794a1bed807e34.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/31590094-Havantepe-Zero-G",
+            "id": 31590094
+        }
     },
     "phonica-205043": {
         "store": "phonica",
@@ -5511,7 +6150,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/599126a7b6899b9c6ad387c61d3bef1d_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/599126a7b6899b9c6ad387c61d3bef1d_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/599126a7b6899b9c6ad387c61d3bef1d_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/34379482-BootyBart-Bootybart-05",
+            "id": 34379482
+        }
     },
     "phonica-129600": {
         "store": "phonica",
@@ -5546,7 +6189,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/48de9b33166c78cbc08f7000a12fb7f3_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/48de9b33166c78cbc08f7000a12fb7f3_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/48de9b33166c78cbc08f7000a12fb7f3_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/2475752-King-Tubby-And-The-Aggrovators-Shalom-Dub",
+            "id": 2475752
+        }
     },
     "phonica-205563": {
         "store": "phonica",
@@ -5567,7 +6214,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/706b8b4c601d20fe2f08aa94faa9cb0e_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/706b8b4c601d20fe2f08aa94faa9cb0e_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/706b8b4c601d20fe2f08aa94faa9cb0e_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/35335909-\u4e95\u4e0a\u967d\u6c34-\u5922\u5bdd\u898b",
+            "id": 35335909
+        }
     },
     "phonica-206267": {
         "store": "phonica",
@@ -5594,7 +6245,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/fd13f21b3146740ee27ff21c611c6e19_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/fd13f21b3146740ee27ff21c611c6e19_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/fd13f21b3146740ee27ff21c611c6e19_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/35815477-Iko-Ch\u00e9rie-Ghosted-Ghosters-Of-The-Holy-G",
+            "id": 35815477
+        }
     },
     "phonica-206287": {
         "store": "phonica",
@@ -5653,7 +6308,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/e00d7d510b3a9a291f2d4170af98836a_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/e00d7d510b3a9a291f2d4170af98836a_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/e00d7d510b3a9a291f2d4170af98836a_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/35535862-System-Olympia-Love-Language",
+            "id": 35535862
+        }
     },
     "phonica-207129": {
         "store": "phonica",
@@ -5690,7 +6349,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/889314c20a94afda300de24df8f4a8db_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/889314c20a94afda300de24df8f4a8db_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/889314c20a94afda300de24df8f4a8db_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "url": "https://www.discogs.com/release/35245198-Rolrolrol-Dinner",
+            "id": 35245198
+        }
     },
     "phonica-206426": {
         "store": "phonica",

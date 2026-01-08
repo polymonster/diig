@@ -263,6 +263,7 @@ struct soa
     cmp_array<Str>                          store;
     cmp_array<u32>                          like_count;
     cmp_array<Str>                          discogs_url;
+    cmp_array<u64>                          discogs_id;
     std::atomic<size_t>                     available_entries = {0};
     std::atomic<size_t>                     soa_size = {0};
 };
@@ -368,6 +369,9 @@ struct AppContext
     f32                     loading_rot = 0.0f;
     nlohmann::json          auth_response = {};
     Str                     username = "";
+    Str                     discogs_token = "";
+    Str                     discogs_username = "";
+    Str                     firebase_token = "";
     Str                     last_response_message = "";
     u32                     last_response_code = 0;
     
@@ -382,6 +386,13 @@ struct AppContext
 
 // os callbacks
 void            enter_background(bool backgrounded);
+
+// auth
+Str             append_auth(Str url);
+
+// input
+void            paste_input(c8* buf, size_t buf_len);
+void            allow_paste();
 
 // audio API
 void            audio_player_pause(bool pause);
@@ -399,3 +410,5 @@ void            remove_like(const Str& id);
 nlohmann::json  get_likes();
 void            update_last_store(const Str& name);
 void            update_store_prefs(const Str& store_name, const Str& view, const std::vector<Str> sections);
+void            add_to_wants(Str discogs_username, u64 discogs_release_id);
+Str             get_discogs_username(Str token);

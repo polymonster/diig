@@ -27,6 +27,7 @@
 #include <chrono>
 
 constexpr bool k_force_login = false;
+constexpr bool k_force_no_discogs_login = false;
 constexpr bool k_force_streamed_audio = false;
 
 using namespace put;
@@ -57,18 +58,16 @@ namespace pen
     }
 } // namespace pen
 
+bool any_popup_open()
+{
+    return (ImGui::GetCurrentContext()->OpenPopupStack.Size > 0);
+}
+
 // curl api
 
 // curls include
 #define CURL_STATICLIB
 #include "curl/curl.h"
-
-// yes hacky
-static Str s_tokenid = "";
-Str append_auth(Str url) {
-    url.appendf("&auth=%s", s_tokenid.c_str());
-    return url;
-}
 
 namespace curl
 {
@@ -234,6 +233,76 @@ namespace curl
         Str urlk = url;
         urlk.appendf("?key=%s", k_api_key);
         return urlk;
+    }
+
+
+    nlohmann::json discogs_request(
+        const char *method,       // "GET", "POST", "PUT", "DELETE"
+        const char *url,          // full URL
+        const char *token,        // Discogs personal access token
+        const char *body          // optional JSON body (NULL for GET)
+    ) {
+
+        // curl
+        CURL *curl = curl_easy_init();
+        if (!curl) {
+            return {};
+        }
+
+        // Build Authorization header
+        char auth_header[256];
+        snprintf(auth_header, sizeof(auth_header), "Authorization: Discogs token=%s", token);
+
+        struct curl_slist* headers = NULL;
+        headers = curl_slist_append(headers, auth_header);
+        headers = curl_slist_append(headers, "User-Agent: diig/1.0");
+        headers = curl_slist_append(headers, "Accept: application/json");
+        if (body) {
+            headers = curl_slist_append(headers, "Content-Type: application/json");
+        }
+
+        curl_easy_setopt(curl, CURLOPT_URL, url);
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+        
+        // data
+        DataBuffer db = {};
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_function);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &db);
+
+        // Set HTTP method
+        if (strcmp(method, "GET") == 0) {
+            // default
+        } else if (strcmp(method, "POST") == 0) {
+            curl_easy_setopt(curl, CURLOPT_POST, 1L);
+            curl_easy_setopt(curl, CURLOPT_POSTFIELDS, body);
+        } else if (strcmp(method, "PUT") == 0) {
+            curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "PUT");
+            curl_easy_setopt(curl, CURLOPT_POSTFIELDS, body ? body : "");
+        } else if (strcmp(method, "DELETE") == 0) {
+            curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "DELETE");
+        }
+
+        // make the request
+        long http_code = -1;
+        CURLcode res = curl_easy_perform(curl);
+        if (res == CURLE_OK)
+            curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &http_code);
+
+        // cleanup
+        curl_slist_free_all(headers);
+        curl_easy_cleanup(curl);
+        
+        if(db.data)
+        {
+            try {
+                return nlohmann::json::parse((const c8*)db.data);
+            }
+            catch(...) {
+                return {};
+            }
+        }
+
+        return {};
     }
 }
 
@@ -851,13 +920,13 @@ void* user_data_thread(void* userdata)
     return nullptr;
 }
 
-inline Str safe_discogs_url(nlohmann::json& j, const Str& default_value)
+inline Str safe_discogs_str(nlohmann::json& j, const c8* key, const Str& default_value)
 {
     if(j.contains("discogs"))
     {
-        if(j["discogs"].contains("url"))
+        if(j["discogs"].contains(key))
         {
-            return ((std::string)j["discogs"]["url"]).c_str();
+            return ((std::string)j["discogs"][key]).c_str();
         }
     }
     
@@ -1182,7 +1251,8 @@ void* releases_view_loader(void* userdata)
         view->releases.label_link[ri] = safe_str(release, "label_link", "");
         
         // discogs info
-        view->releases.discogs_url[ri] = safe_discogs_url(release, "");
+        view->releases.discogs_url[ri] = safe_discogs_str(release, "url", "");
+        view->releases.discogs_id[ri] = release.value("/discogs/id"_json_pointer, (u64)-1);
         
         // clear
         view->releases.artwork_filepath[ri] = "";
@@ -2146,7 +2216,7 @@ namespace
 
         if(ctx.view->page == Page::likes || ctx.view->page == Page::settings)
         {
-            ImGui::Dummy(ImVec2(k_indent2, 0.0f));
+            ImGui::Dummy(ImVec2(k_indent1, 0.0f));
             ImGui::SameLine();
             
             ImGui::Text("%s %s", ICON_FA_CHEVRON_LEFT, ctx.view->page == Page::likes ? "Likes" : "Settings");
@@ -2187,15 +2257,13 @@ namespace
 
         // options menu button
         static bool s_debounce_menu = false;
-        if(!s_debounce_menu) {
-            if(lenient_button_tap(rad) && !ctx.scroll_lock_x && ! ctx.scroll_lock_y) {
-                if(ImGui::IsPopupOpen("Options Menu")) {
-                    ImGui::CloseCurrentPopup();
-                    s_debounce_menu = true;
-                }
-                else {
-                    ImGui::OpenPopup("Options Menu");
-                }
+        if(lenient_button_click(rad, s_debounce_menu) && !ctx.scroll_lock_x && ! ctx.scroll_lock_y) {
+            if(ImGui::IsPopupOpen("Options Menu")) {
+                ImGui::CloseCurrentPopup();
+                s_debounce_menu = true;
+            }
+            else {
+                ImGui::OpenPopup("Options Menu");
             }
         }
 
@@ -2339,13 +2407,73 @@ namespace
             {
                 ImGui::TextWrapped("%s: %s", releases.label[r].c_str(), releases.cat[r].c_str());
             }
-
-            // TODO: open label link on tap
-            /*
-            if(ImGui::IsItemClicked()) {
-                ctx.open_url_request = releases.label_link[r];
+            
+            // more menu button
+            f32 rad = ctx.w * k_page_button_press_radius_ratio;
+            bool has_more = !releases.label_link[r].empty() || !releases.discogs_url[r].empty();
+            
+            if(has_more)
+            {
+                static s32 s_more_menu_r = -1;
+                
+                ImGui::SameLine();
+                ImGui::SetCursorPosX(ctx.w - rad);
+                ImGui::Text("%s", ICON_FA_ELLIPSIS_H);
+                
+                if(lenient_button_tap(rad * 1.5f) && !any_popup_open() && !ctx.scroll_lock_x && !ctx.scroll_lock_y) {
+                    if(ImGui::IsPopupOpen("More Menu")) {
+                        ImGui::CloseCurrentPopup();
+                        s_more_menu_r = -1;
+                    }
+                    else {
+                        ImGui::OpenPopup("More Menu");
+                        s_more_menu_r = r;
+                    }
+                }
+                                        
+                if(r == s_more_menu_r)
+                {
+                    ImVec2 more_menu_pos = ImGui::GetItemRectMin();
+                    more_menu_pos.y = ImGui::GetItemRectMax().y;
+                    
+                    ImGui::SetWindowFontScale(k_text_size_h2);
+                    f32 menu_w = ImGui::CalcTextSize("Open In Discogs     ").x;
+                    
+                    more_menu_pos.x = ctx.w - menu_w;
+                    ImGui::SetNextWindowPos(more_menu_pos);
+                    ImGui::SetNextWindowSize(ImVec2(menu_w, 0.0f));
+                    
+                    if(ImGui::BeginPopup("More Menu")) {
+                    
+                        if(!releases.label_link[r].empty()) {
+                            if(ImGui::MenuItem("Go To Label")) {
+                                ctx.open_url_request = releases.label_link[r];
+                                s_more_menu_r = -1;
+                            }
+                        }
+                        
+                        Str discogs_link = releases.discogs_url[r];
+                        if(!discogs_link.empty()) {
+                            if(ImGui::MenuItem("Open In Discogs")) {
+                                discogs_link = str_replace_string(discogs_link, "https//www.discogs.com", "");
+                                discogs_link = str_replace_string(discogs_link, "https://www.discogs.com", "");
+                                Str url = "https://discogs.com";
+                                url.append(discogs_link.c_str());
+                                ctx.open_url_request = url;
+                                s_more_menu_r = -1;
+                            }
+                        }
+                        
+                        if(!discogs_link.empty()) {
+                            if(ImGui::MenuItem("Add To Wants")) {
+                                add_to_wants(ctx.discogs_username, releases.discogs_id[r]);
+                            }
+                        }
+                        
+                        ImGui::EndPopup();
+                    }
+                }
             }
-            */
 
             ImGui::SetWindowFontScale(k_text_size_body);
 
@@ -2610,8 +2738,6 @@ namespace
 
             ImGui::SetWindowFontScale(k_text_size_h2);
 
-            f32 rad = ctx.w * k_release_button_tap_radius_ratio;
-
             ImGui::PushID("like");
             bool scrolling = ctx.scroll_lock_x || ctx.scroll_lock_y;
             if(releases.flags[r] & EntityFlags::liked)
@@ -2660,24 +2786,6 @@ namespace
                 ImGui::SameLine();
                 ImGui::Text("%s", ICON_FA_EXCLAMATION);
             }
-            
-            ImGui::PushID("discogs");
-            if(!releases.discogs_url[r].empty()) {
-                ImGui::SameLine();
-                ImGui::Spacing();
-                
-                ImGui::SameLine();
-                ImGui::Text("%s", ICON_FA_CIRCLE_O);
-                if(!scrolling && lenient_button_tap(rad)) {
-                    Str link = releases.discogs_url[r];
-                    link = str_replace_string(link, "https//www.discogs.com", "");
-                    link = str_replace_string(link, "https://www.discogs.com", "");
-                    Str url = "https://discogs.com";
-                    url.append(link.c_str());
-                    ctx.open_url_request = url;
-                }
-            }
-            ImGui::PopID();
 
             // mini hype icons
             ImGui::SetWindowFontScale(k_text_size_body);
@@ -2690,15 +2798,6 @@ namespace
             if(releases.store_tags[r] & StoreTags::low_stock) {
                 hype_icons.append(ICON_FA_THERMOMETER_QUARTER);
             }
-            
-            /*
-            if(!releases.discogs_url[r].empty()) {
-                if(!hype_icons.empty()) {
-                    hype_icons.append(" ");
-                }
-                hype_icons.append(ICON_FA_CIRCLE);
-            }
-            */
 
             if(!(releases.store_tags[r] & StoreTags::out_of_stock)) {
                 if(releases.store_tags[r] & StoreTags::has_been_out_of_stock) {
@@ -2858,22 +2957,25 @@ namespace
 
     void apply_taps()
     {
-        constexpr u32 k_tap_threshold_ms = 500;
+        constexpr u32 k_tap_threshold_ms = 1300;
         static u32 s_tap_timer = k_tap_threshold_ms;
 
         // rest tap pos
         ctx.tap_pos = vec2f(FLT_MAX);
+        
+        static vec2f down_pos = vec2f(FLT_MAX);
 
         if(pen::input_is_mouse_down(PEN_MOUSE_L))
         {
             s_tap_timer -= 16;
+            auto ms = pen::input_get_mouse_state();
+            down_pos = vec2f(ms.x, ms.y);
         }
         else
         {
             if(s_tap_timer < k_tap_threshold_ms)
             {
-                auto ms = pen::input_get_mouse_state();
-                ctx.tap_pos = vec2f(ms.x, ms.y);
+                ctx.tap_pos = down_pos;
             }
 
             s_tap_timer = k_tap_threshold_ms;
@@ -3032,7 +3134,7 @@ namespace
         return "";
     }
 
-    void get_input_box_sizes(ImVec2& boxsize, f32& padding)
+    void get_input_box_sizes(ImVec2& boxsize, f32& padding, bool set_pos = true)
     {
         ImGui::SetWindowFontScale(k_text_size_body);
         
@@ -3041,9 +3143,10 @@ namespace
         f32 ypos = ImGui::GetWindowHeight() * 0.175f;
         f32 width = ImGui::GetWindowWidth();
 
-        ImGui::SetCursorPosY(ypos);
-
-        ImGui::Indent();
+        if(set_pos) {
+            ImGui::SetCursorPosY(ypos);
+            ImGui::Indent();
+        }
         
         ImGui::SetWindowFontScale(k_text_size_box);
         
@@ -3080,10 +3183,12 @@ namespace
         get_input_box_sizes(boxsize, padding);
 
         ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(padding, padding));
-                  
+        
         if(ImGui::InputTextEx("##Email", "Email", &email_buf[0], k_login_buf_size, boxsize, 0, nullptr, nullptr)) {
             error_message.clear();
         }
+        paste_input(&email_buf[0], k_login_buf_size);
+
         if(ImGui::IsItemActive()) {
             any_active = true;
         }
@@ -3142,7 +3247,8 @@ namespace
         ImGui::TextWrapped("%s", success_message.c_str());
         ImGui::Unindent();
 
-        // OSK
+        // OSK / paste
+        pen::os_enable_paste_popup(any_active);
         pen::os_show_on_screen_keyboard(any_active);
         pen::input_set_key_up(PK_BACK); // reset any back presses
         pen::input_set_key_up(PK_RETURN);
@@ -3166,6 +3272,7 @@ namespace
         {
             error_message.clear();
         }
+        paste_input(&password_buf[0], k_login_buf_size);
 
         // handle active and move to next
         if(ImGui::IsItemActive()) {
@@ -3218,6 +3325,8 @@ namespace
         if(ImGui::InputTextEx("##Email", "Email", &email_buf[0], k_login_buf_size, boxsize, 0, nullptr, nullptr)) {
             error_message.clear();
         }
+        paste_input(&email_buf[0], k_login_buf_size);
+        
         if(ImGui::IsItemActive()) {
             any_active = true;
         }
@@ -3295,7 +3404,8 @@ namespace
 
         ImGui::Unindent();
 
-        // OSK
+        // OSK // paste
+        pen::os_enable_paste_popup(any_active);
         pen::os_show_on_screen_keyboard(any_active);
         pen::input_set_key_up(PK_BACK); // reset any back presses
         pen::input_set_key_up(PK_RETURN);
@@ -3327,6 +3437,8 @@ namespace
         if(ImGui::InputTextEx("##Username", "Username", &username_buf[0], k_login_buf_size, boxsize, 0, nullptr, nullptr)) {
             error_message.clear();
         }
+        paste_input(&username_buf[0], k_login_buf_size);
+        
         if(ImGui::IsItemActive()) {
             any_active = true;
         }
@@ -3341,6 +3453,8 @@ namespace
         if(ImGui::InputTextEx("##Email", "Email", &email_buf[0], k_login_buf_size, boxsize, 0, nullptr, nullptr)) {
             error_message.clear();
         }
+        paste_input(&email_buf[0], k_login_buf_size);
+        
         if(ImGui::IsItemActive()) {
             any_active = true;
         }
@@ -3435,7 +3549,8 @@ namespace
 
         ImGui::Unindent();
 
-        // OSK
+        // OSK / paste
+        pen::os_enable_paste_popup(any_active);
         pen::os_show_on_screen_keyboard(any_active);
         pen::input_set_key_up(PK_BACK); // reset any back presses
         pen::input_set_key_up(PK_RETURN);
@@ -3451,8 +3566,16 @@ namespace
         // from keychain
         ctx.username = pen::os_get_keychain_item("com.pmtech.dig", "username");
         
-        // set this to use globally
-        s_tokenid = ((std::string)ctx.data_ctx.auth.dict["idToken"]).c_str();
+        if(!k_force_no_discogs_login)
+        {
+            ctx.discogs_token = pen::os_get_keychain_item("com.pmtech.dig", "discogs");
+            if(!ctx.discogs_token.empty())
+            {
+                ctx.discogs_username = get_discogs_username(ctx.discogs_token);
+            }
+        }
+
+        ctx.firebase_token = ((std::string)ctx.data_ctx.auth.dict["idToken"]).c_str();
         
         // kick off reg loader now we have auth
         pen::thread_create(registry_loader, 10 * 1024 * 1024, &ctx.data_ctx, pen::e_thread_start_flags::detached);
@@ -4305,6 +4428,118 @@ void update_store_prefs(const Str& store_name, const Str& view, const std::vecto
     ctx.data_ctx.user_data.status = Status::e_invalidated;
 }
 
+void paste_input(c8* buf, size_t buf_len)
+{
+    if(ImGui::IsItemActive())
+    {
+        // apply paste
+        Str clip = pen::os_get_clipboard_string();
+        if(!clip.empty())
+        {
+            // strip out newlines for this case
+            clip = str_replace_chars(clip, '\n', ' ');
+            
+            // rescind active
+            ImGui::ClearActiveID();
+            
+            // clear inout buffer and paste
+            memset(&buf[0], 0x0, buf_len);
+            strncpy(&buf[0], clip.c_str(), std::min<size_t>(clip.length(), buf_len));
+            
+            // clear clipboard now we used the result
+            pen::os_clear_clipboard_string();
+        }
+    }
+}
+
+void discogs_token_input()
+{
+    // discogs key
+    ImGui::Text("%s", "Discogs Access Token");
+    static Str verify_message = "";
+    
+    // populate it
+    static c8 key_buf[k_login_buf_size] = {0};
+    static bool init = true;
+    if(init)
+    {
+        strncpy(&key_buf[0], ctx.discogs_token.c_str(), ctx.discogs_token.length());
+        init = false;
+    }
+    
+    f32 padding = 0.0;
+    ImVec2 boxsize = {};
+    get_input_box_sizes(boxsize, padding, false);
+    
+    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(padding, padding));
+    if(ImGui::InputTextEx("##Discogs", "Discogs Token", &key_buf[0], k_login_buf_size, boxsize, 0, nullptr, nullptr)) {
+        verify_message.clear();
+    }
+    paste_input(&key_buf[0], k_login_buf_size);
+    
+    bool any_active = ImGui::IsItemActive();
+    
+    if(strlen(key_buf) > 0)
+    {
+        if(ImGui::Button("Verify"))
+        {
+            // validate the key and set
+            auto response = curl::discogs_request("GET", "https://api.discogs.com/oauth/identity", key_buf, nullptr);
+            if(response.is_null())
+            {
+                verify_message = "Token is incorrect or invalid";
+            }
+            else
+            {
+                if(response.contains("username"))
+                {
+                    // set the keychain item
+                    pen::os_set_keychain_item("com.pmtech.dig", "discogs", key_buf);
+                    ctx.discogs_token = key_buf;
+                    
+                    // set the message
+                    std::string username = response["username"];
+                    verify_message.appendf("Token verified as: %s", username.c_str());
+                }
+                else if(response.contains("message"))
+                {
+                    // error response inside message json
+                    std::string msg = response["message"];
+                    verify_message = msg.c_str();
+                }
+                else
+                {
+                    // ..
+                    verify_message = "Auth response was unexpected";
+                }
+            }
+        }
+    }
+    
+    // show existing login
+    if(!ctx.discogs_username.empty() && verify_message.empty())
+    {
+        verify_message.setf("Logged into discogs as: %s", ctx.discogs_username.c_str());
+    }
+    else if(verify_message.empty())
+    {
+        verify_message.setf("Discogs > Settings > Developers > Generate Token", ctx.discogs_username.c_str());
+    }
+    
+    ImGui::PopStyleVar();
+    
+    //
+    ImGui::TextWrapped("%s", verify_message.c_str());
+    
+    // OSK
+    pen::os_enable_paste_popup(any_active);
+    pen::os_show_on_screen_keyboard(any_active);
+    pen::input_set_key_up(PK_BACK); // reset any back presses
+    pen::input_set_key_up(PK_RETURN);
+    
+    ImGui::Unindent();
+}
+
 void settings_menu()
 {
     ImGui::SetWindowFontScale(k_text_size_h3);
@@ -4333,6 +4568,8 @@ void settings_menu()
         set_user_setting("setting_play_backgrounded", s_play_backgrounded_setting);
         pen::os_enable_background_audio(s_play_backgrounded_setting);
     }
+    
+    discogs_token_input();
 
     ImGui::Unindent();
 
@@ -4491,4 +4728,34 @@ void enter_background(bool backgrounded) {
     }
     
     ctx.backgrounded = backgrounded;
+}
+
+Str append_auth(Str url) {
+    url.appendf("&auth=%s", ctx.firebase_token.c_str());
+    return url;
+}
+
+void add_to_wants(Str discogs_username, u64 discogs_release_id) {
+    Str url = "";
+    url.appendf("https://api.discogs.com/users/%s/wants/%llu", discogs_username.c_str(), discogs_release_id);
+    auto response = curl::discogs_request("PUT", url.c_str(), ctx.discogs_token.c_str(), "");
+}
+
+Str get_discogs_username(Str token) {
+    auto response = curl::discogs_request("GET", "https://api.discogs.com/oauth/identity", token.c_str(), nullptr);
+    if(response.is_null())
+    {
+        return "";
+    }
+    else
+    {
+        if(response.contains("username"))
+        {
+            // set the message
+            std::string username = response["username"];
+            return username.c_str();
+        }
+    }
+    
+    return "";
 }

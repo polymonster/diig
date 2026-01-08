@@ -9981,7 +9981,10 @@
             "https://d1c4rk9le5opln.cloudfront.net/ecd27b85f48cec4cbde921c2710c9f53_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/ecd27b85f48cec4cbde921c2710c9f53_big.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/ecd27b85f48cec4cbde921c2710c9f53_big.jpg"
-        ]
+        ],
+        "discogs": {
+            "attempted": true
+        }
     },
     "phonica-203151": {
         "store": "phonica",
@@ -17075,7 +17078,10 @@
             "https://d1c4rk9le5opln.cloudfront.net/555794ba7d2206da10cabb317bdad010.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/555794ba7d2206da10cabb317bdad010.jpg"
         ],
-        "phonica-tech-house-new_releases": 127
+        "phonica-tech-house-new_releases": 127,
+        "discogs": {
+            "attempted": true
+        }
     },
     "phonica-207077": {
         "store": "phonica",
@@ -25154,7 +25160,11 @@
             "https://d1c4rk9le5opln.cloudfront.net/03f3472bc4d867f180c6f368c47b8eae.jpg",
             "https://d1c4rk9le5opln.cloudfront.net/03f3472bc4d867f180c6f368c47b8eae.jpg"
         ],
-        "phonica-tech-house-new_releases": 150
+        "phonica-tech-house-new_releases": 150,
+        "discogs": {
+            "url": "https://www.discogs.com/release/34898258-Artem-Stan-Exotic-Cruise-EP",
+            "id": 34898258
+        }
     },
     "phonica-205805": {
         "store": "phonica",
@@ -43071,7 +43081,10 @@
             "out_of_stock": false,
             "preorder": true
         },
-        "phonica-techno-new_releases": 82
+        "phonica-techno-new_releases": 82,
+        "discogs": {
+            "attempted": true
+        }
     },
     "phonica-207643": {
         "store": "phonica",
@@ -43321,7 +43334,10 @@
             "preorder": false
         },
         "phonica-tech-house-new_releases": 34,
-        "phonica-techno-new_releases": 78
+        "phonica-techno-new_releases": 78,
+        "discogs": {
+            "attempted": true
+        }
     },
     "phonica-153684": {
         "store": "phonica",
@@ -43350,6 +43366,10 @@
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
+        },
+        "discogs": {
+            "url": "https://www.discogs.com/release/12190031-ACME-Things-Of-Life",
+            "id": 12190031
         }
     },
     "phonica-208602": {
@@ -43371,6 +43391,9 @@
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
+        },
+        "discogs": {
+            "attempted": true
         }
     },
     "phonica-208595": {
@@ -43392,6 +43415,9 @@
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
+        },
+        "discogs": {
+            "attempted": true
         }
     },
     "phonica-208464": {
@@ -43437,7 +43463,11 @@
             "preorder": false
         },
         "phonica-tech-house-new_releases": 35,
-        "phonica-techno-new_releases": 78
+        "phonica-techno-new_releases": 78,
+        "discogs": {
+            "url": "https://www.discogs.com/release/11941-Bandulu-Guidance",
+            "id": 11941
+        }
     },
     "phonica-208556": {
         "store": "phonica",
@@ -43470,7 +43500,11 @@
             "preorder": true
         },
         "phonica-tech-house-bestsellers": 8,
-        "phonica-techno-bestsellers": 23
+        "phonica-techno-bestsellers": 23,
+        "discogs": {
+            "url": "https://www.discogs.com/release/30879483-Ulo-S-Uphoria",
+            "id": 30879483
+        }
     },
     "phonica-208459": {
         "store": "phonica",
@@ -43497,6 +43531,10 @@
         "store_tags": {
             "out_of_stock": false,
             "preorder": true
+        },
+        "discogs": {
+            "url": "https://www.discogs.com/release/549364-TV-Babies-Vertical-Bacon-Sandwich",
+            "id": 549364
         }
     },
     "phonica-208506": {
@@ -43530,7 +43568,10 @@
             "preorder": false
         },
         "phonica-tech-house-new_releases": 6,
-        "phonica-techno-new_releases": 3
+        "phonica-techno-new_releases": 3,
+        "discogs": {
+            "attempted": true
+        }
     },
     "phonica-205163": {
         "store": "phonica",
@@ -43562,7 +43603,11 @@
             "out_of_stock": false,
             "preorder": false
         },
-        "phonica-sectionless-essentials": 3
+        "phonica-sectionless-essentials": 3,
+        "discogs": {
+            "url": "https://www.discogs.com/release/35932699-Moodymann-Black-Mahogani-II",
+            "id": 35932699
+        }
     },
     "phonica-206750": {
         "store": "phonica",
@@ -43598,7 +43643,11 @@
             "out_of_stock": false,
             "preorder": false
         },
-        "phonica-techno-new_releases": 73
+        "phonica-techno-new_releases": 73,
+        "discogs": {
+            "url": "https://www.discogs.com/release/35416033-Richelieu-2-Falling-EP",
+            "id": 35416033
+        }
     },
     "phonica-100822": {
         "store": "phonica",
@@ -43630,7 +43679,10 @@
             "out_of_stock": false,
             "preorder": false
         },
-        "phonica-techno-new_releases": 80
+        "phonica-techno-new_releases": 80,
+        "discogs": {
+            "attempted": true
+        }
     },
     "phonica-208597": {
         "store": "phonica",
@@ -43651,6 +43703,9 @@
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
+        },
+        "discogs": {
+            "attempted": true
         }
     },
     "phonica-208613": {
@@ -43673,7 +43728,10 @@
             "out_of_stock": false,
             "preorder": false
         },
-        "phonica-techno-new_releases": 75
+        "phonica-techno-new_releases": 75,
+        "discogs": {
+            "attempted": true
+        }
     },
     "phonica-208596": {
         "store": "phonica",
@@ -43694,6 +43752,9 @@
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
+        },
+        "discogs": {
+            "attempted": true
         }
     },
     "phonica-208611": {
@@ -43716,7 +43777,10 @@
             "out_of_stock": false,
             "preorder": false
         },
-        "phonica-techno-new_releases": 77
+        "phonica-techno-new_releases": 77,
+        "discogs": {
+            "attempted": true
+        }
     },
     "phonica-206199": {
         "store": "phonica",
@@ -43757,6 +43821,10 @@
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
+        },
+        "discogs": {
+            "url": "https://www.discogs.com/release/35275564-CAR-Dance-At-Oscars",
+            "id": 35275564
         }
     },
     "phonica-203369": {
@@ -43801,7 +43869,11 @@
             "out_of_stock": false,
             "preorder": false
         },
-        "phonica-techno-new_releases": 78
+        "phonica-techno-new_releases": 78,
+        "discogs": {
+            "url": "https://www.discogs.com/release/11941-Bandulu-Guidance",
+            "id": 11941
+        }
     },
     "phonica-208594": {
         "store": "phonica",
@@ -43823,7 +43895,10 @@
             "out_of_stock": false,
             "preorder": false
         },
-        "phonica-techno-new_releases": 79
+        "phonica-techno-new_releases": 79,
+        "discogs": {
+            "attempted": true
+        }
     },
     "phonica-105082": {
         "store": "phonica",
@@ -43870,6 +43945,9 @@
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
+        },
+        "discogs": {
+            "attempted": true
         }
     },
     "phonica-208614": {
@@ -43891,6 +43969,9 @@
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
+        },
+        "discogs": {
+            "attempted": true
         }
     },
     "phonica-172233": {
@@ -43924,7 +44005,11 @@
             "preorder": false
         },
         "phonica-techno-new_releases": 76,
-        "phonica-techno-bestsellers": 19
+        "phonica-techno-bestsellers": 19,
+        "discogs": {
+            "url": "https://www.discogs.com/release/19206544-Armando-Presents-Robert-Armani-Trax-Series-Vol-2",
+            "id": 19206544
+        }
     },
     "phonica-208052": {
         "store": "phonica",
@@ -43994,7 +44079,11 @@
             "out_of_stock": false,
             "preorder": true
         },
-        "phonica-tech-house-bestsellers": 30
+        "phonica-tech-house-bestsellers": 30,
+        "discogs": {
+            "url": "https://www.discogs.com/release/36023788-Mr-G-OG-Retrospective",
+            "id": 36023788
+        }
     },
     "phonica-8443": {
         "store": "phonica",
@@ -44021,6 +44110,10 @@
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
+        },
+        "discogs": {
+            "url": "https://www.discogs.com/release/8674715-\u00c2me-Rej-EP",
+            "id": 8674715
         }
     },
     "phonica-207298": {
@@ -44056,6 +44149,10 @@
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
+        },
+        "discogs": {
+            "url": "https://www.discogs.com/release/35987239-Various-ATR-0424-002",
+            "id": 35987239
         }
     },
     "phonica-65868": {
@@ -44086,7 +44183,10 @@
             "out_of_stock": false,
             "preorder": false
         },
-        "phonica-tech-house-new_releases": 31
+        "phonica-tech-house-new_releases": 31,
+        "discogs": {
+            "attempted": true
+        }
     },
     "phonica-205779": {
         "store": "phonica",
@@ -44136,7 +44236,10 @@
         },
         "phonica-tech-house-new_releases": 22,
         "phonica-sectionless-essentials": 1,
-        "phonica-techno-new_releases": 51
+        "phonica-techno-new_releases": 51,
+        "discogs": {
+            "attempted": true
+        }
     },
     "phonica-207310": {
         "store": "phonica",
@@ -44169,6 +44272,9 @@
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
+        },
+        "discogs": {
+            "attempted": true
         }
     },
     "phonica-207301": {
@@ -44204,6 +44310,10 @@
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
+        },
+        "discogs": {
+            "url": "https://www.discogs.com/release/35294062-RTK-Tarantino-MINDHELMET-22",
+            "id": 35294062
         }
     },
     "phonica-207307": {
@@ -44235,6 +44345,9 @@
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
+        },
+        "discogs": {
+            "attempted": true
         }
     },
     "phonica-207308": {
@@ -44266,6 +44379,10 @@
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
+        },
+        "discogs": {
+            "url": "https://www.discogs.com/release/36127645-Lamalice-Dysproprioception-Ep",
+            "id": 36127645
         }
     },
     "phonica-207302": {
@@ -44303,7 +44420,11 @@
             "preorder": false
         },
         "phonica-tech-house-new_releases": 28,
-        "phonica-techno-new_releases": 73
+        "phonica-techno-new_releases": 73,
+        "discogs": {
+            "url": "https://www.discogs.com/release/11801212-Hit-The-Lights-Invicta-EP",
+            "id": 11801212
+        }
     },
     "phonica-207537": {
         "store": "phonica",

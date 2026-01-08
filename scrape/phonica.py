@@ -11,6 +11,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import InvalidSessionIdException
 from selenium.common.exceptions import WebDriverException
+from urllib3.exceptions import ReadTimeoutError
 
 
 # fetch htl from a cached file if present or spin up a driver and execute the script if not
@@ -42,6 +43,7 @@ def execute_page(url, driver):
 
 # fetch html execuing script
 def get_json(driver, url, api_url, id, offset):
+    driver.set_page_load_timeout(60)
     driver.get(url)
 
     wait = WebDriverWait(driver, 60)
@@ -108,7 +110,7 @@ def scrape_page(url, store, store_dict, view, section, counter, session_scraped_
             api_url = store_dict["views"][view]["api_url"]
             products = get_json(driver, url, api_url, category_id, pos)
             break
-        except (InvalidSessionIdException, WebDriverException):
+        except (InvalidSessionIdException, WebDriverException, ReadTimeoutError):
             attempts += 1
             if attempts > 5:
                 raise

@@ -49682,6 +49682,10 @@
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
+        },
+        "discogs": {
+            "url": "https://www.discogs.com/release/34527100-Melchior-Productions-Ltd-feat-Mischa-Blanos-Jupiter-Tracks-Pt-1",
+            "id": 34527100
         }
     },
     "phonica-206013": {
@@ -49711,7 +49715,10 @@
             "out_of_stock": false,
             "preorder": false
         },
-        "phonica-techno-new_releases": 0
+        "phonica-techno-new_releases": 0,
+        "discogs": {
+            "attempted": true
+        }
     },
     "phonica-205048": {
         "phonica-tech-house-new_releases": 2,
@@ -49743,6 +49750,10 @@
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
+        },
+        "discogs": {
+            "url": "https://www.discogs.com/release/35437609-A_A-VersionsFlux",
+            "id": 35437609
         }
     },
     "phonica-208858": {
@@ -49776,7 +49787,11 @@
             "out_of_stock": false,
             "preorder": false
         },
-        "phonica-techno-new_releases": 1
+        "phonica-techno-new_releases": 1,
+        "discogs": {
+            "url": "https://www.discogs.com/release/36071524-Log-_In-Innershades-Son-Of-The-Light-EP",
+            "id": 36071524
+        }
     },
     "phonica-208326": {
         "phonica-tech-house-new_releases": 4,
@@ -49809,7 +49824,10 @@
             "out_of_stock": false,
             "preorder": false
         },
-        "phonica-techno-new_releases": 1
+        "phonica-techno-new_releases": 1,
+        "discogs": {
+            "attempted": true
+        }
     },
     "phonica-208694": {
         "phonica-tech-house-bestsellers": 2,
@@ -49846,7 +49864,11 @@
             "out_of_stock": false,
             "preorder": true
         },
-        "phonica-techno-bestsellers": 1
+        "phonica-techno-bestsellers": 1,
+        "discogs": {
+            "url": "https://www.discogs.com/release/35294107-Various-MINDHELMET-23",
+            "id": 35294107
+        }
     },
     "phonica-208821": {
         "phonica-tech-house-bestsellers": 3,
@@ -49879,7 +49901,11 @@
             "out_of_stock": false,
             "preorder": true
         },
-        "phonica-techno-bestsellers": 1
+        "phonica-techno-bestsellers": 1,
+        "discogs": {
+            "url": "https://www.discogs.com/release/23874509-Weedevil-The-Return",
+            "id": 23874509
+        }
     },
     "phonica-208072": {
         "phonica-tech-house-bestsellers": 7,
@@ -49912,7 +49938,11 @@
             "out_of_stock": false,
             "preorder": true
         },
-        "phonica-techno-bestsellers": 5
+        "phonica-techno-bestsellers": 5,
+        "discogs": {
+            "url": "https://www.discogs.com/release/36135121-Persian-Persian-Meets-Picasso",
+            "id": 36135121
+        }
     },
     "phonica-208616": {
         "phonica-tech-house-bestsellers": 9,
@@ -49946,6 +49976,10 @@
         "store_tags": {
             "out_of_stock": false,
             "preorder": true
+        },
+        "discogs": {
+            "url": "https://www.discogs.com/release/35941549-Sequent-Consult-Wings-Of-Fury",
+            "id": 35941549
         }
     },
     "phonica-208761": {
@@ -49979,7 +50013,11 @@
             "out_of_stock": false,
             "preorder": true
         },
-        "phonica-techno-bestsellers": 18
+        "phonica-techno-bestsellers": 18,
+        "discogs": {
+            "url": "https://www.discogs.com/release/15094699-Hive-5-Demiurge",
+            "id": 15094699
+        }
     },
     "phonica-208814": {
         "phonica-tech-house-bestsellers": 13,
@@ -50012,7 +50050,11 @@
             "out_of_stock": false,
             "preorder": true
         },
-        "phonica-techno-bestsellers": 20
+        "phonica-techno-bestsellers": 20,
+        "discogs": {
+            "url": "https://www.discogs.com/release/144612-SYT-Echo-System-School-Of-Thought",
+            "id": 144612
+        }
     },
     "phonica-207474": {
         "phonica-techno-new_releases": 0,
@@ -50052,6 +50094,9 @@
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
+        },
+        "discogs": {
+            "attempted": true
         }
     },
     "phonica-201373": {
@@ -50094,6 +50139,9 @@
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
+        },
+        "discogs": {
+            "attempted": true
         }
     },
     "phonica-208434": {
@@ -50126,6 +50174,9 @@
         "store_tags": {
             "out_of_stock": false,
             "preorder": true
+        },
+        "discogs": {
+            "attempted": true
         }
     },
     "phonica-208695": {
@@ -50158,6 +50209,9 @@
         "store_tags": {
             "out_of_stock": false,
             "preorder": true
+        },
+        "discogs": {
+            "attempted": true
         }
     },
     "phonica-208631": {
@@ -50190,6 +50244,10 @@
         "store_tags": {
             "out_of_stock": false,
             "preorder": true
+        },
+        "discogs": {
+            "url": "https://www.discogs.com/release/8743944-Various-Various-2",
+            "id": 8743944
         }
     },
     "phonica-208825": {
@@ -50224,6 +50282,9 @@
         "store_tags": {
             "out_of_stock": false,
             "preorder": true
+        },
+        "discogs": {
+            "attempted": true
         }
     },
     "phonica-208817": {
@@ -50256,6 +50317,10 @@
         "store_tags": {
             "out_of_stock": false,
             "preorder": true
+        },
+        "discogs": {
+            "url": "https://www.discogs.com/release/1908160-Writers-Block-Next-Stop",
+            "id": 1908160
         }
     },
     "phonica-208811": {
@@ -50288,6 +50353,10 @@
         "store_tags": {
             "out_of_stock": false,
             "preorder": true
+        },
+        "discogs": {
+            "url": "https://www.discogs.com/release/133346-69db-LSD",
+            "id": 133346
         }
     },
     "phonica-208769": {
@@ -50320,6 +50389,9 @@
         "store_tags": {
             "out_of_stock": false,
             "preorder": true
+        },
+        "discogs": {
+            "attempted": true
         }
     },
     "phonica-208700": {
@@ -50352,6 +50424,10 @@
         "store_tags": {
             "out_of_stock": false,
             "preorder": true
+        },
+        "discogs": {
+            "url": "https://www.discogs.com/release/35865070-ERP-WGD-12010",
+            "id": 35865070
         }
     },
     "phonica-207612": {
@@ -50380,6 +50456,9 @@
         "store_tags": {
             "out_of_stock": false,
             "preorder": true
+        },
+        "discogs": {
+            "attempted": true
         }
     }
 }

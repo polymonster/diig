@@ -50477,6 +50477,10 @@
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
+        },
+        "discogs": {
+            "url": "https://www.discogs.com/release/28940713-Larry-Heard-Another-Night-Re-Edit",
+            "id": 28940713
         }
     },
     "phonica-208696": {
@@ -50510,7 +50514,11 @@
             "out_of_stock": false,
             "preorder": true
         },
-        "phonica-techno-bestsellers": 20
+        "phonica-techno-bestsellers": 20,
+        "discogs": {
+            "url": "https://www.discogs.com/release/12381529-David-Bowie-No-Plan-EP",
+            "id": 12381529
+        }
     },
     "phonica-208693": {
         "phonica-tech-house-bestsellers": 11,
@@ -50545,7 +50553,10 @@
             "out_of_stock": false,
             "preorder": true
         },
-        "phonica-techno-bestsellers": 20
+        "phonica-techno-bestsellers": 20,
+        "discogs": {
+            "attempted": true
+        }
     },
     "phonica-208558": {
         "phonica-techno-new_releases": 0,
@@ -50577,6 +50588,10 @@
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
+        },
+        "discogs": {
+            "url": "https://www.discogs.com/release/33840246-Shoal-Temporal-Blend-",
+            "id": 33840246
         }
     },
     "phonica-167872": {
@@ -50613,6 +50628,9 @@
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
+        },
+        "discogs": {
+            "attempted": true
         }
     },
     "phonica-208452": {
@@ -50645,6 +50663,9 @@
         "store_tags": {
             "out_of_stock": false,
             "preorder": true
+        },
+        "discogs": {
+            "attempted": true
         }
     },
     "phonica-208824": {
@@ -50677,6 +50698,10 @@
         "store_tags": {
             "out_of_stock": false,
             "preorder": true
+        },
+        "discogs": {
+            "url": "https://www.discogs.com/release/1995959-Devastation-Inside-Simply-Nothing",
+            "id": 1995959
         }
     }
 }

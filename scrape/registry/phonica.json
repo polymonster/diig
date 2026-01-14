@@ -50731,7 +50731,11 @@
             "out_of_stock": false,
             "preorder": true
         },
-        "phonica-techno-bestsellers": 1
+        "phonica-techno-bestsellers": 1,
+        "discogs": {
+            "url": "https://www.discogs.com/release/999324-Iz-Everything-On-My-Mind",
+            "id": 999324
+        }
     },
     "phonica-208847": {
         "phonica-tech-house-bestsellers": 7,
@@ -50759,6 +50763,10 @@
         "store_tags": {
             "out_of_stock": false,
             "preorder": true
+        },
+        "discogs": {
+            "url": "https://www.discogs.com/release/35993908-Dexter-2-Alien",
+            "id": 35993908
         }
     },
     "phonica-208577": {
@@ -50791,6 +50799,10 @@
         "store_tags": {
             "out_of_stock": false,
             "preorder": true
+        },
+        "discogs": {
+            "url": "https://www.discogs.com/release/3545358-The-Rainmakers-2-No-Romance",
+            "id": 3545358
         }
     },
     "phonica-208861": {
@@ -50823,6 +50835,9 @@
         "store_tags": {
             "out_of_stock": false,
             "preorder": true
+        },
+        "discogs": {
+            "attempted": true
         }
     }
 }

@@ -50850,7 +50850,11 @@
             "out_of_stock": false,
             "preorder": false
         },
-        "phonica-techno-new_releases": 0
+        "phonica-techno-new_releases": 0,
+        "discogs": {
+            "url": "https://www.discogs.com/release/36178972-Ahu-2-Editz",
+            "id": 36178972
+        }
     },
     "phonica-207767": {
         "phonica-tech-house-new_releases": 1,
@@ -50879,7 +50883,10 @@
             "out_of_stock": false,
             "preorder": false
         },
-        "phonica-techno-new_releases": 0
+        "phonica-techno-new_releases": 0,
+        "discogs": {
+            "attempted": true
+        }
     },
     "phonica-208937": {
         "phonica-tech-house-new_releases": 2,
@@ -50911,6 +50918,9 @@
         "store_tags": {
             "out_of_stock": false,
             "preorder": true
+        },
+        "discogs": {
+            "attempted": true
         }
     },
     "phonica-206576": {
@@ -50944,7 +50954,10 @@
             "out_of_stock": false,
             "preorder": false
         },
-        "phonica-techno-new_releases": 0
+        "phonica-techno-new_releases": 0,
+        "discogs": {
+            "attempted": true
+        }
     },
     "phonica-208941": {
         "phonica-tech-house-new_releases": 4,
@@ -50977,7 +50990,10 @@
             "out_of_stock": false,
             "preorder": true
         },
-        "phonica-techno-new_releases": 1
+        "phonica-techno-new_releases": 1,
+        "discogs": {
+            "attempted": true
+        }
     },
     "phonica-207600": {
         "phonica-tech-house-new_releases": 5,
@@ -51008,7 +51024,11 @@
             "out_of_stock": false,
             "preorder": false
         },
-        "phonica-techno-new_releases": 1
+        "phonica-techno-new_releases": 1,
+        "discogs": {
+            "url": "https://www.discogs.com/release/34711026-Unknown-Artist-OMM010",
+            "id": 34711026
+        }
     },
     "phonica-205733": {
         "phonica-tech-house-new_releases": 6,
@@ -51043,7 +51063,10 @@
             "out_of_stock": false,
             "preorder": false
         },
-        "phonica-techno-new_releases": 2
+        "phonica-techno-new_releases": 2,
+        "discogs": {
+            "attempted": true
+        }
     },
     "phonica-208947": {
         "phonica-tech-house-new_releases": 7,
@@ -51075,6 +51098,10 @@
         "store_tags": {
             "out_of_stock": false,
             "preorder": true
+        },
+        "discogs": {
+            "url": "https://www.discogs.com/release/4728122-Harry-Fraud-High-Tide",
+            "id": 4728122
         }
     },
     "phonica-208891": {
@@ -51107,6 +51134,9 @@
         "store_tags": {
             "out_of_stock": false,
             "preorder": true
+        },
+        "discogs": {
+            "attempted": true
         }
     },
     "phonica-208946": {
@@ -51145,6 +51175,9 @@
         "store_tags": {
             "out_of_stock": false,
             "preorder": true
+        },
+        "discogs": {
+            "attempted": true
         }
     },
     "phonica-207070": {
@@ -51177,6 +51210,10 @@
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
+        },
+        "discogs": {
+            "url": "https://www.discogs.com/release/35668921-Adri\u00e0-Duch-Inner-Peace-EP",
+            "id": 35668921
         }
     }
 }

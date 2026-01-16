@@ -1,24 +1,31 @@
 // TASKS
 
+// - tap for android (gesture)
+// - discogs icon
+
+// - return from settings / likes goes to wrong location
 // - ReleasesView can leak mem boot flow!
 
 // - improve carousel dots
-
 // - help page
 // - contact page
 // - following page
-
 // - add reg validation
+
 // - cold cuts
-// - genreless setions, all generes new / chart
+// - hardwax
+// - decks
+// - VU
 
 // - implement label link (on tap)
-// - follow?
 
-// - side swipe still isnt perfect
-// - vertical swipe still sometimes feel sticky
+// ? side swipe still isnt perfect
+// ? vertical swipe still sometimes feel sticky
 
 // DONE
+// x - improve clicks on the app edges
+// x - right align menu (popup)
+// x - genreless setions, all generes new / chart
 // x - improve feedback for loading failures (not spinning endlessly)
 // x - handle auto play when backgrounded setting
 // x - add clear cache and cache options
@@ -142,7 +149,7 @@ constexpr f32       k_text_size_nerds = 0.7f;
 constexpr f32       k_text_size_dots = 0.8f;
 constexpr f32       k_text_size_small = 0.66f;
 constexpr f32       k_release_button_tap_radius_ratio = 64.0f / k_promax_11_w;
-constexpr f32       k_page_button_press_radius_ratio = 94.0f / k_promax_11_w;
+constexpr f32       k_page_button_press_radius_ratio = 74.0f / k_promax_11_w;
 constexpr u32       k_num_threads_per_view = 4;
 constexpr size_t    k_login_buf_size = 320;
 constexpr s32       k_ram_cache_range = 10;

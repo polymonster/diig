@@ -58,9 +58,27 @@ namespace pen
     }
 } // namespace pen
 
+//
+// ImGui Utils
+//
+
 bool any_popup_open()
 {
     return (ImGui::GetCurrentContext()->OpenPopupStack.Size > 0);
+}
+
+bool right_align_menu_item(const c8* text, f32 padding)
+{
+    auto text_size = ImGui::CalcTextSize(text);
+    ImGui::SetCursorPosX(ImGui::GetContentRegionAvail().x - text_size.x - padding);
+    return ImGui::MenuItem(text);
+}
+
+void right_align_text(const c8* text, f32 padding)
+{
+    auto text_size = ImGui::CalcTextSize(text);
+    ImGui::SetCursorPosX(ImGui::GetContentRegionAvail().x - text_size.x - padding);
+    ImGui::Text("%s", text);
 }
 
 // curl api
@@ -2169,11 +2187,13 @@ namespace
         {
             return true;
         }
+        
+        // ImGui::GetForegroundDrawList()->AddCircle(ImVec2(mid.x, mid.y), padding, IM_COL32(255, 0, 0, 255), 32, 2.0f);
 
         return false;
     }
 
-    bool lenient_button_click(f32 padding, bool& debounce, bool debug = false)
+    bool lenient_button_click(f32 padding, bool& debounce)
     {
         auto& ms = pen::input_get_mouse_state();
         ImVec2 bbmin = ImGui::GetItemRectMin();
@@ -2183,6 +2203,8 @@ namespace
         vec2f vbmin = vec2f(bbmin.x, bbmin.y);
         vec2f vbmax = vec2f(bbmax.x, bbmax.y);
         vec2f mid = vbmin + ((vbmax - vbmin) * 0.5f);
+        
+        // ImGui::GetForegroundDrawList()->AddCircle(ImVec2(mid.x, mid.y), padding, IM_COL32(255, 0, 0, 255), 32, 2.0f);
 
         // need to wait on debounce
         if(debounce)
@@ -2258,12 +2280,12 @@ namespace
         // options menu button
         static bool s_debounce_menu = false;
         if(lenient_button_click(rad, s_debounce_menu) && !ctx.scroll_lock_x && ! ctx.scroll_lock_y) {
-            if(ImGui::IsPopupOpen("Options Menu")) {
+            if(ImGui::IsPopupOpen("Options Popup")) {
                 ImGui::CloseCurrentPopup();
                 s_debounce_menu = true;
             }
             else {
-                ImGui::OpenPopup("Options Menu");
+                ImGui::OpenPopup("Options Popup");
             }
         }
 
@@ -2274,33 +2296,38 @@ namespace
         // options menu popup
         ImGui::SetWindowFontScale(k_text_size_h2);
 
-        f32 s = ctx.w - offset * 2.0f;
-        ImVec2 options_menu_pos = ImVec2(s, ImGui::GetCursorPosY());
+        // set pos and scale
+        f32 pad = k_indent2;
+        
+        f32 menu_w = std::max<f32>(
+            ImGui::CalcTextSize("Show Debug").x,
+            ImGui::CalcTextSize(ctx.username.c_str()).x
+        ) + pad * 2.0;
+        
+        ImVec2 options_menu_pos = ImVec2(ctx.w - menu_w, ImGui::GetCursorPosY());
         ImGui::SetNextWindowPos(options_menu_pos);
-        ImGui::SetNextWindowSize(ImVec2(s, 0.0f));
-        if(ImGui::BeginPopup("Options Menu")) {
+        ImGui::SetNextWindowSize(ImVec2(menu_w, 0.0f));
+        
+        if(ImGui::BeginPopup("Options Popup")) {
 
             // user name
             if(!ctx.username.empty())
             {
-                ImGui::SetWindowFontScale(k_text_size_body);
-                ImGui::Text("%s", ctx.username.c_str());
+                right_align_text(ctx.username.c_str(), pad);
                 ImGui::Separator();
             }
 
-            ImGui::SetWindowFontScale(k_text_size_body);
-
-            if(ImGui::MenuItem("Settings")) {
+            if(right_align_menu_item("Settings", pad)) {
                 change_page(Page::settings);
             }
 
             if(ctx.show_debug) {
-                if(ImGui::MenuItem("Hide Debug")) {
+                if(right_align_menu_item("Hide Debug", pad)) {
                     ctx.show_debug = false;
                 }
             }
             else {
-                if(ImGui::MenuItem("Show Debug")) {
+                if(right_align_menu_item("Show Debug", pad)) {
                     ctx.show_debug = true;
                 }
             }
@@ -2308,7 +2335,7 @@ namespace
             // log out
             if(!ctx.auth_response.empty()) {
                 ImGui::Separator();
-                if(ImGui::MenuItem("Log Out")) {
+                if(right_align_menu_item("Log Out", pad)) {
                     ctx.view->page = Page::login_or_signup;
                     audio_player_stop_existing();
                 }
@@ -2318,6 +2345,67 @@ namespace
         }
 
         ImGui::SetWindowFontScale(k_text_size_body);
+    }
+
+    void more_menu(u32 r, f32 rad)
+    {
+        auto& releases = ctx.view->releases;
+        
+        static s32 s_more_menu_r = -1;
+        
+        bool has_more = !releases.discogs_url[r].empty();
+        if(!has_more)
+        {
+            return;
+        }
+        
+        ImGui::SameLine();
+        ImGui::SetCursorPosX(ctx.w - rad);
+        ImGui::Text("%s", ICON_FA_ELLIPSIS_H);
+        
+        if(lenient_button_tap(rad) && !any_popup_open() && !ctx.scroll_lock_x && !ctx.scroll_lock_y) {
+            if(ImGui::IsPopupOpen("More Menu")) {
+                ImGui::CloseCurrentPopup();
+                s_more_menu_r = -1;
+            }
+            else {
+                ImGui::OpenPopup("More Menu");
+                s_more_menu_r = r;
+            }
+        }
+                                
+        if(r == s_more_menu_r)
+        {
+            ImVec2 more_menu_pos = ImGui::GetItemRectMin();
+            more_menu_pos.y = ImGui::GetItemRectMax().y;
+            
+            f32 pad = k_indent2;
+            
+            ImGui::SetWindowFontScale(k_text_size_h2);
+            f32 menu_w = ImGui::CalcTextSize("Open In Discogs").x + (pad * 2.0);
+            
+            Str discogs_link = releases.discogs_url[r];
+            more_menu_pos.x = ctx.w - menu_w;
+            ImGui::SetNextWindowPos(more_menu_pos);
+            ImGui::SetNextWindowSize(ImVec2(menu_w, 0.0f));
+            
+            if(ImGui::BeginPopup("More Menu")) {
+                if(right_align_menu_item("Open In Discogs", pad)) {
+                    discogs_link = str_replace_string(discogs_link, "https//www.discogs.com", "");
+                    discogs_link = str_replace_string(discogs_link, "https://www.discogs.com", "");
+                    Str url = "https://discogs.com";
+                    url.append(discogs_link.c_str());
+                    ctx.open_url_request = url;
+                    s_more_menu_r = -1;
+                }
+                
+                if(right_align_menu_item("Add To Wants", pad)) {
+                    add_to_wants(ctx.discogs_username, releases.discogs_id[r]);
+                }
+                
+                ImGui::EndPopup();
+            }
+        }
     }
 
     void release_feed()
@@ -2410,70 +2498,7 @@ namespace
             
             // more menu button
             f32 rad = ctx.w * k_page_button_press_radius_ratio;
-            bool has_more = !releases.label_link[r].empty() || !releases.discogs_url[r].empty();
-            
-            if(has_more)
-            {
-                static s32 s_more_menu_r = -1;
-                
-                ImGui::SameLine();
-                ImGui::SetCursorPosX(ctx.w - rad);
-                ImGui::Text("%s", ICON_FA_ELLIPSIS_H);
-                
-                if(lenient_button_tap(rad * 1.5f) && !any_popup_open() && !ctx.scroll_lock_x && !ctx.scroll_lock_y) {
-                    if(ImGui::IsPopupOpen("More Menu")) {
-                        ImGui::CloseCurrentPopup();
-                        s_more_menu_r = -1;
-                    }
-                    else {
-                        ImGui::OpenPopup("More Menu");
-                        s_more_menu_r = r;
-                    }
-                }
-                                        
-                if(r == s_more_menu_r)
-                {
-                    ImVec2 more_menu_pos = ImGui::GetItemRectMin();
-                    more_menu_pos.y = ImGui::GetItemRectMax().y;
-                    
-                    ImGui::SetWindowFontScale(k_text_size_h2);
-                    f32 menu_w = ImGui::CalcTextSize("Open In Discogs     ").x;
-                    
-                    more_menu_pos.x = ctx.w - menu_w;
-                    ImGui::SetNextWindowPos(more_menu_pos);
-                    ImGui::SetNextWindowSize(ImVec2(menu_w, 0.0f));
-                    
-                    if(ImGui::BeginPopup("More Menu")) {
-                    
-                        if(!releases.label_link[r].empty()) {
-                            if(ImGui::MenuItem("Go To Label")) {
-                                ctx.open_url_request = releases.label_link[r];
-                                s_more_menu_r = -1;
-                            }
-                        }
-                        
-                        Str discogs_link = releases.discogs_url[r];
-                        if(!discogs_link.empty()) {
-                            if(ImGui::MenuItem("Open In Discogs")) {
-                                discogs_link = str_replace_string(discogs_link, "https//www.discogs.com", "");
-                                discogs_link = str_replace_string(discogs_link, "https://www.discogs.com", "");
-                                Str url = "https://discogs.com";
-                                url.append(discogs_link.c_str());
-                                ctx.open_url_request = url;
-                                s_more_menu_r = -1;
-                            }
-                        }
-                        
-                        if(!discogs_link.empty()) {
-                            if(ImGui::MenuItem("Add To Wants")) {
-                                add_to_wants(ctx.discogs_username, releases.discogs_id[r]);
-                            }
-                        }
-                        
-                        ImGui::EndPopup();
-                    }
-                }
-            }
+            more_menu(r, rad);
 
             ImGui::SetWindowFontScale(k_text_size_body);
 
@@ -2957,6 +2982,7 @@ namespace
 
     void apply_taps()
     {
+        /*
         constexpr u32 k_tap_threshold_ms = 1300;
         static u32 s_tap_timer = k_tap_threshold_ms;
 
@@ -2979,6 +3005,24 @@ namespace
             }
 
             s_tap_timer = k_tap_threshold_ms;
+        }
+        */
+        
+        // track last down pos
+        static vec2f down_pos = vec2f(FLT_MAX);
+        if(pen::input_is_mouse_down(PEN_MOUSE_L))
+        {
+            auto ms = pen::input_get_mouse_state();
+            down_pos = vec2f(ms.x, ms.y);
+        }
+        
+        // reset
+        ctx.tap_pos = vec2f(FLT_MAX);
+        
+        // set tap pos when tapped
+        if(os_tapped())
+        {
+            ctx.tap_pos = down_pos;
         }
     }
 

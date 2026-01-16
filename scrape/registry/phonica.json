@@ -51243,7 +51243,11 @@
             "out_of_stock": false,
             "preorder": false
         },
-        "phonica-techno-new_releases": 0
+        "phonica-techno-new_releases": 0,
+        "discogs": {
+            "url": "https://www.discogs.com/release/2061037-Top-Cat-9-Lives-Of-The-Cat",
+            "id": 2061037
+        }
     },
     "phonica-208866": {
         "phonica-tech-house-bestsellers": 5,
@@ -51265,6 +51269,10 @@
         "store_tags": {
             "out_of_stock": false,
             "preorder": true
+        },
+        "discogs": {
+            "url": "https://www.discogs.com/release/35898232-Unknown-Artist-Rainfuck-03",
+            "id": 35898232
         }
     },
     "phonica-208936": {
@@ -51295,6 +51303,9 @@
         "store_tags": {
             "out_of_stock": false,
             "preorder": true
+        },
+        "discogs": {
+            "attempted": true
         }
     },
     "phonica-200075": {
@@ -51327,6 +51338,10 @@
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
+        },
+        "discogs": {
+            "url": "https://www.discogs.com/release/33724362-Goosy-Goosy",
+            "id": 33724362
         }
     },
     "phonica-208953": {
@@ -51355,6 +51370,9 @@
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
+        },
+        "discogs": {
+            "attempted": true
         }
     }
 }

@@ -51390,7 +51390,11 @@
             "out_of_stock": false,
             "preorder": false
         },
-        "phonica-techno-new_releases": 2
+        "phonica-techno-new_releases": 2,
+        "discogs": {
+            "url": "https://www.discogs.com/release/28216465-Martinou-Chiral",
+            "id": 28216465
+        }
     },
     "phonica-208058": {
         "phonica-tech-house-new_releases": 2,
@@ -51423,7 +51427,11 @@
             "out_of_stock": false,
             "preorder": false
         },
-        "phonica-techno-new_releases": 2
+        "phonica-techno-new_releases": 2,
+        "discogs": {
+            "url": "https://www.discogs.com/release/35828434-ION-Signals-EP",
+            "id": 35828434
+        }
     },
     "phonica-206736": {
         "phonica-tech-house-new_releases": 3,
@@ -51455,6 +51463,10 @@
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
+        },
+        "discogs": {
+            "url": "https://www.discogs.com/release/36130702-Various-Dont-Trust-Snippets-Play-The-Full-Track-Before-Buying-A-Record",
+            "id": 36130702
         }
     },
     "phonica-207489": {
@@ -51486,7 +51498,10 @@
             "out_of_stock": false,
             "preorder": false
         },
-        "phonica-techno-new_releases": 1
+        "phonica-techno-new_releases": 1,
+        "discogs": {
+            "attempted": true
+        }
     },
     "phonica-208059": {
         "phonica-tech-house-new_releases": 5,
@@ -51519,7 +51534,10 @@
             "out_of_stock": false,
             "preorder": false
         },
-        "phonica-techno-new_releases": 5
+        "phonica-techno-new_releases": 5,
+        "discogs": {
+            "attempted": true
+        }
     },
     "phonica-206516": {
         "phonica-tech-house-new_releases": 6,
@@ -51551,6 +51569,9 @@
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
+        },
+        "discogs": {
+            "attempted": true
         }
     },
     "phonica-208342": {
@@ -51584,7 +51605,11 @@
             "out_of_stock": false,
             "preorder": false
         },
-        "phonica-techno-new_releases": 7
+        "phonica-techno-new_releases": 7,
+        "discogs": {
+            "url": "https://www.discogs.com/release/35962924-Various-Sueezo-Vaelvet-EP",
+            "id": 35962924
+        }
     },
     "phonica-207941": {
         "phonica-tech-house-new_releases": 8,
@@ -51617,7 +51642,11 @@
             "out_of_stock": false,
             "preorder": false
         },
-        "phonica-techno-new_releases": 6
+        "phonica-techno-new_releases": 6,
+        "discogs": {
+            "url": "https://www.discogs.com/release/35854657-Marius-Acke-Dirty-Funky-EP",
+            "id": 35854657
+        }
     },
     "phonica-207572": {
         "phonica-tech-house-new_releases": 9,
@@ -51648,7 +51677,11 @@
             "out_of_stock": false,
             "preorder": false
         },
-        "phonica-techno-new_releases": 2
+        "phonica-techno-new_releases": 2,
+        "discogs": {
+            "url": "https://www.discogs.com/release/1384767-Karma-15-Mi-Mnemonic",
+            "id": 1384767
+        }
     },
     "phonica-207806": {
         "phonica-tech-house-new_releases": 10,
@@ -51681,7 +51714,11 @@
             "out_of_stock": false,
             "preorder": false
         },
-        "phonica-techno-new_releases": 2
+        "phonica-techno-new_releases": 2,
+        "discogs": {
+            "url": "https://www.discogs.com/release/35364154-Gene-Hunt-Cosmic-Destiny",
+            "id": 35364154
+        }
     },
     "phonica-208466": {
         "phonica-tech-house-new_releases": 11,
@@ -51712,7 +51749,10 @@
             "out_of_stock": false,
             "preorder": false
         },
-        "phonica-techno-new_releases": 5
+        "phonica-techno-new_releases": 5,
+        "discogs": {
+            "attempted": true
+        }
     },
     "phonica-208692": {
         "phonica-tech-house-bestsellers": 5,
@@ -51745,7 +51785,10 @@
             "out_of_stock": false,
             "preorder": true
         },
-        "phonica-techno-bestsellers": 1
+        "phonica-techno-bestsellers": 1,
+        "discogs": {
+            "attempted": true
+        }
     },
     "phonica-206810": {
         "phonica-sectionless-essentials": 0,
@@ -51777,6 +51820,9 @@
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
+        },
+        "discogs": {
+            "attempted": true
         }
     },
     "phonica-208987": {
@@ -51809,6 +51855,9 @@
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
+        },
+        "discogs": {
+            "attempted": true
         }
     },
     "phonica-63328": {
@@ -51839,6 +51888,10 @@
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
+        },
+        "discogs": {
+            "url": "https://www.discogs.com/release/1948-Mr-Fingers-Washing-Machine-Can-You-Feel-It",
+            "id": 1948
         }
     },
     "phonica-206081": {
@@ -51879,6 +51932,10 @@
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
+        },
+        "discogs": {
+            "url": "https://www.discogs.com/release/35167981-2501-3-Ulmeyda",
+            "id": 35167981
         }
     },
     "phonica-102979": {
@@ -51909,6 +51966,10 @@
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
+        },
+        "discogs": {
+            "url": "https://www.discogs.com/release/3424434-ERP-Lunar-Ruins",
+            "id": 3424434
         }
     },
     "phonica-208999": {
@@ -51939,6 +52000,10 @@
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
+        },
+        "discogs": {
+            "url": "https://www.discogs.com/release/15780721-Rev-Ernest-Franklin-The-New-Franklin-Singers-Walking-By-Faith",
+            "id": 15780721
         }
     },
     "phonica-144191": {
@@ -51971,6 +52036,10 @@
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
+        },
+        "discogs": {
+            "url": "https://www.discogs.com/release/9949486-Reedale-Rise-Eternal-Return",
+            "id": 9949486
         }
     },
     "phonica-208896": {
@@ -51999,6 +52068,10 @@
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
+        },
+        "discogs": {
+            "url": "https://www.discogs.com/release/36230809-Surface-Access-Transfer",
+            "id": 36230809
         }
     },
     "phonica-208923": {
@@ -52031,6 +52104,9 @@
         "store_tags": {
             "out_of_stock": false,
             "preorder": true
+        },
+        "discogs": {
+            "attempted": true
         }
     },
     "phonica-208897": {
@@ -52063,6 +52139,10 @@
         "store_tags": {
             "out_of_stock": false,
             "preorder": true
+        },
+        "discogs": {
+            "url": "https://www.discogs.com/release/36135157-Persian-Persian-Meets-Miles-J-Paralysis",
+            "id": 36135157
         }
     },
     "phonica-208848": {
@@ -52085,6 +52165,10 @@
         "store_tags": {
             "out_of_stock": false,
             "preorder": true
+        },
+        "discogs": {
+            "url": "https://www.discogs.com/release/36139585-Octal-Industries-Ohm-16-Aurora",
+            "id": 36139585
         }
     },
     "phonica-208157": {
@@ -52117,6 +52201,9 @@
         "store_tags": {
             "out_of_stock": false,
             "preorder": true
+        },
+        "discogs": {
+            "attempted": true
         }
     }
 }

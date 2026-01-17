@@ -1,16 +1,16 @@
 // TASKS
 
-// - tap for android (gesture)
+// disable clicks on items which intersect the header
 // - discogs icon
 
 // - return from settings / likes goes to wrong location
 // - ReleasesView can leak mem boot flow!
 
 // - improve carousel dots
+
 // - help page
 // - contact page
 // - following page
-// - add reg validation
 
 // - cold cuts
 // - hardwax
@@ -23,6 +23,7 @@
 // ? vertical swipe still sometimes feel sticky
 
 // DONE
+// x - tap for android (gesture)
 // x - improve clicks on the app edges
 // x - right align menu (popup)
 // x - genreless setions, all generes new / chart
@@ -131,12 +132,13 @@ using namespace put::ecs;
 // magic number constants
 constexpr f32       k_promax_11_w = 1125.0f; // ratios were tuned from pixels sizes on iphone11 pro max
 constexpr f32       k_promax_11_h = 2436.0f;
+
 constexpr f32       k_drag_threshold = 0.1f;
 constexpr f32       k_inertia = 0.96f;
 constexpr f32       k_inertia_cutoff = 3.33f;
 constexpr f32       k_snap_lerp = 0.3f;
 constexpr f32       k_indent1 = 2.0f;
-constexpr f32       k_indent2 = 36.0f;
+constexpr f32       k_indent2 = 18.0f;
 constexpr f32       k_top_pull_pad = 1.5f;
 constexpr f32       k_top_pull_reload = 1.25f;
 constexpr f32       k_text_size_h1 = 2.25f;
@@ -172,7 +174,7 @@ namespace EntityFlags
         cache_url_requested = 1<<10,
         visible = 1<<11
     };
-};
+}
 
 namespace StoreTags
 {
@@ -381,7 +383,8 @@ struct AppContext
     Str                     firebase_token = "";
     Str                     last_response_message = "";
     u32                     last_response_code = 0;
-    
+    vec2f                   display_scale = 1.0;
+
     bool                    backgrounded = false;
     bool                    show_debug = false;
     bool                    mute = false;

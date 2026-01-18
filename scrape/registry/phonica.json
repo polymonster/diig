@@ -494,7 +494,7 @@
             "url": "https://www.discogs.com/release/35328664-Moodymann-Black-Mahogani",
             "id": 35328664
         },
-        "phonica-sectionless-essentials": 32
+        "phonica-sectionless-essentials": 31
     },
     "phonica-206028": {
         "store": "phonica",
@@ -4214,8 +4214,8 @@
             "url": "https://www.discogs.com/release/35436070-Roman-Fl\u00fcgel-Cooking-The-Books-EP",
             "id": 35436070
         },
-        "phonica-tech-house-new_releases": 151,
-        "phonica-sectionless-essentials": 10
+        "phonica-tech-house-new_releases": 148,
+        "phonica-sectionless-essentials": 12
     },
     "phonica-205912": {
         "store": "phonica",
@@ -4763,7 +4763,8 @@
         "discogs": {
             "url": "https://www.discogs.com/release/33693882-Ricardo-Villalobos-Salvador",
             "id": 33693882
-        }
+        },
+        "phonica-tech-house-new_releases": 178
     },
     "phonica-205742": {
         "store": "phonica",
@@ -4832,7 +4833,7 @@
             "url": "https://www.discogs.com/release/35270509-Various-DMA-Friends-001",
             "id": 35270509
         },
-        "phonica-tech-house-new_releases": 150
+        "phonica-tech-house-new_releases": 147
     },
     "phonica-206285": {
         "store": "phonica",
@@ -5076,7 +5077,8 @@
         "discogs": {
             "url": "https://www.discogs.com/release/35410711-Juan-Ferreyra-I-Didnt-Buy-My-Dr-M\u00e4rtens",
             "id": 35410711
-        }
+        },
+        "phonica-tech-house-new_releases": 179
     },
     "phonica-206349": {
         "store": "phonica",
@@ -5147,7 +5149,7 @@
             "url": "https://www.discogs.com/release/35227975-Chlo\u00e9-Caillet-Here-To-Make-You-Smile",
             "id": 35227975
         },
-        "phonica-tech-house-new_releases": 101
+        "phonica-tech-house-new_releases": 96
     },
     "phonica-206598": {
         "store": "phonica",
@@ -6075,7 +6077,8 @@
         "discogs": {
             "url": "https://www.discogs.com/release/27772950-Gemini-Gemini-Traxx-Part-One",
             "id": 27772950
-        }
+        },
+        "phonica-tech-house-new_releases": 176
     },
     "phonica-202258": {
         "store": "phonica",
@@ -6854,7 +6857,7 @@
             "url": "https://www.discogs.com/release/13628699-Stefan-Ringer-2-Sexual-Obsession",
             "id": 13628699
         },
-        "phonica-tech-house-new_releases": 179
+        "phonica-tech-house-new_releases": 175
     },
     "phonica-205439": {
         "store": "phonica",
@@ -7374,7 +7377,7 @@
             "url": "https://www.discogs.com/release/35461207-Cahl-Sel-Traces",
             "id": 35461207
         },
-        "phonica-tech-house-new_releases": 178
+        "phonica-tech-house-new_releases": 174
     },
     "phonica-206291": {
         "store": "phonica",
@@ -7705,8 +7708,7 @@
         ],
         "discogs": {
             "attempted": true
-        },
-        "phonica-sectionless-essentials": 22
+        }
     },
     "phonica-206735": {
         "store": "phonica",
@@ -7841,7 +7843,7 @@
             "url": "https://www.discogs.com/release/12523114-Matrixxman-The-Grid",
             "id": 12523114
         },
-        "phonica-tech-house-new_releases": 177
+        "phonica-tech-house-new_releases": 173
     },
     "phonica-204323": {
         "store": "phonica",
@@ -10060,7 +10062,7 @@
         "discogs": {
             "attempted": true
         },
-        "phonica-tech-house-new_releases": 170
+        "phonica-tech-house-new_releases": 166
     },
     "phonica-205787": {
         "store": "phonica",
@@ -10127,7 +10129,7 @@
             "url": "https://www.discogs.com/release/35644546-Various-Full-Circle-Vol-Two",
             "id": 35644546
         },
-        "phonica-tech-house-new_releases": 169
+        "phonica-tech-house-new_releases": 165
     },
     "phonica-205934": {
         "store": "phonica",
@@ -10201,7 +10203,7 @@
             "url": "https://www.discogs.com/release/35048303-Marshall-Jefferson-Yellow-Meditation-For-The-Dance-Generation",
             "id": 35048303
         },
-        "phonica-sectionless-essentials": 29
+        "phonica-sectionless-essentials": 27
     },
     "phonica-206205": {
         "store": "phonica",
@@ -10812,7 +10814,7 @@
         "discogs": {
             "attempted": true
         },
-        "phonica-tech-house-new_releases": 168
+        "phonica-tech-house-new_releases": 164
     },
     "phonica-206666": {
         "store": "phonica",
@@ -11670,7 +11672,7 @@
         "discogs": {
             "attempted": true
         },
-        "phonica-tech-house-new_releases": 147
+        "phonica-tech-house-new_releases": 144
     },
     "phonica-207295": {
         "store": "phonica",
@@ -12203,7 +12205,7 @@
             "url": "https://www.discogs.com/release/7617950-Yakka-Move-My-Body-EP",
             "id": 7617950
         },
-        "phonica-tech-house-new_releases": 167
+        "phonica-tech-house-new_releases": 163
     },
     "phonica-204895": {
         "store": "phonica",
@@ -13128,7 +13130,7 @@
             "url": "https://www.discogs.com/release/35465020-Various-Summers-End-Sampler",
             "id": 35465020
         },
-        "phonica-tech-house-new_releases": 165
+        "phonica-tech-house-new_releases": 161
     },
     "phonica-206898": {
         "store": "phonica",
@@ -14541,7 +14543,7 @@
             "url": "https://www.discogs.com/release/35438728-Salute-6-Fabric-Presents-Salute",
             "id": 35438728
         },
-        "phonica-tech-house-new_releases": 166
+        "phonica-tech-house-new_releases": 162
     },
     "phonica-207372": {
         "store": "phonica",
@@ -14720,7 +14722,7 @@
             "url": "https://www.discogs.com/release/1505162-Sa-Deuce-Dont-Waste-My-Time",
             "id": 1505162
         },
-        "phonica-tech-house-new_releases": 159
+        "phonica-tech-house-new_releases": 156
     },
     "phonica-207376": {
         "store": "phonica",
@@ -14806,7 +14808,7 @@
             "url": "https://www.discogs.com/release/35148109-Giangi-Cappai-Fabrizio-Minozzi-REZ36thirtysix",
             "id": 35148109
         },
-        "phonica-tech-house-new_releases": 158
+        "phonica-tech-house-new_releases": 155
     },
     "phonica-206712": {
         "store": "phonica",
@@ -14969,7 +14971,7 @@
             "url": "https://www.discogs.com/release/10965329-Four-Tet-New-Energy",
             "id": 10965329
         },
-        "phonica-tech-house-new_releases": 164
+        "phonica-tech-house-new_releases": 160
     },
     "phonica-205896": {
         "store": "phonica",
@@ -15001,7 +15003,7 @@
             "url": "https://www.discogs.com/release/35440564-Keinemusik-Boys-Noize-Feat-Vinson-20-Crazy-For-It",
             "id": 35440564
         },
-        "phonica-tech-house-new_releases": 160
+        "phonica-tech-house-new_releases": 157
     },
     "phonica-206616": {
         "store": "phonica",
@@ -15360,7 +15362,7 @@
             "url": "https://www.discogs.com/release/35270743-Que-Sakamoto-Noriyuki-Takagi-Pra-Caralho-Amazing-EP",
             "id": 35270743
         },
-        "phonica-tech-house-new_releases": 162
+        "phonica-tech-house-new_releases": 158
     },
     "phonica-205363": {
         "store": "phonica",
@@ -16155,7 +16157,7 @@
             "url": "https://www.discogs.com/release/35501983-Nitro-DeLuxe-Mark-Knight-This-Brutal-House",
             "id": 35501983
         },
-        "phonica-tech-house-new_releases": 156
+        "phonica-tech-house-new_releases": 153
     },
     "phonica-207062": {
         "store": "phonica",
@@ -16241,7 +16243,7 @@
             "url": "https://www.discogs.com/release/35515420-Jacksonville-Oracle-Memory-EP",
             "id": 35515420
         },
-        "phonica-tech-house-new_releases": 153
+        "phonica-tech-house-new_releases": 149
     },
     "phonica-207402": {
         "store": "phonica",
@@ -16451,7 +16453,7 @@
             "url": "https://www.discogs.com/release/35281351-Erwin-35-Arepas-EP",
             "id": 35281351
         },
-        "phonica-tech-house-new_releases": 154
+        "phonica-tech-house-new_releases": 150
     },
     "phonica-205625": {
         "store": "phonica",
@@ -16588,7 +16590,7 @@
             "url": "https://www.discogs.com/release/35501296-The-MFA-The-Difference-It-Makes-Remastered-And-Remixed",
             "id": 35501296
         },
-        "phonica-tech-house-new_releases": 39,
+        "phonica-tech-house-new_releases": 37,
         "phonica-techno-new_releases": 54
     },
     "phonica-205450": {
@@ -16931,7 +16933,7 @@
             "url": "https://www.discogs.com/release/35380699-Sascha-Dive-Brothers-Yard",
             "id": 35380699
         },
-        "phonica-tech-house-new_releases": 157
+        "phonica-tech-house-new_releases": 154
     },
     "phonica-203515": {
         "store": "phonica",
@@ -17069,7 +17071,7 @@
         "discogs": {
             "attempted": true
         },
-        "phonica-tech-house-new_releases": 149
+        "phonica-tech-house-new_releases": 146
     },
     "phonica-207077": {
         "store": "phonica",
@@ -17937,7 +17939,7 @@
             "url": "https://www.discogs.com/release/14723927-Julie-Collier-The-Coming-Of-Age",
             "id": 14723927
         },
-        "phonica-tech-house-new_releases": 155
+        "phonica-tech-house-new_releases": 151
     },
     "phonica-206544": {
         "store": "phonica",
@@ -19090,7 +19092,7 @@
         "discogs": {
             "attempted": true
         },
-        "phonica-tech-house-new_releases": 148
+        "phonica-tech-house-new_releases": 145
     },
     "phonica-206258": {
         "store": "phonica",
@@ -19877,7 +19879,7 @@
             "url": "https://www.discogs.com/release/35663056-Paperkraft-Play-Somethin-Nasty-EP",
             "id": 35663056
         },
-        "phonica-tech-house-new_releases": 142
+        "phonica-tech-house-new_releases": 141
     },
     "phonica-206881": {
         "store": "phonica",
@@ -20348,7 +20350,7 @@
             "url": "https://www.discogs.com/release/35568511-Spacebunny-The-Mingers-Spacebunny-The-Mingers",
             "id": 35568511
         },
-        "phonica-tech-house-new_releases": 144
+        "phonica-tech-house-new_releases": 138
     },
     "phonica-206821": {
         "store": "phonica",
@@ -21197,7 +21199,7 @@
             "url": "https://www.discogs.com/release/35492686-MSB-Most-Significant-Beat",
             "id": 35492686
         },
-        "phonica-tech-house-new_releases": 137
+        "phonica-tech-house-new_releases": 133
     },
     "phonica-207177": {
         "store": "phonica",
@@ -21995,7 +21997,7 @@
             "url": "https://www.discogs.com/release/35557921-Dominik-Eulberg-Lepidoptera",
             "id": 35557921
         },
-        "phonica-tech-house-new_releases": 136
+        "phonica-tech-house-new_releases": 132
     },
     "phonica-205952": {
         "store": "phonica",
@@ -22208,7 +22210,7 @@
             "url": "https://www.discogs.com/release/35625601-Mia-Moretti-2-Ft-Irma-Thomas-Safe-With-Me",
             "id": 35625601
         },
-        "phonica-tech-house-new_releases": 133
+        "phonica-tech-house-new_releases": 129
     },
     "phonica-207008": {
         "store": "phonica",
@@ -22279,7 +22281,7 @@
             "url": "https://www.discogs.com/release/35633512-Gast\u00f3n-Cabrera-Prohibido-EP",
             "id": 35633512
         },
-        "phonica-tech-house-new_releases": 131
+        "phonica-tech-house-new_releases": 127
     },
     "phonica-206903": {
         "store": "phonica",
@@ -22322,7 +22324,7 @@
         "discogs": {
             "attempted": true
         },
-        "phonica-sectionless-essentials": 27
+        "phonica-sectionless-essentials": 25
     },
     "phonica-206902": {
         "store": "phonica",
@@ -22365,7 +22367,7 @@
         "discogs": {
             "attempted": true
         },
-        "phonica-sectionless-essentials": 21
+        "phonica-sectionless-essentials": 19
     },
     "phonica-206797": {
         "store": "phonica",
@@ -22397,7 +22399,7 @@
             "url": "https://www.discogs.com/release/35086172-Sasha-Henry-Saiz-Love-Is-All-You-Need",
             "id": 35086172
         },
-        "phonica-tech-house-new_releases": 134
+        "phonica-tech-house-new_releases": 130
     },
     "phonica-206780": {
         "store": "phonica",
@@ -22432,7 +22434,7 @@
         "discogs": {
             "attempted": true
         },
-        "phonica-tech-house-new_releases": 135
+        "phonica-tech-house-new_releases": 131
     },
     "phonica-207593": {
         "store": "phonica",
@@ -22543,7 +22545,7 @@
         "discogs": {
             "attempted": true
         },
-        "phonica-tech-house-new_releases": 132
+        "phonica-tech-house-new_releases": 128
     },
     "phonica-167618": {
         "store": "phonica",
@@ -22587,7 +22589,7 @@
             "url": "https://www.discogs.com/release/7678320-Floating-Points-Elaenia",
             "id": 7678320
         },
-        "phonica-techno-new_releases": 24
+        "phonica-techno-new_releases": 23
     },
     "phonica-205702": {
         "store": "phonica",
@@ -22753,7 +22755,7 @@
             "url": "https://www.discogs.com/release/35569342-Charlotte-De-Witte-Charlotte-De-Witte",
             "id": 35569342
         },
-        "phonica-techno-new_releases": 92
+        "phonica-techno-new_releases": 82
     },
     "phonica-206227": {
         "store": "phonica",
@@ -23419,7 +23421,7 @@
             "url": "https://www.discogs.com/release/35538946-Deetron-Running-Back-Mastermix-Deetron-Vol-1",
             "id": 35538946
         },
-        "phonica-tech-house-new_releases": 130
+        "phonica-tech-house-new_releases": 125
     },
     "phonica-206734": {
         "store": "phonica",
@@ -23659,7 +23661,7 @@
             "url": "https://www.discogs.com/release/1075331-M\u00e5urizi\u00f6-Ploy",
             "id": 1075331
         },
-        "phonica-tech-house-new_releases": 129
+        "phonica-tech-house-new_releases": 126
     },
     "phonica-151018": {
         "store": "phonica",
@@ -24159,7 +24161,7 @@
             "url": "https://www.discogs.com/release/35549407-Nicolas-Duque-We-Drift-In-Pieces-",
             "id": 35549407
         },
-        "phonica-tech-house-new_releases": 140
+        "phonica-tech-house-new_releases": 135
     },
     "phonica-205948": {
         "store": "phonica",
@@ -24194,7 +24196,8 @@
         "discogs": {
             "url": "https://www.discogs.com/release/66172-Astrocat-Open-Systems-EP",
             "id": 66172
-        }
+        },
+        "phonica-tech-house-new_releases": 139
     },
     "phonica-206361": {
         "store": "phonica",
@@ -24300,7 +24303,7 @@
             "url": "https://www.discogs.com/release/35549317-Dominik-Marz-Beginning-To-Fly-Ep",
             "id": 35549317
         },
-        "phonica-tech-house-new_releases": 141
+        "phonica-tech-house-new_releases": 140
     },
     "phonica-206300": {
         "store": "phonica",
@@ -24373,7 +24376,7 @@
             "url": "https://www.discogs.com/release/35452798-TB-Shine-Plight-Of-The-Gifted-EP",
             "id": 35452798
         },
-        "phonica-tech-house-new_releases": 139
+        "phonica-tech-house-new_releases": 134
     },
     "phonica-206091": {
         "store": "phonica",
@@ -24508,7 +24511,7 @@
             "url": "https://www.discogs.com/release/34802435-Raoh-Edit-Sucks",
             "id": 34802435
         },
-        "phonica-tech-house-new_releases": 145
+        "phonica-tech-house-new_releases": 137
     },
     "phonica-207554": {
         "store": "phonica",
@@ -24578,8 +24581,8 @@
         "discogs": {
             "attempted": true
         },
-        "phonica-tech-house-new_releases": 138,
-        "phonica-sectionless-essentials": 22
+        "phonica-tech-house-new_releases": 136,
+        "phonica-sectionless-essentials": 20
     },
     "phonica-207513": {
         "store": "phonica",
@@ -24652,7 +24655,7 @@
         "discogs": {
             "attempted": true
         },
-        "phonica-tech-house-new_releases": 146
+        "phonica-tech-house-new_releases": 142
     },
     "phonica-207507": {
         "store": "phonica",
@@ -24677,7 +24680,7 @@
         "discogs": {
             "attempted": true
         },
-        "phonica-tech-house-new_releases": 145
+        "phonica-tech-house-new_releases": 143
     },
     "phonica-206229": {
         "store": "phonica",
@@ -24829,7 +24832,7 @@
         "discogs": {
             "attempted": true
         },
-        "phonica-tech-house-new_releases": 163
+        "phonica-tech-house-new_releases": 159
     },
     "phonica-207290": {
         "store": "phonica",
@@ -24933,7 +24936,7 @@
             "url": "https://www.discogs.com/release/35453143-Known-Artist-CLUBREMIX005",
             "id": 35453143
         },
-        "phonica-tech-house-new_releases": 175
+        "phonica-tech-house-new_releases": 171
     },
     "phonica-204379": {
         "store": "phonica",
@@ -24969,7 +24972,7 @@
             "url": "https://www.discogs.com/release/34636816-Eversines-Infinity-Corridor-EP",
             "id": 34636816
         },
-        "phonica-tech-house-new_releases": 174
+        "phonica-tech-house-new_releases": 170
     },
     "phonica-202857": {
         "store": "phonica",
@@ -25005,7 +25008,7 @@
             "url": "https://www.discogs.com/release/34093834-Jewellery-Voices",
             "id": 34093834
         },
-        "phonica-tech-house-new_releases": 173
+        "phonica-tech-house-new_releases": 169
     },
     "phonica-206115": {
         "store": "phonica",
@@ -25076,7 +25079,7 @@
             "url": "https://www.discogs.com/release/35510701-Elsa-Web-Glow",
             "id": 35510701
         },
-        "phonica-tech-house-new_releases": 176
+        "phonica-tech-house-new_releases": 172
     },
     "phonica-204375": {
         "store": "phonica",
@@ -25112,7 +25115,7 @@
             "url": "https://www.discogs.com/release/34637656-Trajano-Villa\u00e7a-Criminal-Issues-Simas-Pindorama-EP",
             "id": 34637656
         },
-        "phonica-tech-house-new_releases": 171
+        "phonica-tech-house-new_releases": 167
     },
     "phonica-206135": {
         "store": "phonica",
@@ -25148,7 +25151,7 @@
             "url": "https://www.discogs.com/release/34898258-Artem-Stan-Exotic-Cruise-EP",
             "id": 34898258
         },
-        "phonica-tech-house-new_releases": 172
+        "phonica-tech-house-new_releases": 168
     },
     "phonica-205805": {
         "store": "phonica",
@@ -25217,7 +25220,8 @@
         "discogs": {
             "url": "https://www.discogs.com/release/35409406-Volen-Validation",
             "id": 35409406
-        }
+        },
+        "phonica-tech-house-new_releases": 177
     },
     "phonica-207102": {
         "store": "phonica",
@@ -25253,7 +25257,7 @@
             "url": "https://www.discogs.com/release/35910529-DJ-Merl\u00edn-4-Adam-Pits-Pelican-Dub-002",
             "id": 35910529
         },
-        "phonica-tech-house-new_releases": 115
+        "phonica-tech-house-new_releases": 109
     },
     "phonica-207026": {
         "store": "phonica",
@@ -25283,8 +25287,8 @@
             "url": "https://www.discogs.com/release/35600956-TSHA-Back-Off",
             "id": 35600956
         },
-        "phonica-tech-house-new_releases": 25,
-        "phonica-techno-new_releases": 25
+        "phonica-tech-house-new_releases": 24,
+        "phonica-techno-new_releases": 24
     },
     "phonica-203489": {
         "store": "phonica",
@@ -25629,8 +25633,8 @@
         "discogs": {
             "attempted": true
         },
-        "phonica-tech-house-new_releases": 68,
-        "phonica-techno-new_releases": 127
+        "phonica-tech-house-new_releases": 63,
+        "phonica-techno-new_releases": 115
     },
     "phonica-205743": {
         "store": "phonica",
@@ -25792,8 +25796,8 @@
             "url": "https://www.discogs.com/release/35181028-Ahni-Nicki",
             "id": 35181028
         },
-        "phonica-tech-house-new_releases": 24,
-        "phonica-techno-new_releases": 25
+        "phonica-tech-house-new_releases": 26,
+        "phonica-techno-new_releases": 24
     },
     "phonica-205610": {
         "store": "phonica",
@@ -27302,10 +27306,7 @@
         "discogs": {
             "url": "https://www.discogs.com/release/35949046-Get-Fucked-Unearthed-Stash-DAT-Archives-1998-2000",
             "id": 35949046
-        },
-        "phonica-tech-house-new_releases": 35,
-        "phonica-sectionless-essentials": 11,
-        "phonica-techno-new_releases": 50
+        }
     },
     "phonica-207460": {
         "store": "phonica",
@@ -27380,7 +27381,7 @@
             "url": "https://www.discogs.com/release/35655616-Unknown-Artist-PVC07",
             "id": 35655616
         },
-        "phonica-tech-house-new_releases": 122
+        "phonica-tech-house-new_releases": 118
     },
     "phonica-207518": {
         "store": "phonica",
@@ -27800,10 +27801,7 @@
         "discogs": {
             "url": "https://www.discogs.com/release/35947615-TV-Babies-Smart-Alex-Deeper-Situation-Specially-Hot-Peace-Division-Remix",
             "id": 35947615
-        },
-        "phonica-tech-house-new_releases": 36,
-        "phonica-sectionless-essentials": 34,
-        "phonica-techno-new_releases": 54
+        }
     },
     "phonica-207610": {
         "store": "phonica",
@@ -27838,7 +27836,7 @@
             "id": 36055429
         },
         "phonica-tech-house-new_releases": 42,
-        "phonica-techno-new_releases": 78
+        "phonica-techno-new_releases": 75
     },
     "phonica-204597": {
         "store": "phonica",
@@ -27869,7 +27867,7 @@
         "discogs": {
             "attempted": true
         },
-        "phonica-sectionless-essentials": 23
+        "phonica-sectionless-essentials": 21
     },
     "phonica-205200": {
         "store": "phonica",
@@ -28080,7 +28078,7 @@
             "url": "https://www.discogs.com/release/32376453-Rhythms-of-Prescott-The-Instigator-EP-",
             "id": 32376453
         },
-        "phonica-tech-house-new_releases": 103
+        "phonica-tech-house-new_releases": 99
     },
     "phonica-190938": {
         "store": "phonica",
@@ -28115,7 +28113,7 @@
         "discogs": {
             "attempted": true
         },
-        "phonica-tech-house-new_releases": 104
+        "phonica-tech-house-new_releases": 100
     },
     "phonica-206925": {
         "store": "phonica",
@@ -28222,7 +28220,7 @@
         "discogs": {
             "attempted": true
         },
-        "phonica-tech-house-new_releases": 109
+        "phonica-tech-house-new_releases": 103
     },
     "phonica-206732": {
         "store": "phonica",
@@ -28394,7 +28392,7 @@
             "url": "https://www.discogs.com/release/35770720-Michel-De-Hey-Let-The-Rhythm-Hit-Em",
             "id": 35770720
         },
-        "phonica-tech-house-new_releases": 107
+        "phonica-tech-house-new_releases": 101
     },
     "phonica-207573": {
         "store": "phonica",
@@ -28487,7 +28485,7 @@
             "url": "https://www.discogs.com/release/1069467-Watermelon-Club-Star-System-EP",
             "id": 1069467
         },
-        "phonica-tech-house-new_releases": 106
+        "phonica-tech-house-new_releases": 104
     },
     "phonica-200078": {
         "store": "phonica",
@@ -28521,7 +28519,7 @@
             "url": "https://www.discogs.com/release/32834133-Ron-Roland-Nassaur-Bassed-Party",
             "id": 32834133
         },
-        "phonica-tech-house-new_releases": 108
+        "phonica-tech-house-new_releases": 102
     },
     "phonica-207418": {
         "store": "phonica",
@@ -28671,7 +28669,7 @@
         "discogs": {
             "attempted": true
         },
-        "phonica-tech-house-new_releases": 110
+        "phonica-tech-house-new_releases": 105
     },
     "phonica-206384": {
         "store": "phonica",
@@ -28707,7 +28705,7 @@
             "url": "https://www.discogs.com/release/35906896-Trax-Unit-Gloria-",
             "id": 35906896
         },
-        "phonica-tech-house-new_releases": 112
+        "phonica-tech-house-new_releases": 106
     },
     "phonica-206136": {
         "store": "phonica",
@@ -28786,7 +28784,7 @@
             "url": "https://www.discogs.com/release/17352181-Liquid-Son-Garden-Of-Eden",
             "id": 17352181
         },
-        "phonica-tech-house-new_releases": 111
+        "phonica-tech-house-new_releases": 108
     },
     "phonica-207414": {
         "store": "phonica",
@@ -29089,7 +29087,7 @@
             "url": "https://www.discogs.com/release/11396209-Jimpster-Burning-Up-Becoming-Cyclonic",
             "id": 11396209
         },
-        "phonica-tech-house-new_releases": 113
+        "phonica-tech-house-new_releases": 110
     },
     "phonica-207386": {
         "store": "phonica",
@@ -29224,8 +29222,8 @@
             "url": "https://www.discogs.com/release/35722348-Silverlining-Forgotten-Chorus-i",
             "id": 35722348
         },
-        "phonica-tech-house-new_releases": 58,
-        "phonica-techno-new_releases": 98
+        "phonica-tech-house-new_releases": 56,
+        "phonica-techno-new_releases": 99
     },
     "phonica-207491": {
         "store": "phonica",
@@ -29335,7 +29333,7 @@
             "url": "https://www.discogs.com/release/35688004-Pura-Pura-Hyas-No-More-Afterparties-EP",
             "id": 35688004
         },
-        "phonica-tech-house-new_releases": 114
+        "phonica-tech-house-new_releases": 111
     },
     "phonica-205978": {
         "store": "phonica",
@@ -29404,7 +29402,7 @@
             "url": "https://www.discogs.com/release/35598835-Unknown-Artist-OSS-001",
             "id": 35598835
         },
-        "phonica-tech-house-new_releases": 118
+        "phonica-tech-house-new_releases": 114
     },
     "phonica-206745": {
         "store": "phonica",
@@ -29475,7 +29473,7 @@
             "url": "https://www.discogs.com/release/35874667-Bamao-Yend\u00e9-SSSLIP-Dial-Up",
             "id": 35874667
         },
-        "phonica-tech-house-new_releases": 116
+        "phonica-tech-house-new_releases": 112
     },
     "phonica-206746": {
         "store": "phonica",
@@ -29648,7 +29646,7 @@
             "url": "https://www.discogs.com/release/18118918-Soul-Defiance-Take-It-Back-EP",
             "id": 18118918
         },
-        "phonica-tech-house-new_releases": 119
+        "phonica-tech-house-new_releases": 115
     },
     "phonica-206916": {
         "store": "phonica",
@@ -29680,7 +29678,7 @@
             "url": "https://www.discogs.com/release/139999-Funkaholics-Hype-It-Up-Sneaker",
             "id": 139999
         },
-        "phonica-tech-house-new_releases": 120
+        "phonica-tech-house-new_releases": 116
     },
     "phonica-206755": {
         "store": "phonica",
@@ -29782,7 +29780,7 @@
             "url": "https://www.discogs.com/release/35778133-The-Wizzard-8-Three-Dimensions-Ep",
             "id": 35778133
         },
-        "phonica-tech-house-new_releases": 121
+        "phonica-tech-house-new_releases": 117
     },
     "phonica-205343": {
         "store": "phonica",
@@ -30024,7 +30022,7 @@
         "discogs": {
             "attempted": true
         },
-        "phonica-tech-house-new_releases": 124
+        "phonica-tech-house-new_releases": 120
     },
     "phonica-207688": {
         "store": "phonica",
@@ -30049,7 +30047,7 @@
         "discogs": {
             "attempted": true
         },
-        "phonica-tech-house-new_releases": 123
+        "phonica-tech-house-new_releases": 119
     },
     "phonica-206929": {
         "store": "phonica",
@@ -30148,7 +30146,7 @@
             "url": "https://www.discogs.com/release/35679349-Eris-Drew-DJ-Kicks",
             "id": 35679349
         },
-        "phonica-tech-house-new_releases": 128
+        "phonica-tech-house-new_releases": 123
     },
     "phonica-205034": {
         "store": "phonica",
@@ -30180,7 +30178,7 @@
             "url": "https://www.discogs.com/release/35576332-Terry-Francis-El-Tel-Collection",
             "id": 35576332
         },
-        "phonica-tech-house-new_releases": 127
+        "phonica-tech-house-new_releases": 121
     },
     "phonica-206807": {
         "store": "phonica",
@@ -30226,7 +30224,7 @@
             "url": "https://www.discogs.com/release/35721949-Eris-Drew-DJ-Kicks",
             "id": 35721949
         },
-        "phonica-tech-house-new_releases": 125
+        "phonica-tech-house-new_releases": 122
     },
     "phonica-203598": {
         "store": "phonica",
@@ -30262,7 +30260,7 @@
             "url": "https://www.discogs.com/release/34647904-Ignatius-9-Dj-Bruce-Lee-Horizon",
             "id": 34647904
         },
-        "phonica-tech-house-new_releases": 126
+        "phonica-tech-house-new_releases": 124
     },
     "phonica-206166": {
         "store": "phonica",
@@ -30593,7 +30591,8 @@
             "url": "https://www.discogs.com/release/35823961-Demi-Riqu\u00edsimo-No-Given-Time-EP",
             "id": 35823961
         },
-        "phonica-tech-house-new_releases": 96
+        "phonica-tech-house-new_releases": 90,
+        "phonica-techno-new_releases": 173
     },
     "phonica-206134": {
         "store": "phonica",
@@ -30761,7 +30760,7 @@
             "url": "https://www.discogs.com/release/35594578-Overmono-High-Contrast-If-We-Ever",
             "id": 35594578
         },
-        "phonica-sectionless-essentials": 24
+        "phonica-sectionless-essentials": 22
     },
     "phonica-207224": {
         "store": "phonica",
@@ -30795,7 +30794,7 @@
             "url": "https://www.discogs.com/release/35197045-Discoth\u00e8que-Credits-Forgiveness-Not-Permission-EP-1",
             "id": 35197045
         },
-        "phonica-sectionless-essentials": 28
+        "phonica-sectionless-essentials": 26
     },
     "phonica-206351": {
         "store": "phonica",
@@ -30827,7 +30826,7 @@
             "url": "https://www.discogs.com/release/1082855-Psychotropic-Only-For-The-Headstrong",
             "id": 1082855
         },
-        "phonica-sectionless-essentials": 19
+        "phonica-sectionless-essentials": 18
     },
     "phonica-206263": {
         "store": "phonica",
@@ -30990,7 +30989,7 @@
             "url": "https://www.discogs.com/release/33635136-Escape-Artist-2-Forgot-Who-I-Was-Remembering",
             "id": 33635136
         },
-        "phonica-sectionless-essentials": 26
+        "phonica-sectionless-essentials": 24
     },
     "phonica-202707": {
         "store": "phonica",
@@ -31026,7 +31025,7 @@
             "url": "https://www.discogs.com/release/33803487-Nuage-4-Only-You-EP",
             "id": 33803487
         },
-        "phonica-sectionless-essentials": 25
+        "phonica-sectionless-essentials": 23
     },
     "phonica-203521": {
         "store": "phonica",
@@ -31257,7 +31256,7 @@
             "url": "https://www.discogs.com/release/35819995-Leibniz-3-Corridor-EP",
             "id": 35819995
         },
-        "phonica-techno-new_releases": 41
+        "phonica-techno-new_releases": 42
     },
     "phonica-208167": {
         "store": "phonica",
@@ -34641,7 +34640,7 @@
             "url": "https://www.discogs.com/release/36118711-Witch-Trials-Return-to-Nothing-",
             "id": 36118711
         },
-        "phonica-techno-new_releases": 98
+        "phonica-techno-new_releases": 108
     },
     "phonica-207075": {
         "store": "phonica",
@@ -35088,8 +35087,8 @@
             "url": "https://www.discogs.com/release/35973139-Fold-curve-Business-Smart-Casual",
             "id": 35973139
         },
-        "phonica-sectionless-essentials": 5,
-        "phonica-techno-new_releases": 127
+        "phonica-sectionless-essentials": 2,
+        "phonica-techno-new_releases": 115
     },
     "phonica-207625": {
         "store": "phonica",
@@ -35195,7 +35194,7 @@
             "url": "https://www.discogs.com/release/1091602-Razor-BoyMirror-Man-Cutter-Mix-Beyond-Control",
             "id": 1091602
         },
-        "phonica-techno-new_releases": 113
+        "phonica-techno-new_releases": 114
     },
     "phonica-207889": {
         "store": "phonica",
@@ -35408,7 +35407,7 @@
         "discogs": {
             "attempted": true
         },
-        "phonica-tech-house-new_releases": 105
+        "phonica-tech-house-new_releases": 98
     },
     "phonica-208192": {
         "store": "phonica",
@@ -35758,7 +35757,7 @@
             "url": "https://www.discogs.com/release/14527927-Various-A-New-Chapter-EP",
             "id": 14527927
         },
-        "phonica-tech-house-new_releases": 102
+        "phonica-tech-house-new_releases": 97
     },
     "phonica-208163": {
         "store": "phonica",
@@ -35829,7 +35828,7 @@
             "url": "/release/35465272-FFriend-Fated-Friendship",
             "id": 35465272
         },
-        "phonica-tech-house-new_releases": 51
+        "phonica-tech-house-new_releases": 47
     },
     "phonica-205358": {
         "store": "phonica",
@@ -36729,7 +36728,7 @@
         "discogs": {
             "attempted": true
         },
-        "phonica-tech-house-new_releases": 95
+        "phonica-tech-house-new_releases": 91
     },
     "phonica-208260": {
         "store": "phonica",
@@ -36962,7 +36961,7 @@
             "url": "https://www.discogs.com/release/35823850-Various-Toolroom-Sampler-Vol-20",
             "id": 35823850
         },
-        "phonica-tech-house-new_releases": 99
+        "phonica-tech-house-new_releases": 92
     },
     "phonica-206339": {
         "store": "phonica",
@@ -36998,8 +36997,8 @@
             "url": "https://www.discogs.com/release/35905969-Arno-Kuyateh-Gametime-EP",
             "id": 35905969
         },
-        "phonica-tech-house-new_releases": 94,
-        "phonica-techno-new_releases": 175
+        "phonica-tech-house-new_releases": 93,
+        "phonica-techno-new_releases": 172
     },
     "phonica-207682": {
         "store": "phonica",
@@ -37070,7 +37069,8 @@
             "url": "https://www.discogs.com/release/35953612-Asphalt-DJ-RM12038",
             "id": 35953612
         },
-        "phonica-tech-house-new_releases": 100
+        "phonica-tech-house-new_releases": 95,
+        "phonica-techno-new_releases": 172
     },
     "phonica-206344": {
         "store": "phonica",
@@ -37105,8 +37105,7 @@
         "discogs": {
             "url": "https://www.discogs.com/release/35572924-Tripmastaz-Gutta-Trax-EP",
             "id": 35572924
-        },
-        "phonica-tech-house-new_releases": 97
+        }
     },
     "phonica-206626": {
         "store": "phonica",
@@ -37139,8 +37138,8 @@
         "discogs": {
             "attempted": true
         },
-        "phonica-tech-house-new_releases": 98,
-        "phonica-techno-new_releases": 174
+        "phonica-tech-house-new_releases": 94,
+        "phonica-techno-new_releases": 170
     },
     "phonica-204993": {
         "store": "phonica",
@@ -37344,7 +37343,7 @@
             "url": "https://www.discogs.com/release/35823973-North-90-Panorama-EP",
             "id": 35823973
         },
-        "phonica-sectionless-essentials": 18
+        "phonica-sectionless-essentials": 14
     },
     "phonica-205598": {
         "store": "phonica",
@@ -37378,7 +37377,7 @@
             "url": "https://www.discogs.com/release/35780248-Gee-Que-Disco-Flights",
             "id": 35780248
         },
-        "phonica-sectionless-essentials": 31
+        "phonica-sectionless-essentials": 30
     },
     "phonica-207172": {
         "store": "phonica",
@@ -37414,7 +37413,7 @@
             "url": "https://www.discogs.com/release/35823991-Frits-Wentink-Remixed",
             "id": 35823991
         },
-        "phonica-sectionless-essentials": 30
+        "phonica-sectionless-essentials": 28
     },
     "phonica-208313": {
         "store": "phonica",
@@ -37439,7 +37438,7 @@
         "discogs": {
             "attempted": true
         },
-        "phonica-techno-new_releases": 174
+        "phonica-techno-new_releases": 170
     },
     "phonica-208330": {
         "store": "phonica",
@@ -37487,7 +37486,8 @@
         },
         "discogs": {
             "attempted": true
-        }
+        },
+        "phonica-techno-new_releases": 169
     },
     "phonica-208315": {
         "store": "phonica",
@@ -37565,7 +37565,8 @@
         },
         "discogs": {
             "attempted": true
-        }
+        },
+        "phonica-techno-new_releases": 172
     },
     "phonica-205597": {
         "store": "phonica",
@@ -37837,7 +37838,7 @@
             "url": "https://www.discogs.com/release/35985811-Hercules-Love-Affair-Someone-Else-Is-Calling",
             "id": 35985811
         },
-        "phonica-techno-new_releases": 91
+        "phonica-techno-new_releases": 81
     },
     "phonica-207304": {
         "store": "phonica",
@@ -38283,7 +38284,7 @@
             "url": "https://www.discogs.com/release/35930494-David-Harrow-IN-C",
             "id": 35930494
         },
-        "phonica-techno-new_releases": 175
+        "phonica-techno-new_releases": 171
     },
     "phonica-207897": {
         "store": "phonica",
@@ -38317,8 +38318,7 @@
         },
         "discogs": {
             "attempted": true
-        },
-        "phonica-techno-new_releases": 1
+        }
     },
     "phonica-207328": {
         "store": "phonica",
@@ -38354,8 +38354,8 @@
             "url": "https://www.discogs.com/release/35916508-Antraum-Happie-4-Omakase-007-",
             "id": 35916508
         },
-        "phonica-tech-house-new_releases": 93,
-        "phonica-techno-new_releases": 172
+        "phonica-tech-house-new_releases": 88,
+        "phonica-techno-new_releases": 167
     },
     "phonica-207663": {
         "store": "phonica",
@@ -38390,8 +38390,7 @@
         "discogs": {
             "url": "https://www.discogs.com/release/35872756-Various-Hot-Creations-Autumn-Sampler-2025",
             "id": 35872756
-        },
-        "phonica-tech-house-new_releases": 92
+        }
     },
     "phonica-208384": {
         "store": "phonica",
@@ -38495,7 +38494,7 @@
         "discogs": {
             "attempted": true
         },
-        "phonica-tech-house-new_releases": 50
+        "phonica-tech-house-new_releases": 45
     },
     "phonica-208184": {
         "store": "phonica",
@@ -38627,7 +38626,7 @@
         "discogs": {
             "attempted": true
         },
-        "phonica-tech-house-new_releases": 91
+        "phonica-tech-house-new_releases": 90
     },
     "phonica-177783": {
         "store": "phonica",
@@ -38798,7 +38797,7 @@
             "url": "https://www.discogs.com/release/226611-Alison-Limerick-Hear-My-Call-Where-Love-Lives-DMC-Mastercut",
             "id": 226611
         },
-        "phonica-sectionless-essentials": 33
+        "phonica-sectionless-essentials": 29
     },
     "phonica-207315": {
         "store": "phonica",
@@ -38834,7 +38833,7 @@
             "url": "https://www.discogs.com/release/27632469-Katatonic-Silentio-Mantis-11",
             "id": 27632469
         },
-        "phonica-techno-new_releases": 172
+        "phonica-techno-new_releases": 163
     },
     "phonica-191752": {
         "store": "phonica",
@@ -38901,7 +38900,7 @@
             "url": "https://www.discogs.com/release/35847307-Audiotech-Im-Your-Audio-Tech",
             "id": 35847307
         },
-        "phonica-techno-new_releases": 169
+        "phonica-techno-new_releases": 167
     },
     "phonica-206670": {
         "store": "phonica",
@@ -38937,7 +38936,7 @@
             "url": "https://www.discogs.com/release/35855911-Hassan-Abou-Alam-Tarnished",
             "id": 35855911
         },
-        "phonica-techno-new_releases": 171
+        "phonica-techno-new_releases": 166
     },
     "phonica-207471": {
         "store": "phonica",
@@ -38975,7 +38974,7 @@
             "url": "https://www.discogs.com/release/35853679-The-Gospel-Of-Thomas-2-Billionaires-Are-Destroying-Humanity",
             "id": 35853679
         },
-        "phonica-techno-new_releases": 167
+        "phonica-techno-new_releases": 164
     },
     "phonica-208385": {
         "store": "phonica",
@@ -39011,7 +39010,7 @@
             "url": "https://www.discogs.com/release/35865886-Orlando-Voorn-Wicked-System",
             "id": 35865886
         },
-        "phonica-techno-new_releases": 168
+        "phonica-techno-new_releases": 165
     },
     "phonica-207316": {
         "store": "phonica",
@@ -39047,7 +39046,7 @@
             "url": "https://www.discogs.com/release/35697262-Agonis-Mantis-18",
             "id": 35697262
         },
-        "phonica-techno-new_releases": 170
+        "phonica-techno-new_releases": 168
     },
     "phonica-208355": {
         "store": "phonica",
@@ -39232,8 +39231,8 @@
             "url": "https://www.discogs.com/release/5377039-Various-Ten-Years-Of-Phonica",
             "id": 5377039
         },
-        "phonica-tech-house-new_releases": 90,
-        "phonica-techno-new_releases": 166
+        "phonica-tech-house-new_releases": 87,
+        "phonica-techno-new_releases": 162
     },
     "phonica-208243": {
         "store": "phonica",
@@ -39372,7 +39371,7 @@
             "url": "https://www.discogs.com/release/35778334-Rave-2-The-Grave-What-Times-Are-Love-The-Chimes",
             "id": 35778334
         },
-        "phonica-techno-new_releases": 165
+        "phonica-techno-new_releases": 162
     },
     "phonica-206944": {
         "store": "phonica",
@@ -39408,7 +39407,7 @@
             "url": "https://www.discogs.com/release/35644726-CRYME-7-ANTICALM-London-Boy-The-Remixes",
             "id": 35644726
         },
-        "phonica-techno-new_releases": 166
+        "phonica-techno-new_releases": 154
     },
     "phonica-206665": {
         "store": "phonica",
@@ -39516,8 +39515,8 @@
             "url": "https://www.discogs.com/release/35983012-Tom-Carruthers-Neutralise",
             "id": 35983012
         },
-        "phonica-tech-house-new_releases": 87,
-        "phonica-techno-new_releases": 150
+        "phonica-tech-house-new_releases": 85,
+        "phonica-techno-new_releases": 148
     },
     "phonica-208412": {
         "store": "phonica",
@@ -39549,8 +39548,8 @@
             "url": "https://www.discogs.com/release/35526721-Trip-Show-McCully-Jeep",
             "id": 35526721
         },
-        "phonica-tech-house-new_releases": 88,
-        "phonica-techno-new_releases": 152
+        "phonica-tech-house-new_releases": 86,
+        "phonica-techno-new_releases": 153
     },
     "phonica-206678": {
         "store": "phonica",
@@ -39610,8 +39609,8 @@
             "url": "https://www.discogs.com/release/35915272-Fred-again-USB002",
             "id": 35915272
         },
-        "phonica-tech-house-new_releases": 86,
-        "phonica-techno-new_releases": 149
+        "phonica-tech-house-new_releases": 83,
+        "phonica-techno-new_releases": 147
     },
     "phonica-207080": {
         "store": "phonica",
@@ -39748,7 +39747,7 @@
         "discogs": {
             "attempted": true
         },
-        "phonica-tech-house-new_releases": 85
+        "phonica-tech-house-new_releases": 84
     },
     "phonica-206466": {
         "store": "phonica",
@@ -39896,8 +39895,8 @@
             "url": "https://www.discogs.com/release/35689603-Dav-Tailored-Dreams-",
             "id": 35689603
         },
-        "phonica-tech-house-new_releases": 77,
-        "phonica-techno-new_releases": 127
+        "phonica-tech-house-new_releases": 73,
+        "phonica-techno-new_releases": 129
     },
     "phonica-204750": {
         "store": "phonica",
@@ -39942,7 +39941,7 @@
         "discogs": {
             "attempted": true
         },
-        "phonica-sectionless-essentials": 3
+        "phonica-sectionless-essentials": 4
     },
     "phonica-207094": {
         "store": "phonica",
@@ -39980,7 +39979,7 @@
             "url": "https://www.discogs.com/release/35884903-Synaptic-Voyager-High-Rise-EP",
             "id": 35884903
         },
-        "phonica-techno-new_releases": 149
+        "phonica-techno-new_releases": 147
     },
     "phonica-207760": {
         "store": "phonica",
@@ -40020,7 +40019,7 @@
             "url": "https://www.discogs.com/release/35905753-Various-Reversal-002",
             "id": 35905753
         },
-        "phonica-techno-new_releases": 162
+        "phonica-techno-new_releases": 149
     },
     "phonica-205486": {
         "store": "phonica",
@@ -40207,7 +40206,7 @@
             "url": "https://www.discogs.com/release/32803668-Volpe-3-Elias-Resilience-EP",
             "id": 32803668
         },
-        "phonica-techno-new_releases": 152
+        "phonica-techno-new_releases": 153
     },
     "phonica-206972": {
         "store": "phonica",
@@ -40276,7 +40275,7 @@
         "discogs": {
             "attempted": true
         },
-        "phonica-techno-new_releases": 163
+        "phonica-techno-new_releases": 148
     },
     "phonica-207423": {
         "store": "phonica",
@@ -40324,7 +40323,7 @@
             "url": "https://www.discogs.com/release/35786560-The-Black-Dog-Loud-Ambient",
             "id": 35786560
         },
-        "phonica-techno-new_releases": 164
+        "phonica-techno-new_releases": 151
     },
     "phonica-206409": {
         "store": "phonica",
@@ -40376,7 +40375,7 @@
             "url": "https://www.discogs.com/release/35406439-Mike-Parker-Epilogue",
             "id": 35406439
         },
-        "phonica-techno-new_releases": 151
+        "phonica-techno-new_releases": 152
     },
     "phonica-206133": {
         "store": "phonica",
@@ -40516,7 +40515,7 @@
             "id": 34851
         },
         "phonica-tech-house-new_releases": 82,
-        "phonica-techno-new_releases": 148
+        "phonica-techno-new_releases": 145
     },
     "phonica-175190": {
         "store": "phonica",
@@ -40583,8 +40582,8 @@
             "url": "https://www.discogs.com/release/35804560-Guy-J-Worlds-Apart-Surreal",
             "id": 35804560
         },
-        "phonica-tech-house-new_releases": 84,
-        "phonica-techno-new_releases": 148
+        "phonica-tech-house-new_releases": 81,
+        "phonica-techno-new_releases": 146
     },
     "phonica-206675": {
         "store": "phonica",
@@ -40614,7 +40613,7 @@
             "url": "https://www.discogs.com/release/1032031-Yvan-Dan-Daniel-Enjoy-The-Silence",
             "id": 1032031
         },
-        "phonica-tech-house-new_releases": 81,
+        "phonica-tech-house-new_releases": 79,
         "phonica-techno-new_releases": 147
     },
     "phonica-207618": {
@@ -40680,8 +40679,8 @@
             "url": "https://www.discogs.com/release/31117163-Ori-Lichtik-Half-Life",
             "id": 31117163
         },
-        "phonica-tech-house-new_releases": 83,
-        "phonica-techno-new_releases": 146
+        "phonica-tech-house-new_releases": 80,
+        "phonica-techno-new_releases": 145
     },
     "phonica-205993": {
         "store": "phonica",
@@ -40886,7 +40885,7 @@
         "discogs": {
             "attempted": true
         },
-        "phonica-sectionless-essentials": 4
+        "phonica-sectionless-essentials": 3
     },
     "phonica-207719": {
         "store": "phonica",
@@ -40920,7 +40919,7 @@
             "url": "https://www.discogs.com/release/17040-Player-Player-Three",
             "id": 17040
         },
-        "phonica-techno-new_releases": 148
+        "phonica-techno-new_releases": 146
     },
     "phonica-206630": {
         "store": "phonica",
@@ -40952,7 +40951,7 @@
             "url": "https://www.discogs.com/release/87075-Sander-Kleinenberg-My-Lexicon",
             "id": 87075
         },
-        "phonica-techno-new_releases": 147
+        "phonica-techno-new_releases": 144
     },
     "phonica-207196": {
         "store": "phonica",
@@ -41096,7 +41095,7 @@
             "url": "https://www.discogs.com/release/35983411-Various-Platipus-30-Years-1012",
             "id": 35983411
         },
-        "phonica-techno-new_releases": 146
+        "phonica-techno-new_releases": 145
     },
     "phonica-202764": {
         "store": "phonica",
@@ -41175,7 +41174,7 @@
         },
         "phonica-tech-house-new_releases": 78,
         "phonica-sectionless-essentials": 11,
-        "phonica-techno-new_releases": 145
+        "phonica-techno-new_releases": 135
     },
     "phonica-364": {
         "store": "phonica",
@@ -41238,8 +41237,8 @@
             "url": "https://www.discogs.com/release/8753864-Maurizio-M7",
             "id": 8753864
         },
-        "phonica-tech-house-new_releases": 80,
-        "phonica-techno-new_releases": 132
+        "phonica-tech-house-new_releases": 76,
+        "phonica-techno-new_releases": 134
     },
     "phonica-19257": {
         "store": "phonica",
@@ -41271,8 +41270,8 @@
             "url": "https://www.discogs.com/release/8753890-Maurizio-M4",
             "id": 8753890
         },
-        "phonica-tech-house-new_releases": 79,
-        "phonica-techno-new_releases": 144
+        "phonica-tech-house-new_releases": 77,
+        "phonica-techno-new_releases": 134
     },
     "phonica-207259": {
         "store": "phonica",
@@ -41339,7 +41338,7 @@
             "url": "https://www.discogs.com/release/1074576-Quadrant-Infinition-Hyperprism",
             "id": 1074576
         },
-        "phonica-techno-new_releases": 132
+        "phonica-techno-new_releases": 131
     },
     "phonica-64709": {
         "store": "phonica",
@@ -41371,7 +41370,7 @@
             "url": "https://www.discogs.com/release/3915668-Basic-Channel-Octagon",
             "id": 3915668
         },
-        "phonica-techno-new_releases": 144
+        "phonica-techno-new_releases": 134
     },
     "phonica-124693": {
         "store": "phonica",
@@ -41405,7 +41404,7 @@
             "url": "https://www.discogs.com/release/6074802-Basic-Channel-Q-Loop",
             "id": 6074802
         },
-        "phonica-techno-new_releases": 133
+        "phonica-techno-new_releases": 132
     },
     "phonica-31556": {
         "store": "phonica",
@@ -41490,7 +41489,7 @@
             "url": "https://www.discogs.com/release/35964937-Samuel-Kerridge-Memoir-Of-Disintegration",
             "id": 35964937
         },
-        "phonica-techno-new_releases": 145
+        "phonica-techno-new_releases": 133
     },
     "phonica-205212": {
         "store": "phonica",
@@ -41684,7 +41683,7 @@
             "url": "https://www.discogs.com/release/35854477-Various-Spacefold-EP",
             "id": 35854477
         },
-        "phonica-techno-new_releases": 131
+        "phonica-techno-new_releases": 129
     },
     "phonica-208367": {
         "store": "phonica",
@@ -41754,8 +41753,8 @@
             "url": "https://www.discogs.com/release/34733358-Pablo-Aristimu\u00f1o-Reason-EP",
             "id": 34733358
         },
-        "phonica-tech-house-new_releases": 76,
-        "phonica-techno-new_releases": 130
+        "phonica-tech-house-new_releases": 75,
+        "phonica-techno-new_releases": 128
     },
     "phonica-208177": {
         "store": "phonica",
@@ -41789,8 +41788,8 @@
             "url": "https://www.discogs.com/release/35992768-Lost-Desert-2-Lee-Burridge-November-Snowflakes",
             "id": 35992768
         },
-        "phonica-tech-house-new_releases": 73,
-        "phonica-techno-new_releases": 128
+        "phonica-tech-house-new_releases": 71,
+        "phonica-techno-new_releases": 126
     },
     "phonica-206835": {
         "store": "phonica",
@@ -41825,7 +41824,7 @@
             "id": 35629222
         },
         "phonica-tech-house-new_releases": 72,
-        "phonica-techno-new_releases": 130
+        "phonica-techno-new_releases": 129
     },
     "phonica-206490": {
         "store": "phonica",
@@ -41860,8 +41859,8 @@
         "discogs": {
             "attempted": true
         },
-        "phonica-tech-house-new_releases": 75,
-        "phonica-techno-new_releases": 129
+        "phonica-tech-house-new_releases": 74,
+        "phonica-techno-new_releases": 128
     },
     "phonica-207892": {
         "store": "phonica",
@@ -41896,9 +41895,7 @@
         "discogs": {
             "url": "https://www.discogs.com/release/14916096-Martinez-PICNIC001-",
             "id": 14916096
-        },
-        "phonica-tech-house-new_releases": 74,
-        "phonica-techno-new_releases": 129
+        }
     },
     "phonica-206977": {
         "store": "phonica",
@@ -42283,7 +42280,7 @@
             "url": "https://www.discogs.com/release/35907163-Kelly-Lee-Owens-Kelly",
             "id": 35907163
         },
-        "phonica-techno-new_releases": 127
+        "phonica-techno-new_releases": 128
     },
     "phonica-206893": {
         "store": "phonica",
@@ -42321,7 +42318,7 @@
             "url": "https://www.discogs.com/release/35105102-Art-Fact-Art-Fact-Reviewed-by-Veintidos",
             "id": 35105102
         },
-        "phonica-techno-new_releases": 128
+        "phonica-techno-new_releases": 127
     },
     "phonica-208525": {
         "store": "phonica",
@@ -42381,7 +42378,7 @@
             "url": "https://www.discogs.com/release/35991121-IAMBP-Heartware",
             "id": 35991121
         },
-        "phonica-techno-new_releases": 129
+        "phonica-techno-new_releases": 126
     },
     "phonica-206281": {
         "store": "phonica",
@@ -42550,9 +42547,9 @@
             "url": "https://www.discogs.com/release/35924065-Mihnea-Rog-DumitrEscu-Signal-One-Ep",
             "id": 35924065
         },
-        "phonica-tech-house-new_releases": 66,
+        "phonica-tech-house-new_releases": 67,
         "phonica-tech-house-bestsellers": 19,
-        "phonica-techno-new_releases": 126
+        "phonica-techno-new_releases": 116
     },
     "phonica-207718": {
         "store": "phonica",
@@ -42616,7 +42613,7 @@
             "url": "https://www.discogs.com/release/14656569-Tha-Crew-2-3-Kill-The-Mansion",
             "id": 14656569
         },
-        "phonica-tech-house-new_releases": 0
+        "phonica-tech-house-new_releases": 5
     },
     "phonica-207736": {
         "store": "phonica",
@@ -42652,7 +42649,8 @@
             "url": "https://www.discogs.com/release/35962366-Various-Gt901",
             "id": 35962366
         },
-        "phonica-techno-new_releases": 115,
+        "phonica-tech-house-new_releases": 68,
+        "phonica-techno-new_releases": 126,
         "phonica-techno-bestsellers": 29
     },
     "phonica-206610": {
@@ -42792,8 +42790,7 @@
             "url": "https://www.discogs.com/release/7520808-Drunkat-No-Problem-EP",
             "id": 7520808
         },
-        "phonica-tech-house-new_releases": 72,
-        "phonica-techno-new_releases": 116
+        "phonica-tech-house-new_releases": 69
     },
     "phonica-208541": {
         "store": "phonica",
@@ -42824,7 +42821,7 @@
         "discogs": {
             "attempted": true
         },
-        "phonica-tech-house-new_releases": 69
+        "phonica-tech-house-new_releases": 64
     },
     "phonica-204744": {
         "store": "phonica",
@@ -43001,7 +42998,7 @@
         "discogs": {
             "attempted": true
         },
-        "phonica-techno-new_releases": 126
+        "phonica-techno-new_releases": 115
     },
     "phonica-207643": {
         "store": "phonica",
@@ -43039,8 +43036,8 @@
             "url": "https://www.discogs.com/release/35714491-Break-3000-Human-Nature-EP",
             "id": 35714491
         },
-        "phonica-tech-house-new_releases": 67,
-        "phonica-techno-new_releases": 116
+        "phonica-tech-house-new_releases": 66,
+        "phonica-techno-new_releases": 115
     },
     "phonica-208562": {
         "store": "phonica",
@@ -43076,7 +43073,7 @@
             "url": "https://www.discogs.com/release/35236057-Go-Dam-Digifuga-Series-Stellar-EP",
             "id": 35236057
         },
-        "phonica-techno-new_releases": 8
+        "phonica-techno-new_releases": 7
     },
     "phonica-207810": {
         "store": "phonica",
@@ -43215,7 +43212,7 @@
             "url": "https://www.discogs.com/release/10828758-Sutekh-Every-Dot-And-Tittle",
             "id": 10828758
         },
-        "phonica-tech-house-new_releases": 64,
+        "phonica-tech-house-new_releases": 60,
         "phonica-techno-new_releases": 115
     },
     "phonica-190740": {
@@ -43381,8 +43378,8 @@
             "url": "https://www.discogs.com/release/11941-Bandulu-Guidance",
             "id": 11941
         },
-        "phonica-tech-house-new_releases": 63,
-        "phonica-techno-new_releases": 113
+        "phonica-tech-house-new_releases": 61,
+        "phonica-techno-new_releases": 109
     },
     "phonica-208556": {
         "store": "phonica",
@@ -43518,7 +43515,7 @@
             "url": "https://www.discogs.com/release/35932699-Moodymann-Black-Mahogani-II",
             "id": 35932699
         },
-        "phonica-sectionless-essentials": 2
+        "phonica-sectionless-essentials": 5
     },
     "phonica-206750": {
         "store": "phonica",
@@ -43558,7 +43555,7 @@
             "url": "https://www.discogs.com/release/35416033-Richelieu-2-Falling-EP",
             "id": 35416033
         },
-        "phonica-techno-new_releases": 114
+        "phonica-techno-new_releases": 113
     },
     "phonica-100822": {
         "store": "phonica",
@@ -44094,7 +44091,7 @@
         "discogs": {
             "attempted": true
         },
-        "phonica-tech-house-new_releases": 55
+        "phonica-tech-house-new_releases": 58
     },
     "phonica-205779": {
         "store": "phonica",
@@ -44145,9 +44142,9 @@
         "discogs": {
             "attempted": true
         },
-        "phonica-tech-house-new_releases": 47,
+        "phonica-tech-house-new_releases": 51,
         "phonica-sectionless-essentials": 8,
-        "phonica-techno-new_releases": 91
+        "phonica-techno-new_releases": 82
     },
     "phonica-207310": {
         "store": "phonica",
@@ -44331,8 +44328,8 @@
             "url": "https://www.discogs.com/release/11801212-Hit-The-Lights-Invicta-EP",
             "id": 11801212
         },
-        "phonica-tech-house-new_releases": 56,
-        "phonica-techno-new_releases": 109
+        "phonica-tech-house-new_releases": 57,
+        "phonica-techno-new_releases": 99
     },
     "phonica-207537": {
         "store": "phonica",
@@ -44368,8 +44365,8 @@
             "url": "https://www.discogs.com/release/35987062-Aiden-Francis-Floral-Oceans",
             "id": 35987062
         },
-        "phonica-tech-house-new_releases": 60,
-        "phonica-techno-new_releases": 109
+        "phonica-tech-house-new_releases": 52,
+        "phonica-techno-new_releases": 97
     },
     "phonica-207305": {
         "store": "phonica",
@@ -44405,8 +44402,8 @@
             "url": "https://www.discogs.com/release/36127426-Lucas-92-Sign-Ep",
             "id": 36127426
         },
-        "phonica-tech-house-new_releases": 54,
-        "phonica-techno-new_releases": 99
+        "phonica-tech-house-new_releases": 59,
+        "phonica-techno-new_releases": 109
     },
     "phonica-206842": {
         "store": "phonica",
@@ -44479,8 +44476,8 @@
             "url": "https://www.discogs.com/release/35987188-Aladdin-The-Aquatic-Genie",
             "id": 35987188
         },
-        "phonica-tech-house-new_releases": 59,
-        "phonica-techno-new_releases": 109
+        "phonica-tech-house-new_releases": 55,
+        "phonica-techno-new_releases": 97
     },
     "phonica-206654": {
         "store": "phonica",
@@ -44563,8 +44560,8 @@
             "url": "https://www.discogs.com/release/35960590-Various-Untitled-IV",
             "id": 35960590
         },
-        "phonica-tech-house-new_releases": 57,
-        "phonica-techno-new_releases": 98
+        "phonica-tech-house-new_releases": 54,
+        "phonica-techno-new_releases": 99
     },
     "phonica-207825": {
         "store": "phonica",
@@ -44602,7 +44599,7 @@
             "url": "https://www.discogs.com/release/35973193-Autumns-Get-A-Life-Listen-To-Autumns-EP",
             "id": 35973193
         },
-        "phonica-techno-new_releases": 99
+        "phonica-techno-new_releases": 97
     },
     "phonica-207064": {
         "store": "phonica",
@@ -44689,7 +44686,7 @@
             "url": "https://www.discogs.com/release/33523-Susumu-Yokota-Sakura",
             "id": 33523
         },
-        "phonica-techno-new_releases": 108
+        "phonica-techno-new_releases": 98
     },
     "phonica-208296": {
         "store": "phonica",
@@ -44772,8 +44769,8 @@
             "url": "https://www.discogs.com/release/35159785-Subb-an-Love-Tempo-EP",
             "id": 35159785
         },
-        "phonica-tech-house-new_releases": 52,
-        "phonica-techno-new_releases": 97
+        "phonica-tech-house-new_releases": 46,
+        "phonica-techno-new_releases": 91
     },
     "phonica-207720": {
         "store": "phonica",
@@ -44912,8 +44909,8 @@
             "url": "https://www.discogs.com/release/2205820-Overthrill-Devastate-EP",
             "id": 2205820
         },
-        "phonica-tech-house-new_releases": 48,
-        "phonica-techno-new_releases": 91
+        "phonica-tech-house-new_releases": 50,
+        "phonica-techno-new_releases": 81
     },
     "phonica-206719": {
         "store": "phonica",
@@ -45019,8 +45016,8 @@
             "url": "https://www.discogs.com/release/35520316-Cousin-Priori-2-Fly-In-Amber",
             "id": 35520316
         },
-        "phonica-tech-house-new_releases": 49,
-        "phonica-techno-new_releases": 91
+        "phonica-tech-house-new_releases": 48,
+        "phonica-techno-new_releases": 94
     },
     "phonica-208400": {
         "store": "phonica",
@@ -45091,9 +45088,9 @@
             "url": "https://www.discogs.com/release/35841277-O-Wells-2-Planetary-Shift-EP",
             "id": 35841277
         },
-        "phonica-tech-house-new_releases": 53,
+        "phonica-tech-house-new_releases": 49,
         "phonica-tech-house-bestsellers": 28,
-        "phonica-techno-new_releases": 91
+        "phonica-techno-new_releases": 94
     },
     "phonica-208565": {
         "store": "phonica",
@@ -45226,7 +45223,7 @@
             "url": "https://www.discogs.com/release/11307629-Antonio-Vivaldi-St-Johns-College-Choir-George-Guest-2-Glorias",
             "id": 11307629
         },
-        "phonica-techno-new_releases": 94
+        "phonica-techno-new_releases": 96
     },
     "phonica-207475": {
         "store": "phonica",
@@ -45252,7 +45249,7 @@
             "url": "https://www.discogs.com/release/35795848-Floorplan-Fabric-Presents",
             "id": 35795848
         },
-        "phonica-techno-new_releases": 95
+        "phonica-techno-new_releases": 94
     },
     "phonica-206865": {
         "store": "phonica",
@@ -45331,7 +45328,7 @@
             "url": "https://www.discogs.com/release/36084931-Various-Platipus-30-Years-1112",
             "id": 36084931
         },
-        "phonica-techno-new_releases": 84
+        "phonica-techno-new_releases": 92
     },
     "phonica-202231": {
         "store": "phonica",
@@ -45480,7 +45477,7 @@
             "url": "https://www.discogs.com/release/35671792-Wolfgang-S-Sand-EP",
             "id": 35671792
         },
-        "phonica-techno-new_releases": 90
+        "phonica-techno-new_releases": 93
     },
     "phonica-207842": {
         "store": "phonica",
@@ -45516,7 +45513,7 @@
             "url": "https://www.discogs.com/release/35982130-Novelty-cpt-Deeper-Learnings-EP",
             "id": 35982130
         },
-        "phonica-techno-new_releases": 96
+        "phonica-techno-new_releases": 95
     },
     "phonica-207559": {
         "store": "phonica",
@@ -45587,7 +45584,7 @@
             "url": "https://www.discogs.com/release/35891629-Newborn-Jr-Aura-Error",
             "id": 35891629
         },
-        "phonica-techno-new_releases": 93
+        "phonica-techno-new_releases": 90
     },
     "phonica-207548": {
         "store": "phonica",
@@ -45624,7 +45621,7 @@
         "discogs": {
             "attempted": true
         },
-        "phonica-techno-new_releases": 97
+        "phonica-techno-new_releases": 91
     },
     "phonica-208557": {
         "store": "phonica",
@@ -45836,7 +45833,7 @@
             "url": "https://www.discogs.com/release/35961685-Pianeti-Sintetici-\u4f8d\u683d\u57f9\u4e8c",
             "id": 35961685
         },
-        "phonica-techno-new_releases": 79,
+        "phonica-techno-new_releases": 80,
         "phonica-techno-bestsellers": 27
     },
     "phonica-199331": {
@@ -45885,7 +45882,7 @@
             "url": "https://www.discogs.com/release/32992617-Decius-Decius-Vol-II-Splendour-Obedience",
             "id": 32992617
         },
-        "phonica-techno-new_releases": 82
+        "phonica-techno-new_releases": 78
     },
     "phonica-207091": {
         "store": "phonica",
@@ -45989,7 +45986,7 @@
             "url": "https://www.discogs.com/release/35972227-Pugilist-Inverse-EP",
             "id": 35972227
         },
-        "phonica-techno-new_releases": 80
+        "phonica-techno-new_releases": 76
     },
     "phonica-166079": {
         "store": "phonica",
@@ -46064,7 +46061,7 @@
             "url": "https://www.discogs.com/release/35998126-Various-FW-2526",
             "id": 35998126
         },
-        "phonica-techno-new_releases": 83
+        "phonica-techno-new_releases": 79
     },
     "phonica-208662": {
         "store": "phonica",
@@ -46115,7 +46112,7 @@
         "discogs": {
             "attempted": true
         },
-        "phonica-techno-new_releases": 81
+        "phonica-techno-new_releases": 77
     },
     "phonica-201122": {
         "store": "phonica",
@@ -46159,7 +46156,7 @@
             "url": "https://www.discogs.com/release/33446261-Sandwell-District-End-Beginnings",
             "id": 33446261
         },
-        "phonica-techno-new_releases": 78
+        "phonica-techno-new_releases": 75
     },
     "phonica-206548": {
         "store": "phonica",
@@ -46191,7 +46188,7 @@
             "url": "https://www.discogs.com/release/15332532-Goofy-19-Black-Tooney-02",
             "id": 15332532
         },
-        "phonica-tech-house-new_releases": 43
+        "phonica-tech-house-new_releases": 40
     },
     "phonica-207541": {
         "store": "phonica",
@@ -46261,7 +46258,7 @@
         "discogs": {
             "attempted": true
         },
-        "phonica-tech-house-new_releases": 46,
+        "phonica-tech-house-new_releases": 43,
         "phonica-techno-new_releases": 73
     },
     "phonica-207254": {
@@ -46300,7 +46297,7 @@
         },
         "phonica-tech-house-new_releases": 44,
         "phonica-tech-house-bestsellers": 28,
-        "phonica-techno-new_releases": 78
+        "phonica-techno-new_releases": 73
     },
     "phonica-207571": {
         "store": "phonica",
@@ -46373,8 +46370,8 @@
             "url": "https://www.discogs.com/release/35780851-Catem-CATEM001",
             "id": 35780851
         },
-        "phonica-tech-house-new_releases": 45,
-        "phonica-techno-new_releases": 76
+        "phonica-tech-house-new_releases": 41,
+        "phonica-techno-new_releases": 72
     },
     "phonica-207166": {
         "store": "phonica",
@@ -46511,7 +46508,7 @@
             "url": "https://www.discogs.com/release/6752377-Marsellus-Pittman-Theo-Parrish-Essential-Selections-Vol-1",
             "id": 6752377
         },
-        "phonica-tech-house-new_releases": 117
+        "phonica-tech-house-new_releases": 113
     },
     "phonica-206193": {
         "store": "phonica",
@@ -46575,7 +46572,7 @@
             "url": "https://www.discogs.com/release/35906005-Unknown-Artist-KNWN75",
             "id": 35906005
         },
-        "phonica-techno-new_releases": 73
+        "phonica-techno-new_releases": 72
     },
     "phonica-207626": {
         "store": "phonica",
@@ -46613,7 +46610,7 @@
             "url": "https://www.discogs.com/release/35874385-Tom-Carruthers-Jealousy-EP",
             "id": 35874385
         },
-        "phonica-techno-new_releases": 74
+        "phonica-techno-new_releases": 68
     },
     "phonica-207721": {
         "store": "phonica",
@@ -46705,7 +46702,7 @@
             "url": "https://www.discogs.com/release/36115837-Rambadu-Energy-Systems",
             "id": 36115837
         },
-        "phonica-techno-new_releases": 76
+        "phonica-techno-new_releases": 73
     },
     "phonica-208676": {
         "store": "phonica",
@@ -46740,7 +46737,7 @@
         "discogs": {
             "attempted": true
         },
-        "phonica-techno-new_releases": 75
+        "phonica-techno-new_releases": 67
     },
     "phonica-207738": {
         "store": "phonica",
@@ -46811,7 +46808,7 @@
             "url": "https://www.discogs.com/release/35804749-Kirill-Matveev-An-Actor-Is-The-Only-PersonWho-Believes-In-The-Words-He-Says-",
             "id": 35804749
         },
-        "phonica-techno-new_releases": 77,
+        "phonica-techno-new_releases": 74,
         "phonica-techno-bestsellers": 28
     },
     "phonica-57973": {
@@ -46983,8 +46980,8 @@
             "url": "https://www.discogs.com/release/2242434-Wax-19-No-30003",
             "id": 2242434
         },
-        "phonica-tech-house-new_releases": 41,
-        "phonica-techno-new_releases": 66
+        "phonica-tech-house-new_releases": 39,
+        "phonica-techno-new_releases": 63
     },
     "phonica-196763": {
         "store": "phonica",
@@ -47055,7 +47052,7 @@
             "url": "https://www.discogs.com/release/35826526-Kolorit-Lose-Ideen",
             "id": 35826526
         },
-        "phonica-techno-new_releases": 64
+        "phonica-techno-new_releases": 63
     },
     "phonica-206806": {
         "store": "phonica",
@@ -47099,7 +47096,7 @@
             "url": "https://www.discogs.com/release/35848480-Alvar-8-The-Mist-LP",
             "id": 35848480
         },
-        "phonica-techno-new_releases": 63
+        "phonica-techno-new_releases": 64
     },
     "phonica-208677": {
         "store": "phonica",
@@ -47135,7 +47132,7 @@
             "url": "https://www.discogs.com/release/8166957-Ian-Carrera-Matic-EP",
             "id": 8166957
         },
-        "phonica-techno-new_releases": 62
+        "phonica-techno-new_releases": 65
     },
     "phonica-165077": {
         "store": "phonica",
@@ -47167,7 +47164,7 @@
             "url": "https://www.discogs.com/release/2242434-Wax-19-No-30003",
             "id": 2242434
         },
-        "phonica-techno-new_releases": 65
+        "phonica-techno-new_releases": 62
     },
     "phonica-208420": {
         "store": "phonica",
@@ -47202,7 +47199,7 @@
         "discogs": {
             "attempted": true
         },
-        "phonica-techno-new_releases": 72,
+        "phonica-techno-new_releases": 66,
         "phonica-techno-bestsellers": 1
     },
     "phonica-206200": {
@@ -47694,7 +47691,7 @@
             "url": "https://www.discogs.com/release/4570366-Daft-Punk-Random-Access-Memories",
             "id": 4570366
         },
-        "phonica-techno-new_releases": 56
+        "phonica-techno-new_releases": 55
     },
     "phonica-205772": {
         "store": "phonica",
@@ -47744,7 +47741,7 @@
             "url": "https://www.discogs.com/release/35327329-Polygon-Window-Surfing-On-Sine-Waves-Expanded-Edition",
             "id": 35327329
         },
-        "phonica-techno-new_releases": 55
+        "phonica-techno-new_releases": 56
     },
     "phonica-203163": {
         "store": "phonica",
@@ -47776,7 +47773,7 @@
             "url": "https://www.discogs.com/release/828324-Orbital-Midnight-Choice",
             "id": 828324
         },
-        "phonica-techno-new_releases": 58
+        "phonica-techno-new_releases": 57
     },
     "phonica-208687": {
         "store": "phonica",
@@ -47811,7 +47808,7 @@
         "discogs": {
             "attempted": true
         },
-        "phonica-techno-new_releases": 59
+        "phonica-techno-new_releases": 58
     },
     "phonica-208681": {
         "store": "phonica",
@@ -47849,7 +47846,7 @@
             "url": "https://www.discogs.com/release/25828822-Various-Artists-Trance-100-Summer-2017-4-CD",
             "id": 25828822
         },
-        "phonica-techno-new_releases": 57
+        "phonica-techno-new_releases": 59
     },
     "phonica-161236": {
         "store": "phonica",
@@ -47883,7 +47880,7 @@
             "url": "https://www.discogs.com/release/13759936-Nu-CZn-Thats-How-Lovers-Be-",
             "id": 13759936
         },
-        "phonica-tech-house-new_releases": 40
+        "phonica-tech-house-new_releases": 38
     },
     "phonica-208429": {
         "store": "phonica",
@@ -48232,7 +48229,7 @@
             "url": "https://www.discogs.com/release/25355713-Ben-Sun-Alluvial-Sketches",
             "id": 25355713
         },
-        "phonica-tech-house-new_releases": 38,
+        "phonica-tech-house-new_releases": 36,
         "phonica-techno-new_releases": 54
     },
     "phonica-208421": {
@@ -48397,8 +48394,8 @@
         "discogs": {
             "attempted": true
         },
-        "phonica-tech-house-new_releases": 37,
-        "phonica-techno-new_releases": 54
+        "phonica-tech-house-new_releases": 35,
+        "phonica-techno-new_releases": 49
     },
     "phonica-208727": {
         "store": "phonica",
@@ -48481,7 +48478,7 @@
             "id": 8334251
         },
         "phonica-tech-house-new_releases": 34,
-        "phonica-techno-new_releases": 54
+        "phonica-techno-new_releases": 49
     },
     "phonica-207068": {
         "store": "phonica",
@@ -48517,8 +48514,8 @@
             "url": "https://www.discogs.com/release/36057025-Haris-Custovic-Fourtrack-EP-",
             "id": 36057025
         },
-        "phonica-tech-house-new_releases": 61,
-        "phonica-techno-new_releases": 109
+        "phonica-tech-house-new_releases": 53,
+        "phonica-techno-new_releases": 97
     },
     "phonica-208712": {
         "store": "phonica",
@@ -48690,8 +48687,8 @@
             "url": "https://www.discogs.com/release/5711026-Lo-Shea-Adverse-Camber-EP",
             "id": 5711026
         },
-        "phonica-tech-house-new_releases": 26,
-        "phonica-techno-new_releases": 25
+        "phonica-tech-house-new_releases": 25,
+        "phonica-techno-new_releases": 24
     },
     "phonica-204331": {
         "store": "phonica",
@@ -48727,7 +48724,7 @@
             "url": "https://www.discogs.com/release/34946042-Nairless-Ethereal-EP",
             "id": 34946042
         },
-        "phonica-tech-house-new_releases": 29
+        "phonica-tech-house-new_releases": 32
     },
     "phonica-180021": {
         "store": "phonica",
@@ -48765,8 +48762,8 @@
             "url": "https://www.discogs.com/release/23178701-RAFRAM-In-The-Grow",
             "id": 23178701
         },
-        "phonica-tech-house-new_releases": 30,
-        "phonica-techno-new_releases": 43
+        "phonica-tech-house-new_releases": 27,
+        "phonica-techno-new_releases": 41
     },
     "phonica-202026": {
         "store": "phonica",
@@ -48802,7 +48799,7 @@
             "url": "https://www.discogs.com/release/33183669-Boochie-3-Munir-Budak-Cinta",
             "id": 33183669
         },
-        "phonica-tech-house-new_releases": 27
+        "phonica-tech-house-new_releases": 28
     },
     "phonica-197433": {
         "store": "phonica",
@@ -48836,7 +48833,7 @@
             "url": "https://www.discogs.com/release/31451960-Sam-Park-6-Another-Dream-EP",
             "id": 31451960
         },
-        "phonica-tech-house-new_releases": 32
+        "phonica-tech-house-new_releases": 31
     },
     "phonica-202010": {
         "store": "phonica",
@@ -48872,7 +48869,7 @@
             "url": "https://www.discogs.com/release/33396317-Las-Americas-Do-It-St-David-Remixes",
             "id": 33396317
         },
-        "phonica-tech-house-new_releases": 31
+        "phonica-tech-house-new_releases": 33
     },
     "phonica-193799": {
         "store": "phonica",
@@ -48914,7 +48911,7 @@
             "url": "https://www.discogs.com/release/30092864-Abyssy-Extra-Meta-",
             "id": 30092864
         },
-        "phonica-tech-house-new_releases": 33,
+        "phonica-tech-house-new_releases": 29,
         "phonica-techno-new_releases": 36
     },
     "phonica-203455": {
@@ -48951,7 +48948,7 @@
             "url": "https://www.discogs.com/release/33577128-Atimpuri-Epic-Wave",
             "id": 33577128
         },
-        "phonica-tech-house-new_releases": 28,
+        "phonica-tech-house-new_releases": 30,
         "phonica-techno-new_releases": 45
     },
     "phonica-208698": {
@@ -49091,7 +49088,7 @@
             "url": "https://www.discogs.com/release/35458753-Olof-Dreijer-Iris",
             "id": 35458753
         },
-        "phonica-techno-new_releases": 38
+        "phonica-techno-new_releases": 24
     },
     "phonica-202699": {
         "store": "phonica",
@@ -49173,7 +49170,7 @@
             "url": "https://www.discogs.com/release/35208334-JAJA-4-In-Phase-EP",
             "id": 35208334
         },
-        "phonica-techno-new_releases": 37
+        "phonica-techno-new_releases": 39
     },
     "phonica-201860": {
         "store": "phonica",
@@ -49209,7 +49206,7 @@
             "url": "https://www.discogs.com/release/33581775-Maria-Amor-Shcuro-Intertwined",
             "id": 33581775
         },
-        "phonica-techno-new_releases": 40
+        "phonica-techno-new_releases": 43
     },
     "phonica-200416": {
         "store": "phonica",
@@ -49284,7 +49281,7 @@
             "url": "https://www.discogs.com/release/33931698-Annie-Hall-Practical-Optimism-EP",
             "id": 33931698
         },
-        "phonica-techno-new_releases": 49
+        "phonica-techno-new_releases": 45
     },
     "phonica-177738": {
         "store": "phonica",
@@ -49356,7 +49353,7 @@
             "url": "https://www.discogs.com/release/13202471-Puppet-Masters-New-Reality-EP",
             "id": 13202471
         },
-        "phonica-techno-new_releases": 39
+        "phonica-techno-new_releases": 37
     },
     "phonica-202388": {
         "store": "phonica",
@@ -49433,7 +49430,7 @@
         "discogs": {
             "attempted": true
         },
-        "phonica-techno-new_releases": 43
+        "phonica-techno-new_releases": 41
     },
     "phonica-202304": {
         "store": "phonica",
@@ -49469,7 +49466,7 @@
             "url": "https://www.discogs.com/release/33526473-Ginno-4-Log-_In-LVCA-Strange-Feeling-EP",
             "id": 33526473
         },
-        "phonica-techno-new_releases": 45
+        "phonica-techno-new_releases": 38
     },
     "phonica-208808": {
         "store": "phonica",
@@ -49660,8 +49657,8 @@
         "discogs": {
             "attempted": true
         },
-        "phonica-tech-house-new_releases": 22,
-        "phonica-techno-new_releases": 23
+        "phonica-tech-house-new_releases": 23,
+        "phonica-techno-new_releases": 22
     },
     "phonica-205048": {
         "store": "phonica",
@@ -49697,7 +49694,7 @@
             "url": "https://www.discogs.com/release/35437609-A_A-VersionsFlux",
             "id": 35437609
         },
-        "phonica-tech-house-new_releases": 23
+        "phonica-tech-house-new_releases": 22
     },
     "phonica-208858": {
         "store": "phonica",
@@ -50037,7 +50034,7 @@
         "discogs": {
             "attempted": true
         },
-        "phonica-techno-new_releases": 23
+        "phonica-techno-new_releases": 22
     },
     "phonica-201373": {
         "store": "phonica",
@@ -50082,7 +50079,7 @@
         "discogs": {
             "attempted": true
         },
-        "phonica-techno-new_releases": 42
+        "phonica-techno-new_releases": 40
     },
     "phonica-208434": {
         "store": "phonica",
@@ -50575,7 +50572,7 @@
         "discogs": {
             "attempted": true
         },
-        "phonica-techno-new_releases": 22
+        "phonica-techno-new_releases": 21
     },
     "phonica-208452": {
         "store": "phonica",
@@ -50816,9 +50813,9 @@
             "url": "https://www.discogs.com/release/36178972-Ahu-2-Editz",
             "id": 36178972
         },
-        "phonica-tech-house-new_releases": 20,
+        "phonica-tech-house-new_releases": 18,
         "phonica-tech-house-bestsellers": 28,
-        "phonica-techno-new_releases": 22
+        "phonica-techno-new_releases": 21
     },
     "phonica-207767": {
         "store": "phonica",
@@ -50849,9 +50846,9 @@
         "discogs": {
             "attempted": true
         },
-        "phonica-tech-house-new_releases": 16,
+        "phonica-tech-house-new_releases": 13,
         "phonica-tech-house-bestsellers": 4,
-        "phonica-techno-new_releases": 21,
+        "phonica-techno-new_releases": 19,
         "phonica-techno-bestsellers": 1
     },
     "phonica-208937": {
@@ -50922,8 +50919,8 @@
         "discogs": {
             "attempted": true
         },
-        "phonica-tech-house-new_releases": 14,
-        "phonica-techno-new_releases": 21
+        "phonica-tech-house-new_releases": 15,
+        "phonica-techno-new_releases": 19
     },
     "phonica-208941": {
         "store": "phonica",
@@ -50958,8 +50955,8 @@
         "discogs": {
             "attempted": true
         },
-        "phonica-tech-house-new_releases": 17,
-        "phonica-techno-new_releases": 21
+        "phonica-tech-house-new_releases": 16,
+        "phonica-techno-new_releases": 20
     },
     "phonica-207600": {
         "store": "phonica",
@@ -50993,7 +50990,7 @@
             "url": "https://www.discogs.com/release/34711026-Unknown-Artist-OMM010",
             "id": 34711026
         },
-        "phonica-tech-house-new_releases": 18,
+        "phonica-tech-house-new_releases": 14,
         "phonica-techno-new_releases": 21
     },
     "phonica-205733": {
@@ -51031,7 +51028,7 @@
         "discogs": {
             "attempted": true
         },
-        "phonica-tech-house-new_releases": 13,
+        "phonica-tech-house-new_releases": 20,
         "phonica-techno-new_releases": 21
     },
     "phonica-208947": {
@@ -51068,7 +51065,7 @@
             "url": "https://www.discogs.com/release/4728122-Harry-Fraud-High-Tide",
             "id": 4728122
         },
-        "phonica-tech-house-new_releases": 15
+        "phonica-tech-house-new_releases": 17
     },
     "phonica-208891": {
         "store": "phonica",
@@ -51145,7 +51142,7 @@
         "discogs": {
             "attempted": true
         },
-        "phonica-techno-new_releases": 21
+        "phonica-techno-new_releases": 20
     },
     "phonica-207070": {
         "store": "phonica",
@@ -51181,7 +51178,7 @@
             "url": "https://www.discogs.com/release/35668921-Adri\u00e0-Duch-Inner-Peace-EP",
             "id": 35668921
         },
-        "phonica-techno-new_releases": 20
+        "phonica-techno-new_releases": 19
     },
     "phonica-208766": {
         "store": "phonica",
@@ -51346,11 +51343,9 @@
         },
         "discogs": {
             "attempted": true
-        },
-        "phonica-techno-new_releases": 19
+        }
     },
     "phonica-189141": {
-        "phonica-tech-house-new_releases": 1,
         "store": "phonica",
         "id": "phonica-189141",
         "label_link": "",
@@ -51390,14 +51385,14 @@
             "out_of_stock": false,
             "preorder": false
         },
-        "phonica-techno-new_releases": 2,
         "discogs": {
             "url": "https://www.discogs.com/release/28216465-Martinou-Chiral",
             "id": 28216465
-        }
+        },
+        "phonica-tech-house-new_releases": 0,
+        "phonica-techno-new_releases": 3
     },
     "phonica-208058": {
-        "phonica-tech-house-new_releases": 2,
         "store": "phonica",
         "id": "phonica-208058",
         "label_link": "",
@@ -51427,14 +51422,14 @@
             "out_of_stock": false,
             "preorder": false
         },
-        "phonica-techno-new_releases": 2,
         "discogs": {
             "url": "https://www.discogs.com/release/35828434-ION-Signals-EP",
             "id": 35828434
-        }
+        },
+        "phonica-tech-house-new_releases": 1,
+        "phonica-techno-new_releases": 2
     },
     "phonica-206736": {
-        "phonica-tech-house-new_releases": 3,
         "store": "phonica",
         "id": "phonica-206736",
         "label_link": "",
@@ -51467,10 +51462,10 @@
         "discogs": {
             "url": "https://www.discogs.com/release/36130702-Various-Dont-Trust-Snippets-Play-The-Full-Track-Before-Buying-A-Record",
             "id": 36130702
-        }
+        },
+        "phonica-tech-house-new_releases": 4
     },
     "phonica-207489": {
-        "phonica-tech-house-new_releases": 4,
         "store": "phonica",
         "id": "phonica-207489",
         "label_link": "",
@@ -51498,13 +51493,13 @@
             "out_of_stock": false,
             "preorder": false
         },
-        "phonica-techno-new_releases": 1,
         "discogs": {
             "attempted": true
-        }
+        },
+        "phonica-tech-house-new_releases": 11,
+        "phonica-techno-new_releases": 1
     },
     "phonica-208059": {
-        "phonica-tech-house-new_releases": 5,
         "store": "phonica",
         "id": "phonica-208059",
         "label_link": "",
@@ -51534,13 +51529,13 @@
             "out_of_stock": false,
             "preorder": false
         },
-        "phonica-techno-new_releases": 5,
         "discogs": {
             "attempted": true
-        }
+        },
+        "phonica-tech-house-new_releases": 3,
+        "phonica-techno-new_releases": 3
     },
     "phonica-206516": {
-        "phonica-tech-house-new_releases": 6,
         "store": "phonica",
         "id": "phonica-206516",
         "label_link": "",
@@ -51572,10 +51567,10 @@
         },
         "discogs": {
             "attempted": true
-        }
+        },
+        "phonica-tech-house-new_releases": 6
     },
     "phonica-208342": {
-        "phonica-tech-house-new_releases": 7,
         "store": "phonica",
         "id": "phonica-208342",
         "label_link": "",
@@ -51605,14 +51600,14 @@
             "out_of_stock": false,
             "preorder": false
         },
-        "phonica-techno-new_releases": 7,
         "discogs": {
             "url": "https://www.discogs.com/release/35962924-Various-Sueezo-Vaelvet-EP",
             "id": 35962924
-        }
+        },
+        "phonica-tech-house-new_releases": 10,
+        "phonica-techno-new_releases": 2
     },
     "phonica-207941": {
-        "phonica-tech-house-new_releases": 8,
         "store": "phonica",
         "id": "phonica-207941",
         "label_link": "",
@@ -51642,14 +51637,14 @@
             "out_of_stock": false,
             "preorder": false
         },
-        "phonica-techno-new_releases": 6,
         "discogs": {
             "url": "https://www.discogs.com/release/35854657-Marius-Acke-Dirty-Funky-EP",
             "id": 35854657
-        }
+        },
+        "phonica-tech-house-new_releases": 7,
+        "phonica-techno-new_releases": 5
     },
     "phonica-207572": {
-        "phonica-tech-house-new_releases": 9,
         "store": "phonica",
         "id": "phonica-207572",
         "label_link": "",
@@ -51677,14 +51672,14 @@
             "out_of_stock": false,
             "preorder": false
         },
-        "phonica-techno-new_releases": 2,
         "discogs": {
             "url": "https://www.discogs.com/release/1384767-Karma-15-Mi-Mnemonic",
             "id": 1384767
-        }
+        },
+        "phonica-tech-house-new_releases": 8,
+        "phonica-techno-new_releases": 3
     },
     "phonica-207806": {
-        "phonica-tech-house-new_releases": 10,
         "store": "phonica",
         "id": "phonica-207806",
         "label_link": "",
@@ -51714,14 +51709,14 @@
             "out_of_stock": false,
             "preorder": false
         },
-        "phonica-techno-new_releases": 2,
         "discogs": {
             "url": "https://www.discogs.com/release/35364154-Gene-Hunt-Cosmic-Destiny",
             "id": 35364154
-        }
+        },
+        "phonica-tech-house-new_releases": 9,
+        "phonica-techno-new_releases": 3
     },
     "phonica-208466": {
-        "phonica-tech-house-new_releases": 11,
         "store": "phonica",
         "id": "phonica-208466",
         "label_link": "",
@@ -51749,13 +51744,13 @@
             "out_of_stock": false,
             "preorder": false
         },
-        "phonica-techno-new_releases": 5,
         "discogs": {
             "attempted": true
-        }
+        },
+        "phonica-tech-house-new_releases": 2,
+        "phonica-techno-new_releases": 5
     },
     "phonica-208692": {
-        "phonica-tech-house-bestsellers": 5,
         "store": "phonica",
         "id": "phonica-208692",
         "label_link": "",
@@ -51785,13 +51780,13 @@
             "out_of_stock": false,
             "preorder": true
         },
-        "phonica-techno-bestsellers": 1,
         "discogs": {
             "attempted": true
-        }
+        },
+        "phonica-tech-house-bestsellers": 5,
+        "phonica-techno-bestsellers": 1
     },
     "phonica-206810": {
-        "phonica-sectionless-essentials": 0,
         "store": "phonica",
         "id": "phonica-206810",
         "label_link": "",
@@ -51823,10 +51818,10 @@
         },
         "discogs": {
             "attempted": true
-        }
+        },
+        "phonica-sectionless-essentials": 0
     },
     "phonica-208987": {
-        "phonica-sectionless-essentials": 1,
         "store": "phonica",
         "id": "phonica-208987",
         "label_link": "",
@@ -51858,10 +51853,10 @@
         },
         "discogs": {
             "attempted": true
-        }
+        },
+        "phonica-sectionless-essentials": 1
     },
     "phonica-63328": {
-        "phonica-techno-new_releases": 0,
         "store": "phonica",
         "id": "phonica-63328",
         "label_link": "",
@@ -51892,10 +51887,10 @@
         "discogs": {
             "url": "https://www.discogs.com/release/1948-Mr-Fingers-Washing-Machine-Can-You-Feel-It",
             "id": 1948
-        }
+        },
+        "phonica-techno-new_releases": 0
     },
     "phonica-206081": {
-        "phonica-techno-new_releases": 2,
         "store": "phonica",
         "id": "phonica-206081",
         "label_link": "",
@@ -51936,10 +51931,10 @@
         "discogs": {
             "url": "https://www.discogs.com/release/35167981-2501-3-Ulmeyda",
             "id": 35167981
-        }
+        },
+        "phonica-techno-new_releases": 3
     },
     "phonica-102979": {
-        "phonica-techno-new_releases": 3,
         "store": "phonica",
         "id": "phonica-102979",
         "label_link": "",
@@ -51970,10 +51965,10 @@
         "discogs": {
             "url": "https://www.discogs.com/release/3424434-ERP-Lunar-Ruins",
             "id": 3424434
-        }
+        },
+        "phonica-techno-new_releases": 2
     },
     "phonica-208999": {
-        "phonica-techno-new_releases": 5,
         "store": "phonica",
         "id": "phonica-208999",
         "label_link": "",
@@ -52004,10 +51999,10 @@
         "discogs": {
             "url": "https://www.discogs.com/release/15780721-Rev-Ernest-Franklin-The-New-Franklin-Singers-Walking-By-Faith",
             "id": 15780721
-        }
+        },
+        "phonica-techno-new_releases": 1
     },
     "phonica-144191": {
-        "phonica-techno-new_releases": 6,
         "store": "phonica",
         "id": "phonica-144191",
         "label_link": "",
@@ -52040,10 +52035,10 @@
         "discogs": {
             "url": "https://www.discogs.com/release/9949486-Reedale-Rise-Eternal-Return",
             "id": 9949486
-        }
+        },
+        "phonica-techno-new_releases": 6
     },
     "phonica-208896": {
-        "phonica-techno-new_releases": 7,
         "store": "phonica",
         "id": "phonica-208896",
         "label_link": "",
@@ -52072,10 +52067,10 @@
         "discogs": {
             "url": "https://www.discogs.com/release/36230809-Surface-Access-Transfer",
             "id": 36230809
-        }
+        },
+        "phonica-techno-new_releases": 5
     },
     "phonica-208923": {
-        "phonica-techno-bestsellers": 20,
         "store": "phonica",
         "id": "phonica-208923",
         "label_link": "",
@@ -52107,10 +52102,10 @@
         },
         "discogs": {
             "attempted": true
-        }
+        },
+        "phonica-techno-bestsellers": 20
     },
     "phonica-208897": {
-        "phonica-techno-bestsellers": 21,
         "store": "phonica",
         "id": "phonica-208897",
         "label_link": "",
@@ -52143,10 +52138,10 @@
         "discogs": {
             "url": "https://www.discogs.com/release/36135157-Persian-Persian-Meets-Miles-J-Paralysis",
             "id": 36135157
-        }
+        },
+        "phonica-techno-bestsellers": 21
     },
     "phonica-208848": {
-        "phonica-techno-bestsellers": 22,
         "store": "phonica",
         "id": "phonica-208848",
         "label_link": "",
@@ -52169,10 +52164,10 @@
         "discogs": {
             "url": "https://www.discogs.com/release/36139585-Octal-Industries-Ohm-16-Aurora",
             "id": 36139585
-        }
+        },
+        "phonica-techno-bestsellers": 22
     },
     "phonica-208157": {
-        "phonica-techno-bestsellers": 25,
         "store": "phonica",
         "id": "phonica-208157",
         "label_link": "",
@@ -52204,6 +52199,7 @@
         },
         "discogs": {
             "attempted": true
-        }
+        },
+        "phonica-techno-bestsellers": 25
     }
 }

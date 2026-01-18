@@ -1,12 +1,8 @@
 // TASKS
 
-// disable clicks on items which intersect the header
-// - discogs icon
-
+// - disable clicks on items which intersect the header
 // - return from settings / likes goes to wrong location
 // - ReleasesView can leak mem boot flow!
-
-// - improve carousel dots
 
 // - help page
 // - contact page
@@ -17,12 +13,14 @@
 // - decks
 // - VU
 
-// - implement label link (on tap)
-
+// ? implement label link (on tap)
 // ? side swipe still isnt perfect
 // ? vertical swipe still sometimes feel sticky
 
 // DONE
+// x - improve carousel dots
+// x - discogs token / enable
+// x - discogs icon
 // x - tap for android (gesture)
 // x - improve clicks on the app edges
 // x - right align menu (popup)
@@ -138,7 +136,7 @@ constexpr f32       k_inertia = 0.96f;
 constexpr f32       k_inertia_cutoff = 3.33f;
 constexpr f32       k_snap_lerp = 0.3f;
 constexpr f32       k_indent1 = 2.0f;
-constexpr f32       k_indent2 = 18.0f;
+constexpr f32       k_indent2 = 9.0f;
 constexpr f32       k_top_pull_pad = 1.5f;
 constexpr f32       k_top_pull_reload = 1.25f;
 constexpr f32       k_text_size_h1 = 2.25f;
@@ -384,6 +382,7 @@ struct AppContext
     Str                     last_response_message = "";
     u32                     last_response_code = 0;
     vec2f                   display_scale = 1.0;
+    u32                     discogs_icon = 0;
 
     bool                    backgrounded = false;
     bool                    show_debug = false;

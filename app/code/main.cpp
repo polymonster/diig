@@ -30,6 +30,12 @@ constexpr bool k_force_login = false;
 constexpr bool k_force_no_discogs_login = false;
 constexpr bool k_force_streamed_audio = false;
 
+#if PEN_PLATFORM_ANDROID
+constexpr f32 k_platform_spacing_scale = 2.0f;
+#else
+constexpr f32 k_platform_spacing_scale = 1.0f;
+#endif
+
 using namespace put;
 using namespace pen;
 
@@ -2388,13 +2394,15 @@ namespace
         }
     }
 
-    void release_label_cat_more(soa& releases, u32 r)
+    bool release_label_cat_more(soa& releases, u32 r)
     {
         // label and catalogue
         push_font_scale(k_text_size_h3);
 
         ImGui::Dummy(ImVec2(k_indent1, 0.0f));
         ImGui::SameLine();
+
+        f32 icon_size = ImGui::CalcTextSize(releases.label[r].c_str()).y;
 
         if(releases.cat[r].empty())
         {
@@ -2407,22 +2415,25 @@ namespace
 
         pop_font_scale();
 
-        // more menu ellipsis
-        static s32 s_more_menu_r = -1;
-        
         bool has_more = !releases.discogs_url[r].empty();
         if(!has_more)
         {
-            return;
+            return false;
         }
+
+        // more menu
+        static s32 s_more_menu_r = -1;
 
         push_font_scale(k_text_size_h3);
 
+        // discogs menu
         ImGui::SameLine();
 
+        // discogs icon
         f32 rad = ctx.w * k_page_button_press_radius_ratio;
         ImGui::SetCursorPosX(ctx.w - rad);
-        ImGui::Text("%s", ICON_FA_ELLIPSIS_H);
+        ImGui::SetCursorPosY(ImGui::GetCursorPosY() + (ImGui::GetFontSize() - icon_size));
+        ImGui::ImageButton("##Discogs", IMG(ctx.discogs_icon), ImVec2(icon_size, icon_size));
         
         if(lenient_button_tap(0.3) && !any_popup_open() && !ctx.scroll_lock_x && !ctx.scroll_lock_y) {
             if(ImGui::IsPopupOpen("More Menu")) {
@@ -2436,7 +2447,8 @@ namespace
         }
 
         pop_font_scale();
-                                
+
+        bool changed_page = false;
         if(r == s_more_menu_r)
         {
             ImVec2 more_menu_pos = ImGui::GetItemRectMin();
@@ -2453,22 +2465,34 @@ namespace
             ImGui::SetNextWindowSize(ImVec2(menu_w, 0.0f));
             
             if(ImGui::BeginPopup("More Menu")) {
-                if(right_align_menu_item("Open In Discogs", pad)) {
-                    discogs_link = str_replace_string(discogs_link, "https//www.discogs.com", "");
-                    discogs_link = str_replace_string(discogs_link, "https://www.discogs.com", "");
-                    Str url = "https://discogs.com";
-                    url.append(discogs_link.c_str());
-                    ctx.open_url_request = url;
-                    s_more_menu_r = -1;
+                if(ctx.discogs_username.empty())
+                {
+                    if(right_align_menu_item("Enable Discogs", pad)) {
+                        change_page(Page::settings);
+                        changed_page = true;
+                    }
                 }
-                
-                if(right_align_menu_item("Add To Wants", pad)) {
-                    add_to_wants(ctx.discogs_username, releases.discogs_id[r]);
+                else
+                {
+                    if(right_align_menu_item("Open In Discogs", pad)) {
+                        discogs_link = str_replace_string(discogs_link, "https//www.discogs.com", "");
+                        discogs_link = str_replace_string(discogs_link, "https://www.discogs.com", "");
+                        Str url = "https://discogs.com";
+                        url.append(discogs_link.c_str());
+                        ctx.open_url_request = url;
+                        s_more_menu_r = -1;
+                    }
+
+                    if(right_align_menu_item("Add To Wants", pad)) {
+                        add_to_wants(ctx.discogs_username, releases.discogs_id[r]);
+                    }
                 }
-                
+
                 ImGui::EndPopup();
             }
         }
+
+        return changed_page;
     }
 
     void release_images(soa& releases, u32 r)
@@ -2637,69 +2661,107 @@ namespace
             }
         }
 
+        auto ts = ImGui::CalcTextSize(ICON_FA_STOP_CIRCLE);
         if(tc != 0 && valid_audio > 0)
         {
             auto ww = ImGui::GetWindowSize().x;
-            auto tw = ImGui::CalcTextSize(ICON_FA_STOP_CIRCLE).x * releases.track_url_count[r] * 1.5f;
-            ImGui::SetCursorPosX((ww - tw) * 0.5f);
+            auto tw = ts.x * releases.track_url_count[r] * 1.5f;
 
-            // dots
-            for(u32 i = 0; i < releases.track_url_count[r]; ++i)
+            // dummy
+            ImGui::Text(" "); // pad the row
+            f32 y = ImGui::GetItemRectMin().y + (ImGui::GetItemRectMax().y - ImGui::GetItemRectMin().y) * 0.5f;
+
+            constexpr u32 max_count = 8;
+            u32 actual_count = releases.track_url_count[r];
+            u32 count = std::min<u32>(releases.track_url_count[r], max_count);
+
+            u32 sel = releases.select_track[r];
+
+            f32 mid = ww * 0.5f;
+            f32 rad = ts.y * 0.3f;
+            f32 pad = rad * 0.333f;
+            f32 stride = (rad + pad) * 2.0f;
+
+            f32 xpos = mid - ((stride * count) * 0.5f) + (rad + pad);
+
+            // shifting dots
+            s32 base = std::max<s32>(sel - count + 1, 0);
+            s32 shift = 0;
+            if(ctx.top == r)
             {
-                if(i > 0)
+                if(sel == actual_count-1)
                 {
-                    ImGui::SameLine();
+                    shift = 0;
                 }
-
-                u32 sel = releases.select_track[r];
-
-                // handle missing individual tracks
-                auto icon = ICON_FA_STOP_CIRCLE;
-                if(releases.track_filepaths[r][i].empty())
+                else if((count-1)+base == sel)
                 {
-                    icon = ICON_FA_TIMES_CIRCLE;
+                    shift = 1;
                 }
+            }
 
-                // auto move to next track if one is empty or invalid
-                if(ctx.top == r)
+            // draw dots
+            for(u32 i = 0; i < count; ++i)
+            {
+                // scale truncated length, small dots
+                f32 scaled_rad = rad;
+                if(actual_count > count)
                 {
-                    if(releases.track_filepaths[r][sel].empty())
+                    if(base+shift > 0 && i == 0) // first
                     {
-                        sel++;
-                        ctx.audio_ctx.invalidate_track = true;
-
-                        if(sel >= releases.track_url_count[r])
-                        {
-                            sel = 0;
-                        }
-
-                        releases.select_track[r] = sel;
+                        scaled_rad *= 0.5f;
+                    }
+                    else if(sel+shift < actual_count-1 && i == count-1) // last
+                    {
+                        scaled_rad *= 0.5f;
                     }
                 }
 
-                if(i == sel)
+                // highlight selected
+                u32 col = IM_COL32(0, 0, 0, 255);
+                if(i+base+shift == sel && ctx.top == r)
                 {
-                    if(ctx.top == r)
-                    {
-                        ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.8f, 0.3f, 0.0f, 1.0f));
-                        ImGui::Text("%s", ICON_FA_PLAY);
-                        ImGui::PopStyleColor();
+                    col = IM_COL32(255.0f * 0.8f, 255.0f * 0.3f, 0, 255);
+                }
 
-                        // load up the track
-                        if(!(ctx.audio_ctx.play_track_filepath == releases.track_filepaths[r][sel]))
-                        {
-                            ctx.audio_ctx.play_track_filepath = releases.track_filepaths[r][sel];
-                            ctx.audio_ctx.invalidate_track = true;
-                        }
-                    }
-                    else
-                    {
-                        ImGui::Text("%s", icon);
-                    }
+                u32 t = i+base+shift;
+                if(releases.track_filepaths[r][t].empty())
+                {
+                    ImGui::GetWindowDrawList()->AddLine(
+                            ImVec2(xpos - rad, y - rad), ImVec2(xpos + rad, y + rad), col, 2.0f);
+
+                    ImGui::GetWindowDrawList()->AddLine(
+                            ImVec2(xpos + rad, y - rad), ImVec2(xpos - rad, y + rad), col, 2.0f);
                 }
                 else
                 {
-                    ImGui::Text("%s", icon);
+                    ImGui::GetWindowDrawList()->AddCircleFilled(
+                            ImVec2(xpos, y), scaled_rad, col, 32);
+                }
+
+                xpos += stride;
+            }
+
+            // auto move to next track if one is empty or invalid
+            if(ctx.top == r)
+            {
+                if(releases.track_filepaths[r][sel].empty())
+                {
+                    sel++;
+                    ctx.audio_ctx.invalidate_track = true;
+
+                    if(sel >= releases.track_url_count[r])
+                    {
+                        sel = 0;
+                    }
+
+                    releases.select_track[r] = sel;
+                }
+
+                // load a new track
+                if(!(ctx.audio_ctx.play_track_filepath == releases.track_filepaths[r][sel]))
+                {
+                    ctx.audio_ctx.play_track_filepath = releases.track_filepaths[r][sel];
+                    ctx.audio_ctx.invalidate_track = true;
                 }
             }
         }
@@ -2722,7 +2784,10 @@ namespace
             else if(releases.track_url_count[r] == 0 || valid_audio == 0)
             {
                 // no audio
-                ImGui::SetCursorPosX(ww * 0.5f);
+
+                ImGui::SetCursorPosX((ww - ts.x) * 0.5f);
+
+
                 ImGui::Text("%s", ICON_FA_TIMES_CIRCLE);
             }
         }
@@ -2919,7 +2984,14 @@ namespace
             auto& releases = ctx.view->releases;
 
             release_extra_info(releases, r);
-            release_label_cat_more(releases, r);
+
+            // more menu might change page
+            if(release_label_cat_more(releases, r))
+            {
+                // early out
+                break;
+            }
+
             release_images(releases, r);
             release_carousel(releases, r);
             release_likes_buy_hype(releases, r);
@@ -3981,14 +4053,14 @@ namespace
         ImGui::StyleColorsLight(); // white
 
         // screen ratio based spacing and indents
-        ImGui::GetStyle().IndentSpacing = ctx.w * (ImGui::GetStyle().IndentSpacing / k_promax_11_w) * 2.0;
+        ImGui::GetStyle().IndentSpacing = ctx.w * (ImGui::GetStyle().IndentSpacing / k_promax_11_w) * k_platform_spacing_scale;
         ImGui::GetStyle().ItemSpacing = ImVec2(
-                ctx.w * (ImGui::GetStyle().ItemSpacing.x / k_promax_11_w) * 2.0,
-                ctx.h * (ImGui::GetStyle().ItemSpacing.y / k_promax_11_h) * 2.0
+                ctx.w * (ImGui::GetStyle().ItemSpacing.x / k_promax_11_w) * k_platform_spacing_scale,
+                ctx.h * (ImGui::GetStyle().ItemSpacing.y / k_promax_11_h) * k_platform_spacing_scale
         );
         ImGui::GetStyle().ItemInnerSpacing = ImVec2(
-                ctx.w * (ImGui::GetStyle().ItemInnerSpacing.x / k_promax_11_w) * 2.0,
-                ctx.h * (ImGui::GetStyle().ItemInnerSpacing.y / k_promax_11_h) * 2.0
+                ctx.w * (ImGui::GetStyle().ItemInnerSpacing.x / k_promax_11_w) * k_platform_spacing_scale,
+                ctx.h * (ImGui::GetStyle().ItemInnerSpacing.y / k_promax_11_h) * k_platform_spacing_scale
         );
 
         ImGui::GetStyle().Colors[ImGuiCol_CheckMark] = ImVec4(1.0f, 0.5f, 0.0f, 1.0f);
@@ -4005,6 +4077,9 @@ namespace
 
         // white label
         ctx.white_label_texture = put::load_texture("data/images/white_label.dds");
+
+        // discogs
+        ctx.discogs_icon = put::load_texture("data/images/discogs_light.dds");
 
         // lets go
         pen::thread_create(user_data_thread, 10 * 1024 * 1024, &ctx.data_ctx, pen::e_thread_start_flags::detached);
@@ -4592,7 +4667,7 @@ void discogs_token_input()
     }
     else if(verify_message.empty())
     {
-        verify_message.setf("Discogs > Settings > Developers > Generate Token", ctx.discogs_username.c_str());
+        verify_message.setf("Discogs > Settings > Developers > Generate Token. (Paste in here)", ctx.discogs_username.c_str());
     }
     
     ImGui::PopStyleVar();

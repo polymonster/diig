@@ -10,7 +10,10 @@ jobs:
         store: [redeye, juno, phonica, yoyaku]
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
+      with:
+        submodules: recursive
+        token: ${{ secrets.GITHUB_TOKEN }} 
     - name: install_deps
       run: |
         python3 -m pip install --upgrade pip
@@ -29,11 +32,9 @@ jobs:
         for i in {1..5}; do
           git add .
           git commit -m "- update '${{ matrix.store }}' releases" || true
-
           if git pull --rebase && git push origin HEAD:main; then
             break
           fi
-
           echo "Push failed, retrying ($i/5)..."
           sleep 2
         done

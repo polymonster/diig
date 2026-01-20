@@ -40,6 +40,7 @@ jobs:
         python3 dig.py -store ${{ github.event.inputs.store }} -key '${{secrets.SERVICE_ACCOUNT}}' -clear-trackers -verbose -urls
         git config user.name github-actions
         git config user.email github-actions@github.com
+        cd diig-registry
         git add .
         git commit -m "- update ${{ github.event.inputs.store }} releases" || true
         git pull --rebase

@@ -1,17 +1,27 @@
 {
     "configurations": [
         {
-            "name": "Python Debugger: Python File",
+            "name": "scrape",
             "type": "debugpy",
             "request": "launch",
             "program": "dig.py",
             "cwd": "${workspaceFolder}/scrape",
             "args": [
-                "-store", "yoyaku",
+                "-store", "redeye",
                 "-verbose",
-                "-view", "weekly_chart",
-                "-section", "breaks",
+                "-quick",
                 "-urls"
+            ]
+        },
+        {
+            "name": "discogs",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "discogs.py",
+            "cwd": "${workspaceFolder}/scrape",
+            "args": [
+                "-store", "redeye",
+                "-skip0"
             ]
         }
     ]

@@ -52226,7 +52226,11 @@
             "out_of_stock": false,
             "preorder": false
         },
-        "phonica-techno-new_releases": 0
+        "phonica-techno-new_releases": 0,
+        "discogs": {
+            "url": "https://www.discogs.com/release/33610125-Henriku-Horus-Will",
+            "id": 33610125
+        }
     },
     "phonica-208479": {
         "phonica-tech-house-new_releases": 1,
@@ -52259,7 +52263,11 @@
             "out_of_stock": false,
             "preorder": false
         },
-        "phonica-techno-new_releases": 0
+        "phonica-techno-new_releases": 0,
+        "discogs": {
+            "url": "https://www.discogs.com/release/35173567-Various-Discount-DJs-present-Vol-4",
+            "id": 35173567
+        }
     },
     "phonica-205503": {
         "phonica-tech-house-new_releases": 2,
@@ -52292,7 +52300,11 @@
             "out_of_stock": false,
             "preorder": false
         },
-        "phonica-techno-new_releases": 0
+        "phonica-techno-new_releases": 0,
+        "discogs": {
+            "url": "https://www.discogs.com/release/21482260-Atomic-Drop-2-Macho-Madness",
+            "id": 21482260
+        }
     },
     "phonica-206397": {
         "phonica-tech-house-bestsellers": 19,
@@ -52314,6 +52326,9 @@
         "store_tags": {
             "out_of_stock": true,
             "preorder": false
+        },
+        "discogs": {
+            "attempted": true
         }
     },
     "phonica-208982": {
@@ -52342,6 +52357,10 @@
         "store_tags": {
             "out_of_stock": false,
             "preorder": true
+        },
+        "discogs": {
+            "url": "https://www.discogs.com/release/361425-Chris-Pascoe-Mong-Juice",
+            "id": 361425
         }
     },
     "phonica-208437": {
@@ -52374,6 +52393,9 @@
         "store_tags": {
             "out_of_stock": false,
             "preorder": true
+        },
+        "discogs": {
+            "attempted": true
         }
     }
 }

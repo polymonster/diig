@@ -32,14 +32,15 @@ jobs:
         python3 -m pip install --upgrade pip
         python3 -m pip install --upgrade google-auth
         python3 -m pip install selenium
-    - name: scrape_and_commit
+    - name: scrape
       run: |
         cd scrape
         python3 dig.py -store '${{matrix.store}}' -key '${{secrets.SERVICE_ACCOUNT}}' -clear-trackers -verbose -urls
+    - name: commit
+      run: |
+        cd scrape/diig-registry
         git config user.name github-actions
         git config user.email github-actions@github.com
-       
-        cd diig-registry
         for i in {1..5}; do
           git add .
           git commit -m "- update '${{ matrix.store }}' releases" || true

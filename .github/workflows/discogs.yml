@@ -24,9 +24,9 @@ jobs:
     - name: pull_reg
       run: |
         cd scrape/diig-registry
-        git fetch origin main
-        git checkout main
-        git pull origin main
+        git fetch origin master
+        git checkout master
+        git pull origin master
     - name: populate_discogs
       run: |
         cd scrape

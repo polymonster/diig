@@ -184,12 +184,7 @@ def scrape_page(url, store, store_dict, view, section, counter, session_scraped_
         return -1
 
     # store release entries in dict
-    releases_dict = dict()
-
-    # load existing registry to speed things up
-    reg_filepath = f"registry/{store}.json"
-    if os.path.exists(reg_filepath):
-        releases_dict = json.loads(open(reg_filepath, "r").read())
+    releases_dict = dig.load_registry(store)
 
     html_str = html_file.read().decode("utf8")
     grid_elems = parse_redeye_grid_elems(html_str)
@@ -251,10 +246,6 @@ def scrape_page(url, store, store_dict, view, section, counter, session_scraped_
         else:
             release_dict["store_tags"]["out_of_stock"] = False
 
-        # extra print for debugging long jobs
-        if verbose:
-            print(f"scraping release urls: {id}", flush=True)
-
         # this takes a little while so its useful to skip during dev
         if get_urls:
             # check if we already have urls and skip them
@@ -269,9 +260,11 @@ def scrape_page(url, store, store_dict, view, section, counter, session_scraped_
                         has_artworks = True
 
             if not has_tracks:
+                print(f"scraping release tracks: {id}", flush=True)
                 release_dict["track_urls"] = get_redeye_snippit_urls(release_dict["link"], "https://sounds.redeyerecords.co.uk/", id)
 
             if not has_artworks:
+                print(f"scraping release artworks: {id}", flush=True)
                 release_dict["artworks"] = get_redeye_artwork_urls(id)
 
         # merge into main
@@ -289,51 +282,7 @@ def scrape_page(url, store, store_dict, view, section, counter, session_scraped_
                 if len(merged["track_urls"]) != len(merged["track_names"]):
                     merged["track_names"] = reparse_and_split_tracks(merged["track_names"], len(merged["track_urls"]))
 
-    # write results back
-    release_registry = (json.dumps(releases_dict, indent=4))
-    open(reg_filepath, "w+").write(release_registry)
+    # write to file
+    dig.write_registry(store, releases_dict)
 
     return counter
-
-
-# reformat data to v2 version which was modified to accomodate firebase, multiple stores and more+
-def reformat_v2():
-    # load existing registry to speed things up
-    reg_filepath = "registry/releases.json"
-    if os.path.exists(reg_filepath):
-        releases_dict = json.loads(open(reg_filepath, "r").read())
-
-        for (k, v) in releases_dict.items():
-            # ensure we have store: redeye
-            v["store"] = "redeye"
-
-            # remove the loose has_charted tag
-            if "has_charted" in v:
-                del v["has_charted"]
-
-            # move section grouped charts and latest
-            # move separate tags to grouped 'sections'
-            if "tags" in v:
-                sections = [
-                    "weekly_chart",
-                    "monthly_chart",
-                    "new_releases"
-                ]
-                for section in sections:
-                    if section in v:
-                        if "techno" in v["tags"]:
-                            v["{}-{}-{}".format("redeye", section, "techno-electro")] = v[section]
-                        if "house" in v["tags"]:
-                            v["{}-{}-{}".format("redeye", section, "house-disco")] = v[section]
-                        del v[section]
-                del v["tags"]
-
-        # prepend redeye to release keys
-        formatted = dict()
-        for (k, v) in releases_dict.items():
-            formatted["{}-{}".format("redeye", k)] = v
-
-        # write
-        formatted_reg = (json.dumps(formatted, indent=4))
-        open("registry/redeye.json", "w+").write(formatted_reg)
-

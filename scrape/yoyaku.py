@@ -84,11 +84,7 @@ def scrape_page(url, store, store_dict, view, section, counter, session_scraped_
     releases = dig.parse_class(html_str, "class=\"ct-media-container\"", "a")
 
     # open existing reg
-    releases_dict = dict()
-    reg_filepath = f"registry/{store}.json"
-    if os.path.exists(reg_filepath):
-        releases_dict = json.loads(open(reg_filepath, "r").read())
-
+    releases_dict = dig.load_registry(store)
     releases_ex = dig.parse_class(html_str, 'class="product type-product', "li")
 
     for release in releases:
@@ -224,8 +220,7 @@ def scrape_page(url, store, store_dict, view, section, counter, session_scraped_
         dig.merge_dicts(releases_dict, merge)
 
     # write to file
-    release_registry = (json.dumps(releases_dict, indent=4))
-    open(reg_filepath, "w+").write(release_registry)
+    dig.write_registry(store, releases_dict)
 
     return counter
 

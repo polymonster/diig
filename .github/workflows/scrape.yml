@@ -33,6 +33,7 @@ jobs:
         python3 -m pip install --upgrade google-auth
         python3 -m pip install selenium
     - name: pull_reg
+      run: |
         cd scrape/diig-registry
         git fetch origin main
         git checkout main

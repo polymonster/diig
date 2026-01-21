@@ -9,7 +9,8 @@ export default defineNuxtConfig({
     '@nuxt/eslint',
     '@nuxt/test-utils',
     '@nuxtjs/tailwindcss',
-    'nuxt-vuefire'
+    'nuxt-vuefire',
+    '@pinia/nuxt',
   ],
 
   tailwindcss: {

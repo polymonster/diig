@@ -498,8 +498,8 @@ def populate_discogs_links(discogs, store):
     for entry in reg:
         if time.monotonic() >= deadline:
             print("terminating early to beat deadline")
-            break        
-        if "attempted" in reg[entry]["discogs"]:
+            break
+        if "discogs" in reg[entry] and "attempted" in reg[entry]["discogs"]:
             print(f"{entry} - {concat_title(reg[entry])}")
             try:
                 attempt_index = 0

@@ -16,80 +16,43 @@ jobs:
       run: |
         cd scrape
         python3 dig.py -update-stores -key '${{secrets.SERVICE_ACCOUNT}}'
-  scrape-juno:
+  scrape:
     needs: update-stores
+    strategy:
+      matrix:
+        store: [redeye, juno, phonica, yoyaku]
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - name: install_deps
-      run: |
-        python3 -m pip install --upgrade pip
-        python3 -m pip install --upgrade google-auth
-    - name: scrape_and_commit
-      run: |
-        cd scrape
-        python3 dig.py -store juno -key '${{secrets.SERVICE_ACCOUNT}}' -clear-trackers
-        git config user.name github-actions
-        git config user.email github-actions@github.com
-        git add .
-        git commit -m "- update juno releases" || true
-        git pull --rebase
-        git push origin HEAD:main
-  scrape-phonica:
-    needs: update-stores
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
+      with:
+        submodules: recursive
+        token: ${{ secrets.DIIG_REG_TOKEN }} 
     - name: install_deps
       run: |
         python3 -m pip install --upgrade pip
         python3 -m pip install --upgrade google-auth
         python3 -m pip install selenium
-    - name: scrape_and_commit
+    - name: pull_reg
+      run: |
+        cd scrape/diig-registry
+        git fetch origin main
+        git checkout main
+        git pull origin main
+    - name: scrape
       run: |
         cd scrape
-        python3 dig.py -store phonica -key '${{secrets.SERVICE_ACCOUNT}}' -clear-trackers -verbose -urls
+        python3 dig.py -store '${{matrix.store}}' -key '${{secrets.SERVICE_ACCOUNT}}' -clear-trackers -verbose -urls
+    - name: commit
+      run: |
+        cd scrape/diig-registry
         git config user.name github-actions
         git config user.email github-actions@github.com
-        git add .
-        git commit -m "- update phonica releases" || true
-        git pull --rebase
-        git push origin HEAD:main
-  scrape-redeye:
-    needs: update-stores
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3
-    - name: install_deps
-      run: |
-        python3 -m pip install --upgrade pip
-        python3 -m pip install --upgrade google-auth
-    - name: scrape_and_commit
-      run: |
-        cd scrape
-        python3 dig.py -store redeye -key '${{secrets.SERVICE_ACCOUNT}}' -clear-trackers -urls
-        git config user.name github-actions
-        git config user.email github-actions@github.com
-        git add .
-        git commit -m "- update redeye releases" || true
-        git pull --rebase
-        git push origin HEAD:main
-  scrape-yoyaku:
-    needs: update-stores
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3
-    - name: install_deps
-      run: |
-        python3 -m pip install --upgrade pip
-        python3 -m pip install --upgrade google-auth
-    - name: scrape_and_commit
-      run: |
-        cd scrape
-        python3 dig.py -store yoyaku -key '${{secrets.SERVICE_ACCOUNT}}' -clear-trackers -verbose -urls
-        git config user.name github-actions
-        git config user.email github-actions@github.com
-        git add .
-        git commit -m "- update yoyaku releases" || true
-        git pull --rebase
-        git push origin HEAD:main
+        for i in {1..5}; do
+          git add .
+          git commit -m "- update '${{ matrix.store }}' releases" || true
+          if git pull --rebase && git push origin HEAD:main; then
+            break
+          fi
+          echo "Push failed, retrying ($i/5)..."
+          sleep 2
+        done

@@ -1,3 +1,6 @@
 [submodule "app/pmtech"]
 	path = app/pmtech
 	url = https://github.com/polymonster/pmtech
+[submodule "diig-registry"]
+	path = scrape/diig-registry
+	url = https://github.com/polymonster/diig-registry

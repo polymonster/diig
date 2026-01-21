@@ -24,7 +24,7 @@ jobs:
     - name: populate_discogs
       run: |
         cd scrape
-        python3 discogs.py -store '${{matrix.store}}' -key '${{secrets.SERVICE_ACCOUNT}}' -discogs-key '${{secrets.DISCOGS_KEY}}' -releases 1024 -searches 100
+        python3 discogs.py -store '${{matrix.store}}' -key '${{secrets.SERVICE_ACCOUNT}}' -discogs-key '${{secrets.DISCOGS_KEY}}' -searches 100
     - name: commit
         cd scrape/diig-registry
         git config user.name github-actions

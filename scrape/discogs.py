@@ -166,6 +166,13 @@ def check_release_limit(count):
     return False
 
 
+def get_time_limit():
+    if "-time" in sys.argv:
+        i = sys.argv.index("-time") + 1
+        return float(sys.argv[i]) * 60 * 60
+    return 5.5 * 60 * 60
+
+
 ZERO_WIDTH = [
     "\u200B",  # zero width space
     "\u200C",  # zero width non-joiner
@@ -452,7 +459,7 @@ def populate_discogs_links(discogs, store):
     failures = 0
 
     # time limit of 5.5hs so we can push any improvements before GH actions kills us
-    deadline = time.monotonic() + 5.5 * 60 * 60
+    deadline = time.monotonic() + get_time_limit()
 
     # iterate over all entries
     if "-skip0" not in sys.argv:

@@ -52422,7 +52422,11 @@
             "out_of_stock": false,
             "preorder": true
         },
-        "phonica-techno-new_releases": 1
+        "phonica-techno-new_releases": 1,
+        "discogs": {
+            "url": "https://www.discogs.com/release/1649101-Sandi-Thom-Caledonia-EP",
+            "id": 1649101
+        }
     },
     "phonica-206860": {
         "phonica-tech-house-new_releases": 3,
@@ -52455,7 +52459,11 @@
             "out_of_stock": false,
             "preorder": false
         },
-        "phonica-techno-new_releases": 0
+        "phonica-techno-new_releases": 0,
+        "discogs": {
+            "url": "https://www.discogs.com/release/28452103-DJ-Mes-D3w-W3rk-Vol-2",
+            "id": 28452103
+        }
     },
     "phonica-209008": {
         "phonica-tech-house-new_releases": 4,
@@ -52496,7 +52504,10 @@
             "out_of_stock": false,
             "preorder": true
         },
-        "phonica-techno-new_releases": 0
+        "phonica-techno-new_releases": 0,
+        "discogs": {
+            "attempted": true
+        }
     },
     "phonica-206815": {
         "phonica-sectionless-essentials": 1,
@@ -52518,6 +52529,9 @@
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
+        },
+        "discogs": {
+            "attempted": true
         }
     },
     "phonica-206816": {
@@ -52540,6 +52554,9 @@
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
+        },
+        "discogs": {
+            "attempted": true
         }
     },
     "phonica-206623": {
@@ -52572,6 +52589,10 @@
         "store_tags": {
             "out_of_stock": false,
             "preorder": false
+        },
+        "discogs": {
+            "url": "https://www.discogs.com/release/35769889-Francesco-Skip-Breathworks-EP",
+            "id": 35769889
         }
     }
 }

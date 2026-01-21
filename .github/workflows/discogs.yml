@@ -25,13 +25,13 @@ jobs:
       run: |
         cd scrape
         python3 discogs.py -store '${{matrix.store}}' -key '${{secrets.SERVICE_ACCOUNT}}' -discogs-key '${{secrets.DISCOGS_KEY}}' -releases 1024 -searches 100
+    - name: commit
+        cd scrape/diig-registry
         git config user.name github-actions
         git config user.email github-actions@github.com
-        
-        cd diig-registry
         for i in {1..5}; do
           git add .
-          git commit -m "- update '${{ matrix.store }}' releases" || true
+          git commit -m "- update '${{matrix.store}}' discogs" || true
           if git pull --rebase && git push origin HEAD:main; then
             break
           fi

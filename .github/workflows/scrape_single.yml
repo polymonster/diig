@@ -40,14 +40,20 @@ jobs:
         python3 -m pip install --upgrade pip
         python3 -m pip install --upgrade google-auth
         python3 -m pip install --upgrade selenium
-    - name: scrape_and_commit
+    - name: scrape
       run: |
         cd scrape
         python3 dig.py -store ${{ github.event.inputs.store }} -key '${{secrets.SERVICE_ACCOUNT}}' -clear-trackers -verbose -urls
+    - name: commit
+        cd scrape/diig-registry
         git config user.name github-actions
         git config user.email github-actions@github.com
-        cd diig-registry
-        git add .
-        git commit -m "- update ${{ github.event.inputs.store }} releases" || true
-        git pull --rebase
-        git push origin HEAD:main
+        for i in {1..5}; do
+          git add .
+          git commit -m "- update '${{ github.event.inputs.store }}' releases" || true
+          if git pull --rebase && git push origin HEAD:main; then
+            break
+          fi
+          echo "Push failed, retrying ($i/5)..."
+          sleep 2
+        done

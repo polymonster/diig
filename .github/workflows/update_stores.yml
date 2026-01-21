@@ -13,7 +13,7 @@ jobs:
       run: |
         python3 -m pip install --upgrade pip
         python3 -m pip install --upgrade google-auth
-    - name: scrape_and_commit
+    - name: update_stores
       run: |
         cd scrape
         python3 dig.py -update-stores -key '${{secrets.SERVICE_ACCOUNT}}'

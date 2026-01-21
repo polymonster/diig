@@ -28,6 +28,11 @@ jobs:
         python3 -m pip install --upgrade python3-discogs-client
         python3 -m pip install --upgrade yt-dlp
         python3 -m pip install --upgrade rapidfuzz
+    - name: pull_reg
+       cd scrape/diig-registry
+        git fetch origin main
+        git checkout main
+        git pull origin main
     - name: populate_discogs
       run: |
         cd scrape

@@ -12,7 +12,7 @@ on:
           - phonica
           - yoyaku
 jobs:
-  scrape-discogs:
+  scrape-discogs-single:
     permissions:
       contents: read
     runs-on: ubuntu-latest
@@ -31,7 +31,7 @@ jobs:
     - name: populate_discogs
       run: |
         cd scrape
-        python3 discogs.py -store ${{ github.event.inputs.store }} -key '${{secrets.SERVICE_ACCOUNT}}' -discogs-key '${{secrets.DISCOGS_KEY}}' -searches 100 -t 0.1
+        python3 discogs.py -store ${{ github.event.inputs.store }} -key '${{secrets.SERVICE_ACCOUNT}}' -discogs-key '${{secrets.DISCOGS_KEY}}' -searches 100 -time 0.1
     - name: commit
       run: |
         cd scrape/diig-registry

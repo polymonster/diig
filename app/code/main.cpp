@@ -30,12 +30,6 @@ constexpr bool k_force_login = false;
 constexpr bool k_force_no_discogs_login = false;
 constexpr bool k_force_streamed_audio = false;
 
-#if PEN_PLATFORM_ANDROID
-constexpr f32 k_platform_spacing_scale = 3.0f;
-#else
-constexpr f32 k_platform_spacing_scale = 1.0f;
-#endif
-
 using namespace put;
 using namespace pen;
 
@@ -90,18 +84,10 @@ void right_align_text(const c8* text, f32 padding)
 void push_font_scale(f32 scale)
 {
     ImGui::SetWindowFontScale(scale);
-
-    //auto a = ImGui::GetStyle().IndentSpacing;
-    //auto b = ImGui::GetStyle().ItemSpacing;
-    //auto c = ImGui::GetStyle().ItemInnerSpacing;
-    //ImGui::PushStyleVar(ImGuiStyleVar_IndentSpacing, a*scale);
-    //ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(b.x*scale, b.y*scale));
-    //ImGui::PushStyleVar(ImGuiStyleVar_ItemInnerSpacing, ImVec2(c.x*scale, c.y*scale));
 }
 
 void pop_font_scale()
 {
-    //ImGui::PopStyleVar(3);
     ImGui::SetWindowFontScale(1.0);
 }
 
@@ -3984,34 +3970,6 @@ namespace
         pen_main_loop_continue();
     }
 
-    void print_imgui_stats()
-    {
-        ImGuiIO& io = ImGui::GetIO();
-        ImFont* f = io.Fonts->Fonts[0];
-
-        PEN_LOG("---- ImGui Metrics ----\n");
-        PEN_LOG("ItemSpacing:        x=%.2f  y=%.2f\n",
-               ImGui::GetStyle().ItemSpacing.x,
-               ImGui::GetStyle().ItemSpacing.y);
-
-        PEN_LOG("FontSize:           %.2f\n", f->FontSize);
-        PEN_LOG("Ascent:             %.2f\n", f->Ascent);
-        PEN_LOG("Descent:            %.2f\n", f->Descent);
-        PEN_LOG("LineHeight:         %.2f\n", f->Ascent - f->Descent);
-
-        PEN_LOG("DisplaySize:        %.2f x %.2f\n",
-               io.DisplaySize.x, io.DisplaySize.y);
-
-        PEN_LOG("DisplayFramebufferScale:  x=%.2f  y=%.2f\n",
-               io.DisplayFramebufferScale.x,
-               io.DisplayFramebufferScale.y);
-
-        PEN_LOG("FontGlobalScale:    %.2f\n", io.FontGlobalScale);
-        PEN_LOG("WindowScale:        %.2f\n", io.DisplayFramebufferScale.y * io.FontGlobalScale);
-
-        PEN_LOG("-----------------------\n");
-    }
-
     void* user_setup(void* params) {
 
         // unpack the params passed to the thread and signal to the engine it ok to proceed
@@ -4079,17 +4037,18 @@ namespace
         // imgui style
         ImGui::StyleColorsLight(); // white
 
-        print_imgui_stats();
+        //
+        f32 platform_spacing_scale = ctx.w *  ((24.0f / ImGui::GetStyle().ItemSpacing.x) / k_promax_11_w);
 
         // screen ratio based spacing and indents
-        ImGui::GetStyle().IndentSpacing = ctx.w * (ImGui::GetStyle().IndentSpacing / k_promax_11_w) * k_platform_spacing_scale;
+        ImGui::GetStyle().IndentSpacing = ctx.w * (ImGui::GetStyle().IndentSpacing / k_promax_11_w) * platform_spacing_scale;
         ImGui::GetStyle().ItemSpacing = ImVec2(
-                ctx.w * (ImGui::GetStyle().ItemSpacing.x / k_promax_11_w) * k_platform_spacing_scale,
-                ctx.h * (ImGui::GetStyle().ItemSpacing.y / k_promax_11_h) * k_platform_spacing_scale
+                ctx.w * (ImGui::GetStyle().ItemSpacing.x / k_promax_11_w) * platform_spacing_scale,
+                ctx.h * (ImGui::GetStyle().ItemSpacing.y / k_promax_11_h) * platform_spacing_scale
         );
         ImGui::GetStyle().ItemInnerSpacing = ImVec2(
-                ctx.w * (ImGui::GetStyle().ItemInnerSpacing.x / k_promax_11_w) * k_platform_spacing_scale,
-                ctx.h * (ImGui::GetStyle().ItemInnerSpacing.y / k_promax_11_h) * k_platform_spacing_scale
+                ctx.w * (ImGui::GetStyle().ItemInnerSpacing.x / k_promax_11_w) * platform_spacing_scale,
+                ctx.h * (ImGui::GetStyle().ItemInnerSpacing.y / k_promax_11_h) * platform_spacing_scale
         );
 
         ImGui::GetStyle().Colors[ImGuiCol_CheckMark] = ImVec4(1.0f, 0.5f, 0.0f, 1.0f);

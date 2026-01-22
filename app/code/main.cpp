@@ -2629,6 +2629,54 @@ namespace
         }
     }
 
+    typedef struct {
+        int index;      // real index, or -1 for overflow indicator
+        int small;      // 1 = small dot, 0 = normal
+        int selected;   // 1 = selected, 0 = not
+    } Dot;
+
+    Dot* compute_dots(int n, int s, int m, Dot* dots) {
+        if (n <= m) {
+            for (int i = 0; i < n; i++) {
+                dots[i].index = i;
+                dots[i].small = 0;
+                dots[i].selected = (i == s);
+            }
+            return dots;
+        }
+
+        int half = m / 2;
+        int start = s - half;
+        int end = start + m - 1;
+
+        // Clamp window
+        if (start < 0) {
+            start = 0;
+            end = m - 1;
+        } else if (end >= n) {
+            end = n - 1;
+            start = n - m;
+        }
+
+        for (int i = 0; i < m; i++) {
+            int idx = start + i;
+            int lover = (start > 0 && i == 0);
+            int rover = (end < n - 1 && i == m - 1);
+
+            if (lover || rover) {
+                dots[i].index = -1;   // overflow indicator
+                dots[i].small = 1;
+                dots[i].selected = 0;
+            } else {
+                dots[i].index = idx;
+                dots[i].small = 0;
+                dots[i].selected = (idx == s);
+            }
+        }
+
+        return dots;
+    }
+
     void release_carousel(soa& releases, u32 r)
     {
         push_font_scale(k_text_size_dots);
@@ -2669,6 +2717,37 @@ namespace
 
             f32 xpos = mid - ((stride * count) * 0.5f) + (rad + pad);
 
+            Dot dots[max_count];
+            compute_dots(actual_count, sel, max_count, &dots[0]);
+
+            for(size_t i = 0; i < count; ++i)
+            {
+                u32 col = IM_COL32(0, 0, 0, 255);
+                if(dots[i].selected && ctx.top == r)
+                {
+                    col = IM_COL32(255.0f * 0.8f, 255.0f * 0.3f, 0, 255);
+                }
+
+                float scaled_rad = dots[i].small == 0 ? rad : rad * 0.5f;
+
+                if(dots[i].index > -1 && releases.track_filepaths[r][dots[i].index].empty())
+                {
+                    ImGui::GetWindowDrawList()->AddLine(
+                            ImVec2(xpos - rad, y - rad), ImVec2(xpos + rad, y + rad), col, 2.0f);
+
+                    ImGui::GetWindowDrawList()->AddLine(
+                            ImVec2(xpos + rad, y - rad), ImVec2(xpos - rad, y + rad), col, 2.0f);
+                }
+                else
+                {
+                    ImGui::GetWindowDrawList()->AddCircleFilled(
+                            ImVec2(xpos, y), scaled_rad, col, 32);
+                }
+
+                xpos += stride;
+            }
+
+            /*
             // shifting dots
             s32 base = std::max<s32>(sel - count + 1, 0);
             s32 shift = 0;
@@ -2725,6 +2804,7 @@ namespace
 
                 xpos += stride;
             }
+            */
 
             // auto move to next track if one is empty or invalid
             if(ctx.top == r)

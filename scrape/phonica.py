@@ -92,10 +92,7 @@ def scrape_page(url, store, store_dict, view, section, counter, session_scraped_
     print(f"scraping phonica: {section} {url}")
 
     # grab registry
-    releases_dict = dict()
-    reg_filepath = f"registry/{store}.json"
-    if os.path.exists(reg_filepath):
-        releases_dict = json.loads(open(reg_filepath, "r").read())
+    releases_dict = dig.load_registry(store)
 
     # spin up a driver for the session
     attempts = 0
@@ -191,8 +188,7 @@ def scrape_page(url, store, store_dict, view, section, counter, session_scraped_
         pos += 1
 
     # write to file
-    release_registry = (json.dumps(releases_dict, indent=4))
-    open(reg_filepath, "w+").write(release_registry)
+    dig.write_registry(store, releases_dict)
 
     driver.quit()
     dig.scrape_yield()

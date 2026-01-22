@@ -5,12 +5,15 @@ jobs:
   update_stores:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
+      with:
+        submodules: recursive
+        token: ${{ secrets.DIIG_REG_TOKEN }} 
     - name: install_deps
       run: |
         python3 -m pip install --upgrade pip
         python3 -m pip install --upgrade google-auth
-    - name: scrape_and_commit
+    - name: update_stores
       run: |
         cd scrape
         python3 dig.py -update-stores -key '${{secrets.SERVICE_ACCOUNT}}'

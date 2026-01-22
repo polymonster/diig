@@ -6,6 +6,7 @@ import re
 import sys
 import dig
 import os
+import unicodedata
 from rapidfuzz import fuzz
 
 def hyperlink(text, url):
@@ -103,6 +104,10 @@ def concat_title_2(release):
     return f"{discogs_title(release)} - {release['title']}"
 
 
+def concat_title_3(release):
+    return f"{release['artist']} - {strip_format_suffix(release['title'])}"
+
+
 def tracklist_match_unordered(db, discogs, threshold=60):
     used = set()
     for a in db:
@@ -160,6 +165,145 @@ def check_release_limit(count):
             return True
     return False
 
+
+def get_time_limit():
+    if "-time" in sys.argv:
+        i = sys.argv.index("-time") + 1
+        return float(sys.argv[i]) * 60 * 60
+    return 5.5 * 60 * 60
+
+
+ZERO_WIDTH = [
+    "\u200B",  # zero width space
+    "\u200C",  # zero width non-joiner
+    "\u200D",  # zero width joiner
+    "\uFEFF",  # zero width no-break space
+]
+
+def normalize_unicode(s: str) -> str:
+    if not s:
+        return ""
+
+    # Normalize to NFC (canonical composed form)
+    s = unicodedata.normalize("NFC", s)
+
+    # Remove zero-width characters
+    for zw in ZERO_WIDTH:
+        s = s.replace(zw, "")
+
+    # Normalize whitespace
+    s = re.sub(r"\s+", " ", s).strip()
+
+    # Lowercase for comparison
+    return s.lower()
+
+
+FORMAT_KEYWORDS = [
+    r"\b\d+x\b",          # 2x, 3x, etc.
+    r"\b\d+\s*lp\b",      # 2 LP, 3LP
+    r"\b\d+\s*cd\b",
+    r"\b\d+\s*12",        # 12", 12”
+    r"\b\d+\s*inch\b",
+    r"\b\d+\s*g\b",       # 180g, 140g
+    r"vinyl",
+    r"gatefold",
+    r"promo",
+    r"test pressing",
+    r"limited",
+    r"ltd",
+    r"reissue",
+    r"remaster",
+]
+
+FORMAT_REGEX = re.compile("|".join(FORMAT_KEYWORDS), re.IGNORECASE)
+
+def remove_parens_and_brackets(s: str) -> str:
+    s = re.sub(r'\s*[\(\[][^\)\]]*[\)\]]', '', s)
+    s = re.sub(r'\s+', ' ', s).strip()
+    return s
+
+
+def strip_format_suffix(title: str) -> str:
+    if not title:
+        return ""
+
+    parts = [p.strip() for p in title.split(" - ")]
+
+    # If only one or two parts, nothing to strip
+    if len(parts) <= 2:
+        title = title.strip()
+        title = title.strip("-")
+        title = title.strip("EP")
+        title = title.strip("LP")
+        return remove_parens_and_brackets(search_title(title.strip()))
+
+    # Check last part for format keywords
+    last = parts[-1]
+    if FORMAT_REGEX.search(last):
+        return " - ".join(parts[:-1]).strip()
+
+    title = title.strip()
+    title = title.strip("-")
+    title = title.strip("EP")
+    title = title.strip("LP")
+    return remove_parens_and_brackets(search_title(title.strip()))
+
+
+def normalize_discogs_title(title: str) -> str:
+    if not title:
+        return ""
+
+    # Remove Discogs disambiguation numbers: (11), (2), (123), etc.
+    # Only when they appear right after a name, not in the middle of a title.
+    title = re.sub(r'\s*\(\d+\)', '', title)
+
+    # Normalize whitespace
+    title = re.sub(r'\s+', ' ', title).strip()
+
+    return normalize_unicode(title.lower())
+
+
+def normalize_local_title(title: str) -> str:
+    if not title:
+        return ""
+
+    # Remove label suffix after '|'
+    if '|' in title:
+        title = title.split('|')[0]
+
+    # Normalize whitespace
+    title = re.sub(r'\s+', ' ', title).strip()
+
+    return normalize_unicode(title.lower())
+
+
+def titles_match(local_title: str, discogs_title: str) -> bool:
+    return normalize_local_title(local_title) == normalize_discogs_title(discogs_title)
+
+
+def release_search_2(discogs, release):
+    title = strip_format_suffix(concat_title_3(release))
+    searches = list()
+    # searches based on catno, if we have one
+    if len(release['cat']) > 0:
+        searches.extend([
+            {
+                "search": throttled_search(discogs.search,
+                    q=title,
+                    type='release'
+                ),
+                "search_keys": ['catno'],
+            }
+        ])
+    for search in searches:
+        for result in search["search"]:
+            if titles_match(title, result.title):
+                print(f"{release['link']} -> {result.url}")
+                return {
+                    "url": f"{result.url}",
+                    "id": result.id
+                }
+    
 
 def release_search(discogs, release):
     searches = list()
@@ -307,23 +451,23 @@ def collection_dump(discogs):
 
 
 def populate_discogs_links(discogs, store):
-    reg_file = f"registry/{store}.json"
-    reg = json.loads(open(reg_file, "r").read())
+    reg = dig.load_registry(store)
+
     count = 0
     hits = 0
     prev_attemps = 0
     failures = 0
 
     # time limit of 5.5hs so we can push any improvements before GH actions kills us
-    deadline = time.monotonic() + 5.5 * 60 * 60
+    deadline = time.monotonic() + get_time_limit()
 
     # iterate over all entries
-    for entry in reg:
-        if time.monotonic() >= deadline:
-            print("terminating early to beat deadline")
-            break
-        if "discogs" not in reg[entry] or "-recheck" in sys.argv:
-            if not check_release_limit(count):
+    if "-skip0" not in sys.argv:
+        for entry in reg:
+            if time.monotonic() >= deadline:
+                print("terminating early to beat deadline")
+                break        
+            if "discogs" not in reg[entry] or "-recheck" in sys.argv:
                 print(f"{entry} - {concat_title(reg[entry])}")
                 try:
                     result = release_search(discogs, reg[entry])
@@ -340,24 +484,59 @@ def populate_discogs_links(discogs, store):
                     print("failed with exception")
                     time.sleep(1)
                     continue
-        else:
-            if "attempted" in reg[entry]["discogs"]:
-                print(f"{entry} {reg[entry]['cat']} - previously attempted and failed to find")
-                prev_attemps += 1
             else:
-                print(f"{entry} {reg[entry]['cat']} - already exists")
-                hits += 1
+                if "attempted" in reg[entry]["discogs"]:
+                    if "-verbose" in sys.argv:
+                        print(f"{entry} {reg[entry]['cat']} - previously attempted and failed to find")
+                    prev_attemps += 1
+                else:
+                    if "-verbose" in sys.argv:
+                        print(f"{entry} {reg[entry]['cat']} - already exists")
+                    hits += 1
+
+    # fall through and try anything that was previously attempted
+    for entry in reg:
+        if time.monotonic() >= deadline:
+            print("terminating early to beat deadline")
+            break
+        if "discogs" in reg[entry] and "attempted" in reg[entry]["discogs"]:
+            print(f"{entry} - {concat_title(reg[entry])}")
+            try:
+                attempt_index = 0
+                if isinstance(reg[entry]["discogs"].get("attempted"), bool):
+                    result = release_search_2(discogs, reg[entry])
+                elif isinstance(reg[entry]["discogs"].get("attempted"), int):
+                    attempted = reg[entry]["discogs"].get("attempted")
+                    print(f"{entry} {reg[entry]['cat']} - previously attempted with {attempted} and failed to find")
+                    continue
+                if result != None:
+                    reg[entry]["discogs"] = result
+                    count = count + 1
+                    hits += 1
+                else:
+                    reg[entry]["discogs"] = {
+                        "attempted": attempt_index
+                    }
+            except:
+                failures += 1
+                print("failed with exception")
+                time.sleep(1)
+                continue
+
+
     print(f"Job complete: {count} new additions, {hits} have info / {len(reg)}, {prev_attemps} previously attempted, {failures} failures")
-    open(reg_file, "w").write(json.dumps(reg, indent=4))
+    
+    # write to file
+    dig.write_registry(store, reg)
     dig.patch_releases(json.dumps(reg))
 
 
 def populate_discogs_likes(discogs, likes_file):
     count = 0
     likes = json.loads(open(likes_file, "r").read())
-    for file in os.listdir("registry"):
+    for file in os.listdir("diig-registry"):
         if file.endswith(".json"):
-            reg_file = f"registry/{file}"
+            reg_file = f"diig-registry/{file}"
             reg = json.loads(open(reg_file, "r").read())
             for entry in likes:
                 if entry in reg:

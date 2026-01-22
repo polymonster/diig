@@ -401,57 +401,46 @@ def update_stores():
 def clear_tracker_keys(store, view_tracker_keys):
     print(f"clear: {len(view_tracker_keys)} tracker flags for {store}")
     # open store registry and remove the keys
-    reg_filepath = f"registry/{store}.json"
-    if os.path.exists(reg_filepath):
-        releases_dict = json.loads(open(reg_filepath, "r").read())
-        for release in releases_dict:
-            release = releases_dict[release]
-            for key in view_tracker_keys:
-                if key in release:
-                    del release[key]
-        # write the registry back
-        release_registry = (json.dumps(releases_dict, indent=4))
-        open(reg_filepath, "w+").write(release_registry)
+    releases_dict = load_registry(store)
+    for release in releases_dict:
+        release = releases_dict[release]
+        for key in view_tracker_keys:
+            if key in release:
+                del release[key]
+    write_registry(store, releases_dict)
 
 
 # patch store releases
 def patch_store(store):
-    reg_filepath = f"registry/{store}.json"
-    if os.path.exists(reg_filepath):
-        releases_str = open(reg_filepath, "r").read()
-        if "-incremental" in sys.argv:
-            releases = json.loads(releases_str)
-            for release in releases:
-                patch_single = dict()
-                patch_single[release] = releases[release]
-                patch_single_str = json.dumps(patch_single, indent=4)
-                print(patch_single_str)
-                patch_releases(patch_single_str, throw_assert=True)
-        else:
-            patch_releases(releases_str, throw_assert=True)
+    releases = load_registry(store)
+    if "-incremental" in sys.argv:
+        for release in releases:
+            patch_single = dict()
+            patch_single[release] = releases[release]
+            patch_single_str = json.dumps(patch_single, indent=4)
+            print(patch_single_str)
+            patch_releases(patch_single_str, throw_assert=True)
+    else:
+        patch_releases(json.dumps(releases), throw_assert=True)
 
 
 # patch store releases
 def fix_store(store):
-    reg_filepath = f"registry/{store}.json"
-    if os.path.exists(reg_filepath):
-        releases_str = open(reg_filepath, "r").read()
-        releases = json.loads(releases_str)
-        for release in releases:
-            # custom code for juno artwork fix
-            update_artwork = list()
-            if "artworks" in releases[release]:
-                for artwork in releases[release]["artworks"]:
-                    artwork = artwork.replace("-MED-MED", "-MED")
-                    artwork = artwork.replace("-MED-BIG", "-BIG")
-                    update_artwork.append(artwork)
-            releases[release]["artworks"] = update_artwork
-            patch_single_str = json.dumps(releases[release], indent=4)
-            if "-verbose" in sys.argv:
-                print(patch_single_str)
-        open(reg_filepath, "w").write(json.dumps(releases, indent=4))
-        releases_str = open(reg_filepath, "r").read()
-        patch_releases(releases_str, throw_assert=True)
+    releases = load_registry(store)
+    for release in releases:
+        # custom code for juno artwork fix
+        update_artwork = list()
+        if "artworks" in releases[release]:
+            for artwork in releases[release]["artworks"]:
+                artwork = artwork.replace("-MED-MED", "-MED")
+                artwork = artwork.replace("-MED-BIG", "-BIG")
+                update_artwork.append(artwork)
+        releases[release]["artworks"] = update_artwork
+        patch_single_str = json.dumps(releases[release], indent=4)
+        if "-verbose" in sys.argv:
+            print(patch_single_str)
+    write_registry(store, releases)
+    patch_releases(json.dumps(releases), throw_assert=True)
 
 
 # scrape a store based on rules defined in stores.json config
@@ -522,6 +511,8 @@ def scrape_store(stores, store_name):
                         counter,
                         session_scraped_ids
                     )
+                    if "-quick" in sys.argv:
+                        return
                     # if the scrape takes 6hrs GH actions will timeout
                     # return here and patch any updates
                     if time.time() - start_time > 21000:
@@ -558,6 +549,24 @@ def load_combined_registries(reg_dir):
             store_reg = json.loads(open(f"{reg_dir}/{file}", "r").read())
             merge_dicts(reg, store_reg)
     return reg
+
+
+# load registry from submodule or empty dict if it doesnt exist
+def load_registry(store):
+    reg_dir = "diig-registry"
+    filepath = f"{reg_dir}/{store}.json"
+    if os.path.exists(filepath):
+        return json.loads(open(f"{reg_dir}/{store}.json", "r").read())
+    return dict()
+
+
+# write the registry back
+def write_registry(store, reg):
+    reg_dir = "diig-registry"
+    filepath = f"{reg_dir}/{store}.json"
+    str_reg = (json.dumps(reg, indent=4))
+    open(filepath, "w+").write(str_reg)
+
 
 # main
 if __name__ == '__main__':

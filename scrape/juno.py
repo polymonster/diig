@@ -110,9 +110,7 @@ def scrape_page(url, store, store_dict, view, section, counter, session_scraped_
     releases = dig.parse_div(products[0], 'class="dv-item"')
 
     # open existing reg
-    reg_filepath = f"registry/{store}.json"
-    if os.path.exists(reg_filepath):
-        releases_dict = json.loads(open(reg_filepath, "r").read())
+    releases_dict = dig.load_registry(store)
 
     for release in releases:
         # basic info
@@ -207,8 +205,7 @@ def scrape_page(url, store, store_dict, view, section, counter, session_scraped_
         session_scraped_ids.append(key)
 
     # write to file
-    release_registry = (json.dumps(releases_dict, indent=4))
-    open(reg_filepath, "w+").write(release_registry)
+    dig.write_registry(store, releases_dict)
 
     dig.scrape_yield()
     return counter

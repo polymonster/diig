@@ -407,7 +407,7 @@ def clear_tracker_keys(store, view_tracker_keys):
         for key in view_tracker_keys:
             if key in release:
                 del release[key]
-    write_registry(releases_dict)
+    write_registry(store, releases_dict)
 
 
 # patch store releases

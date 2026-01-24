@@ -4,10 +4,10 @@
 // - contact page
 // - following page
 
-// - cold cuts
 // - hardwax
-// - decks
 // - VU
+// - cold cuts
+// - decks
 
 // ? ReleasesView can leak mem boot flow!
 // ? implement label link (on tap)

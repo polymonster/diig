@@ -157,5 +157,42 @@
             }
         },
         "scrape_rate": 5
+    },
+    "hardwax": {
+        "sections": [
+            "electro",
+            "house",
+            "techno"
+        ],
+        "section_display_names": [
+            "Electro",
+            "House",
+            "Techno"
+        ],
+        "view_order": [
+            "new_releases",
+            "this_week",
+            "last_week"
+        ],
+        "views": {
+            "new_releases": {
+                "url": "https://hardwax.com/${{section}}/?page=${{page}}",
+                "page_count": 50,
+                "display_name": "Latest"
+            },
+            "this_week": {
+                "url": "https://hardwax.com/this-week/",
+                "page_count": 1,
+                "display_name": "This Week",
+                "sectionless": true
+            },
+            "last_week": {
+                "url": "https://hardwax.com/last-week/",
+                "page_count": 1,
+                "display_name": "Last Week",
+                "sectionless": true
+            }
+        },
+        "scrape_rate": 5
     }
 }

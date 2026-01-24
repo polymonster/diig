@@ -24,6 +24,7 @@ def display_help():
     print("  -verbose - print more info")
     print("  -update-stores - synchronises local stores.json with the database")
     print("  -patch-only - skips scraping and applies patch to the database from store registry")
+    print("  -local-only - skip Firebase auth and patching, only write to local registry files")
     print("")
     print("  optional filters:")
     print("    -section <sectiom_name> - specify a single section to scrape ie. 'techno-electro'")
@@ -574,8 +575,12 @@ if __name__ == '__main__':
         display_help()
         exit(0)
 
-    # auth
-    setup_firebase_auth()
+    # check for local-only mode (skip Firebase entirely)
+    local_only = "-local-only" in sys.argv
+
+    # auth (skip if local-only)
+    if not local_only:
+        setup_firebase_auth()
 
     # run the fix-store function with custom code
     if "-fix-store" in sys.argv:
@@ -591,8 +596,14 @@ if __name__ == '__main__':
         if not "-patch-only" in sys.argv:
             # scrape
             scrape_store(stores, store)
-        # patch
-        patch_store(store)
+        # patch (skip if local-only)
+        if not local_only:
+            patch_store(store)
+        else:
+            print(f"local-only mode: skipping Firebase patch for {store}")
     elif "-update-stores" in sys.argv:
-        # updates the store config into firebase
-        update_stores()
+        if local_only:
+            print("local-only mode: -update-stores requires Firebase, skipping")
+        else:
+            # updates the store config into firebase
+            update_stores()

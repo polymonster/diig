@@ -1,7 +1,5 @@
 // TASKS
 
-// - return from settings / likes goes to wrong location
-
 // - help page
 // - contact page
 // - following page
@@ -18,6 +16,7 @@
 
 
 // DONE
+// x return from settings / likes goes to wrong location.. doesnt
 // x - android creds persistent. no
 // x - disable clicks on items which intersect the header
 // x - improve carousel dots

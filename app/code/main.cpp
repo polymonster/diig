@@ -29,7 +29,7 @@
 constexpr bool k_force_login = false;
 constexpr bool k_force_no_discogs_login = false;
 constexpr bool k_force_streamed_audio = false;
-constexpr bool k_show_prims = true;
+constexpr bool k_show_prims = false;
 
 using namespace put;
 using namespace pen;

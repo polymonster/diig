@@ -1,8 +1,6 @@
 // TASKS
 
-// - disable clicks on items which intersect the header
 // - return from settings / likes goes to wrong location
-// - ReleasesView can leak mem boot flow!
 
 // - help page
 // - contact page
@@ -13,11 +11,15 @@
 // - decks
 // - VU
 
+// ? ReleasesView can leak mem boot flow!
 // ? implement label link (on tap)
 // ? side swipe still isnt perfect
 // ? vertical swipe still sometimes feel sticky
 
+
 // DONE
+// x - android creds persistent. no
+// x - disable clicks on items which intersect the header
 // x - improve carousel dots
 // x - discogs token / enable
 // x - discogs icon
@@ -137,6 +139,7 @@ constexpr f32       k_inertia_cutoff = 3.33f;
 constexpr f32       k_snap_lerp = 0.3f;
 constexpr f32       k_indent1 = 2.0f;
 constexpr f32       k_indent2 = 9.0f;
+constexpr f32       k_indent3 = 36.0f;
 constexpr f32       k_top_pull_pad = 1.5f;
 constexpr f32       k_top_pull_reload = 1.25f;
 constexpr f32       k_text_size_h1 = 2.25f;
@@ -346,6 +349,7 @@ struct AudioPlayerContext
     Str     play_track_url = "";
     bool    invalidate_track = false;
     bool    play_bg = false;
+    bool    mute = false;
 };
 
 struct AppContext
@@ -383,6 +387,8 @@ struct AppContext
     u32                     last_response_code = 0;
     vec2f                   display_scale = 1.0;
     u32                     discogs_icon = 0;
+    u32                     mute_icon = 0;
+    u32                     unmute_icon = 0;
 
     bool                    backgrounded = false;
     bool                    show_debug = false;

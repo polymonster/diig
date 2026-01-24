@@ -29,6 +29,7 @@
 constexpr bool k_force_login = false;
 constexpr bool k_force_no_discogs_login = false;
 constexpr bool k_force_streamed_audio = false;
+constexpr bool k_show_prims = true;
 
 using namespace put;
 using namespace pen;
@@ -2183,62 +2184,84 @@ namespace
         cleanup_views();
     }
 
-    bool lenient_button_tap(f32 padding_pct)
+    bool lenient_button_tap(f32 padding_pct, vec4f* bb = nullptr)
     {
-        ImVec2 bbmin = ImGui::GetItemRectMin();
-        ImVec2 bbmax = ImGui::GetItemRectMax();
-
-        vec2f vbmin = vec2f(bbmin.x, bbmin.y);
-        vec2f vbmax = vec2f(bbmax.x, bbmax.y);
-        vec2f mid = vbmin + ((vbmax - vbmin) * 0.5f);
-
-        f32 padding = dist(vbmin, vbmax) * (0.5 + (padding_pct * 0.5));
-        f32 d = dist(vec2f(ctx.tap_pos.x, ctx.tap_pos.y), mid);
-        if(d < padding)
+        if(ImGui::IsItemVisible())
         {
-            return true;
+            vec2f vbmin;
+            vec2f vbmax;
+
+            if(bb)
+            {
+                vbmin = bb->xy;
+                vbmax = bb->zw;
+
+                ImRect region(ImVec2(vbmin.x, vbmin.y), ImVec2(vbmax.x, vbmax.y));
+                ImRect clip = ImGui::GetCurrentWindow()->ClipRect;
+
+                if(!region.Overlaps(clip))
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                ImVec2 bbmin = ImGui::GetItemRectMin();
+                ImVec2 bbmax = ImGui::GetItemRectMax();
+
+                vbmin = vec2f(bbmin.x, bbmin.y);
+                vbmax = vec2f(bbmax.x, bbmax.y);
+            }
+
+            vec2f mid = vbmin + ((vbmax - vbmin) * 0.5f);
+
+            f32 padding = dist(vbmin, vbmax) * (0.5 + (padding_pct * 0.5));
+            f32 d = dist(vec2f(ctx.tap_pos.x, ctx.tap_pos.y), mid);
+            if(d < padding)
+            {
+                return true;
+            }
+
+            if(k_show_prims) {
+                ImGui::GetForegroundDrawList()->AddCircle(ImVec2(mid.x, mid.y), padding, IM_COL32(255, 0, 0, 255), 32, 2.0f);
+            }
         }
-        
-        //ImGui::GetForegroundDrawList()->AddCircle(ImVec2(mid.x, mid.y), padding, IM_COL32(255, 0, 0, 255), 32, 2.0f);
 
         return false;
     }
 
     bool lenient_button_click(f32 padding_pct, bool& debounce)
     {
-        auto& ms = pen::input_get_mouse_state();
-        ImVec2 bbmin = ImGui::GetItemRectMin();
-        ImVec2 bbmax = ImGui::GetItemRectMax();
+        if(ImGui::IsItemVisible()) {
+            auto &ms = pen::input_get_mouse_state();
+            ImVec2 bbmin = ImGui::GetItemRectMin();
+            ImVec2 bbmax = ImGui::GetItemRectMax();
 
-        // debug
-        vec2f vbmin = vec2f(bbmin.x, bbmin.y);
-        vec2f vbmax = vec2f(bbmax.x, bbmax.y);
-        vec2f mid = vbmin + ((vbmax - vbmin) * 0.5f);
+            // debug
+            vec2f vbmin = vec2f(bbmin.x, bbmin.y);
+            vec2f vbmax = vec2f(bbmax.x, bbmax.y);
+            vec2f mid = vbmin + ((vbmax - vbmin) * 0.5f);
 
-        f32 padding = dist(vbmin, vbmax) * (0.5 + (padding_pct * 0.5));
+            f32 padding = dist(vbmin, vbmax) * (0.5 + (padding_pct * 0.5));
 
-        //ImGui::GetForegroundDrawList()->AddCircle(ImVec2(mid.x, mid.y), padding, IM_COL32(255, 0, 255, 255), 32, 2.0f);
-
-        // need to wait on debounce
-        if(debounce)
-        {
-            if(!ctx.touch_down)
-            {
-                debounce = false;
+            // need to wait on debounce
+            if (debounce) {
+                if (!ctx.touch_down) {
+                    debounce = false;
+                }
+                return false;
+            } else {
+                if (ctx.touch_down) {
+                    f32 d = dist(vec2f(ms.x, ms.y), mid);
+                    if (d < padding) {
+                        debounce = true;
+                        return true;
+                    }
+                }
             }
 
-            return false;
-        }
-        else
-        {
-            if(ctx.touch_down)
-            {
-                f32 d = dist(vec2f(ms.x, ms.y), mid);
-                if(d < padding)
-                {
-                    debounce = true;
-                    return true;
-                }
+            if(k_show_prims) {
+                ImGui::GetForegroundDrawList()->AddCircle(ImVec2(mid.x, mid.y), padding, IM_COL32(255, 0, 255, 255), 32, 2.0f);
             }
         }
 
@@ -2528,6 +2551,29 @@ namespace
                         releases.flags[r] |= EntityFlags::hovered;
                     }
                 }
+
+                if(ctx.top == r && i == 0)
+                {
+                    ImVec2 image_top_left = ImGui::GetItemRectMin();
+                    ImVec2 icon_text_size = ImGui::CalcTextSize(ICON_FA_MUSIC);
+
+                    vec2f icon_top_left = vec2f(image_top_left.x + k_indent3, image_top_left.y + k_indent3);
+                    vec2f icon_bottom_right = icon_top_left + vec2f(icon_text_size.x * 2.0f, icon_text_size.y * 2.0f);
+
+                    // draw overlay icon
+                    ImDrawList* draw = ImGui::GetWindowDrawList();
+                    draw->AddImage(
+                        ctx.audio_ctx.mute ? IMG(ctx.mute_icon) : IMG(ctx.unmute_icon),
+                        ImVec2(icon_top_left.x, icon_top_left.y),
+                        ImVec2(icon_bottom_right.x, icon_bottom_right.y)
+                    );
+
+                    vec4f bb = vec4f(icon_top_left.xy, icon_bottom_right.xy);
+                    if(lenient_button_tap(0.1, &bb))
+                    {
+                        ctx.audio_ctx.mute = !ctx.audio_ctx.mute;
+                    }
+                }
             }
 
             if(!pen::input_is_mouse_down(PEN_MOUSE_L))
@@ -2746,65 +2792,6 @@ namespace
 
                 xpos += stride;
             }
-
-            /*
-            // shifting dots
-            s32 base = std::max<s32>(sel - count + 1, 0);
-            s32 shift = 0;
-            if(ctx.top == r)
-            {
-                if(sel == actual_count-1)
-                {
-                    shift = 0;
-                }
-                else if((count-1)+base == sel)
-                {
-                    shift = 1;
-                }
-            }
-
-            // draw dots
-            for(u32 i = 0; i < count; ++i)
-            {
-                // scale truncated length, small dots
-                f32 scaled_rad = rad;
-                if(actual_count > count)
-                {
-                    if(base+shift > 0 && i == 0) // first
-                    {
-                        scaled_rad *= 0.5f;
-                    }
-                    else if(sel+shift < actual_count-1 && i == count-1) // last
-                    {
-                        scaled_rad *= 0.5f;
-                    }
-                }
-
-                // highlight selected
-                u32 col = IM_COL32(0, 0, 0, 255);
-                if(i+base+shift == sel && ctx.top == r)
-                {
-                    col = IM_COL32(255.0f * 0.8f, 255.0f * 0.3f, 0, 255);
-                }
-
-                u32 t = i+base+shift;
-                if(releases.track_filepaths[r][t].empty())
-                {
-                    ImGui::GetWindowDrawList()->AddLine(
-                            ImVec2(xpos - rad, y - rad), ImVec2(xpos + rad, y + rad), col, 2.0f);
-
-                    ImGui::GetWindowDrawList()->AddLine(
-                            ImVec2(xpos + rad, y - rad), ImVec2(xpos - rad, y + rad), col, 2.0f);
-                }
-                else
-                {
-                    ImGui::GetWindowDrawList()->AddCircleFilled(
-                            ImVec2(xpos, y), scaled_rad, col, 32);
-                }
-
-                xpos += stride;
-            }
-            */
 
             // auto move to next track if one is empty or invalid
             if(ctx.top == r)
@@ -3035,9 +3022,9 @@ namespace
             // select primary
             ImGui::Spacing();
             f32 y = ImGui::GetCursorPos().y - ImGui::GetScrollY();
-            if(y < (f32)h - ((f32)w * 1.1f))
+            if(y < (f32)h - ((f32)w * 1.1f)) // 1.1f to pad the end
             {
-                if(y > -w * 0.33f)
+                if(y > -h * 0.5f)
                 {
                     if(ctx.top == -1)
                     {
@@ -4149,6 +4136,10 @@ namespace
         // discogs
         ctx.discogs_icon = put::load_texture("data/images/discogs_light.dds");
 
+        // discogs
+        ctx.mute_icon = put::load_texture("data/images/mute.dds");
+        ctx.unmute_icon = put::load_texture("data/images/unmute.dds");
+
         // lets go
         pen::thread_create(user_data_thread, 10 * 1024 * 1024, &ctx.data_ctx, pen::e_thread_start_flags::detached);
         auto_login();
@@ -4299,6 +4290,12 @@ void audio_player()
     {
         ctx.audio_ctx.invalidate_track = true;
         return;
+    }
+
+    // audio channel mute
+    if(is_valid(audio_ctx.gi))
+    {
+        put::audio_group_set_mute(audio_ctx.gi, ctx.audio_ctx.mute);
     }
 
     // audio player

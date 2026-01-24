@@ -29,6 +29,7 @@
 constexpr bool k_force_login = false;
 constexpr bool k_force_no_discogs_login = false;
 constexpr bool k_force_streamed_audio = false;
+constexpr bool k_show_prims = false;
 
 using namespace put;
 using namespace pen;
@@ -79,6 +80,16 @@ void right_align_text(const c8* text, f32 padding)
     auto text_size = ImGui::CalcTextSize(text);
     ImGui::SetCursorPosX(ImGui::GetContentRegionAvail().x - text_size.x - padding);
     ImGui::Text("%s", text);
+}
+
+void push_font_scale(f32 scale)
+{
+    ImGui::SetWindowFontScale(scale);
+}
+
+void pop_font_scale()
+{
+    ImGui::SetWindowFontScale(1.0);
 }
 
 // curl api
@@ -2173,59 +2184,84 @@ namespace
         cleanup_views();
     }
 
-    bool lenient_button_tap(f32 padding)
+    bool lenient_button_tap(f32 padding_pct, vec4f* bb = nullptr)
     {
-        ImVec2 bbmin = ImGui::GetItemRectMin();
-        ImVec2 bbmax = ImGui::GetItemRectMax();
-
-        vec2f vbmin = vec2f(bbmin.x, bbmin.y);
-        vec2f vbmax = vec2f(bbmax.x, bbmax.y);
-        vec2f mid = vbmin + ((vbmax - vbmin) * 0.5f);
-
-        f32 d = dist(vec2f(ctx.tap_pos.x, ctx.tap_pos.y), mid);
-        if(d < padding)
+        if(ImGui::IsItemVisible())
         {
-            return true;
+            vec2f vbmin;
+            vec2f vbmax;
+
+            if(bb)
+            {
+                vbmin = bb->xy;
+                vbmax = bb->zw;
+
+                ImRect region(ImVec2(vbmin.x, vbmin.y), ImVec2(vbmax.x, vbmax.y));
+                ImRect clip = ImGui::GetCurrentWindow()->ClipRect;
+
+                if(!region.Overlaps(clip))
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                ImVec2 bbmin = ImGui::GetItemRectMin();
+                ImVec2 bbmax = ImGui::GetItemRectMax();
+
+                vbmin = vec2f(bbmin.x, bbmin.y);
+                vbmax = vec2f(bbmax.x, bbmax.y);
+            }
+
+            vec2f mid = vbmin + ((vbmax - vbmin) * 0.5f);
+
+            f32 padding = dist(vbmin, vbmax) * (0.5 + (padding_pct * 0.5));
+            f32 d = dist(vec2f(ctx.tap_pos.x, ctx.tap_pos.y), mid);
+            if(d < padding)
+            {
+                return true;
+            }
+
+            if(k_show_prims) {
+                ImGui::GetForegroundDrawList()->AddCircle(ImVec2(mid.x, mid.y), padding, IM_COL32(255, 0, 0, 255), 32, 2.0f);
+            }
         }
-        
-        // ImGui::GetForegroundDrawList()->AddCircle(ImVec2(mid.x, mid.y), padding, IM_COL32(255, 0, 0, 255), 32, 2.0f);
 
         return false;
     }
 
-    bool lenient_button_click(f32 padding, bool& debounce)
+    bool lenient_button_click(f32 padding_pct, bool& debounce)
     {
-        auto& ms = pen::input_get_mouse_state();
-        ImVec2 bbmin = ImGui::GetItemRectMin();
-        ImVec2 bbmax = ImGui::GetItemRectMax();
+        if(ImGui::IsItemVisible()) {
+            auto &ms = pen::input_get_mouse_state();
+            ImVec2 bbmin = ImGui::GetItemRectMin();
+            ImVec2 bbmax = ImGui::GetItemRectMax();
 
-        // debug
-        vec2f vbmin = vec2f(bbmin.x, bbmin.y);
-        vec2f vbmax = vec2f(bbmax.x, bbmax.y);
-        vec2f mid = vbmin + ((vbmax - vbmin) * 0.5f);
-        
-        // ImGui::GetForegroundDrawList()->AddCircle(ImVec2(mid.x, mid.y), padding, IM_COL32(255, 0, 0, 255), 32, 2.0f);
+            // debug
+            vec2f vbmin = vec2f(bbmin.x, bbmin.y);
+            vec2f vbmax = vec2f(bbmax.x, bbmax.y);
+            vec2f mid = vbmin + ((vbmax - vbmin) * 0.5f);
 
-        // need to wait on debounce
-        if(debounce)
-        {
-            if(!ctx.touch_down)
-            {
-                debounce = false;
+            f32 padding = dist(vbmin, vbmax) * (0.5 + (padding_pct * 0.5));
+
+            // need to wait on debounce
+            if (debounce) {
+                if (!ctx.touch_down) {
+                    debounce = false;
+                }
+                return false;
+            } else {
+                if (ctx.touch_down) {
+                    f32 d = dist(vec2f(ms.x, ms.y), mid);
+                    if (d < padding) {
+                        debounce = true;
+                        return true;
+                    }
+                }
             }
 
-            return false;
-        }
-        else
-        {
-            if(ctx.touch_down)
-            {
-                f32 d = dist(vec2f(ms.x, ms.y), mid);
-                if(d < padding)
-                {
-                    debounce = true;
-                    return true;
-                }
+            if(k_show_prims) {
+                ImGui::GetForegroundDrawList()->AddCircle(ImVec2(mid.x, mid.y), padding, IM_COL32(255, 0, 255, 255), 32, 2.0f);
             }
         }
 
@@ -2266,7 +2302,7 @@ namespace
 
         f32 rad = ctx.w * k_page_button_press_radius_ratio;
 
-        if(lenient_button_tap(rad) && !ctx.scroll_lock_x && ! ctx.scroll_lock_y)
+        if(lenient_button_tap(0.1) && !ctx.scroll_lock_x && ! ctx.scroll_lock_y)
         {
             change_page(Page::likes);
         }
@@ -2279,7 +2315,7 @@ namespace
 
         // options menu button
         static bool s_debounce_menu = false;
-        if(lenient_button_click(rad, s_debounce_menu) && !ctx.scroll_lock_x && ! ctx.scroll_lock_y) {
+        if(lenient_button_click(0.1, s_debounce_menu) && !ctx.scroll_lock_x && ! ctx.scroll_lock_y) {
             if(ImGui::IsPopupOpen("Options Popup")) {
                 ImGui::CloseCurrentPopup();
                 s_debounce_menu = true;
@@ -2347,23 +2383,67 @@ namespace
         ImGui::SetWindowFontScale(k_text_size_body);
     }
 
-    void more_menu(u32 r, f32 rad)
+    void release_extra_info(soa& releases, u32 r)
     {
-        auto& releases = ctx.view->releases;
-        
-        static s32 s_more_menu_r = -1;
-        
+        // debug display ID
+        if(ctx.show_debug) {
+            ImGui::SetWindowFontScale(k_text_size_nerds);
+            ImGui::Dummy(ImVec2(k_indent1, 0.0f));
+            ImGui::SameLine();
+            ImGui::Text("(%s)", releases.key[r].c_str());
+        }
+
+        // display store for likes
+        if(ctx.view->page == Page::likes) {
+            ImGui::SetWindowFontScale(k_text_size_body);
+            ImGui::Dummy(ImVec2(k_indent1, 0.0f));
+            ImGui::SameLine();
+            ImGui::Text("%s", releases.store[r].c_str());
+        }
+    }
+
+    bool release_label_cat_more(soa& releases, u32 r)
+    {
+        // label and catalogue
+        push_font_scale(k_text_size_h3);
+
+        ImGui::Dummy(ImVec2(k_indent1, 0.0f));
+        ImGui::SameLine();
+
+        f32 icon_size = ImGui::CalcTextSize(releases.label[r].c_str()).y;
+
+        if(releases.cat[r].empty())
+        {
+            ImGui::TextWrapped("%s", releases.label[r].c_str());
+        }
+        else
+        {
+            ImGui::TextWrapped("%s: %s", releases.label[r].c_str(), releases.cat[r].c_str());
+        }
+
+        pop_font_scale();
+
         bool has_more = !releases.discogs_url[r].empty();
         if(!has_more)
         {
-            return;
+            return false;
         }
-        
+
+        // more menu
+        static s32 s_more_menu_r = -1;
+
+        push_font_scale(k_text_size_h3);
+
+        // discogs menu
         ImGui::SameLine();
+
+        // discogs icon
+        f32 rad = ctx.w * k_page_button_press_radius_ratio;
         ImGui::SetCursorPosX(ctx.w - rad);
-        ImGui::Text("%s", ICON_FA_ELLIPSIS_H);
+        ImGui::SetCursorPosY(ImGui::GetCursorPosY() + (ImGui::GetFontSize() - icon_size));
+        ImGui::ImageButton("##Discogs", IMG(ctx.discogs_icon), ImVec2(icon_size, icon_size));
         
-        if(lenient_button_tap(rad) && !any_popup_open() && !ctx.scroll_lock_x && !ctx.scroll_lock_y) {
+        if(lenient_button_tap(0.3) && !any_popup_open() && !ctx.scroll_lock_x && !ctx.scroll_lock_y) {
             if(ImGui::IsPopupOpen("More Menu")) {
                 ImGui::CloseCurrentPopup();
                 s_more_menu_r = -1;
@@ -2373,7 +2453,10 @@ namespace
                 s_more_menu_r = r;
             }
         }
-                                
+
+        pop_font_scale();
+
+        bool changed_page = false;
         if(r == s_more_menu_r)
         {
             ImVec2 more_menu_pos = ImGui::GetItemRectMin();
@@ -2390,22 +2473,507 @@ namespace
             ImGui::SetNextWindowSize(ImVec2(menu_w, 0.0f));
             
             if(ImGui::BeginPopup("More Menu")) {
-                if(right_align_menu_item("Open In Discogs", pad)) {
-                    discogs_link = str_replace_string(discogs_link, "https//www.discogs.com", "");
-                    discogs_link = str_replace_string(discogs_link, "https://www.discogs.com", "");
-                    Str url = "https://discogs.com";
-                    url.append(discogs_link.c_str());
-                    ctx.open_url_request = url;
-                    s_more_menu_r = -1;
+                if(ctx.discogs_username.empty())
+                {
+                    if(right_align_menu_item("Enable Discogs", pad)) {
+                        change_page(Page::settings);
+                        changed_page = true;
+                    }
                 }
-                
-                if(right_align_menu_item("Add To Wants", pad)) {
-                    add_to_wants(ctx.discogs_username, releases.discogs_id[r]);
+                else
+                {
+                    if(right_align_menu_item("Open In Discogs", pad)) {
+                        discogs_link = str_replace_string(discogs_link, "https//www.discogs.com", "");
+                        discogs_link = str_replace_string(discogs_link, "https://www.discogs.com", "");
+                        Str url = "https://discogs.com";
+                        url.append(discogs_link.c_str());
+                        ctx.open_url_request = url;
+                        s_more_menu_r = -1;
+                    }
+
+                    if(right_align_menu_item("Add To Wants", pad)) {
+                        add_to_wants(ctx.discogs_username, releases.discogs_id[r]);
+                    }
                 }
-                
+
                 ImGui::EndPopup();
             }
         }
+
+        return changed_page;
+    }
+
+    void release_images(soa& releases, u32 r)
+    {
+        f32 w = ctx.w;
+        f32 scaled_vel = ctx.scroll_delta.x;
+
+        // images or placeholder
+        u32 tex = ctx.white_label_texture;
+        f32 texh = w;
+
+        if(releases.artwork_texture[r])
+        {
+            tex = releases.artwork_texture[r];
+            texh = (f32)w * ((f32)releases.artwork_tcp[r].height / (f32)releases.artwork_tcp[r].width);
+        }
+
+        if(tex)
+        {
+            f32 spacing = 20.0f;
+
+            ImGui::BeginChildEx("rel", r+1, ImVec2((f32)w, texh + 10.0f), false, 0);
+            ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(spacing, 0.0));
+
+            u32 num_images = std::max<u32>(1, releases.track_url_count[r]);
+            f32 imgw = w + spacing;
+
+            f32 max_scroll = (num_images * imgw) - imgw;
+            for(u32 i = 0; i < num_images; ++i)
+            {
+                if(i > 0)
+                {
+                    ImGui::SameLine();
+                }
+
+                ImGui::Image(IMG(tex), ImVec2((f32)w, texh));
+
+                if(ImGui::IsItemHovered() && pen::input_is_mouse_down(PEN_MOUSE_L))
+                {
+                    if(!ctx.scroll_lock_y)
+                    {
+                        if(abs(ctx.scroll_delta.x) > k_drag_threshold && ctx.side_drag)
+                        {
+                            releases.flags[r] |= EntityFlags::dragging;
+                            ctx.scroll_lock_x = true;
+                        }
+
+                        releases.flags[r] |= EntityFlags::hovered;
+                    }
+                }
+
+                if(ctx.top == r && i == 0)
+                {
+                    ImVec2 image_top_left = ImGui::GetItemRectMin();
+                    ImVec2 icon_text_size = ImGui::CalcTextSize(ICON_FA_MUSIC);
+
+                    vec2f icon_top_left = vec2f(image_top_left.x + k_indent3, image_top_left.y + k_indent3);
+                    vec2f icon_bottom_right = icon_top_left + vec2f(icon_text_size.x * 2.0f, icon_text_size.y * 2.0f);
+
+                    // draw overlay icon
+                    ImDrawList* draw = ImGui::GetWindowDrawList();
+                    draw->AddImage(
+                        ctx.audio_ctx.mute ? IMG(ctx.mute_icon) : IMG(ctx.unmute_icon),
+                        ImVec2(icon_top_left.x, icon_top_left.y),
+                        ImVec2(icon_bottom_right.x, icon_bottom_right.y)
+                    );
+
+                    vec4f bb = vec4f(icon_top_left.xy, icon_bottom_right.xy);
+                    if(lenient_button_tap(0.1, &bb))
+                    {
+                        ctx.audio_ctx.mute = !ctx.audio_ctx.mute;
+                    }
+                }
+            }
+
+            if(!pen::input_is_mouse_down(PEN_MOUSE_L))
+            {
+                releases.flags[r] &= ~EntityFlags::hovered;
+                if(abs(scaled_vel) < 1.0)
+                {
+                    releases.flags[r] &= ~EntityFlags::dragging;
+                }
+            }
+
+            // stop drags if we no longer hover
+            if(!(releases.flags[r] & EntityFlags::hovered))
+            {
+                if(releases.flags[r] & EntityFlags::dragging)
+                {
+                    ctx.scroll_delta.y = 0.0f;
+                    releases.scrollx[r] -= scaled_vel;
+                }
+
+                f32 target = releases.select_track[r] * imgw;
+                f32 ssx = releases.scrollx[r];
+
+                if(!(releases.flags[r] & EntityFlags::transitioning))
+                {
+                    if(ssx > target + (imgw/2) && releases.select_track[r]+1 < num_images)
+                    {
+                        ctx.scroll_delta.x = 0.0;
+                        releases.select_track[r] += 1;
+                        releases.flags[r] |= EntityFlags::transitioning;
+                    }
+                    else if(ssx < target - (imgw/2) && (ssize_t)releases.select_track[r]-1 >= 0)
+                    {
+                        ctx.scroll_delta.x = 0.0;
+                        releases.select_track[r] -= 1;
+                        releases.flags[r] |= EntityFlags::transitioning;
+                    }
+                    else
+                    {
+                        if(abs(scaled_vel) < 5.0)
+                        {
+                            releases.flags[r] |= EntityFlags::transitioning;
+                        }
+                    }
+                }
+                else
+                {
+                    if(abs(ssx - target) < k_inertia_cutoff)
+                    {
+                        releases.scrollx[r] = target;
+                        releases.flags[r] &= ~EntityFlags::transitioning;
+                    }
+                    else
+                    {
+                        static constexpr bool k_snappier_swipe = true; // newer experimental
+                        if(k_snappier_swipe)
+                        {
+                            f32 dir = (ssx - target);
+
+                            f32 diff = std::min(abs(releases.scrollx[r] - lerp(ssx, target, k_snap_lerp)), 7.5f);
+
+                            if(dir < 0.0)
+                            {
+                                releases.scrollx[r] = std::max(releases.scrollx[r] + diff, target);
+                            }
+                            else if(dir > 0.0)
+                            {
+                                releases.scrollx[r] = std::min(releases.scrollx[r] - diff, target);
+                            }
+                        }
+                        else
+                        {
+                            // old version had a bit fo sluggish drift, but keeping code for reference
+                            if(abs(scaled_vel) < 5.0)
+                            {
+                                releases.scrollx[r] = lerp(ssx, target, k_snap_lerp);
+                            }
+                        }
+                    }
+                }
+            }
+            else if (releases.flags[r] & EntityFlags::dragging)
+            {
+                releases.scrollx[r] -= ctx.scroll_delta.x;
+                releases.scrollx[r] = std::max(releases.scrollx[r], 0.0f);
+                releases.scrollx[r] = std::min(releases.scrollx[r], max_scroll);
+                releases.flags[r] &= ~EntityFlags::transitioning;
+            }
+
+            ImGui::SetScrollX(releases.scrollx[r]);
+
+            ImGui::PopStyleVar();
+            ImGui::EndChild();
+        }
+        else
+        {
+            // should never reach this case
+            ImGui::Dummy(ImVec2(w, w));
+        }
+    }
+
+    typedef struct {
+        int index;      // real index, or -1 for overflow indicator
+        int small;      // 1 = small dot, 0 = normal
+        int selected;   // 1 = selected, 0 = not
+    } Dot;
+
+    Dot* compute_dots(int n, int s, int m, Dot* dots) {
+        if (n <= m) {
+            for (int i = 0; i < n; i++) {
+                dots[i].index = i;
+                dots[i].small = 0;
+                dots[i].selected = (i == s);
+            }
+            return dots;
+        }
+
+        int half = m / 2;
+        int start = s - half;
+        int end = start + m - 1;
+
+        // Clamp window
+        if (start < 0) {
+            start = 0;
+            end = m - 1;
+        } else if (end >= n) {
+            end = n - 1;
+            start = n - m;
+        }
+
+        for (int i = 0; i < m; i++) {
+            int idx = start + i;
+            int lover = (start > 0 && i == 0);
+            int rover = (end < n - 1 && i == m - 1);
+
+            if (lover || rover) {
+                dots[i].index = -1;   // overflow indicator
+                dots[i].small = 1;
+                dots[i].selected = 0;
+            } else {
+                dots[i].index = idx;
+                dots[i].small = 0;
+                dots[i].selected = (idx == s);
+            }
+        }
+
+        return dots;
+    }
+
+    void release_carousel(soa& releases, u32 r)
+    {
+        push_font_scale(k_text_size_dots);
+        s32 tc = releases.track_filepath_count[r];
+
+        s32 valid_audio = 0;
+        if(tc > 0)
+        {
+            for(u32 i = 0; i < releases.track_url_count[r]; ++i)
+            {
+                if(!releases.track_filepaths[r][i].empty())
+                {
+                    valid_audio++;
+                }
+            }
+        }
+
+        auto ts = ImGui::CalcTextSize(ICON_FA_STOP_CIRCLE);
+        if(tc != 0 && valid_audio > 0)
+        {
+            auto ww = ImGui::GetWindowSize().x;
+            auto tw = ts.x * releases.track_url_count[r] * 1.5f;
+
+            // dummy
+            ImGui::Text(" "); // pad the row
+            f32 y = ImGui::GetItemRectMin().y + (ImGui::GetItemRectMax().y - ImGui::GetItemRectMin().y) * 0.5f;
+
+            constexpr u32 max_count = 8;
+            u32 actual_count = releases.track_url_count[r];
+            u32 count = std::min<u32>(releases.track_url_count[r], max_count);
+
+            u32 sel = releases.select_track[r];
+
+            f32 mid = ww * 0.5f;
+            f32 rad = ts.y * 0.3f;
+            f32 pad = rad * 0.333f;
+            f32 stride = (rad + pad) * 2.0f;
+
+            f32 xpos = mid - ((stride * count) * 0.5f) + (rad + pad);
+
+            Dot dots[max_count];
+            compute_dots(actual_count, sel, max_count, &dots[0]);
+
+            for(size_t i = 0; i < count; ++i)
+            {
+                u32 col = IM_COL32(0, 0, 0, 255);
+                if(dots[i].selected && ctx.top == r)
+                {
+                    col = IM_COL32(255.0f * 0.8f, 255.0f * 0.3f, 0, 255);
+                }
+
+                float scaled_rad = dots[i].small == 0 ? rad : rad * 0.5f;
+
+                if(dots[i].index > -1 && releases.track_filepaths[r][dots[i].index].empty())
+                {
+                    ImGui::GetWindowDrawList()->AddLine(
+                            ImVec2(xpos - rad, y - rad), ImVec2(xpos + rad, y + rad), col, 2.0f);
+
+                    ImGui::GetWindowDrawList()->AddLine(
+                            ImVec2(xpos + rad, y - rad), ImVec2(xpos - rad, y + rad), col, 2.0f);
+                }
+                else
+                {
+                    ImGui::GetWindowDrawList()->AddCircleFilled(
+                            ImVec2(xpos, y), scaled_rad, col, 32);
+                }
+
+                xpos += stride;
+            }
+
+            // auto move to next track if one is empty or invalid
+            if(ctx.top == r)
+            {
+                if(releases.track_filepaths[r][sel].empty())
+                {
+                    sel++;
+                    ctx.audio_ctx.invalidate_track = true;
+
+                    if(sel >= releases.track_url_count[r])
+                    {
+                        sel = 0;
+                    }
+
+                    releases.select_track[r] = sel;
+                }
+
+                // load a new track
+                if(!(ctx.audio_ctx.play_track_filepath == releases.track_filepaths[r][sel]))
+                {
+                    ctx.audio_ctx.play_track_filepath = releases.track_filepaths[r][sel];
+                    ctx.audio_ctx.invalidate_track = true;
+                }
+            }
+        }
+        else
+        {
+            auto ww = ImGui::GetWindowSize().x;
+
+            if(!(releases.flags[r] & EntityFlags::tracks_cached))
+            {
+                // loading
+                f32 tw = ImGui::CalcTextSize("....").x;
+                ImGui::SetCursorPosX((ww - tw) * 0.5f);
+
+                Str dd = ".";
+                for(u32 d = 0; d < ctx.loading_dots; ++d) {
+                    dd.append(".");
+                }
+                ImGui::Text("%s", dd.c_str());
+            }
+            else if(releases.track_url_count[r] == 0 || valid_audio == 0)
+            {
+                // no audio
+
+                ImGui::SetCursorPosX((ww - ts.x) * 0.5f);
+
+
+                ImGui::Text("%s", ICON_FA_TIMES_CIRCLE);
+            }
+        }
+
+        pop_font_scale();
+    }
+
+    void release_likes_buy_hype(soa& releases, u32 r)
+    {
+        push_font_scale(k_text_size_h2);
+        ImGui::Spacing();
+
+        ImGui::Indent();
+
+        ImGui::PushID("like");
+        bool scrolling = ctx.scroll_lock_x || ctx.scroll_lock_y;
+        if(releases.flags[r] & EntityFlags::liked)
+        {
+            ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(225.0f/255.0f, 48.0f/255.0f, 108.0f/255.0f, 1.0f));
+            ImGui::Text("%s", ICON_FA_HEART);
+            if(!scrolling && lenient_button_tap(0.1))
+            {
+                pen::os_haptic_selection_feedback();
+                remove_like(releases.key[r]);
+                releases.flags[r] &= ~EntityFlags::liked;
+            }
+            ImGui::PopStyleColor();
+        }
+        else
+        {
+            ImGui::Text("%s", ICON_FA_HEART_O);
+            if(!scrolling && lenient_button_tap(0.1))
+            {
+                pen::os_haptic_selection_feedback();
+                add_like(releases.key[r]);
+                releases.flags[r] |= EntityFlags::liked;
+            }
+        }
+        f32 indent_x = ImGui::GetItemRectMin().x;
+        ImGui::PopID();
+
+        ImGui::SameLine();
+        ImGui::Spacing();
+
+        ImGui::SameLine();
+        ImGui::PushID("buy");
+        if(releases.store_tags[r] & StoreTags::preorder) {
+            ImGui::Text("%s", ICON_FA_CALENDAR_PLUS_O);
+        }
+        else {
+            ImGui::Text("%s", ICON_FA_CART_PLUS);
+        }
+
+        if(!scrolling && lenient_button_tap(0.1)) {
+            ctx.open_url_request = releases.link[r];
+        }
+        ImGui::PopID();
+
+        if(releases.store_tags[r] & StoreTags::out_of_stock) {
+            ImGui::SameLine();
+            ImGui::Text("%s", ICON_FA_EXCLAMATION);
+        }
+
+        ImGui::Unindent();
+
+        pop_font_scale();
+
+        // mini hype icons
+        ImGui::SetWindowFontScale(k_text_size_body);
+
+        Str hype_icons = "";
+        if(releases.store_tags[r] & StoreTags::has_charted) {
+            hype_icons.append(ICON_FA_FIRE);
+        }
+
+        if(releases.store_tags[r] & StoreTags::low_stock) {
+            hype_icons.append(ICON_FA_THERMOMETER_QUARTER);
+        }
+
+        if(!(releases.store_tags[r] & StoreTags::out_of_stock)) {
+            if(releases.store_tags[r] & StoreTags::has_been_out_of_stock) {
+                if(!hype_icons.empty()) {
+                    hype_icons.append(" ");
+                }
+                hype_icons.append(ICON_FA_EXCLAMATION);
+            }
+        }
+
+        ImGui::SameLine();
+        f32 tw = ImGui::CalcTextSize(hype_icons.c_str()).x;
+        auto ww = ImGui::GetWindowSize().x;
+        ImGui::SetCursorPosX(ww - tw - indent_x);
+        ImGui::Text("%s", hype_icons.c_str());
+    }
+
+    void release_info(soa& releases, u32 r)
+    {
+        ImGui::Indent();
+
+        auto title = releases.title[r];
+        auto artist = releases.artist[r];
+
+        // like count
+        if(releases.like_count[r] > 0) {
+            ImGui::SetWindowFontScale(k_text_size_nerds);
+            if(releases.like_count[r] > 1) {
+                ImGui::Text("%i likes", releases.like_count[r]);
+            }
+            else if(!(releases.flags[r] & EntityFlags::liked)) {
+                ImGui::Text("%i like", releases.like_count[r]);
+            }
+            ImGui::SetWindowFontScale(k_text_size_body);
+        }
+
+        // release info
+        if(!artist.empty()) {
+            ImGui::TextWrapped("%s", artist.c_str());
+        }
+
+        if(!title.empty()) {
+            ImGui::TextWrapped("%s", title.c_str());
+        }
+
+        // track name
+        ImGui::SetWindowFontScale(k_text_size_track);
+        u32 sel = releases.select_track[r];
+        if(releases.track_name_count[r] > releases.select_track[r])
+        {
+            ImGui::TextWrapped("%s", releases.track_names[r][sel].c_str());
+        }
+        ImGui::SetWindowFontScale(k_text_size_body);
+
+        ImGui::Unindent();
+        ImGui::Spacing();
     }
 
     void release_feed()
@@ -2454,9 +3022,9 @@ namespace
             // select primary
             ImGui::Spacing();
             f32 y = ImGui::GetCursorPos().y - ImGui::GetScrollY();
-            if(y < (f32)h - ((f32)w * 1.1f))
+            if(y < (f32)h - ((f32)w * 1.1f)) // 1.1f to pad the end
             {
-                if(y > -w * 0.33f)
+                if(y > -h * 0.5f)
                 {
                     if(ctx.top == -1)
                     {
@@ -2465,417 +3033,23 @@ namespace
                 }
             }
 
-            // debug display ID
-            if(ctx.show_debug) {
-                ImGui::SetWindowFontScale(k_text_size_nerds);
-                ImGui::Dummy(ImVec2(k_indent1, 0.0f));
-                ImGui::SameLine();
-                ImGui::Text("(%s)", releases.key[r].c_str());
-            }
+            auto& releases = ctx.view->releases;
 
-            // display store for likes
-            if(ctx.view->page == Page::likes) {
-                ImGui::SetWindowFontScale(k_text_size_body);
-                ImGui::Dummy(ImVec2(k_indent1, 0.0f));
-                ImGui::SameLine();
-                ImGui::Text("%s", releases.store[r].c_str());
-            }
+            release_extra_info(releases, r);
 
-            // label and catalogue
-            ImGui::SetWindowFontScale(k_text_size_h3);
-
-            ImGui::Dummy(ImVec2(k_indent1, 0.0f));
-            ImGui::SameLine();
-            
-            if(releases.cat[r].empty())
+            // more menu might change page
+            if(release_label_cat_more(releases, r))
             {
-                ImGui::TextWrapped("%s", releases.label[r].c_str());
-            }
-            else
-            {
-                ImGui::TextWrapped("%s: %s", releases.label[r].c_str(), releases.cat[r].c_str());
-            }
-            
-            // more menu button
-            f32 rad = ctx.w * k_page_button_press_radius_ratio;
-            more_menu(r, rad);
-
-            ImGui::SetWindowFontScale(k_text_size_body);
-
-            // ..
-            f32 scaled_vel = ctx.scroll_delta.x;
-
-            // images or placeholder
-            u32 tex = ctx.white_label_texture;
-            f32 texh = w;
-
-            if(releases.artwork_texture[r])
-            {
-                tex = releases.artwork_texture[r];
-                texh = (f32)w * ((f32)releases.artwork_tcp[r].height / (f32)releases.artwork_tcp[r].width);
+                // early out
+                break;
             }
 
-            if(tex)
-            {
-                f32 spacing = 20.0f;
-
-                ImGui::BeginChildEx("rel", r+1, ImVec2((f32)w, texh + 10.0f), false, 0);
-                ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(spacing, 0.0));
-
-                u32 num_images = std::max<u32>(1, releases.track_url_count[r]);
-                f32 imgw = w + spacing;
-
-                f32 max_scroll = (num_images * imgw) - imgw;
-                for(u32 i = 0; i < num_images; ++i)
-                {
-                    if(i > 0)
-                    {
-                        ImGui::SameLine();
-                    }
-
-                    ImGui::Image(IMG(tex), ImVec2((f32)w, texh));
-
-                    if(ImGui::IsItemHovered() && pen::input_is_mouse_down(PEN_MOUSE_L))
-                    {
-                        if(!ctx.scroll_lock_y)
-                        {
-                            if(abs(ctx.scroll_delta.x) > k_drag_threshold && ctx.side_drag)
-                            {
-                                releases.flags[r] |= EntityFlags::dragging;
-                                ctx.scroll_lock_x = true;
-                            }
-
-                            releases.flags[r] |= EntityFlags::hovered;
-                        }
-                    }
-                }
-
-                if(!pen::input_is_mouse_down(PEN_MOUSE_L))
-                {
-                    releases.flags[r] &= ~EntityFlags::hovered;
-                    if(abs(scaled_vel) < 1.0)
-                    {
-                        releases.flags[r] &= ~EntityFlags::dragging;
-                    }
-                }
-
-                // stop drags if we no longer hover
-                if(!(releases.flags[r] & EntityFlags::hovered))
-                {
-                    if(releases.flags[r] & EntityFlags::dragging)
-                    {
-                        ctx.scroll_delta.y = 0.0f;
-                        releases.scrollx[r] -= scaled_vel;
-                    }
-
-                    f32 target = releases.select_track[r] * imgw;
-                    f32 ssx = releases.scrollx[r];
-
-                    if(!(releases.flags[r] & EntityFlags::transitioning))
-                    {
-                        if(ssx > target + (imgw/2) && releases.select_track[r]+1 < num_images)
-                        {
-                            ctx.scroll_delta.x = 0.0;
-                            releases.select_track[r] += 1;
-                            releases.flags[r] |= EntityFlags::transitioning;
-                        }
-                        else if(ssx < target - (imgw/2) && (ssize_t)releases.select_track[r]-1 >= 0)
-                        {
-                            ctx.scroll_delta.x = 0.0;
-                            releases.select_track[r] -= 1;
-                            releases.flags[r] |= EntityFlags::transitioning;
-                        }
-                        else
-                        {
-                            if(abs(scaled_vel) < 5.0)
-                            {
-                                releases.flags[r] |= EntityFlags::transitioning;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        if(abs(ssx - target) < k_inertia_cutoff)
-                        {
-                            releases.scrollx[r] = target;
-                            releases.flags[r] &= ~EntityFlags::transitioning;
-                        }
-                        else
-                        {
-                            static constexpr bool k_snappier_swipe = true; // newer experimental
-                            if(k_snappier_swipe)
-                            {
-                                f32 dir = (ssx - target);
-                                
-                                f32 diff = std::min(abs(releases.scrollx[r] - lerp(ssx, target, k_snap_lerp)), 7.5f);
-                                
-                                if(dir < 0.0)
-                                {
-                                    releases.scrollx[r] = std::max(releases.scrollx[r] + diff, target);
-                                }
-                                else if(dir > 0.0)
-                                {
-                                    releases.scrollx[r] = std::min(releases.scrollx[r] - diff, target);
-                                }
-                            }
-                            else
-                            {
-                                // old version had a bit fo sluggish drift, but keeping code for reference
-                                if(abs(scaled_vel) < 5.0)
-                                {
-                                    releases.scrollx[r] = lerp(ssx, target, k_snap_lerp);
-                                }
-                            }
-                        }
-                    }
-                }
-                else if (releases.flags[r] & EntityFlags::dragging)
-                {
-                    releases.scrollx[r] -= ctx.scroll_delta.x;
-                    releases.scrollx[r] = std::max(releases.scrollx[r], 0.0f);
-                    releases.scrollx[r] = std::min(releases.scrollx[r], max_scroll);
-                    releases.flags[r] &= ~EntityFlags::transitioning;
-                }
-
-                ImGui::SetScrollX(releases.scrollx[r]);
-
-                ImGui::PopStyleVar();
-                ImGui::EndChild();
-            }
-            else
-            {
-                // should never reach this case
-                ImGui::Dummy(ImVec2(w, w));
-            }
-
-            // tracks
-            ImGui::SetWindowFontScale(k_text_size_dots);
-            s32 tc = releases.track_filepath_count[r];
-
-            s32 valid_audio = 0;
-            if(tc > 0)
-            {
-                for(u32 i = 0; i < releases.track_url_count[r]; ++i)
-                {
-                    if(!releases.track_filepaths[r][i].empty())
-                    {
-                        valid_audio++;
-                    }
-                }
-            }
-            
-            if(tc != 0 && valid_audio > 0)
-            {
-                auto ww = ImGui::GetWindowSize().x;
-                auto tw = ImGui::CalcTextSize(ICON_FA_STOP_CIRCLE).x * releases.track_url_count[r] * 1.5f;
-                ImGui::SetCursorPosX((ww - tw) * 0.5f);
-
-                // dots
-                for(u32 i = 0; i < releases.track_url_count[r]; ++i)
-                {
-                    if(i > 0)
-                    {
-                        ImGui::SameLine();
-                    }
-
-                    u32 sel = releases.select_track[r];
-                    
-                    // handle missing individual tracks
-                    auto icon = ICON_FA_STOP_CIRCLE;
-                    if(releases.track_filepaths[r][i].empty())
-                    {
-                        icon = ICON_FA_TIMES_CIRCLE;
-                    }
-                    
-                    // auto move to next track if one is empty or invalid
-                    if(ctx.top == r)
-                    {
-                        if(releases.track_filepaths[r][sel].empty())
-                        {
-                            sel++;
-                            ctx.audio_ctx.invalidate_track = true;
-
-                            if(sel >= releases.track_url_count[r])
-                            {
-                                sel = 0;
-                            }
-
-                            releases.select_track[r] = sel;
-                        }
-                    }
-
-                    if(i == sel)
-                    {
-                        if(ctx.top == r)
-                        {
-                            ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.8f, 0.3f, 0.0f, 1.0f));
-                            ImGui::Text("%s", ICON_FA_PLAY);
-                            ImGui::PopStyleColor();
-
-                            // load up the track
-                            if(!(ctx.audio_ctx.play_track_filepath == releases.track_filepaths[r][sel]))
-                            {
-                                ctx.audio_ctx.play_track_filepath = releases.track_filepaths[r][sel];
-                                ctx.audio_ctx.invalidate_track = true;
-                            }
-                        }
-                        else
-                        {
-                            ImGui::Text("%s", icon);
-                        }
-                    }
-                    else
-                    {
-                        ImGui::Text("%s", icon);
-                    }
-                }
-            }
-            else
-            {
-                auto ww = ImGui::GetWindowSize().x;
-
-                if(!(releases.flags[r] & EntityFlags::tracks_cached))
-                {
-                    // loading
-                    f32 tw = ImGui::CalcTextSize("....").x;
-                    ImGui::SetCursorPosX((ww - tw) * 0.5f);
-
-                    Str dd = ".";
-                    for(u32 d = 0; d < ctx.loading_dots; ++d) {
-                        dd.append(".");
-                    }
-                    ImGui::Text("%s", dd.c_str());
-                }
-                else if(releases.track_url_count[r] == 0 || valid_audio == 0)
-                {
-                    // no audio
-                    ImGui::SetCursorPosX(ww * 0.5f);
-                    ImGui::Text("%s", ICON_FA_TIMES_CIRCLE);
-                }
- 
-            }
-
-            // likes / buy
-            ImGui::SetWindowFontScale(k_text_size_body);
-
-            ImGui::Spacing();
-            ImGui::Indent();
-
-            ImGui::SetWindowFontScale(k_text_size_h2);
-
-            ImGui::PushID("like");
-            bool scrolling = ctx.scroll_lock_x || ctx.scroll_lock_y;
-            if(releases.flags[r] & EntityFlags::liked)
-            {
-                ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(225.0f/255.0f, 48.0f/255.0f, 108.0f/255.0f, 1.0f));
-                ImGui::Text("%s", ICON_FA_HEART);
-                if(!scrolling && lenient_button_tap(rad))
-                {
-                    pen::os_haptic_selection_feedback();
-                    remove_like(releases.key[r]);
-                    releases.flags[r] &= ~EntityFlags::liked;
-                }
-                ImGui::PopStyleColor();
-            }
-            else
-            {
-                ImGui::Text("%s", ICON_FA_HEART_O);
-                if(!scrolling && lenient_button_tap(rad))
-                {
-                    pen::os_haptic_selection_feedback();
-                    add_like(releases.key[r]);
-                    releases.flags[r] |= EntityFlags::liked;
-                }
-            }
-            f32 indent_x = ImGui::GetItemRectMin().x;
-            ImGui::PopID();
-
-            ImGui::SameLine();
-            ImGui::Spacing();
-
-            ImGui::SameLine();
-            ImGui::PushID("buy");
-            if(releases.store_tags[r] & StoreTags::preorder) {
-                ImGui::Text("%s", ICON_FA_CALENDAR_PLUS_O);
-            }
-            else {
-                ImGui::Text("%s", ICON_FA_CART_PLUS);
-            }
-
-            if(!scrolling && lenient_button_tap(rad)) {
-                ctx.open_url_request = releases.link[r];
-            }
-            ImGui::PopID();
-
-            if(releases.store_tags[r] & StoreTags::out_of_stock) {
-                ImGui::SameLine();
-                ImGui::Text("%s", ICON_FA_EXCLAMATION);
-            }
-
-            // mini hype icons
-            ImGui::SetWindowFontScale(k_text_size_body);
-
-            Str hype_icons = "";
-            if(releases.store_tags[r] & StoreTags::has_charted) {
-                hype_icons.append(ICON_FA_FIRE);
-            }
-
-            if(releases.store_tags[r] & StoreTags::low_stock) {
-                hype_icons.append(ICON_FA_THERMOMETER_QUARTER);
-            }
-
-            if(!(releases.store_tags[r] & StoreTags::out_of_stock)) {
-                if(releases.store_tags[r] & StoreTags::has_been_out_of_stock) {
-                    if(!hype_icons.empty()) {
-                        hype_icons.append(" ");
-                    }
-                    hype_icons.append(ICON_FA_EXCLAMATION);
-                }
-            }
-
-            ImGui::SameLine();
-            f32 tw = ImGui::CalcTextSize(hype_icons.c_str()).x;
-            auto ww = ImGui::GetWindowSize().x;
-            ImGui::SetCursorPosX(ww - tw - indent_x);
-
-            ImGui::Text("%s", hype_icons.c_str());
-
-            // like count
-            if(releases.like_count[r] > 0) {
-                ImGui::SetWindowFontScale(k_text_size_nerds);
-                if(releases.like_count[r] > 1) {
-                    ImGui::Text("%i likes", releases.like_count[r]);
-                }
-                else if(!(releases.flags[r] & EntityFlags::liked)) {
-                    ImGui::Text("%i like", releases.like_count[r]);
-                }
-                ImGui::SetWindowFontScale(k_text_size_body);
-            }
-
-            // release info
-            if(!artist.empty()) {
-                ImGui::TextWrapped("%s", artist.c_str());
-            }
-
-            if(!title.empty()) {
-                ImGui::TextWrapped("%s", title.c_str());
-            }
-
-            // track name
-            ImGui::SetWindowFontScale(k_text_size_track);
-            u32 sel = releases.select_track[r];
-            if(releases.track_name_count[r] > releases.select_track[r])
-            {
-                ImGui::TextWrapped("%s", releases.track_names[r][sel].c_str());
-            }
-            ImGui::SetWindowFontScale(k_text_size_body);
-
-            ImGui::Unindent();
-
-            ImGui::Spacing();
+            release_images(releases, r);
+            release_carousel(releases, r);
+            release_likes_buy_hype(releases, r);
+            release_info(releases, r);
 
             f32 endy = ImGui::GetCursorPos().y;
-
             releases.sizey[r] = endy - starty;
         }
 
@@ -2982,32 +3156,6 @@ namespace
 
     void apply_taps()
     {
-        /*
-        constexpr u32 k_tap_threshold_ms = 1300;
-        static u32 s_tap_timer = k_tap_threshold_ms;
-
-        // rest tap pos
-        ctx.tap_pos = vec2f(FLT_MAX);
-        
-        static vec2f down_pos = vec2f(FLT_MAX);
-
-        if(pen::input_is_mouse_down(PEN_MOUSE_L))
-        {
-            s_tap_timer -= 16;
-            auto ms = pen::input_get_mouse_state();
-            down_pos = vec2f(ms.x, ms.y);
-        }
-        else
-        {
-            if(s_tap_timer < k_tap_threshold_ms)
-            {
-                ctx.tap_pos = down_pos;
-            }
-
-            s_tap_timer = k_tap_threshold_ms;
-        }
-        */
-        
         // track last down pos
         static vec2f down_pos = vec2f(FLT_MAX);
         if(pen::input_is_mouse_down(PEN_MOUSE_L))
@@ -3919,20 +4067,21 @@ namespace
         // base ratio taken from iphone11 max dimension
         f32 font_ratio = 42.0f / 1125.0f;
         f32 font_pixel_size = ctx.w * font_ratio;
+        ctx.display_scale = vec2f(k_promax_11_w / ctx.w, k_promax_11_h / ctx.h);
 
         // intialise pmtech systems
         pen::jobs_create_job(put::audio_thread_function, 1024 * 10, nullptr, pen::e_thread_start_flags::detached);
-        
-        // dev_ui::init(dev_ui::default_pmtech_style(), font_pixel_size);
-        
+                
         std::vector<dev_ui::font_options> fonts;
-        
-        // small font
+
+        // create merged font, icons and ranges
         fonts.push_back({"data/fonts/cousine-regular.ttf", font_pixel_size, 0, 0, false});
         fonts.push_back({"data/fonts/cousine-regular.ttf", font_pixel_size, 0x2013, 0x2019, true});
         fonts.push_back({"data/fonts/fontawesome-webfont.ttf", font_pixel_size, ICON_MIN_FA, ICON_MAX_FA, true});
-        init_ex(fonts);
-        
+
+        // init dev ui with font
+        dev_ui::init_ex(fonts);
+
         curl::init();
 
         // init context
@@ -3955,15 +4104,18 @@ namespace
         // imgui style
         ImGui::StyleColorsLight(); // white
 
+        //
+        f32 platform_spacing_scale = ctx.w *  ((24.0f / ImGui::GetStyle().ItemSpacing.x) / k_promax_11_w);
+
         // screen ratio based spacing and indents
-        ImGui::GetStyle().IndentSpacing = ctx.w * (ImGui::GetStyle().IndentSpacing / k_promax_11_w);
+        ImGui::GetStyle().IndentSpacing = ctx.w * (ImGui::GetStyle().IndentSpacing / k_promax_11_w) * platform_spacing_scale;
         ImGui::GetStyle().ItemSpacing = ImVec2(
-                ctx.w * (ImGui::GetStyle().ItemSpacing.x / k_promax_11_w),
-                ctx.h * (ImGui::GetStyle().ItemSpacing.y / k_promax_11_h)
+                ctx.w * (ImGui::GetStyle().ItemSpacing.x / k_promax_11_w) * platform_spacing_scale,
+                ctx.h * (ImGui::GetStyle().ItemSpacing.y / k_promax_11_h) * platform_spacing_scale
         );
         ImGui::GetStyle().ItemInnerSpacing = ImVec2(
-                ctx.w * (ImGui::GetStyle().ItemInnerSpacing.x / k_promax_11_w),
-                ctx.h * (ImGui::GetStyle().ItemInnerSpacing.y / k_promax_11_h)
+                ctx.w * (ImGui::GetStyle().ItemInnerSpacing.x / k_promax_11_w) * platform_spacing_scale,
+                ctx.h * (ImGui::GetStyle().ItemInnerSpacing.y / k_promax_11_h) * platform_spacing_scale
         );
 
         ImGui::GetStyle().Colors[ImGuiCol_CheckMark] = ImVec4(1.0f, 0.5f, 0.0f, 1.0f);
@@ -3980,6 +4132,13 @@ namespace
 
         // white label
         ctx.white_label_texture = put::load_texture("data/images/white_label.dds");
+
+        // discogs
+        ctx.discogs_icon = put::load_texture("data/images/discogs_light.dds");
+
+        // discogs
+        ctx.mute_icon = put::load_texture("data/images/mute.dds");
+        ctx.unmute_icon = put::load_texture("data/images/unmute.dds");
 
         // lets go
         pen::thread_create(user_data_thread, 10 * 1024 * 1024, &ctx.data_ctx, pen::e_thread_start_flags::detached);
@@ -4131,6 +4290,12 @@ void audio_player()
     {
         ctx.audio_ctx.invalidate_track = true;
         return;
+    }
+
+    // audio channel mute
+    if(is_valid(audio_ctx.gi))
+    {
+        put::audio_group_set_mute(audio_ctx.gi, ctx.audio_ctx.mute);
     }
 
     // audio player
@@ -4567,7 +4732,7 @@ void discogs_token_input()
     }
     else if(verify_message.empty())
     {
-        verify_message.setf("Discogs > Settings > Developers > Generate Token", ctx.discogs_username.c_str());
+        verify_message.setf("Discogs > Settings > Developers > Generate Token. (Paste in here)", ctx.discogs_username.c_str());
     }
     
     ImGui::PopStyleVar();

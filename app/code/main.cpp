@@ -2186,45 +2186,42 @@ namespace
 
     bool lenient_button_tap(f32 padding_pct, vec4f* bb = nullptr)
     {
-        if(ImGui::IsItemVisible())
+        vec2f vbmin;
+        vec2f vbmax;
+
+        if(bb)
         {
-            vec2f vbmin;
-            vec2f vbmax;
+            vbmin = bb->xy;
+            vbmax = bb->zw;
+        }
+        else
+        {
+            ImVec2 bbmin = ImGui::GetItemRectMin();
+            ImVec2 bbmax = ImGui::GetItemRectMax();
 
-            if(bb)
-            {
-                vbmin = bb->xy;
-                vbmax = bb->zw;
+            vbmin = vec2f(bbmin.x, bbmin.y);
+            vbmax = vec2f(bbmax.x, bbmax.y);
+        }
 
-                ImRect region(ImVec2(vbmin.x, vbmin.y), ImVec2(vbmax.x, vbmax.y));
-                ImRect clip = ImGui::GetCurrentWindow()->ClipRect;
+        // clip
+        ImRect region(ImVec2(vbmin.x, vbmin.y), ImVec2(vbmax.x, vbmax.y));
+        ImRect clip = ImGui::GetCurrentWindow()->ClipRect;
+        if(!region.Overlaps(clip))
+        {
+            return false;
+        }
 
-                if(!region.Overlaps(clip))
-                {
-                    return false;
-                }
-            }
-            else
-            {
-                ImVec2 bbmin = ImGui::GetItemRectMin();
-                ImVec2 bbmax = ImGui::GetItemRectMax();
+        // check for tap
+        vec2f mid = vbmin + ((vbmax - vbmin) * 0.5f);
+        f32 padding = dist(vbmin, vbmax) * (0.5 + (padding_pct * 0.5));
+        f32 d = dist(vec2f(ctx.tap_pos.x, ctx.tap_pos.y), mid);
+        if(d < padding)
+        {
+            return true;
+        }
 
-                vbmin = vec2f(bbmin.x, bbmin.y);
-                vbmax = vec2f(bbmax.x, bbmax.y);
-            }
-
-            vec2f mid = vbmin + ((vbmax - vbmin) * 0.5f);
-
-            f32 padding = dist(vbmin, vbmax) * (0.5 + (padding_pct * 0.5));
-            f32 d = dist(vec2f(ctx.tap_pos.x, ctx.tap_pos.y), mid);
-            if(d < padding)
-            {
-                return true;
-            }
-
-            if(k_show_prims) {
-                ImGui::GetForegroundDrawList()->AddCircle(ImVec2(mid.x, mid.y), padding, IM_COL32(255, 0, 0, 255), 32, 2.0f);
-            }
+        if(k_show_prims) {
+            ImGui::GetForegroundDrawList()->AddCircle(ImVec2(mid.x, mid.y), padding, IM_COL32(255, 0, 0, 255), 32, 2.0f);
         }
 
         return false;
@@ -2528,6 +2525,8 @@ namespace
             u32 num_images = std::max<u32>(1, releases.track_url_count[r]);
             f32 imgw = w + spacing;
 
+            ImVec2 image_top_left = ImGui::GetWindowPos();
+
             f32 max_scroll = (num_images * imgw) - imgw;
             for(u32 i = 0; i < num_images; ++i)
             {
@@ -2551,10 +2550,16 @@ namespace
                         releases.flags[r] |= EntityFlags::hovered;
                     }
                 }
+            }
 
-                if(ctx.top == r && i == 0)
+            ImVec2 ii = ImGui::GetItemRectMin();
+
+            // mute / unmute
+            int sel = releases.select_track[r];
+            if(releases.track_filepath_count[r] > sel)
+            {
+                if(ctx.top == r && ctx.audio_ctx.play_track_filepath == releases.track_filepaths[r][sel])
                 {
-                    ImVec2 image_top_left = ImGui::GetItemRectMin();
                     ImVec2 icon_text_size = ImGui::CalcTextSize(ICON_FA_MUSIC);
 
                     vec2f icon_top_left = vec2f(image_top_left.x + k_indent3, image_top_left.y + k_indent3);
@@ -2563,9 +2568,9 @@ namespace
                     // draw overlay icon
                     ImDrawList* draw = ImGui::GetWindowDrawList();
                     draw->AddImage(
-                        ctx.audio_ctx.mute ? IMG(ctx.mute_icon) : IMG(ctx.unmute_icon),
-                        ImVec2(icon_top_left.x, icon_top_left.y),
-                        ImVec2(icon_bottom_right.x, icon_bottom_right.y)
+                            ctx.audio_ctx.mute ? IMG(ctx.mute_icon) : IMG(ctx.unmute_icon),
+                            ImVec2(icon_top_left.x, icon_top_left.y),
+                            ImVec2(icon_bottom_right.x, icon_bottom_right.y)
                     );
 
                     vec4f bb = vec4f(icon_top_left.xy, icon_bottom_right.xy);

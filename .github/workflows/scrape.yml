@@ -20,7 +20,7 @@ jobs:
     needs: update-stores
     strategy:
       matrix:
-        store: [redeye, juno, phonica, yoyaku]
+        store: [redeye, juno, phonica, yoyaku, hardwax]
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4

@@ -24,6 +24,7 @@ def display_help():
     print("  -verbose - print more info")
     print("  -update-stores - synchronises local stores.json with the database")
     print("  -patch-only - skips scraping and applies patch to the database from store registry")
+    print("  -local-only - skip Firebase auth and patching, only write to local registry files")
     print("")
     print("  optional filters:")
     print("    -section <sectiom_name> - specify a single section to scrape ie. 'techno-electro'")
@@ -475,16 +476,16 @@ def scrape_store(stores, store_name):
                     view_tracker_keys.append(f"{store_name}-sectionless-{view}")
             clear_tracker_keys(store_name, view_tracker_keys)
         session_scraped_ids = list()
-        # iterate per section, per view
-        for section in store["sections"]:
-            # allow commandline control of section
-            if "-section" in sys.argv:
-                if section not in sys.argv:
+        for view in store["views"]:
+            # allow commandline control of views
+            if "-view" in sys.argv:
+                if view not in sys.argv:
                     continue
-            for view in store["views"]:
-                # allow commandline control of views
-                if "-view" in sys.argv:
-                    if view not in sys.argv:
+            # iterate per section, per view
+            for section in store["sections"]:
+                # allow commandline control of section
+                if "-section" in sys.argv:
+                    if section not in sys.argv:
                         continue
                 view_dict = store["views"][view]
                 page_count = view_dict["page_count"]
@@ -492,11 +493,7 @@ def scrape_store(stores, store_name):
                     page_count = int(sys.argv[sys.argv.index("-pages") + 1])
                 counter = 0
                 # ignore sections for sectionless views.
-                # TODO: this is a hack just because section is the outer loop
-                # really we should loop view, section
                 if "sectionless" in view_dict:
-                    if store["sections"].index(section) > 0:
-                        continue
                     section = "sectionless"
                 print("scraping: {}: {} / {}".format(store_name, section, view))
                 for i in range(1, 1+page_count):
@@ -519,6 +516,8 @@ def scrape_store(stores, store_name):
                         return
                     if counter == -1:
                         break
+                if "sectionless" in view_dict:
+                    break
     else:
         print("error: unknown store {}".format(store_name))
         exit(1)
@@ -574,8 +573,12 @@ if __name__ == '__main__':
         display_help()
         exit(0)
 
-    # auth
-    setup_firebase_auth()
+    # check for local-only mode (skip Firebase entirely)
+    local_only = "-local-only" in sys.argv
+
+    # auth (skip if local-only)
+    if not local_only:
+        setup_firebase_auth()
 
     # run the fix-store function with custom code
     if "-fix-store" in sys.argv:
@@ -591,8 +594,14 @@ if __name__ == '__main__':
         if not "-patch-only" in sys.argv:
             # scrape
             scrape_store(stores, store)
-        # patch
-        patch_store(store)
+        # patch (skip if local-only)
+        if not local_only:
+            patch_store(store)
+        else:
+            print(f"local-only mode: skipping Firebase patch for {store}")
     elif "-update-stores" in sys.argv:
-        # updates the store config into firebase
-        update_stores()
+        if local_only:
+            print("local-only mode: -update-stores requires Firebase, skipping")
+        else:
+            # updates the store config into firebase
+            update_stores()

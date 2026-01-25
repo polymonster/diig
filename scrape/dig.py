@@ -476,16 +476,16 @@ def scrape_store(stores, store_name):
                     view_tracker_keys.append(f"{store_name}-sectionless-{view}")
             clear_tracker_keys(store_name, view_tracker_keys)
         session_scraped_ids = list()
-        # iterate per section, per view
-        for section in store["sections"]:
-            # allow commandline control of section
-            if "-section" in sys.argv:
-                if section not in sys.argv:
+        for view in store["views"]:
+            # allow commandline control of views
+            if "-view" in sys.argv:
+                if view not in sys.argv:
                     continue
-            for view in store["views"]:
-                # allow commandline control of views
-                if "-view" in sys.argv:
-                    if view not in sys.argv:
+            # iterate per section, per view
+            for section in store["sections"]:
+                # allow commandline control of section
+                if "-section" in sys.argv:
+                    if section not in sys.argv:
                         continue
                 view_dict = store["views"][view]
                 page_count = view_dict["page_count"]
@@ -493,11 +493,7 @@ def scrape_store(stores, store_name):
                     page_count = int(sys.argv[sys.argv.index("-pages") + 1])
                 counter = 0
                 # ignore sections for sectionless views.
-                # TODO: this is a hack just because section is the outer loop
-                # really we should loop view, section
                 if "sectionless" in view_dict:
-                    if store["sections"].index(section) > 0:
-                        continue
                     section = "sectionless"
                 print("scraping: {}: {} / {}".format(store_name, section, view))
                 for i in range(1, 1+page_count):
@@ -520,6 +516,8 @@ def scrape_store(stores, store_name):
                         return
                     if counter == -1:
                         break
+                if "sectionless" in view_dict:
+                    break
     else:
         print("error: unknown store {}".format(store_name))
         exit(1)

@@ -194,5 +194,38 @@
             }
         },
         "scrape_rate": 5
+    },
+    "decks": {
+        "sections": [
+            "ten",
+            "hon"
+        ],
+        "section_display_names": [
+            "Techno",
+            "House"
+        ],
+        "view_order": [
+            "new_releases",
+            "buzz_chart",
+            "sales_chart"
+        ],
+        "views": {
+            "new_releases": {
+                "url": "https://www.decks.de/decks/workfloor/lists/list_db.php?now_Was=news&wo=${{section}}&aktuell=${{page}}",
+                "page_count": 10,
+                "display_name": "Latest"
+            },
+            "buzz_chart": {
+                "url": "https://www.decks.de/decks/workfloor/charts/charts.php?was=buzz&wo=${{section}}",
+                "page_count": 1,
+                "display_name": "Buzz Chart"
+            },
+            "sales_chart": {
+                "url": "https://www.decks.de/decks/workfloor/charts/charts.php?was=sales&wo=${{section}}",
+                "page_count": 1,
+                "display_name": "Sales Chart"
+            }
+        },
+        "scrape_rate": 5
     }
 }

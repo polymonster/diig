@@ -2,7 +2,8 @@
     "phonica": {
         "sections": [
             "tech-house",
-            "techno"
+            "techno",
+            "house"
         ],
         "section_display_names": [
             "Tech House / Minimal",
@@ -16,7 +17,8 @@
         "category_id": {
             "tech-house": "90",
             "techno": "9",
-            "essentials": "6"
+            "essentials": "6",
+            "house": "2"
         },
         "views": {
             "new_releases": {
@@ -156,7 +158,8 @@
                 "display_name": "Weekly Chart"
             }
         },
-        "scrape_rate": 5
+        "scrape_rate": 5,
+        "art_index": 1
     },
     "hardwax": {
         "sections": [
@@ -193,6 +196,7 @@
                 "sectionless": true
             }
         },
-        "scrape_rate": 5
+        "scrape_rate": 5,
+        "art_index": 1
     }
 }

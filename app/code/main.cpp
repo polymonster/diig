@@ -169,8 +169,7 @@ namespace curl
         return db;
     }
 
-    nlohmann::json request(const c8* url, const c8* data, CURLcode& res) {
-
+    nlohmann::json request(const c8* url, const c8* data, CURLcode& res, const c8* method = nullptr) {
         CURL *curl;
         DataBuffer db = {};
 
@@ -184,6 +183,9 @@ namespace curl
             curl_easy_setopt(curl, CURLOPT_WRITEDATA, &db);
 
             if(data) {
+                if(method != nullptr) {
+                    curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, method);
+                }
                 curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data);
             }
 
@@ -263,7 +265,6 @@ namespace curl
         urlk.appendf("?key=%s", k_api_key);
         return urlk;
     }
-
 
     nlohmann::json discogs_request(
         const char *method,       // "GET", "POST", "PUT", "DELETE"
@@ -1278,6 +1279,7 @@ void* releases_view_loader(void* userdata)
         view->releases.cat[ri] = safe_str(release, "cat", "");
         view->releases.store[ri] = safe_str(release, "store", "");
         view->releases.label_link[ri] = safe_str(release, "label_link", "");
+        view->releases.like_count[ri] = release.value("/likes/count"_json_pointer, 0);
         
         // discogs info
         view->releases.discogs_url[ri] = safe_discogs_str(release, "url", "");
@@ -1301,12 +1303,8 @@ void* releases_view_loader(void* userdata)
         // assign artwork url
         if(release["artworks"].size() > 0)
         {
-            size_t art_index = 0;
-            if(view->releases.store[ri] == "yoyaku")
-            {
-                art_index = 1; // 400x400
-            }
-            else if(view->releases.store[ri] == "redeye")
+            size_t art_index = view->store_view.art_index;
+            if(view->releases.store[ri] == "redeye")
             {
                 // this is required to fixup the fact -0.jpg may not exist
                 // redeye <guid>-1.jpg is preferable
@@ -1369,20 +1367,6 @@ void* releases_view_loader(void* userdata)
         {
             view->releases.flags[ri] |= EntityFlags::liked;
         }
-
-        // count cloud likes... removing feature, needs improving
-        /*
-        Str like_release_url = likes_url;
-        like_release_url.appendf("%s.json?timeout=25ms", view->releases.key[ri].c_str());
-        CURLcode code;
-        auto likes = curl::request(like_release_url.c_str(), nullptr, code);
-        view->releases.like_count[ri] = 0;
-        for(auto& like : likes) {
-            if(like > 0) {
-                view->releases.like_count[ri]++;
-            }
-        }
-        */
 
         // store tags
         if(release.contains("store_tags"))
@@ -1667,6 +1651,7 @@ namespace
             }
         }
 
+        view.art_index = store.art_index;
         return view;
     }
 
@@ -1805,6 +1790,9 @@ namespace
             auto& views = store["views"];
             auto& section_search_names = store["sections"];
             auto& section_display_names = store["section_display_names"];
+
+            // set prefer art index if it exists
+            output.art_index = store.value("/art_index"_json_pointer, (size_t)0);
 
             // hardcoded priority order
             static const c8* k_view_order[] = {
@@ -2869,6 +2857,7 @@ namespace
             {
                 pen::os_haptic_selection_feedback();
                 remove_like(releases.key[r]);
+                releases.like_count[r] = std::max<u32>(releases.like_count[r]--, 0);
                 releases.flags[r] &= ~EntityFlags::liked;
             }
             ImGui::PopStyleColor();
@@ -2880,6 +2869,7 @@ namespace
             {
                 pen::os_haptic_selection_feedback();
                 add_like(releases.key[r]);
+                releases.like_count[r]++;
                 releases.flags[r] |= EntityFlags::liked;
             }
         }
@@ -4183,10 +4173,12 @@ void audio_player_toggle_like() {
 
     if(releases.flags[r] & EntityFlags::liked) {
         add_like(releases.key[r]);
+        releases.like_count[r]++;
         releases.flags[r] |= EntityFlags::liked;
     }
     else {
         remove_like(releases.key[r]);
+        releases.like_count[r] = std::max<u32>(releases.like_count[r]--, 0);
         releases.flags[r] |= EntityFlags::liked;
     }
 }
@@ -4530,6 +4522,36 @@ f32 get_like_timestamp(const Str& id) {
     return ret;
 }
 
+void increment_server_like(const Str& id, s32 amount)
+{
+    // increment like
+    Str patch_url;
+    patch_url.setf("https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app/releases/%s/likes/count.json", id.c_str());
+    patch_url = append_auth(patch_url);
+    CURLcode res;
+
+    // get current
+    auto cur = curl::request(patch_url.c_str(), nullptr, res, "GET");
+
+    // increment anc clamp
+    s32 val = 0;
+    if(cur.is_number())
+    {
+        val = std::max(amount + cur.get<s32>(), 0);
+    }
+    else
+    {
+        // compute new value
+        val = std::max(amount + cur.value("/likes/count"_json_pointer, 0), 0);
+    }
+
+    // str payload
+    Str payload;
+    payload.setf("%i", val);
+
+    auto response = curl::request(patch_url.c_str(), payload.c_str(), res, "PUT");
+}
+
 void add_like(const Str& id)
 {
     ctx.data_ctx.user_data.mutex.lock();
@@ -4550,8 +4572,8 @@ void add_like(const Str& id)
         }
 
         // grab the release info
-        Str search_url = "https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app/releases.json";
-        search_url.appendf("?orderBy=\"$key\"&equalTo=\"%s\"&timeout=1s", id.c_str());
+        Str search_url;
+        search_url.setf("https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app/releases/%s.json", id.c_str());
         search_url = append_auth(search_url);
 
         auto db = curl::download(search_url.c_str());
@@ -4561,6 +4583,7 @@ void add_like(const Str& id)
             nlohmann::json release;
             try {
                 release = nlohmann::json::parse(db.data);
+                increment_server_like(id, 1);
                 likes_registry[id.c_str()] = release[id.c_str()];
             }
             catch(...) {
@@ -4601,7 +4624,7 @@ void remove_like(const Str& id)
 
         if(likes_registry.contains(id.c_str())) {
             likes_registry.erase(id.c_str());
-
+            increment_server_like(id, -1);
             PEN_LOG("remove %s from likes registry", id.c_str());
             FILE* fp = fopen(filepath.c_str(), "wb");
             std::string j = likes_registry.dump();
@@ -4945,7 +4968,11 @@ void enter_background(bool backgrounded) {
 }
 
 Str append_auth(Str url) {
-    url.appendf("&auth=%s", ctx.firebase_token.c_str());
+    Str join = "?";
+    if(str_find(url, "?") != -1) {
+        join = "&";
+    }
+    url.appendf("%sauth=%s", join.c_str(), ctx.firebase_token.c_str());
     return url;
 }
 

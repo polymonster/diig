@@ -298,6 +298,7 @@ struct StoreView
     Str                 store_name = "";
     Str                 selected_view = "";
     std::vector<Str>    selected_sections = {};
+    size_t              art_index = 0;
 };
 
 struct ReleasesView
@@ -335,6 +336,7 @@ struct Store
     u32              selected_view_index = 0;
     u32              selected_sections_mask = 0xff;
     StoreView        store_view = {};
+    size_t           art_index = 0;
 };
 
 struct AudioPlayerContext

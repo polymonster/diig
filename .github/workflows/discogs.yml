@@ -6,6 +6,7 @@ on:
 jobs:
   scrape-discogs:
     strategy:
+      fail-fast: false
       matrix:
         store: [redeye, juno, phonica, yoyaku, hardwax, decks]
     runs-on: ubuntu-latest

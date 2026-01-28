@@ -64,7 +64,7 @@
         "views": {
             "new_releases": {
                 "url": "https://www.juno.co.uk/${{section}}/eight-weeks/${{page}}?order=date_down&show_out_of_stock=1",
-                "page_count": 100,
+                "page_count": 50,
                 "display_name": "Latest"
             },
             "weekly_chart": {
@@ -79,11 +79,11 @@
             },
             "preorders": {
                 "url": "https://www.juno.co.uk/${{section}}/preorders/${{page}}?order=date_down&show_out_of_stock=1",
-                "page_count": 100,
+                "page_count": 50,
                 "display_name": "Preorders"
             }
         },
-        "scrape_rate": 5
+        "scrape_rate": 10
     },
     "redeye": {
         "sections": [
@@ -104,7 +104,7 @@
         "views": {
             "new_releases": {
                 "url": "https://www.redeyerecords.co.uk/${{section}}/new-releases/page-${{page}}",
-                "page_count": 100,
+                "page_count": 50,
                 "display_name": "Latest"
             },
             "weekly_chart": {
@@ -119,7 +119,7 @@
             },
             "back_catalogue": {
                 "url": "https://www.redeyerecords.co.uk/${{section}}/back-catalogue/page-${{page}}",
-                "page_count": 100,
+                "page_count": 50,
                 "display_name": "Back Catalogue"
             }
         },

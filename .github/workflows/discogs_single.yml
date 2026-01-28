@@ -12,6 +12,7 @@ on:
           - phonica
           - yoyaku
           - hardwax
+          - decks
 jobs:
   scrape-discogs-single:
     permissions:
@@ -21,7 +22,7 @@ jobs:
     - uses: actions/checkout@v4
       with:
         submodules: recursive
-        token: ${{ secrets.DIIG_REG_TOKEN }} 
+        token: ${{ secrets.DIIG_REG_TOKEN }}
     - name: install_deps
       run: |
         python3 -m pip install --upgrade pip

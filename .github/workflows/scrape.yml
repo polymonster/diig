@@ -21,7 +21,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        store: [redeye, juno, phonica, yoyaku, hardwax, decks]
+        store: [redeye, phonica, yoyaku, hardwax, decks]
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4

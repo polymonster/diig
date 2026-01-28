@@ -19,6 +19,7 @@ jobs:
   scrape:
     needs: update-stores
     strategy:
+      fail-fast: false
       matrix:
         store: [redeye, juno, phonica, yoyaku, hardwax, decks]
     runs-on: ubuntu-latest

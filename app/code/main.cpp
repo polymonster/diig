@@ -15,6 +15,7 @@
 #include "audio/audio.h"
 #include "imgui_ext.h"
 #include "maths/maths.h"
+#include "maths/util.h"
 
 #define SIMPLEWEBP_IMPLEMENTATION
 #include "simplewebp.h"
@@ -2566,6 +2567,111 @@ namespace
                     {
                         ctx.audio_ctx.mute = !ctx.audio_ctx.mute;
                     }
+
+                    // draw waveform visualization at bottom 10% of image
+                    if(is_valid(ctx.audio_ctx.spectrum_dsp))
+                    {
+                        f32 waveform_height = texh * 0.1f;
+                        f32 waveform_top = image_top_left.y + texh - waveform_height;
+                        f32 waveform_left = image_top_left.x;
+
+                        // get playback progress
+                        f32 progress = 0.0f;
+                        put::audio_channel_state state = {};
+                        put::audio_sound_file_info info = {};
+                        if(put::audio_channel_get_state(ctx.audio_ctx.ci, &state) == PEN_ERR_OK &&
+                           put::audio_channel_get_sound_file_info(ctx.audio_ctx.si, &info) == PEN_ERR_OK)
+                        {
+                            if(info.length_ms > 0)
+                            {
+                                progress = (f32)state.position_ms / (f32)info.length_ms;
+                            }
+                        }
+
+                        // sample FFT and accumulate into waveform buffer
+                        put::audio_fft_spectrum spectrum = {};
+                        pen_error err = put::audio_dsp_get_spectrum(ctx.audio_ctx.spectrum_dsp, &spectrum);
+
+                        if(err == PEN_ERR_OK && spectrum.length > 0)
+                        {
+                            // calculate which waveform sample index we're at
+                            s32 sample_index = (s32)(progress * (k_waveform_samples - 1));
+                            sample_index = clamp(sample_index, 0, (s32)k_waveform_samples - 1);
+
+                            // if we haven't sampled this index yet, capture it
+                            if(!ctx.audio_ctx.waveform_sampled[sample_index])
+                            {
+                                // sum all FFT bins across all channels
+                                f32 total_energy = 0.0f;
+                                for(s32 ch = 0; ch < spectrum.num_channels; ++ch)
+                                {
+                                    if(spectrum.spectrum[ch])
+                                    {
+                                        for(s32 bin = 0; bin < spectrum.length; ++bin)
+                                        {
+                                            total_energy += spectrum.spectrum[ch][bin];
+                                        }
+                                    }
+                                }
+                                total_energy /= (f32)(spectrum.length * std::max(1, spectrum.num_channels));
+
+                                ctx.audio_ctx.waveform[sample_index] = total_energy;
+                                ctx.audio_ctx.waveform_sampled[sample_index] = true;
+                            }
+                        }
+
+                        // find max waveform value for normalization
+                        f32 max_waveform = 0.001f; // avoid div by zero
+                        for(u32 i = 0; i < k_waveform_samples; ++i)
+                        {
+                            if(ctx.audio_ctx.waveform_sampled[i])
+                            {
+                                max_waveform = std::max(max_waveform, ctx.audio_ctx.waveform[i]);
+                            }
+                        }
+
+                        // draw darkened background for played portion
+                        f32 progress_x = waveform_left + (w * progress);
+                        draw->AddRectFilled(
+                            ImVec2(waveform_left, waveform_top),
+                            ImVec2(progress_x, waveform_top + waveform_height),
+                            IM_COL32(0, 0, 0, 100)
+                        );
+
+                        // draw waveform bars
+                        f32 bar_width = w / (f32)k_waveform_samples;
+                        for(u32 i = 0; i < k_waveform_samples; ++i)
+                        {
+                            f32 bar_x = waveform_left + i * bar_width;
+
+                            if(ctx.audio_ctx.waveform_sampled[i])
+                            {
+                                // normalize and scale bar height
+                                f32 normalized = ctx.audio_ctx.waveform[i] / max_waveform;
+                                f32 bar_height = normalized * waveform_height;
+
+                                f32 bar_bottom = waveform_top + waveform_height;
+
+                                // determine bar color - dimmer if already played
+                                u32 alpha = (bar_x < progress_x) ? 120 : 200;
+                                ImU32 bar_color = IM_COL32(255, 255, 255, alpha);
+
+                                draw->AddRectFilled(
+                                    ImVec2(bar_x, bar_bottom - bar_height),
+                                    ImVec2(bar_x + bar_width - 1.0f, bar_bottom),
+                                    bar_color
+                                );
+                            }
+                        }
+
+                        // draw progress line
+                        draw->AddLine(
+                            ImVec2(progress_x, waveform_top),
+                            ImVec2(progress_x, waveform_top + waveform_height),
+                            IM_COL32(255, 255, 255, 255),
+                            2.0f
+                        );
+                    }
                 }
             }
 
@@ -4272,6 +4378,17 @@ void audio_player_stop_existing() {
         audio_ctx.gi = -1;
     }
 
+    if(is_valid(audio_ctx.spectrum_dsp))
+    {
+        put::audio_release_resource(audio_ctx.spectrum_dsp);
+        audio_ctx.spectrum_dsp = -1;
+    }
+
+    // reset waveform data for new track
+    memset(audio_ctx.waveform, 0, sizeof(audio_ctx.waveform));
+    memset(audio_ctx.waveform_sampled, 0, sizeof(audio_ctx.waveform_sampled));
+    audio_ctx.last_waveform_index = -1;
+
     audio_ctx.started = false;
 }
 
@@ -4326,9 +4443,12 @@ void audio_player()
                 audio_ctx.si = put::audio_create_stream(audio_ctx.play_track_filepath.c_str());
                 audio_ctx.ci = put::audio_create_channel_for_sound(audio_ctx.si);
                 audio_ctx.gi = put::audio_create_channel_group();
-                
+
                 put::audio_add_channel_to_group(audio_ctx.ci, audio_ctx.gi);
                 put::audio_group_set_volume(audio_ctx.gi, 1.0f);
+
+                // create FFT DSP for spectrum visualization
+                audio_ctx.spectrum_dsp = put::audio_add_dsp_to_group(audio_ctx.gi, put::e_dsp::fft);
                 
                 u32 t = releases.select_track[ctx.top];
                 Str track_name = "";
@@ -4366,18 +4486,21 @@ void audio_player()
                     {
                         audio_ctx.ci = put::audio_create_channel_for_sound(audio_ctx.si);
                         audio_ctx.gi = put::audio_create_channel_group();
-                        
+
                         put::audio_add_channel_to_group(audio_ctx.ci, audio_ctx.gi);
                         put::audio_group_set_volume(audio_ctx.gi, 1.0f);
-                        
+
+                        // create FFT DSP for spectrum visualization
+                        audio_ctx.spectrum_dsp = put::audio_add_dsp_to_group(audio_ctx.gi, put::e_dsp::fft);
+
                         u32 t = releases.select_track[ctx.top];
                         Str track_name = "";
                         if(t < releases.track_name_count[r]) {
                             track_name = releases.track_names[r][t];
                         }
-                        
+
                         pen::music_set_now_playing(releases.artist[r], releases.title[r], track_name);
-                        
+
                         audio_ctx.read_tex_data_handle = 0;
                         audio_ctx.invalidate_track = false;
                         audio_ctx.started = false;

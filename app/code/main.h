@@ -339,11 +339,14 @@ struct Store
     size_t           art_index = 0;
 };
 
+constexpr u32 k_waveform_samples = 128;
+
 struct AudioPlayerContext
 {
     u32     si = -1;
     u32     ci = -1;
     u32     gi = -1;
+    u32     spectrum_dsp = -1;
     bool    started = false;
     u32     read_tex_data_handle = 0;
     Str     play_track_filepath = "";
@@ -351,6 +354,11 @@ struct AudioPlayerContext
     bool    invalidate_track = false;
     bool    play_bg = false;
     bool    mute = false;
+
+    // waveform visualization - accumulated as track plays
+    f32     waveform[k_waveform_samples] = {0};
+    bool    waveform_sampled[k_waveform_samples] = {false};
+    s32     last_waveform_index = -1;
 };
 
 struct AppContext

@@ -63,7 +63,7 @@
         ],
         "views": {
             "new_releases": {
-                "url": "https://www.juno.co.uk/${{section}}/eight-weeks/${{page}}?order=date_down&show_out_of_stock=1",
+                "url": "https://www.juno.co.uk/${{section}}/eight-weeks/${{page}}",
                 "page_count": 50,
                 "display_name": "Latest"
             },

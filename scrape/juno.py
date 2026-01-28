@@ -94,6 +94,9 @@ def scrape_page(url, store, store_dict, view, section, counter, session_scraped_
         html_file = urllib.request.urlopen(req)
     except urllib.error.HTTPError as e:
         print("error:", e.code, e.reason)
+        for i in range(0, 10):
+            dig.scrape_yield()
+        return -1
 
     html_str = html_file.read().decode("utf8")
 
@@ -141,6 +144,7 @@ def scrape_page(url, store, store_dict, view, section, counter, session_scraped_
             continue
         elif "-verbose" in sys.argv:
             print(f"parsing release: {key}", flush=True)
+
 
         (_, link_elem) = dig.find_parse_elem(release, 0, "<a href=", ">")
         (_, artwork_elem) = dig.find_parse_elem(release, 0, "<img class", ">")

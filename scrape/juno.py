@@ -5,6 +5,8 @@ import os
 import datetime
 import dig
 import cloudscraper
+import random
+import time
 
 # parse ide element <div id="item-861163-1" class="dv-item"> to extract the
 # id number without the item- prefix
@@ -74,10 +76,7 @@ def parse_tracks(tracks):
 # fetch html using cloudscraper
 def fetch_page(url, scraper):
     response = scraper.get(url)
-    if response.status_code != 200:
-        print(f"warning: got status {response.status_code} for {url}")
-        return None
-    return response.text
+    return response
 
 
 # scape a single page with counter tracking
@@ -95,15 +94,23 @@ def scrape_page(url, store, store_dict, view, section, counter, session_scraped_
         }
     )
 
-    while attempts < 6:
+    while attempts < 12:
         try:
-            html_str = fetch_page(url, scraper)
-            if html_str:
+            response = fetch_page(url, scraper)
+            if response.status_code == 200:
+                html_str = response.text
                 break
+            elif response.status_code == 403:
+                # exponential backoff with jitter for 403s
+                backoff = (2 ** attempts) + random.uniform(1, 3)
+                print(f"got 403, backing off for {backoff:.1f}s...")
+                time.sleep(backoff)
+            else:
+                print(f"warning: got status {response.status_code}")
         except Exception as e:
             print(f"Failed with exception: {e}")
         attempts += 1
-        if attempts < 6:
+        if attempts < 6 and not html_str:
             print(f"Retrying after {attempts} attempts")
             dig.scrape_yield()
 

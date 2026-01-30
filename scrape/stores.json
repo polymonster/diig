@@ -24,7 +24,7 @@
             "new_releases": {
                 "url": "https://www.phonicarecords.com/genre/${{category_id}}/${{section}}/all/latest/desc/${{counter}}",
                 "api_url":  "https://www.phonicarecords.com/api/product/json_category",
-                "page_count": 10,
+                "page_count": 4,
                 "display_name": "Latest"
             },
             "bestsellers": {

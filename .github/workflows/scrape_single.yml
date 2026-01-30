@@ -19,7 +19,7 @@ jobs:
     - uses: actions/checkout@v4
       with:
         submodules: recursive
-        token: ${{ secrets.DIIG_REG_TOKEN }} 
+        token: ${{ secrets.DIIG_REG_TOKEN }}
     - name: install_deps
       run: |
         python3 -m pip install --upgrade pip
@@ -40,6 +40,7 @@ jobs:
       run: |
         python3 -m pip install --upgrade pip
         python3 -m pip install --upgrade google-auth
+        python3 -m pip install selenium
         python3 -m pip install cloudscraper
     - name: pull_reg
       run: |

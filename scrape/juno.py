@@ -4,14 +4,7 @@ import sys
 import os
 import datetime
 import dig
-
-import undetected_chromedriver as uc
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import InvalidSessionIdException
-from selenium.common.exceptions import WebDriverException
-from urllib3.exceptions import ReadTimeoutError
+import cloudscraper
 
 # parse ide element <div id="item-861163-1" class="dv-item"> to extract the
 # id number without the item- prefix
@@ -78,50 +71,45 @@ def parse_tracks(tracks):
     return (track_names, track_urls)
 
 
-# fetch html using selenium driver
-def execute_page(url, driver):
-    driver.get(url)
-    wait = WebDriverWait(driver, 120)
-    wait.until(lambda d: d.execute_script("return document.readyState") == "complete")
-
-    # wait for cloudflare challenge to resolve (page title changes from "Just a moment...")
-    print("debug: waiting for cloudflare challenge...")
-    try:
-        wait.until(lambda d: "Just a moment" not in d.title)
-        print("debug: cloudflare challenge passed")
-    except Exception as e:
-        print(f"warning: cloudflare challenge did not resolve - {e}")
-
-    # wait for product list to actually load
-    try:
-        wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, ".product-list .dv-item")))
-    except Exception as e:
-        print(f"warning: timed out waiting for products - {e}")
-
-    html = driver.execute_script("return document.documentElement.outerHTML")
-    return html
+# fetch html using cloudscraper
+def fetch_page(url, scraper):
+    response = scraper.get(url)
+    if response.status_code != 200:
+        print(f"warning: got status {response.status_code} for {url}")
+        return None
+    return response.text
 
 
 # scape a single page with counter tracking
 def scrape_page(url, store, store_dict, view, section, counter, session_scraped_ids):
     print("scraping: juno ", url, flush=True)
 
-    # spin up a driver for the session with retry logic
+    # create cloudscraper session with retry logic
     attempts = 0
-    while True:
+    html_str = None
+    scraper = cloudscraper.create_scraper(
+        browser={
+            'browser': 'chrome',
+            'platform': 'linux',
+            'desktop': True
+        }
+    )
+
+    while attempts < 6:
         try:
-            options = uc.ChromeOptions()
-            # note: headless mode gets blocked by cloudflare turnstile
-            driver = uc.Chrome(options=options, headless=False)
-            html_str = execute_page(url, driver)
-            break
-        except (InvalidSessionIdException, WebDriverException, ReadTimeoutError) as e:
-            attempts += 1
-            if attempts > 5:
-                print(f"error: failed after {attempts} attempts - {e}")
-                return -1
-            print(f"Failed with exception, retrying after {attempts} attempts")
+            html_str = fetch_page(url, scraper)
+            if html_str:
+                break
+        except Exception as e:
+            print(f"Failed with exception: {e}")
+        attempts += 1
+        if attempts < 6:
+            print(f"Retrying after {attempts} attempts")
             dig.scrape_yield()
+
+    if not html_str:
+        print(f"error: failed after {attempts} attempts")
+        return -1
 
     # store release entries in dict
     releases_dict = dict()
@@ -130,7 +118,6 @@ def scrape_page(url, store, store_dict, view, section, counter, session_scraped_
     products = dig.parse_div(html_str, 'class="product-list"')
 
     if len(products) == 0:
-        driver.quit()
         return -1
 
     # separate into items
@@ -234,6 +221,5 @@ def scrape_page(url, store, store_dict, view, section, counter, session_scraped_
     # write to file
     dig.write_registry(store, releases_dict)
 
-    driver.quit()
     dig.scrape_yield()
     return counter

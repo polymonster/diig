@@ -30,14 +30,9 @@ jobs:
         token: ${{ secrets.DIIG_REG_TOKEN }}
     - name: install_deps
       run: |
-        sudo apt-get update
-        sudo apt-get install -y xvfb
-        wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-        sudo apt-get install -y ./google-chrome-stable_current_amd64.deb
         python3 -m pip install --upgrade pip
         python3 -m pip install --upgrade google-auth
-        python3 -m pip install selenium
-        python3 -m pip install undetected-chromedriver
+        python3 -m pip install cloudscraper
     - name: pull_reg
       run: |
         cd scrape/diig-registry
@@ -47,7 +42,7 @@ jobs:
     - name: scrape
       run: |
         cd scrape
-        xvfb-run --auto-servernum python3 dig.py -store '${{matrix.store}}' -key '${{secrets.SERVICE_ACCOUNT}}' -clear-trackers -verbose -urls
+        python3 dig.py -store '${{matrix.store}}' -key '${{secrets.SERVICE_ACCOUNT}}' -clear-trackers -verbose -urls
     - name: commit
       run: |
         cd scrape/diig-registry

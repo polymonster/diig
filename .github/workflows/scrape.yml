@@ -30,6 +30,8 @@ jobs:
         token: ${{ secrets.DIIG_REG_TOKEN }}
     - name: install_deps
       run: |
+        sudo apt-get update
+        sudo apt-get install -y xvfb
         python3 -m pip install --upgrade pip
         python3 -m pip install --upgrade google-auth
         python3 -m pip install selenium
@@ -43,7 +45,7 @@ jobs:
     - name: scrape
       run: |
         cd scrape
-        python3 dig.py -store '${{matrix.store}}' -key '${{secrets.SERVICE_ACCOUNT}}' -clear-trackers -verbose -urls
+        xvfb-run --auto-servernum python3 dig.py -store '${{matrix.store}}' -key '${{secrets.SERVICE_ACCOUNT}}' -clear-trackers -verbose -urls
     - name: commit
       run: |
         cd scrape/diig-registry

@@ -42,7 +42,8 @@ jobs:
       run: |
         python3 -m pip install --upgrade pip
         python3 -m pip install --upgrade google-auth
-        python3 -m pip install --upgrade selenium
+        python3 -m pip install selenium
+        python3 -m pip install undetected-chromedriver
     - name: pull_reg
       run: |
         cd scrape/diig-registry

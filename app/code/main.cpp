@@ -15,6 +15,7 @@
 #include "audio/audio.h"
 #include "imgui_ext.h"
 #include "maths/maths.h"
+#include "maths/util.h"
 
 #define SIMPLEWEBP_IMPLEMENTATION
 #include "simplewebp.h"
@@ -30,6 +31,8 @@ constexpr bool k_force_login = false;
 constexpr bool k_force_no_discogs_login = false;
 constexpr bool k_force_streamed_audio = false;
 constexpr bool k_show_prims = false;
+
+constexpr u32 k_waveform_resolution = 128;
 
 using namespace put;
 using namespace pen;
@@ -169,8 +172,7 @@ namespace curl
         return db;
     }
 
-    nlohmann::json request(const c8* url, const c8* data, CURLcode& res) {
-
+    nlohmann::json request(const c8* url, const c8* data, CURLcode& res, const c8* method = nullptr) {
         CURL *curl;
         DataBuffer db = {};
 
@@ -184,6 +186,9 @@ namespace curl
             curl_easy_setopt(curl, CURLOPT_WRITEDATA, &db);
 
             if(data) {
+                if(method != nullptr) {
+                    curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, method);
+                }
                 curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data);
             }
 
@@ -263,7 +268,6 @@ namespace curl
         urlk.appendf("?key=%s", k_api_key);
         return urlk;
     }
-
 
     nlohmann::json discogs_request(
         const char *method,       // "GET", "POST", "PUT", "DELETE"
@@ -1278,6 +1282,7 @@ void* releases_view_loader(void* userdata)
         view->releases.cat[ri] = safe_str(release, "cat", "");
         view->releases.store[ri] = safe_str(release, "store", "");
         view->releases.label_link[ri] = safe_str(release, "label_link", "");
+        view->releases.like_count[ri] = release.value("/likes/count"_json_pointer, 0);
         
         // discogs info
         view->releases.discogs_url[ri] = safe_discogs_str(release, "url", "");
@@ -1301,12 +1306,8 @@ void* releases_view_loader(void* userdata)
         // assign artwork url
         if(release["artworks"].size() > 0)
         {
-            size_t art_index = 0;
-            if(view->releases.store[ri] == "yoyaku")
-            {
-                art_index = 1; // 400x400
-            }
-            else if(view->releases.store[ri] == "redeye")
+            size_t art_index = view->store_view.art_index;
+            if(view->releases.store[ri] == "redeye")
             {
                 // this is required to fixup the fact -0.jpg may not exist
                 // redeye <guid>-1.jpg is preferable
@@ -1369,20 +1370,6 @@ void* releases_view_loader(void* userdata)
         {
             view->releases.flags[ri] |= EntityFlags::liked;
         }
-
-        // count cloud likes... removing feature, needs improving
-        /*
-        Str like_release_url = likes_url;
-        like_release_url.appendf("%s.json?timeout=25ms", view->releases.key[ri].c_str());
-        CURLcode code;
-        auto likes = curl::request(like_release_url.c_str(), nullptr, code);
-        view->releases.like_count[ri] = 0;
-        for(auto& like : likes) {
-            if(like > 0) {
-                view->releases.like_count[ri]++;
-            }
-        }
-        */
 
         // store tags
         if(release.contains("store_tags"))
@@ -1667,6 +1654,7 @@ namespace
             }
         }
 
+        view.art_index = store.art_index;
         return view;
     }
 
@@ -1805,6 +1793,9 @@ namespace
             auto& views = store["views"];
             auto& section_search_names = store["sections"];
             auto& section_display_names = store["section_display_names"];
+
+            // set prefer art index if it exists
+            output.art_index = store.value("/art_index"_json_pointer, (size_t)0);
 
             // hardcoded priority order
             static const c8* k_view_order[] = {
@@ -2500,6 +2491,99 @@ namespace
         return changed_page;
     }
 
+    void playing_waveform(ImVec2 track_top_left, f32 texh, f32 w)
+    {
+        constexpr f32 waveform_to_image_ratio = 0.075f;
+        f32 waveform_bottom_padding = texh * 0.005f;
+
+        // draw waveform visualization at bottom 10% of image
+        if(is_valid(ctx.audio_ctx.waveform_handle))
+        {
+            ImDrawList* draw = ImGui::GetWindowDrawList();
+
+            put::audio_waveform_data waveform_data = {};
+            if(put::audio_waveform_get_data(ctx.audio_ctx.waveform_handle, &waveform_data) == PEN_ERR_OK &&
+               waveform_data.state == put::e_waveform_state::ready &&
+               waveform_data.buckets != nullptr)
+            {
+                f32 waveform_height = texh * 0.075f;
+                f32 waveform_top = track_top_left.y + texh - waveform_height - waveform_bottom_padding;
+                f32 waveform_left = track_top_left.x;
+
+                // get playback progress
+                f32 progress = 0.0f;
+                put::audio_channel_state state = {};
+                if(put::audio_channel_get_state(ctx.audio_ctx.ci, &state) == PEN_ERR_OK &&
+                   waveform_data.length_ms > 0)
+                {
+                    progress = (f32)state.position_ms / (f32)waveform_data.length_ms;
+                }
+
+                f32 progress_x = waveform_left + (w * progress);
+
+                // draw waveform bars (min/max pairs)
+                u32 resolution = waveform_data.resolution;
+                f32 bar_width = w / (f32)resolution;
+                f32 half_height = waveform_height * 0.5f;
+                f32 center_y = waveform_top + half_height;
+
+                for(u32 i = 0; i < resolution; ++i)
+                {
+                    f32 bar_x = waveform_left + i * bar_width;
+                    f32 min_val = waveform_data.buckets[i * 2];
+                    f32 max_val = waveform_data.buckets[i * 2 + 1];
+
+                    // scale to waveform height
+                    f32 top_y = center_y - (max_val * half_height);
+                    f32 bottom_y = center_y - (min_val * half_height);
+
+                    // determine bar color - darker if already played, white if unplayed
+                    bool is_played = bar_x < progress_x;
+                    ImU32 bar_color = is_played ? IM_COL32(100, 100, 100, 128) : IM_COL32(225, 225, 225, 128);
+                    ImU32 bar_black = IM_COL32(0, 0, 0, 128);
+
+                    constexpr f32 shadow_thickness = 2.0f;
+                    draw->AddRectFilled(
+                            ImVec2(bar_x + shadow_thickness, top_y - shadow_thickness),
+                            ImVec2(bar_x + + shadow_thickness + bar_width - 1.0f, bottom_y),
+                            bar_black
+                    );
+
+                    draw->AddRectFilled(
+                            ImVec2(bar_x, top_y),
+                            ImVec2(bar_x + bar_width - 1.0f, bottom_y),
+                            bar_color
+                    );
+                }
+
+                // draw progress line
+                draw->AddLine(
+                        ImVec2(progress_x, waveform_top),
+                        ImVec2(progress_x, waveform_top + waveform_height),
+                        IM_COL32(255, 128, 0, 255),
+                        4.0f
+                );
+
+                vec2f wfmin = vec2f(waveform_left, waveform_top);
+                vec2f wfmax = vec2f(waveform_left + w, waveform_top + texh);
+
+                if(is_valid(ctx.audio_ctx.ci))
+                {
+                    // check where the tap is within the wave form and seek within the track
+                    if(maths::point_inside_aabb(wfmin, wfmax, ctx.tap_pos))
+                    {
+                        // get position in 0-1 range
+                        f32 pos = (ctx.tap_pos.x - wfmin.x) / wfmax.x;
+
+                        // get pos in time
+                        f32 seek_pos = waveform_data.length_ms * pos;
+                        put::audio_channel_set_position(ctx.audio_ctx.ci, seek_pos);
+                    }
+                }
+            }
+        }
+    }
+
     void release_images(soa& releases, u32 r)
     {
         f32 w = ctx.w;
@@ -2515,6 +2599,7 @@ namespace
             texh = (f32)w * ((f32)releases.artwork_tcp[r].height / (f32)releases.artwork_tcp[r].width);
         }
 
+        int sel = releases.select_track[r];
         if(tex)
         {
             f32 spacing = 20.0f;
@@ -2536,6 +2621,7 @@ namespace
                 }
 
                 ImGui::Image(IMG(tex), ImVec2((f32)w, texh));
+                ImVec2 track_top_left = ImGui::GetItemRectMin();
 
                 if(ImGui::IsItemHovered() && pen::input_is_mouse_down(PEN_MOUSE_L))
                 {
@@ -2550,12 +2636,16 @@ namespace
                         releases.flags[r] |= EntityFlags::hovered;
                     }
                 }
+
+                if(i == sel)
+                {
+                    playing_waveform(track_top_left, texh, w);
+                }
             }
 
             ImVec2 ii = ImGui::GetItemRectMin();
 
             // mute / unmute
-            int sel = releases.select_track[r];
             if(releases.track_filepath_count[r] > sel)
             {
                 if(ctx.top == r && ctx.audio_ctx.play_track_filepath == releases.track_filepaths[r][sel])
@@ -2869,6 +2959,7 @@ namespace
             {
                 pen::os_haptic_selection_feedback();
                 remove_like(releases.key[r]);
+                releases.like_count[r] = std::max<u32>(releases.like_count[r]--, 0);
                 releases.flags[r] &= ~EntityFlags::liked;
             }
             ImGui::PopStyleColor();
@@ -2880,6 +2971,7 @@ namespace
             {
                 pen::os_haptic_selection_feedback();
                 add_like(releases.key[r]);
+                releases.like_count[r]++;
                 releases.flags[r] |= EntityFlags::liked;
             }
         }
@@ -4183,10 +4275,12 @@ void audio_player_toggle_like() {
 
     if(releases.flags[r] & EntityFlags::liked) {
         add_like(releases.key[r]);
+        releases.like_count[r]++;
         releases.flags[r] |= EntityFlags::liked;
     }
     else {
         remove_like(releases.key[r]);
+        releases.like_count[r] = std::max<u32>(releases.like_count[r]--, 0);
         releases.flags[r] |= EntityFlags::liked;
     }
 }
@@ -4280,6 +4374,12 @@ void audio_player_stop_existing() {
         audio_ctx.gi = -1;
     }
 
+    if(is_valid(audio_ctx.waveform_handle))
+    {
+        put::audio_release_resource(audio_ctx.waveform_handle);
+        audio_ctx.waveform_handle = -1;
+    }
+
     audio_ctx.started = false;
 }
 
@@ -4334,10 +4434,13 @@ void audio_player()
                 audio_ctx.si = put::audio_create_stream(audio_ctx.play_track_filepath.c_str());
                 audio_ctx.ci = put::audio_create_channel_for_sound(audio_ctx.si);
                 audio_ctx.gi = put::audio_create_channel_group();
-                
+
                 put::audio_add_channel_to_group(audio_ctx.ci, audio_ctx.gi);
                 put::audio_group_set_volume(audio_ctx.gi, 1.0f);
-                
+
+                // create waveform for visualization
+                audio_ctx.waveform_handle = put::audio_create_waveform(audio_ctx.play_track_filepath.c_str(), k_waveform_resolution);
+
                 u32 t = releases.select_track[ctx.top];
                 Str track_name = "";
                 if(t < releases.track_name_count[r]) {
@@ -4374,18 +4477,20 @@ void audio_player()
                     {
                         audio_ctx.ci = put::audio_create_channel_for_sound(audio_ctx.si);
                         audio_ctx.gi = put::audio_create_channel_group();
-                        
+
                         put::audio_add_channel_to_group(audio_ctx.ci, audio_ctx.gi);
                         put::audio_group_set_volume(audio_ctx.gi, 1.0f);
-                        
+
+                        // Note: waveform not available for URL streaming (no local file)
+
                         u32 t = releases.select_track[ctx.top];
                         Str track_name = "";
                         if(t < releases.track_name_count[r]) {
                             track_name = releases.track_names[r][t];
                         }
-                        
+
                         pen::music_set_now_playing(releases.artist[r], releases.title[r], track_name);
-                        
+
                         audio_ctx.read_tex_data_handle = 0;
                         audio_ctx.invalidate_track = false;
                         audio_ctx.started = false;
@@ -4530,6 +4635,36 @@ f32 get_like_timestamp(const Str& id) {
     return ret;
 }
 
+void increment_server_like(const Str& id, s32 amount)
+{
+    // increment like
+    Str patch_url;
+    patch_url.setf("https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app/releases/%s/likes/count.json", id.c_str());
+    patch_url = append_auth(patch_url);
+    CURLcode res;
+
+    // get current
+    auto cur = curl::request(patch_url.c_str(), nullptr, res, "GET");
+
+    // increment anc clamp
+    s32 val = 0;
+    if(cur.is_number())
+    {
+        val = std::max(amount + cur.get<s32>(), 0);
+    }
+    else
+    {
+        // compute new value
+        val = std::max(amount + cur.value("/likes/count"_json_pointer, 0), 0);
+    }
+
+    // str payload
+    Str payload;
+    payload.setf("%i", val);
+
+    auto response = curl::request(patch_url.c_str(), payload.c_str(), res, "PUT");
+}
+
 void add_like(const Str& id)
 {
     ctx.data_ctx.user_data.mutex.lock();
@@ -4550,8 +4685,8 @@ void add_like(const Str& id)
         }
 
         // grab the release info
-        Str search_url = "https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app/releases.json";
-        search_url.appendf("?orderBy=\"$key\"&equalTo=\"%s\"&timeout=1s", id.c_str());
+        Str search_url;
+        search_url.setf("https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app/releases/%s.json", id.c_str());
         search_url = append_auth(search_url);
 
         auto db = curl::download(search_url.c_str());
@@ -4561,6 +4696,7 @@ void add_like(const Str& id)
             nlohmann::json release;
             try {
                 release = nlohmann::json::parse(db.data);
+                increment_server_like(id, 1);
                 likes_registry[id.c_str()] = release[id.c_str()];
             }
             catch(...) {
@@ -4601,7 +4737,7 @@ void remove_like(const Str& id)
 
         if(likes_registry.contains(id.c_str())) {
             likes_registry.erase(id.c_str());
-
+            increment_server_like(id, -1);
             PEN_LOG("remove %s from likes registry", id.c_str());
             FILE* fp = fopen(filepath.c_str(), "wb");
             std::string j = likes_registry.dump();
@@ -4945,7 +5081,11 @@ void enter_background(bool backgrounded) {
 }
 
 Str append_auth(Str url) {
-    url.appendf("&auth=%s", ctx.firebase_token.c_str());
+    Str join = "?";
+    if(str_find(url, "?") != -1) {
+        join = "&";
+    }
+    url.appendf("%sauth=%s", join.c_str(), ctx.firebase_token.c_str());
     return url;
 }
 

@@ -298,6 +298,7 @@ struct StoreView
     Str                 store_name = "";
     Str                 selected_view = "";
     std::vector<Str>    selected_sections = {};
+    size_t              art_index = 0;
 };
 
 struct ReleasesView
@@ -335,6 +336,7 @@ struct Store
     u32              selected_view_index = 0;
     u32              selected_sections_mask = 0xff;
     StoreView        store_view = {};
+    size_t           art_index = 0;
 };
 
 struct AudioPlayerContext
@@ -342,6 +344,7 @@ struct AudioPlayerContext
     u32     si = -1;
     u32     ci = -1;
     u32     gi = -1;
+    u32     waveform_handle = -1;
     bool    started = false;
     u32     read_tex_data_handle = 0;
     Str     play_track_filepath = "";

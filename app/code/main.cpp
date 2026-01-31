@@ -2506,7 +2506,7 @@ namespace
                waveform_data.state == put::e_waveform_state::ready &&
                waveform_data.buckets != nullptr)
             {
-                f32 waveform_height = texh * 0.075f;
+                f32 waveform_height = texh * waveform_to_image_ratio;
                 f32 waveform_top = track_top_left.y + texh - waveform_height - waveform_bottom_padding;
                 f32 waveform_left = track_top_left.x;
 
@@ -2637,16 +2637,18 @@ namespace
                     }
                 }
 
+                // we only display the playing waveform for the select track and selected release
                 if(i == sel)
                 {
-                    if(ctx.top == r && ctx.audio_ctx.play_track_filepath == releases.track_filepaths[r][sel]))
+                    if(releases.track_filepath_count[r] > sel)
                     {
-                        playing_waveform(track_top_left, texh, w);
+                        if(ctx.top == r && ctx.audio_ctx.play_track_filepath == releases.track_filepaths[r][sel])
+                        {
+                            playing_waveform(track_top_left, texh, w);
+                        }
                     }
                 }
             }
-
-            ImVec2 ii = ImGui::GetItemRectMin();
 
             // mute / unmute
             if(releases.track_filepath_count[r] > sel)

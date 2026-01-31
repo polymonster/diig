@@ -24,7 +24,7 @@
             "new_releases": {
                 "url": "https://www.phonicarecords.com/genre/${{category_id}}/${{section}}/all/latest/desc/${{counter}}",
                 "api_url":  "https://www.phonicarecords.com/api/product/json_category",
-                "page_count": 10,
+                "page_count": 8,
                 "display_name": "Latest"
             },
             "bestsellers": {
@@ -66,7 +66,7 @@
         "views": {
             "new_releases": {
                 "url": "https://www.juno.co.uk/${{section}}/eight-weeks/${{page}}",
-                "page_count": 50,
+                "page_count": 4,
                 "display_name": "Latest"
             },
             "weekly_chart": {
@@ -81,7 +81,7 @@
             },
             "preorders": {
                 "url": "https://www.juno.co.uk/${{section}}/preorders/${{page}}?order=date_down&show_out_of_stock=1",
-                "page_count": 50,
+                "page_count": 4,
                 "display_name": "Preorders"
             }
         },
@@ -106,7 +106,7 @@
         "views": {
             "new_releases": {
                 "url": "https://www.redeyerecords.co.uk/${{section}}/new-releases/page-${{page}}",
-                "page_count": 50,
+                "page_count": 20,
                 "display_name": "Latest"
             },
             "weekly_chart": {
@@ -121,7 +121,7 @@
             },
             "back_catalogue": {
                 "url": "https://www.redeyerecords.co.uk/${{section}}/back-catalogue/page-${{page}}",
-                "page_count": 50,
+                "page_count": 10,
                 "display_name": "Back Catalogue"
             }
         },
@@ -149,7 +149,7 @@
         "views": {
             "new_releases": {
                 "url": "https://yoyaku.io/style/${{section}}/page/${{page}}/?orderby=date",
-                "page_count": 100,
+                "page_count": 25,
                 "display_name": "Latest"
             },
             "weekly_chart": {
@@ -180,7 +180,7 @@
         "views": {
             "new_releases": {
                 "url": "https://hardwax.com/${{section}}/?page=${{page}}",
-                "page_count": 50,
+                "page_count": 25,
                 "display_name": "Latest"
             },
             "this_week": {
@@ -230,6 +230,7 @@
                 "display_name": "Sales Chart"
             }
         },
-        "scrape_rate": 5
+        "scrape_rate": 5,
+        "art_index": 1
     }
 }

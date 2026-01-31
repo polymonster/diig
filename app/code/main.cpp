@@ -147,7 +147,7 @@ namespace curl
 
         if(curl) {
             struct curl_slist *headers = NULL;
-            
+
             headers = curl_slist_append(headers, "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36");
 
             curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
@@ -296,7 +296,7 @@ namespace curl
 
         curl_easy_setopt(curl, CURLOPT_URL, url);
         curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
-        
+
         // data
         DataBuffer db = {};
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_function);
@@ -324,7 +324,7 @@ namespace curl
         // cleanup
         curl_slist_free_all(headers);
         curl_easy_cleanup(curl);
-        
+
         if(db.data)
         {
             try {
@@ -449,7 +449,7 @@ bool check_audio_file(const Str& path)
         fseek(f, 0, SEEK_END);
         size_t size = ftell(f);
         rewind(f);
-        
+
         if(size >= 4)
         {
             char buf[4];
@@ -463,10 +463,10 @@ bool check_audio_file(const Str& path)
                 return false;
             }
         }
-        
+
         fclose(f);
     }
-    
+
     return true;
 }
 
@@ -532,7 +532,7 @@ Str download_and_cache(const Str& url, Str releaseid, bool validate = false)
             free(db->data);
         }
     }
-    
+
     return filepath;
 }
 
@@ -606,12 +606,12 @@ pen::texture_creation_params load_texture_from_disk(const Str& filepath)
         tcp.data = nullptr;
         return tcp;
     }
-    
+
     // check file size
     fseek(ff, 0, SEEK_END);
     size_t size = ftell(ff);
     rewind(ff);
-    
+
     if(size < 4)
     {
         PEN_LOG("texture has unexpected size: %s %zu", filepath.c_str(), size);
@@ -619,15 +619,15 @@ pen::texture_creation_params load_texture_from_disk(const Str& filepath)
         tcp.data = nullptr;
         return tcp;
     }
-    
+
     // check cc for webp
     char cc[4];
     fread(&cc[0], 1, 4, ff);
     fclose(ff);
-    
+
     s32 w, h, c;
     stbi_uc* rgba = nullptr;
-    
+
     if(cc[0] == 'R' && cc[1] == 'I' && cc[2] == 'F' && cc[3] == 'F')
     {
         // webp
@@ -635,11 +635,11 @@ pen::texture_creation_params load_texture_from_disk(const Str& filepath)
         simplewebp *swebp;
         simplewebp_load_from_filename(filepath.c_str(), NULL, &swebp);
         simplewebp_get_dimensions(swebp, &width, &height);
-        
+
         rgba = (stbi_uc*)malloc(width * height * 4);
         simplewebp_decode(swebp, rgba, NULL);
         simplewebp_unload(swebp);
-        
+
         w = (s32)width;
         h = (s32)height;
         c = 4;
@@ -650,7 +650,7 @@ pen::texture_creation_params load_texture_from_disk(const Str& filepath)
         rgba = stbi_load(filepath.c_str(), &w, &h, &c, 4);
         c = 4;
     }
-        
+
     pen::texture_creation_params tcp;
     tcp.width = w;
     tcp.height = h;
@@ -767,7 +767,7 @@ bool fetch_json_cache(const c8* url, const c8* cache_filename, AsyncDict& async_
 void* registry_loader(void* userdata)
 {
     DataContext* ctx = (DataContext*)userdata;
-    
+
     Str store_url = "https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app/stores.json?&timeout=5s";
     store_url = append_auth(store_url);
 
@@ -962,7 +962,7 @@ inline Str safe_discogs_str(nlohmann::json& j, const c8* key, const Str& default
             return ((std::string)j["discogs"][key]).c_str();
         }
     }
-    
+
     return default_value;
 }
 
@@ -1128,7 +1128,7 @@ void* releases_view_loader(void* userdata)
         } catch (...) {
             // ..
         }
-        
+
         auto likes = get_likes();
         if(!likes.empty() && likes.size() != likes_registry.size()) {
             PEN_LOG("populate likes from feed");
@@ -1283,11 +1283,11 @@ void* releases_view_loader(void* userdata)
         view->releases.store[ri] = safe_str(release, "store", "");
         view->releases.label_link[ri] = safe_str(release, "label_link", "");
         view->releases.like_count[ri] = release.value("/likes/count"_json_pointer, 0);
-        
+
         // discogs info
         view->releases.discogs_url[ri] = safe_discogs_str(release, "url", "");
         view->releases.discogs_id[ri] = release.value("/discogs/id"_json_pointer, (u64)-1);
-        
+
         // clear
         view->releases.artwork_filepath[ri] = "";
         view->releases.artwork_texture[ri] = 0;
@@ -1302,7 +1302,7 @@ void* releases_view_loader(void* userdata)
 
         view->releases.id[ri] = safe_str(release, "id", "");
         view->releases.key[ri] = entry.index;
-        
+
         // assign artwork url
         if(release["artworks"].size() > 0)
         {
@@ -1323,7 +1323,7 @@ void* releases_view_loader(void* userdata)
                     ++i;
                 }
             }
-            
+
             if(art_index < release["artworks"].size()) {
                 view->releases.artwork_url[ri] = release["artworks"][art_index];
             }
@@ -1458,7 +1458,7 @@ void* data_cache_fetch(void* userdata) {
                         if(!k_force_streamed_audio)
                         {
                             Str fp = download_and_cache(view->releases.track_urls[i][t], view->releases.key[i], true);
-                            
+
                             if(check_audio_file(fp))
                             {
                                 view->releases.track_filepaths[i][t] = fp;
@@ -1518,7 +1518,7 @@ void* data_loader(void* userdata)
                !(view->releases.flags[i] & EntityFlags::artwork_loaded) &&
                (view->releases.flags[i] & EntityFlags::artwork_requested)) {
                 view->releases.artwork_tcp[i] = load_texture_from_disk(view->releases.artwork_filepath[i]);
-                
+
                 if(view->releases.artwork_tcp[i].data)
                 {
                     std::atomic_thread_fence(std::memory_order_release);
@@ -1547,7 +1547,7 @@ vec2f touch_screen_mouse_wheel()
 
     vec2f delta = (cur - prev);
     prev = cur;
-    
+
     static constexpr bool k_use_smooth_delta = true;
     if(k_use_smooth_delta)
     {
@@ -1560,13 +1560,13 @@ vec2f touch_screen_mouse_wheel()
             delta_history[history_pos] = delta;
             history_pos = (history_pos + 1) % k_max_history;
             history_len = std::min(++history_len, k_max_history);
-            
+
             vec2f smooth_delta = vec2f::zero();
             for(u32 d = 0; d < history_len; ++d)
             {
                 smooth_delta += delta_history[d];
             }
-            
+
             smooth_delta /= (f32)history_len;
             delta = smooth_delta;
         }
@@ -1721,7 +1721,7 @@ namespace
             if (store_prefs.contains("view")) {
                 view_preference = ctx.data_ctx.user_data.dict["stores"][store_name.c_str()]["view"];
             }
-            
+
             // check sections are valid and still exist
             for(ssize_t i = section_preference.size() - 1; i >= 0; --i)
             {
@@ -1734,13 +1734,13 @@ namespace
                         break;
                     }
                 }
-                
+
                 if(!found)
                 {
                     section_preference.erase(section_preference.begin() + i);
                 }
             }
-            
+
             // add all sections
             if(section_preference.size() == 0)
             {
@@ -1803,7 +1803,7 @@ namespace
                 "weekly_chart",
                 "monthly_chart"
             };
-            
+
             std::vector<std::string> store_view_order;
             if(store.contains("view_order"))
             {
@@ -1821,7 +1821,7 @@ namespace
                     output.view_search_names.push_back(v);
                     std::string dn = views[v]["display_name"];
                     output.view_display_names.push_back(dn.c_str());
-                    
+
                     views[v].contains("sectionless") ?
                         output.view_sectionless.push_back(1):
                         output.view_sectionless.push_back(0);
@@ -1846,7 +1846,7 @@ namespace
                 output.view_search_names.push_back(view.key());
                 std::string dn = view.value()["display_name"];
                 output.view_display_names.push_back(dn.c_str());
-                
+
                 view.value().contains("sectionless") ?
                     output.view_sectionless.push_back(1):
                     output.view_sectionless.push_back(0);
@@ -2264,7 +2264,7 @@ namespace
         {
             ImGui::Dummy(ImVec2(k_indent1, 0.0f));
             ImGui::SameLine();
-            
+
             ImGui::Text("%s %s", ICON_FA_CHEVRON_LEFT, ctx.view->page == Page::likes ? "Likes" : "Settings");
             if(ImGui::IsItemClicked())
             {
@@ -2322,16 +2322,16 @@ namespace
 
         // set pos and scale
         f32 pad = k_indent2;
-        
+
         f32 menu_w = std::max<f32>(
             ImGui::CalcTextSize("Show Debug").x,
             ImGui::CalcTextSize(ctx.username.c_str()).x
         ) + pad * 2.0;
-        
+
         ImVec2 options_menu_pos = ImVec2(ctx.w - menu_w, ImGui::GetCursorPosY());
         ImGui::SetNextWindowPos(options_menu_pos);
         ImGui::SetNextWindowSize(ImVec2(menu_w, 0.0f));
-        
+
         if(ImGui::BeginPopup("Options Popup")) {
 
             // user name
@@ -2430,7 +2430,7 @@ namespace
         ImGui::SetCursorPosX(ctx.w - rad);
         ImGui::SetCursorPosY(ImGui::GetCursorPosY() + (ImGui::GetFontSize() - icon_size));
         ImGui::ImageButton("##Discogs", IMG(ctx.discogs_icon), ImVec2(icon_size, icon_size));
-        
+
         if(lenient_button_tap(0.3) && !any_popup_open() && !ctx.scroll_lock_x && !ctx.scroll_lock_y) {
             if(ImGui::IsPopupOpen("More Menu")) {
                 ImGui::CloseCurrentPopup();
@@ -2449,17 +2449,17 @@ namespace
         {
             ImVec2 more_menu_pos = ImGui::GetItemRectMin();
             more_menu_pos.y = ImGui::GetItemRectMax().y;
-            
+
             f32 pad = k_indent2;
-            
+
             ImGui::SetWindowFontScale(k_text_size_h2);
             f32 menu_w = ImGui::CalcTextSize("Open In Discogs").x + (pad * 2.0);
-            
+
             Str discogs_link = releases.discogs_url[r];
             more_menu_pos.x = ctx.w - menu_w;
             ImGui::SetNextWindowPos(more_menu_pos);
             ImGui::SetNextWindowSize(ImVec2(menu_w, 0.0f));
-            
+
             if(ImGui::BeginPopup("More Menu")) {
                 if(ctx.discogs_username.empty())
                 {
@@ -2639,7 +2639,10 @@ namespace
 
                 if(i == sel)
                 {
-                    playing_waveform(track_top_left, texh, w);
+                    if(ctx.top == r && ctx.audio_ctx.play_track_filepath == releases.track_filepaths[r][sel]))
+                    {
+                        playing_waveform(track_top_left, texh, w);
+                    }
                 }
             }
 
@@ -3260,10 +3263,10 @@ namespace
             auto ms = pen::input_get_mouse_state();
             down_pos = vec2f(ms.x, ms.y);
         }
-        
+
         // reset
         ctx.tap_pos = vec2f(FLT_MAX);
-        
+
         // set tap pos when tapped
         if(os_tapped())
         {
@@ -3349,7 +3352,7 @@ namespace
         ImGui::SetWindowFontScale(k_text_size_nerds);
 
         ImGui::Indent();
-        
+
         ImGui::Text("frame time %f (ms)", 1.0 / ctx.dt);
 
         if(ctx.view)
@@ -3426,7 +3429,7 @@ namespace
     void get_input_box_sizes(ImVec2& boxsize, f32& padding, bool set_pos = true)
     {
         ImGui::SetWindowFontScale(k_text_size_body);
-        
+
         f32 textheight = ImGui::CalcTextSize("Ag").y;
 
         f32 ypos = ImGui::GetWindowHeight() * 0.175f;
@@ -3436,15 +3439,15 @@ namespace
             ImGui::SetCursorPosY(ypos);
             ImGui::Indent();
         }
-        
+
         ImGui::SetWindowFontScale(k_text_size_box);
-        
+
         f32 cursorx = ImGui::GetCursorPosX();
         f32 boxwidth = width - (cursorx * 2.0f);
         f32 boxheight = ImGui::CalcTextSize("Ag").y;
-        
+
         ImGui::SetWindowFontScale(k_text_size_body);
-        
+
         padding = (boxheight - textheight) / 2.0f;
         boxsize = ImVec2(boxwidth, boxheight);
     }
@@ -3472,7 +3475,7 @@ namespace
         get_input_box_sizes(boxsize, padding);
 
         ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(padding, padding));
-        
+
         if(ImGui::InputTextEx("##Email", "Email", &email_buf[0], k_login_buf_size, boxsize, 0, nullptr, nullptr)) {
             error_message.clear();
         }
@@ -3484,7 +3487,7 @@ namespace
         if(return_pressed) {
             ImGui::SetWindowFocus(nullptr);
         }
-        
+
         ImGui::PopStyleVar();
 
         ImGui::Dummy(ImVec2(0.0, padding));
@@ -3604,7 +3607,7 @@ namespace
 
         bool return_pressed = pen::input_is_key_down(PK_RETURN);
         bool any_active = false;
-        
+
         f32 padding = 0.0;
         ImVec2 boxsize = {};
         get_input_box_sizes(boxsize, padding);
@@ -3615,7 +3618,7 @@ namespace
             error_message.clear();
         }
         paste_input(&email_buf[0], k_login_buf_size);
-        
+
         if(ImGui::IsItemActive()) {
             any_active = true;
         }
@@ -3640,7 +3643,7 @@ namespace
         if(ImGui::Button("Back")) {
             ctx.view->page = Page::login_or_signup;
             pen::os_haptic_selection_feedback();
-            
+
             memset(&email_buf[0], 0x0, k_login_buf_size);
             memset(&password_buf[0], 0x0, k_login_buf_size);
             error_message = "";
@@ -3711,7 +3714,7 @@ namespace
         ImGui::SetWindowFontScale(k_text_size_h2);
         ImGui::Spacing();
         ImGui::TextCentred("Sign Up");
-        
+
         bool return_pressed = pen::input_is_key_down(PK_RETURN);
         bool any_active = false;
 
@@ -3722,12 +3725,12 @@ namespace
         get_input_box_sizes(boxsize, padding);
 
         ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(padding, padding));
-        
+
         if(ImGui::InputTextEx("##Username", "Username", &username_buf[0], k_login_buf_size, boxsize, 0, nullptr, nullptr)) {
             error_message.clear();
         }
         paste_input(&username_buf[0], k_login_buf_size);
-        
+
         if(ImGui::IsItemActive()) {
             any_active = true;
         }
@@ -3738,12 +3741,12 @@ namespace
                 return_pressed = false;
             }
         }
-          
+
         if(ImGui::InputTextEx("##Email", "Email", &email_buf[0], k_login_buf_size, boxsize, 0, nullptr, nullptr)) {
             error_message.clear();
         }
         paste_input(&email_buf[0], k_login_buf_size);
-        
+
         if(ImGui::IsItemActive()) {
             any_active = true;
         }
@@ -3774,7 +3777,7 @@ namespace
         if(ImGui::Button("Back")) {
             pen::os_haptic_selection_feedback();
             ctx.view->page = Page::login_or_signup;
-            
+
             memset(&username_buf[0], 0x0, k_login_buf_size);
             memset(&email_buf[0], 0x0, k_login_buf_size);
             memset(&password_buf[0], 0x0, k_login_buf_size);
@@ -3792,9 +3795,9 @@ namespace
         if(valid) {
             ImGui::SameLine();
             if(ImGui::Button("Sign Up") || next) {
-                
+
                 nlohmann::json response = {};
-                
+
                 if(strcmp(password_buf, retype_buf) == 0)
                 {
                     pen::os_haptic_selection_feedback();
@@ -3807,14 +3810,14 @@ namespace
                         jstr.c_str(),
                         code
                     );
-                    
+
                     error_message = unpack_error_response(code, response);
                 }
                 else
                 {
                     error_message = "error: passwords do not match";
                 }
-                
+
                 if(error_message.empty()) {
                     // stash credentials
                     pen::os_set_keychain_item("com.pmtech.dig", "email", email_buf);
@@ -3854,7 +3857,7 @@ namespace
 
         // from keychain
         ctx.username = pen::os_get_keychain_item("com.pmtech.dig", "username");
-        
+
         if(!k_force_no_discogs_login)
         {
             ctx.discogs_token = pen::os_get_keychain_item("com.pmtech.dig", "discogs");
@@ -3865,7 +3868,7 @@ namespace
         }
 
         ctx.firebase_token = ((std::string)ctx.data_ctx.auth.dict["idToken"]).c_str();
-        
+
         // kick off reg loader now we have auth
         pen::thread_create(registry_loader, 10 * 1024 * 1024, &ctx.data_ctx, pen::e_thread_start_flags::detached);
 
@@ -4168,7 +4171,7 @@ namespace
 
         // intialise pmtech systems
         pen::jobs_create_job(put::audio_thread_function, 1024 * 10, nullptr, pen::e_thread_start_flags::detached);
-                
+
         std::vector<dev_ui::font_options> fonts;
 
         // create merged font, icons and ranges
@@ -4354,20 +4357,20 @@ void audio_player_stop_existing() {
         put::audio_release_resource(audio_ctx.si);
         audio_ctx.si = -1;
     }
-    
+
     if(is_valid(audio_ctx.ci))
     {
         put::audio_channel_stop(audio_ctx.ci);
         put::audio_release_resource(audio_ctx.ci);
         audio_ctx.ci = -1;
     }
-    
+
     if(is_valid(audio_ctx.si))
     {
         put::audio_release_resource(audio_ctx.si);
         audio_ctx.si = -1;
     }
-    
+
     if(is_valid(audio_ctx.gi))
     {
         put::audio_release_resource(audio_ctx.gi);
@@ -4387,10 +4390,10 @@ void audio_player()
 {
     if(!ctx.view)
         return;
-    
+
     auto& releases = ctx.view->releases;
     auto& audio_ctx = ctx.audio_ctx;
-    
+
     if(ctx.backgrounded && !audio_ctx.play_bg)
     {
         ctx.audio_ctx.invalidate_track = true;
@@ -4420,7 +4423,7 @@ void audio_player()
             audio_ctx.play_track_filepath = "";
             audio_ctx.play_track_url = "";
         }
-                
+
         // play new
         if(!k_force_streamed_audio)
         {
@@ -4430,7 +4433,7 @@ void audio_player()
             {
                 // stop existing
                 audio_player_stop_existing();
-                
+
                 audio_ctx.si = put::audio_create_stream(audio_ctx.play_track_filepath.c_str());
                 audio_ctx.ci = put::audio_create_channel_for_sound(audio_ctx.si);
                 audio_ctx.gi = put::audio_create_channel_group();
@@ -4446,9 +4449,9 @@ void audio_player()
                 if(t < releases.track_name_count[r]) {
                     track_name = releases.track_names[r][t];
                 }
-                
+
                 pen::music_set_now_playing(releases.artist[r], releases.title[r], track_name);
-                
+
                 audio_ctx.read_tex_data_handle = 0;
                 audio_ctx.invalidate_track = false;
                 audio_ctx.started = false;
@@ -4465,14 +4468,14 @@ void audio_player()
                 audio_ctx.si = put::audio_create_sound_url(audio_ctx.play_track_filepath.c_str());
                 audio_ctx.invalidate_track = false;
             }
-            
+
             // defer the play
             if(!is_valid(audio_ctx.ci))
             {
                 if(is_valid(audio_ctx.si))
                 {
                     f32 buffered = put::audio_sound_get_buffered_percentage(audio_ctx.si);
-                    
+
                     if(buffered > 10.0f)
                     {
                         audio_ctx.ci = put::audio_create_channel_for_sound(audio_ctx.si);
@@ -4498,7 +4501,7 @@ void audio_player()
                 }
             }
         }
-        
+
         // playing
         if(is_valid(audio_ctx.ci))
         {
@@ -4788,14 +4791,14 @@ void paste_input(c8* buf, size_t buf_len)
         {
             // strip out newlines for this case
             clip = str_replace_chars(clip, '\n', ' ');
-            
+
             // rescind active
             ImGui::ClearActiveID();
-            
+
             // clear inout buffer and paste
             memset(&buf[0], 0x0, buf_len);
             strncpy(&buf[0], clip.c_str(), std::min<size_t>(clip.length(), buf_len));
-            
+
             // clear clipboard now we used the result
             pen::os_clear_clipboard_string();
         }
@@ -4807,7 +4810,7 @@ void discogs_token_input()
     // discogs key
     ImGui::Text("%s", "Discogs Access Token");
     static Str verify_message = "";
-    
+
     // populate it
     static c8 key_buf[k_login_buf_size] = {0};
     static bool init = true;
@@ -4816,19 +4819,19 @@ void discogs_token_input()
         strncpy(&key_buf[0], ctx.discogs_token.c_str(), ctx.discogs_token.length());
         init = false;
     }
-    
+
     f32 padding = 0.0;
     ImVec2 boxsize = {};
     get_input_box_sizes(boxsize, padding, false);
-    
+
     ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(padding, padding));
     if(ImGui::InputTextEx("##Discogs", "Discogs Token", &key_buf[0], k_login_buf_size, boxsize, 0, nullptr, nullptr)) {
         verify_message.clear();
     }
     paste_input(&key_buf[0], k_login_buf_size);
-    
+
     bool any_active = ImGui::IsItemActive();
-    
+
     if(strlen(key_buf) > 0)
     {
         if(ImGui::Button("Verify"))
@@ -4846,7 +4849,7 @@ void discogs_token_input()
                     // set the keychain item
                     pen::os_set_keychain_item("com.pmtech.dig", "discogs", key_buf);
                     ctx.discogs_token = key_buf;
-                    
+
                     // set the message
                     std::string username = response["username"];
                     verify_message.appendf("Token verified as: %s", username.c_str());
@@ -4865,7 +4868,7 @@ void discogs_token_input()
             }
         }
     }
-    
+
     // show existing login
     if(!ctx.discogs_username.empty() && verify_message.empty())
     {
@@ -4875,18 +4878,18 @@ void discogs_token_input()
     {
         verify_message.setf("Discogs > Settings > Developers > Generate Token. (Paste in here)", ctx.discogs_username.c_str());
     }
-    
+
     ImGui::PopStyleVar();
-    
+
     //
     ImGui::TextWrapped("%s", verify_message.c_str());
-    
+
     // OSK
     pen::os_enable_paste_popup(any_active);
     pen::os_show_on_screen_keyboard(any_active);
     pen::input_set_key_up(PK_BACK); // reset any back presses
     pen::input_set_key_up(PK_RETURN);
-    
+
     ImGui::Unindent();
 }
 
@@ -4918,7 +4921,7 @@ void settings_menu()
         set_user_setting("setting_play_backgrounded", s_play_backgrounded_setting);
         pen::os_enable_background_audio(s_play_backgrounded_setting);
     }
-    
+
     discogs_token_input();
 
     ImGui::Unindent();
@@ -5076,7 +5079,7 @@ void enter_background(bool backgrounded) {
             audio_reinit();
         }
     }
-    
+
     ctx.backgrounded = backgrounded;
 }
 
@@ -5110,6 +5113,6 @@ Str get_discogs_username(Str token) {
             return username.c_str();
         }
     }
-    
+
     return "";
 }

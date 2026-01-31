@@ -339,8 +339,6 @@ struct Store
     size_t           art_index = 0;
 };
 
-constexpr u32 k_waveform_resolution = 256;
-
 struct AudioPlayerContext
 {
     u32     si = -1;

@@ -32,6 +32,8 @@ constexpr bool k_force_no_discogs_login = false;
 constexpr bool k_force_streamed_audio = false;
 constexpr bool k_show_prims = false;
 
+constexpr u32 k_waveform_resolution = 128;
+
 using namespace put;
 using namespace pen;
 
@@ -2489,6 +2491,82 @@ namespace
         return changed_page;
     }
 
+    void playing_waveform(ImVec2 track_top_left, f32 texh, f32 w)
+    {
+        constexpr f32 waveform_to_image_ratio = 0.075f;
+        f32 waveform_bottom_padding = texh * 0.005f;
+
+        // draw waveform visualization at bottom 10% of image
+        if(is_valid(ctx.audio_ctx.waveform_handle))
+        {
+            ImDrawList* draw = ImGui::GetWindowDrawList();
+
+            put::audio_waveform_data waveform_data = {};
+            if(put::audio_waveform_get_data(ctx.audio_ctx.waveform_handle, &waveform_data) == PEN_ERR_OK &&
+               waveform_data.state == put::e_waveform_state::ready &&
+               waveform_data.buckets != nullptr)
+            {
+                f32 waveform_height = texh * 0.075f;
+                f32 waveform_top = track_top_left.y + texh - waveform_height - waveform_bottom_padding;
+                f32 waveform_left = track_top_left.x;
+
+                // get playback progress
+                f32 progress = 0.0f;
+                put::audio_channel_state state = {};
+                if(put::audio_channel_get_state(ctx.audio_ctx.ci, &state) == PEN_ERR_OK &&
+                   waveform_data.length_ms > 0)
+                {
+                    progress = (f32)state.position_ms / (f32)waveform_data.length_ms;
+                }
+
+                f32 progress_x = waveform_left + (w * progress);
+
+                // draw waveform bars (min/max pairs)
+                u32 resolution = waveform_data.resolution;
+                f32 bar_width = w / (f32)resolution;
+                f32 half_height = waveform_height * 0.5f;
+                f32 center_y = waveform_top + half_height;
+
+                for(u32 i = 0; i < resolution; ++i)
+                {
+                    f32 bar_x = waveform_left + i * bar_width;
+                    f32 min_val = waveform_data.buckets[i * 2];
+                    f32 max_val = waveform_data.buckets[i * 2 + 1];
+
+                    // scale to waveform height
+                    f32 top_y = center_y - (max_val * half_height);
+                    f32 bottom_y = center_y - (min_val * half_height);
+
+                    // determine bar color - darker if already played, white if unplayed
+                    bool is_played = bar_x < progress_x;
+                    ImU32 bar_color = is_played ? IM_COL32(100, 100, 100, 128) : IM_COL32(200, 200, 200, 128);
+                    ImU32 bar_black = IM_COL32(0, 0, 0, 128);
+
+                    constexpr f32 shadow_thickness = 2.0f;
+                    draw->AddRectFilled(
+                            ImVec2(bar_x + shadow_thickness, top_y - shadow_thickness),
+                            ImVec2(bar_x + + shadow_thickness + bar_width - 1.0f, bottom_y),
+                            bar_black
+                    );
+
+                    draw->AddRectFilled(
+                            ImVec2(bar_x, top_y),
+                            ImVec2(bar_x + bar_width - 1.0f, bottom_y),
+                            bar_color
+                    );
+                }
+
+                // draw progress line
+                draw->AddLine(
+                        ImVec2(progress_x, waveform_top),
+                        ImVec2(progress_x, waveform_top + waveform_height),
+                        IM_COL32(255, 255, 255, 255),
+                        2.0f
+                );
+            }
+        }
+    }
+
     void release_images(soa& releases, u32 r)
     {
         f32 w = ctx.w;
@@ -2504,6 +2582,7 @@ namespace
             texh = (f32)w * ((f32)releases.artwork_tcp[r].height / (f32)releases.artwork_tcp[r].width);
         }
 
+        int sel = releases.select_track[r];
         if(tex)
         {
             f32 spacing = 20.0f;
@@ -2525,6 +2604,7 @@ namespace
                 }
 
                 ImGui::Image(IMG(tex), ImVec2((f32)w, texh));
+                ImVec2 track_top_left = ImGui::GetItemRectMin();
 
                 if(ImGui::IsItemHovered() && pen::input_is_mouse_down(PEN_MOUSE_L))
                 {
@@ -2539,12 +2619,16 @@ namespace
                         releases.flags[r] |= EntityFlags::hovered;
                     }
                 }
+
+                if(i == sel)
+                {
+                    playing_waveform(track_top_left, texh, w);
+                }
             }
 
             ImVec2 ii = ImGui::GetItemRectMin();
 
             // mute / unmute
-            int sel = releases.select_track[r];
             if(releases.track_filepath_count[r] > sel)
             {
                 if(ctx.top == r && ctx.audio_ctx.play_track_filepath == releases.track_filepaths[r][sel])
@@ -2566,66 +2650,6 @@ namespace
                     if(lenient_button_tap(0.1, &bb))
                     {
                         ctx.audio_ctx.mute = !ctx.audio_ctx.mute;
-                    }
-
-                    // draw waveform visualization at bottom 10% of image
-                    if(is_valid(ctx.audio_ctx.waveform_handle))
-                    {
-                        put::audio_waveform_data waveform_data = {};
-                        if(put::audio_waveform_get_data(ctx.audio_ctx.waveform_handle, &waveform_data) == PEN_ERR_OK &&
-                           waveform_data.state == put::e_waveform_state::ready &&
-                           waveform_data.buckets != nullptr)
-                        {
-                            f32 waveform_height = texh * 0.1f;
-                            f32 waveform_top = image_top_left.y + texh - waveform_height;
-                            f32 waveform_left = image_top_left.x;
-
-                            // get playback progress
-                            f32 progress = 0.0f;
-                            put::audio_channel_state state = {};
-                            if(put::audio_channel_get_state(ctx.audio_ctx.ci, &state) == PEN_ERR_OK &&
-                               waveform_data.length_ms > 0)
-                            {
-                                progress = (f32)state.position_ms / (f32)waveform_data.length_ms;
-                            }
-
-                            f32 progress_x = waveform_left + (w * progress);
-
-                            // draw waveform bars (min/max pairs)
-                            u32 resolution = waveform_data.resolution;
-                            f32 bar_width = w / (f32)resolution;
-                            f32 half_height = waveform_height * 0.5f;
-                            f32 center_y = waveform_top + half_height;
-
-                            for(u32 i = 0; i < resolution; ++i)
-                            {
-                                f32 bar_x = waveform_left + i * bar_width;
-                                f32 min_val = waveform_data.buckets[i * 2];
-                                f32 max_val = waveform_data.buckets[i * 2 + 1];
-
-                                // scale to waveform height
-                                f32 top_y = center_y - (max_val * half_height);
-                                f32 bottom_y = center_y - (min_val * half_height);
-
-                                // determine bar color - darker if already played, white if unplayed
-                                bool is_played = bar_x < progress_x;
-                                ImU32 bar_color = is_played ? IM_COL32(100, 100, 100, 255) : IM_COL32(255, 255, 255, 255);
-
-                                draw->AddRectFilled(
-                                    ImVec2(bar_x, top_y),
-                                    ImVec2(bar_x + bar_width - 1.0f, bottom_y),
-                                    bar_color
-                                );
-                            }
-
-                            // draw progress line
-                            draw->AddLine(
-                                ImVec2(progress_x, waveform_top),
-                                ImVec2(progress_x, waveform_top + waveform_height),
-                                IM_COL32(255, 255, 255, 255),
-                                2.0f
-                            );
-                        }
                     }
                 }
             }

@@ -2567,7 +2567,7 @@ namespace
                 vec2f wfmin = vec2f(waveform_left, waveform_top);
                 vec2f wfmax = vec2f(waveform_left + w, waveform_top + texh);
 
-                if(is_valid(ctx.audio_ctx.ci))
+                if(is_valid(ctx.audio_ctx.ci) && !ctx.scroll_lock_x && !ctx.scroll_lock_y)
                 {
                     // check where the tap is within the wave form and seek within the track
                     if(maths::point_inside_aabb(wfmin, wfmax, ctx.tap_pos))

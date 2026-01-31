@@ -281,6 +281,106 @@ def titles_match(local_title: str, discogs_title: str) -> bool:
     return normalize_local_title(local_title) == normalize_discogs_title(discogs_title)
 
 
+def release_search_3(discogs, release):
+    """
+    Third-pass search: single API call, heavy client-side fuzzy matching.
+    Searches by label name and scores results locally.
+    """
+    label = release.get('label', '').strip()
+    title = strip_format_suffix(release.get('title', ''))
+    artist = release.get('artist', '').strip()
+    cat = release.get('cat', '').strip()
+
+    # Build search query - prioritize label for electronic/vinyl releases
+    if label:
+        query = label
+    elif artist and artist.lower() not in ('various', 'va'):
+        query = artist
+    else:
+        return None
+
+    try:
+        results = throttled_search(discogs.search, q=query, type='release')
+    except:
+        return None
+
+    # Prepare normalized local values for comparison
+    local_artist = normalize_local_title(artist)
+    local_title = normalize_local_title(title)
+    local_full = normalize_local_title(f"{artist} - {title}")
+    local_label = normalize_local_title(label)
+    local_cat = re.sub(r'[\s\-\.]', '', cat.lower()) if cat else ''
+
+    best_match = None
+    best_score = 0
+
+    # Process first page only (no pagination API calls)
+    for i, result in enumerate(results):
+        if i >= 50:
+            break
+
+        score = 0
+        result_data = result.data or {}
+
+        # Title matching (max 100 points)
+        if hasattr(result, 'title') and result.title:
+            result_title_norm = normalize_discogs_title(result.title)
+            # Try matching against full "artist - title" and title-only
+            title_score = max(
+                fuzz.ratio(local_full, result_title_norm),
+                fuzz.ratio(local_title, result_title_norm),
+                fuzz.token_set_ratio(local_full, result_title_norm)
+            )
+            score += title_score
+
+        # Catno matching (bonus 80 points for exact, 40 for partial)
+        result_cat = result_data.get('catno', '')
+        if result_cat and local_cat:
+            result_cat_norm = re.sub(r'[\s\-\.]', '', result_cat.lower())
+            if local_cat == result_cat_norm:
+                score += 80
+            elif fuzz.ratio(local_cat, result_cat_norm) > 85:
+                score += 40
+
+        # Label matching from result.data (bonus up to 50 points)
+        result_labels = result_data.get('label', [])
+        if result_labels and local_label:
+            if isinstance(result_labels, list):
+                for rl in result_labels:
+                    label_score = fuzz.ratio(local_label, normalize_discogs_title(rl))
+                    if label_score > 75:
+                        score += min(50, label_score // 2)
+                        break
+
+        # Artist matching from result.data (bonus up to 30 points)
+        # Format field sometimes contains artist info
+        result_format = result_data.get('format', [])
+        result_title_raw = result.title if hasattr(result, 'title') else ''
+        if local_artist and result_title_raw:
+            # Discogs titles are often "Artist - Title"
+            if ' - ' in result_title_raw:
+                result_artist = normalize_discogs_title(result_title_raw.split(' - ')[0])
+                artist_score = fuzz.ratio(local_artist, result_artist)
+                if artist_score > 80:
+                    score += min(30, artist_score // 3)
+
+        if score > best_score:
+            best_score = score
+            best_match = result
+
+    # Threshold: need decent title match (70+) plus some other signal
+    if best_match and best_score >= 140:
+        print(f"{release['link']} -> {best_match.url} (score: {best_score})")
+        return {
+            "url": f"{best_match.url}",
+            "id": best_match.id
+        }
+
+    if "-verbose" in sys.argv:
+        print(f"No match (algo 3): {concat_title(release)} ({cat}) best: {best_score}")
+    return None
+
+
 def release_search_2(discogs, release):
     title = strip_format_suffix(concat_title_3(release))
     searches = list()
@@ -457,6 +557,7 @@ def populate_discogs_links(discogs, store):
     hits = 0
     prev_attemps = 0
     failures = 0
+    preorders = 0
 
     # time limit of 5.5hs so we can push any improvements before GH actions kills us
     deadline = time.monotonic() + get_time_limit()
@@ -476,9 +577,10 @@ def populate_discogs_links(discogs, store):
                         count = count + 1
                         hits += 1
                     else:
-                        reg[entry]["discogs"] = {
-                            "attempted": True
-                        }
+                        attempted_info = {"attempted": True}
+                        if reg[entry].get("store_tags", {}).get("preorder"):
+                            attempted_info["preorder"] = True
+                        reg[entry]["discogs"] = attempted_info
                 except:
                     failures += 1
                     print("failed with exception")
@@ -500,23 +602,33 @@ def populate_discogs_links(discogs, store):
             print("terminating early to beat deadline")
             break
         if "discogs" in reg[entry] and "attempted" in reg[entry]["discogs"]:
+            if reg[entry]["discogs"].get("preorder"):
+                preorders += 1
             print(f"{entry} - {concat_title(reg[entry])}")
             try:
-                attempt_index = 0
-                if isinstance(reg[entry]["discogs"].get("attempted"), bool):
+                attempted_val = reg[entry]["discogs"].get("attempted")
+                if isinstance(attempted_val, bool):
+                    # First fallthrough: try algorithm 2
                     result = release_search_2(discogs, reg[entry])
-                elif isinstance(reg[entry]["discogs"].get("attempted"), int):
-                    attempted = reg[entry]["discogs"].get("attempted")
-                    print(f"{entry} {reg[entry]['cat']} - previously attempted with {attempted} and failed to find")
+                    next_attempt_index = 0
+                elif attempted_val == 0:
+                    # Second fallthrough: try algorithm 3 (label-based fuzzy)
+                    result = release_search_3(discogs, reg[entry])
+                    next_attempt_index = 1
+                else:
+                    # Already exhausted all algorithms
+                    if "-verbose" in sys.argv:
+                        print(f"{entry} {reg[entry]['cat']} - exhausted all {attempted_val + 1} algorithms")
                     continue
                 if result != None:
                     reg[entry]["discogs"] = result
                     count = count + 1
                     hits += 1
                 else:
-                    reg[entry]["discogs"] = {
-                        "attempted": attempt_index
-                    }
+                    attempted_info = {"attempted": next_attempt_index}
+                    if reg[entry].get("store_tags", {}).get("preorder"):
+                        attempted_info["preorder"] = True
+                    reg[entry]["discogs"] = attempted_info
             except:
                 failures += 1
                 print("failed with exception")
@@ -524,7 +636,7 @@ def populate_discogs_links(discogs, store):
                 continue
 
 
-    print(f"Job complete: {count} new additions, {hits} have info / {len(reg)}, {prev_attemps} previously attempted, {failures} failures")
+    print(f"Job complete: {count} new additions, {hits} have info / {len(reg)}, {prev_attemps} previously attempted ({preorders} preorders), {failures} failures")
     
     # write to file
     dig.write_registry(store, reg)
@@ -550,9 +662,10 @@ def populate_discogs_likes(discogs, likes_file):
                                 if check_release_limit(count):
                                     break
                             else:
-                                reg[entry]["discogs"] = {
-                                    "attempted": True
-                                }
+                                attempted_info = {"attempted": True}
+                                if reg[entry].get("store_tags", {}).get("preorder"):
+                                    attempted_info["preorder"] = True
+                                reg[entry]["discogs"] = attempted_info
                         except:
                             time.sleep(1)
                             continue
@@ -583,9 +696,6 @@ def main():
         populate_discogs_links(discogs, store)
     elif "-likes" in sys.argv:
         populate_discogs_likes(discogs, sys.argv[sys.argv.index("-likes") + 1])
-
-    # genre_search(discogs, style='Tech House', year=2023)
-    # collection_dump(discogs)
 
 
 if __name__ == "__main__":

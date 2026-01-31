@@ -6,14 +6,15 @@ on:
 jobs:
   scrape-discogs:
     strategy:
+      fail-fast: false
       matrix:
-        store: [redeye, juno, phonica, yoyaku, hardwax]
+        store: [redeye, juno, phonica, yoyaku, hardwax, decks]
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
       with:
         submodules: recursive
-        token: ${{ secrets.DIIG_REG_TOKEN }} 
+        token: ${{ secrets.DIIG_REG_TOKEN }}
     - name: install_deps
       run: |
         python3 -m pip install --upgrade pip

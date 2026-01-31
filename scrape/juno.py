@@ -5,6 +5,120 @@ import sys
 import os
 import datetime
 import dig
+import random
+import time
+
+# rotating user agents to avoid detection
+USER_AGENTS = [
+    # Chrome on Windows
+    (
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) "
+        "Chrome/131.0.0.0 Safari/537.36"
+    ),
+    # Chrome on Mac
+    (
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) "
+        "Chrome/131.0.0.0 Safari/537.36"
+    ),
+    # Firefox on Windows
+    (
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:133.0) "
+        "Gecko/20100101 Firefox/133.0"
+    ),
+    # Firefox on Mac
+    (
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:133.0) "
+        "Gecko/20100101 Firefox/133.0"
+    ),
+    # Edge on Windows
+    (
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) "
+        "Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0"
+    ),
+]
+
+
+def get_headers_for_agent(user_agent):
+    """Get appropriate headers based on the user agent type."""
+    is_firefox = "Firefox" in user_agent
+    is_edge = "Edg/" in user_agent
+
+    if is_firefox:
+        return {
+            "User-Agent": user_agent,
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+            "Accept-Language": "en-GB,en;q=0.5",
+            "Accept-Encoding": "identity",
+            "Connection": "keep-alive",
+            "Referer": "https://www.juno.co.uk/",
+            "Upgrade-Insecure-Requests": "1",
+            "Sec-Fetch-Dest": "document",
+            "Sec-Fetch-Mode": "navigate",
+            "Sec-Fetch-Site": "same-origin",
+            "Sec-Fetch-User": "?1",
+        }
+    else:
+        # Chrome/Edge headers
+        if is_edge:
+            sec_ch_ua = '"Microsoft Edge";v="131", "Chromium";v="131", "Not_A Brand";v="24"'
+        else:
+            sec_ch_ua = '"Google Chrome";v="131", "Chromium";v="131", "Not_A Brand";v="24"'
+
+        platform = '"Windows"' if "Windows" in user_agent else '"macOS"'
+
+        return {
+            "User-Agent": user_agent,
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
+            "Accept-Language": "en-GB,en;q=0.9",
+            "Accept-Encoding": "identity",
+            "Connection": "keep-alive",
+            "Referer": "https://www.juno.co.uk/",
+            "Upgrade-Insecure-Requests": "1",
+            "Sec-Fetch-Dest": "document",
+            "Sec-Fetch-Mode": "navigate",
+            "Sec-Fetch-Site": "same-origin",
+            "Sec-Fetch-User": "?1",
+            "Sec-Ch-Ua": sec_ch_ua,
+            "Sec-Ch-Ua-Mobile": "?0",
+            "Sec-Ch-Ua-Platform": platform,
+            "Cache-Control": "max-age=0",
+        }
+
+
+def fetch_with_retry(url, max_retries=3, base_delay=2.0):
+    """Fetch URL with retries, random jitter, and rotating user agents."""
+    last_error = None
+
+    for attempt in range(max_retries):
+        user_agent = random.choice(USER_AGENTS)
+        headers = get_headers_for_agent(user_agent)
+
+        if attempt > 0:
+            # exponential backoff with jitter: base_delay * 2^attempt + random(0-2s)
+            delay = base_delay * (2 ** attempt) + random.uniform(0, 2)
+            print(f"  retry {attempt + 1}/{max_retries} after {delay:.1f}s delay...", flush=True)
+            time.sleep(delay)
+        try:
+            req = urllib.request.Request(url=url, headers=headers)
+            return urllib.request.urlopen(req, timeout=30)
+        except urllib.error.HTTPError as e:
+            last_error = e
+            print(f"  attempt {attempt + 1} failed: {e.code} {e.reason}", flush=True)
+            if e.code == 403:
+                continue
+            elif e.code >= 500:
+                continue
+            else:
+                raise
+        except urllib.error.URLError as e:
+            last_error = e
+            print(f"  attempt {attempt + 1} failed: {e.reason}", flush=True)
+            continue
+
+    raise last_error
 
 # parse ide element <div id="item-861163-1" class="dv-item"> to extract the
 # id number without the item- prefix
@@ -75,25 +189,14 @@ def parse_tracks(tracks):
 def scrape_page(url, store, store_dict, view, section, counter, session_scraped_ids):
     print("scraping: juno ", url, flush=True)
 
-    # try and then continue if the page does not exist
+    # try with retries and rotating user agents
     try:
-        headers = {
-            "User-Agent": (
-                "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
-                "AppleWebKit/537.36 (KHTML, like Gecko) "
-                "Chrome/120.0.0.0 Safari/537.36"
-            ),
-            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-            "Accept-Language": "en-US,en;q=0.5",
-            "Referer": "https://www.juno.co.uk/",
-        }
-        req = urllib.request.Request(
-            url=url,
-            headers=headers
-        )
-        html_file = urllib.request.urlopen(req)
-    except urllib.error.HTTPError as e:
-        print("error:", e.code, e.reason)
+        html_file = fetch_with_retry(url)
+    except (urllib.error.HTTPError, urllib.error.URLError) as e:
+        print(f"error after retries: {e}", flush=True)
+        for i in range(0, 10):
+            dig.scrape_yield()
+        return -1
 
     html_str = html_file.read().decode("utf8")
 
@@ -141,6 +244,7 @@ def scrape_page(url, store, store_dict, view, section, counter, session_scraped_
             continue
         elif "-verbose" in sys.argv:
             print(f"parsing release: {key}", flush=True)
+
 
         (_, link_elem) = dig.find_parse_elem(release, 0, "<a href=", ">")
         (_, artwork_elem) = dig.find_parse_elem(release, 0, "<img class", ">")

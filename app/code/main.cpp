@@ -2539,7 +2539,7 @@ namespace
 
                     // determine bar color - darker if already played, white if unplayed
                     bool is_played = bar_x < progress_x;
-                    ImU32 bar_color = is_played ? IM_COL32(100, 100, 100, 128) : IM_COL32(200, 200, 200, 128);
+                    ImU32 bar_color = is_played ? IM_COL32(100, 100, 100, 128) : IM_COL32(225, 225, 225, 128);
                     ImU32 bar_black = IM_COL32(0, 0, 0, 128);
 
                     constexpr f32 shadow_thickness = 2.0f;
@@ -2560,9 +2560,26 @@ namespace
                 draw->AddLine(
                         ImVec2(progress_x, waveform_top),
                         ImVec2(progress_x, waveform_top + waveform_height),
-                        IM_COL32(255, 255, 255, 255),
-                        2.0f
+                        IM_COL32(255, 128, 0, 255),
+                        4.0f
                 );
+
+                vec2f wfmin = vec2f(waveform_left, waveform_top);
+                vec2f wfmax = vec2f(waveform_left + w, waveform_top + texh);
+
+                if(is_valid(ctx.audio_ctx.ci))
+                {
+                    // check where the tap is within the wave form and seek within the track
+                    if(maths::point_inside_aabb(wfmin, wfmax, ctx.tap_pos))
+                    {
+                        // get position in 0-1 range
+                        f32 pos = (ctx.tap_pos.x - wfmin.x) / wfmax.x;
+
+                        // get pos in time
+                        f32 seek_pos = waveform_data.length_ms * pos;
+                        put::audio_channel_set_position(ctx.audio_ctx.ci, seek_pos);
+                    }
+                }
             }
         }
     }

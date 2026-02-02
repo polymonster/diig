@@ -2503,8 +2503,8 @@ namespace
 
             put::audio_waveform_data waveform_data = {};
             if(put::audio_waveform_get_data(ctx.audio_ctx.waveform_handle, &waveform_data) == PEN_ERR_OK &&
-               waveform_data.state == put::e_waveform_state::ready &&
-               waveform_data.buckets != nullptr)
+               waveform_data.buckets != nullptr &&
+               waveform_data.buckets_loaded > 0)
             {
                 f32 waveform_height = texh * waveform_to_image_ratio;
                 f32 waveform_top = track_top_left.y + texh - waveform_height - waveform_bottom_padding;
@@ -2521,13 +2521,14 @@ namespace
 
                 f32 progress_x = waveform_left + (w * progress);
 
-                // draw waveform bars (min/max pairs)
+                // draw waveform bars (min/max pairs) - use buckets_loaded for progressive rendering
                 u32 resolution = waveform_data.resolution;
+                u32 buckets_to_draw = waveform_data.buckets_loaded;
                 f32 bar_width = w / (f32)resolution;
                 f32 half_height = waveform_height * 0.5f;
                 f32 center_y = waveform_top + half_height;
 
-                for(u32 i = 0; i < resolution; ++i)
+                for(u32 i = 0; i < buckets_to_draw; ++i)
                 {
                     f32 bar_x = waveform_left + i * bar_width;
                     f32 min_val = waveform_data.buckets[i * 2];
@@ -2565,7 +2566,7 @@ namespace
                 );
 
                 vec2f wfmin = vec2f(waveform_left, waveform_top);
-                vec2f wfmax = vec2f(waveform_left + w, waveform_top + texh);
+                vec2f wfmax = vec2f(waveform_left + w, waveform_top + waveform_height);
 
                 if(is_valid(ctx.audio_ctx.ci) && !ctx.scroll_lock_x && !ctx.scroll_lock_y)
                 {
@@ -4353,6 +4354,9 @@ void audio_player_pause(bool pause) {
 void audio_player_stop_existing() {
     auto& audio_ctx = ctx.audio_ctx;
 
+    // mark as explicitly stopping to avoid false "natural next" triggers
+    audio_ctx.stopping = true;
+
     // stop existing
     if(is_valid(audio_ctx.si))
     {
@@ -4457,6 +4461,7 @@ void audio_player()
                 audio_ctx.read_tex_data_handle = 0;
                 audio_ctx.invalidate_track = false;
                 audio_ctx.started = false;
+                audio_ctx.stopping = false;
             }
         }
         else
@@ -4499,6 +4504,7 @@ void audio_player()
                         audio_ctx.read_tex_data_handle = 0;
                         audio_ctx.invalidate_track = false;
                         audio_ctx.started = false;
+                        audio_ctx.stopping = false;
                     }
                 }
             }
@@ -4557,11 +4563,12 @@ void audio_player()
             memset(&gstate, 0x0, sizeof(put::audio_group_state));
             put::audio_group_get_state(audio_ctx.gi, &gstate);
 
-            if(audio_ctx.started && gstate.play_state == put::e_audio_play_state::not_playing)
+            if(audio_ctx.started && !audio_ctx.stopping && gstate.play_state == put::e_audio_play_state::not_playing)
             {
                 audio_player_stop_existing();
 
                 // move to next track
+                PEN_LOG("natural next");
                 u32 next_track = releases.select_track[ctx.top] + 1;
                 if(next_track < releases.track_filepath_count[ctx.top])
                 {

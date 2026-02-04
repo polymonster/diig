@@ -31,6 +31,7 @@ constexpr bool k_force_login = false;
 constexpr bool k_force_no_discogs_login = false;
 constexpr bool k_force_streamed_audio = false;
 constexpr bool k_show_prims = false;
+constexpr bool k_disable_waveform = false;
 
 constexpr u32 k_waveform_resolution = 128;
 
@@ -4448,7 +4449,9 @@ void audio_player()
                 put::audio_group_set_volume(audio_ctx.gi, 1.0f);
 
                 // create waveform for visualization
-                audio_ctx.waveform_handle = put::audio_create_waveform(audio_ctx.play_track_filepath.c_str(), k_waveform_resolution);
+                if(!k_disable_waveform) {
+                    audio_ctx.waveform_handle = put::audio_create_waveform(audio_ctx.play_track_filepath.c_str(), k_waveform_resolution);
+                }
 
                 u32 t = releases.select_track[ctx.top];
                 Str track_name = "";

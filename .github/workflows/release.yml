@@ -27,7 +27,8 @@ jobs:
     - uses: actions/checkout@v4
       with:
         submodules: recursive
-        token: ${{ secrets.DIIG_REG_TOKEN }} 
+        token: ${{ secrets.DIIG_REG_TOKEN }}
+        clean: true
     - name: release_tesflight
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -72,8 +73,8 @@ jobs:
         # bump version in plist
         export VERSION=$(echo $REFS_VERSION| cut -d'/' -f 3)
         export VERSION=$(echo $VERSION| cut -d'.' -f 3)
-        echo $VERSION
-        sed -i.bak "s/<key>CFBundleVersion<\/key><string>[0-9]*<\/string>/<key>CFBundleVersion<\/key><string>$VERSION<\/string>/g" app/dist/ios/Info.plist
+        echo "Version: $VERSION"
+        /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $VERSION" app/dist/ios/Info.plist
 
         # build and upload
         cd app

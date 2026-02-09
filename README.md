@@ -75,7 +75,7 @@ Where `-key` is a valid Firebase auth token. Run `python3 dig.py -help` for full
         },
         "new_releases": {
             "url": "https://store.com/${{section}}/new/page/${{page}}",
-            "page_count": 10
+            "page_count": 10In thi
         }
     }
 }

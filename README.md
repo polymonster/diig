@@ -1,193 +1,102 @@
 # diig
 
 [![scrape](https://github.com/polymonster/diig/actions/workflows/scrape.yml/badge.svg)](https://github.com/polymonster/diig/actions/workflows/scrape.yml)
-[![tests](https://github.com/polymonster/diig/actions/workflows/release.yml/badge.svg)](https://github.com/polymonster/diig/actions/workflows/release_testflight.yml)
+[![release](https://github.com/polymonster/diig/actions/workflows/release.yml/badge.svg)](https://github.com/polymonster/diig/actions/workflows/release.yml)
 
-diig is a record digging app that provides a high performance audio player and ergonomic user interface to make digging through record snippets rapid, responsive and enjoyable.
-
-It provides a record store agnostic audio player with a familiar social media infinite scrolling interface to allow users to dig for new releases and provide click through links to stores to buy. Feeds and snippets are cached which also enables offline browsing.
-
-The aim is to be extensible so more record stores, genre sections and views can be added from different sources. The current scope of the sites and sections that are being monitored is opinionated and targeted to a small group of friends, but the overall goal is to allow community contribution and expand the project.
+A record digging app for people who collect records. Fast audio player, infinite scroll, offline caching. Swipe through new releases and charts from your favourite stores, tap through to buy.
 
 <p align="center">
     <img src="https://github.com/polymonster/polymonster.github.io/blob/master/images/diig/diig.gif?raw=true" width="640" height="360"/>
 </p>
 
+## Get the Beta
+
+Available now on iOS and Android. Email [polymonster@icloud.com](mailto:polymonster@icloud.com) to join:
+
+- **iOS** - via TestFlight
+- **Android** - via Google Play internal testing
+
+Website coming soon. Get in touch to register interest.
+
+## Contributing
+
+Contributions welcome. Got a store you want scraped? Raise an issue or better yet, implement it yourself and open a PR.
+
+If you're finding diig useful and want to help keep it running, sponsorship helps cover developer fees and hosting costs.
+
 ## Scrapers
 
-Scrapers run [nightly](https://github.com/polymonster/dig/actions) to update information, if you provide a store schema then you need to define a page scraper function. There are currently a few examples in the project. It involves parsing the release schema information from the store's html pages.
+Scrapers run [nightly](https://github.com/polymonster/diig/actions) to pull releases from record stores. Each store needs a schema defining its structure and a parser to extract release data from HTML.
 
 ### Running Locally
 
-The scrapers need the following python dependencies:
-
-```
+```bash
 pip install google-auth google-auth-oauthlib google-auth-httplib2
-
-```
-
-The you can run locally with command lines such as:
-
-```
 cd scrape
-dig.py -urls -store juno -clear-trackers -key "{}" -verbose
-python3
+python3 dig.py -urls -store juno -verbose -key "{}"
 ```
 
-Where key should be a valid auth key for a firebase database.
-
-Full help can be viewed with `-help`:
-
-```
-cd scrape
-py -3 dig.py -help
-diig
-  -help - display this message
-  -store <store_name> - specify a store to scrape
-  -key - auth token json string for firebase. if not present will ook for a local file diig-auth.json
-  -rate <in seconds> - duration at which to yield inbetween requests
-  -urls - flag selects whether extra urls such as artwork or mp3s are scraped
-  -verbose - print more info
-  -update-stores - synchronises local stores.json with the database
-  -patch-only - skips scraping and applies patch to the database from store registry
-
-  optional filters:
-    -section <sectiom_name> - specify a single section to scrape ie. 'techno-electro'
-    -view <store_name> - specify a single view to scrape ie. weekly-chart
-
-  debug options:
-    -fix-store <store_name> - specify a store run custom fixup code
-```
-
-### Debugging
-
-You can debug using vscode if you have the python extensions installed, edit [.vscode/launch.json](https://github.com/polymonster/diig/blob/main/.vscode/launch.json) to change which projects to debug. You can supply commandline arguments as descibed above.
+Where `-key` is a valid Firebase auth token. Run `python3 dig.py -help` for full options.
 
 ### Schemas
 
-The project provides schemas and a unified data representation so that other record stores and sources can be added to expand the database.
-
 #### Release Schema
-
-A release schema defines a single release, specifying artist, track names, track urls of snippits and artworks amongst other information. Releases are stored in a flat dictionary with the key being their id plus the store name prefix to avoid ID collisions, each release is treated uniquely per record store. In the future aggregating releases and cross checking them might be a feature worth looking into.
 
 ```json
 {
-    "id": "string - store specific id for the release",
-    "link": "string - url link to the store specific page for the release",
-    "artist": "string - the artist name",
-    "title": "string - the releases title name",
-    "label": "string - name of the label",
-    "label_link": "string - url link to the store specific page for the label",
-    "cat": "string - the catalogue number for the label of the release",
-    "artworks": [
-        "string list - 3 artwork sizes: [small, medium, large]"
-    ],
-    "track_names": [
-        "string list - track names"
-    ],
-    "track_urls": [
-        "string list - url links to track mp3s"
-    ],
-    "store": "string - the specific store this release is from",
+    "id": "store-specific release id",
+    "link": "url to release page",
+    "artist": "artist name",
+    "title": "release title",
+    "label": "label name",
+    "label_link": "url to label page",
+    "cat": "catalogue number",
+    "artworks": ["small", "medium", "large"],
+    "track_names": ["track 1", "track 2"],
+    "track_urls": ["url to mp3 snippet", "..."],
+    "store": "store name",
     "store_tags": {
-        "out_of_stock": true,
-        "has_sold_out": true,
-        "has_charted": true,
-        "preorder": true
-    },
-
-    "<store>-<section>-<view>": "int - position in a view (page) for particular store and section (genre group)",
-    "Example Genre": "Genre Tag"
+        "out_of_stock": false,
+        "preorder": false
+    }
 }
 ```
 
 #### Store Schema
 
-A store config can specify parts of a record store website to track. `store` is the record store itself, `sections` define genre groups and `views` define charts, latest releases, preorders and other criteria which may vary from site to site. You can supply the special variables `${{section}}` and `${{page}}` to record store urls to scrape multiple pages and sections.
-
 ```json
 {
-    "sections": [
-        "string list - Sections names to parse from the website, these strings will appear in the website urls",
-    ],
-    "section_display_names": [
-        "string list - Display names for the sections for rendering within the app"
-    ],
+    "sections": ["techno", "house", "electro"],
+    "section_display_names": ["Techno", "House", "Electro"],
     "views": {
         "weekly_chart": {
-            "url": "https://www.recordstore.co.uk/${{section}}/weekly-chart",
-            "page_count": "int - number of pages to parse for the url"
-        },
-        "monthly_chart": {
-            "url": "https://www.recordstore.co.uk/${{section}}/monthly-chart",
+            "url": "https://store.com/${{section}}/charts/weekly",
             "page_count": 1
         },
         "new_releases": {
-            "url": "https://www.recordstore.co.uk/${{section}}/new-releases/page-${{page}}",
-            "page_count": 100
+            "url": "https://store.com/${{section}}/new/page/${{page}}",
+            "page_count": 10
         }
     }
 }
 ```
 
-## Requests / Urls
+### Discogs
 
-Auth is required to access the database. Which requires a registered user and a json json payload.
+Discogs links are fetched or attempted to be fetched for all releases. This algrithm is work in progress and it is tricky to find the exact match in some cases. You can add items directly to you Discogs wantlist from in the app. In time deeper integration with discogs will be implemented.
 
-```text
-https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword
-{email: "<user email>", password: "<user pass>", returnSecureToken: true}
-```
+## Building the App
 
-The you can request access to releases as follows:
+Built with C++, Objective-C and [ImGui](https://github.com/ocornut/imgui) on top of [pmtech](https://github.com/polymonster/pmtech).
 
-```text
-https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app/releases.json?orderBy=\"<index_on>"&startAt=0&timeout=10s&auth=<auth_key>
-```
-
-Where valid options for `<index_on>` can be found in the realtime data base rules and `<auth_key>` is obtained from the auth step.
-
-## App
-
-### Beta
-
-A beta is available on iOS, you can follow these instructions to get access or request an invite:
-
-1. Download and install [TestFlight](https://apps.apple.com/us/app/testflight/id899247664/) for iOS from the AppStore.
-2. Obtain your email address associated with your apple id, the best way to confirm this is Settings > Click Profile Picture: email address is beneath you profile picture.
-3. Send over the email address (you can request in GitHub issues or request via [email](polymonster@icloud.com)).
-4. Once you are invited you will receive an email with a link, open this email and click the link to open in TestFlight on your device.
-5. Accept the invite in TestFlight and install.
-6. diig will now be installed on your iOS device, you can open it like any normal app from the home screen.
-7. Opening TestFlight will give you chance to update if one is available.
-
-### Building From Source
-
-The dig app currently runs natively on iOS, it is implemented using C++, Objective-C and ImGui via my cross platform game engine [pmtech](https://github.com/polymonster/pmtech). You can find more info in that repository on how to build in more detail but for a quick start you can use:
-
-```text
-git submodule update --init --recursive // fetch submodules pmtech, pmbuild
+```bash
+git submodule update --init --recursive
 cd app
-pmtech/pmbuild ios
+pmtech/pmbuild ios    # or: mac, android
 ```
 
-An Xcode project will be generated into the `app/build/ios` folder. From there you can use Xcode to build. If you wish to build from the commandline you can use:
+Xcode/Android Studio project lands in `app/build/<platform>`. Build from IDE or command line:
 
-```text
-pmtech/pmbuild make ios dig
+```bash
+pmtech/pmbuild make ios diig
 ```
-
-The project is also buildable and runnable on macOS, just switch `ios` to `mac` in the build commands.
-
-## Future Platforms
-
-Android, Windows and Linux can all be added in future, although currently the aim is for a mobile app so iOS and Android will be priority.
-
-The app will soon be available via `TestFlight` if you want to be invited to the Nightly build please open an issue.
-
-## Contribution / Sponsorship
-
-Contributions and requests are welcome. If you have requests for features and stores to scrape you can raise an issue. Better still if you can implement your own then go right ahead, make a fork and then a pull request we can start from there.
-
-If you like this project and are interested in helping it expand further, sponsorship will help with the cost of developer fees and hosting fees for the cloud infrastructure. Currently the costs are low and the project is open source but expansion may require incur some costs.

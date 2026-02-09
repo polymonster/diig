@@ -11,7 +11,7 @@ A record digging app for people who collect records. Fast audio player, infinite
 
 ## Get the Beta
 
-Available now on iOS and Android. Email [polymonster@icloud.com](mailto:polymonster@icloud.com) to join:
+Available now on iOS and Android. Contact to join:
 
 - **iOS** - via TestFlight
 - **Android** - via Google Play internal testing

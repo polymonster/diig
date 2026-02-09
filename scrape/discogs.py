@@ -281,6 +281,20 @@ def titles_match(local_title: str, discogs_title: str) -> bool:
     return normalize_local_title(local_title) == normalize_discogs_title(discogs_title)
 
 
+def is_vinyl_release(formats):
+    """Check if discogs format data indicates a vinyl release."""
+    if not formats:
+        return None
+    for fmt in formats:
+        if isinstance(fmt, dict):
+            name = fmt.get('name', '').lower().strip()
+        else:
+            name = str(fmt).lower().strip()
+        if name == 'vinyl':
+            return True
+    return False
+
+
 def release_search_3(discogs, release):
     """
     Third-pass search: single API call, heavy client-side fuzzy matching.
@@ -636,7 +650,51 @@ def populate_discogs_links(discogs, store):
                 continue
 
 
-    print(f"Job complete: {count} new additions, {hits} have info / {len(reg)}, {prev_attemps} previously attempted ({preorders} preorders), {failures} failures")
+    # Third pass: verify format of existing discogs links
+    format_verified = 0
+    format_switched = 0
+    for entry in reg:
+        if time.monotonic() >= deadline:
+            print("terminating early to beat deadline")
+            break
+        if "discogs" not in reg[entry]:
+            continue
+        disc = reg[entry]["discogs"]
+        if "attempted" in disc:
+            continue
+        if disc.get("format_checked"):
+            continue
+        release_id = disc.get("id")
+        if not release_id:
+            continue
+        try:
+            time.sleep(1)
+            discogs_release = discogs.release(release_id)
+            formats = discogs_release.data.get('formats')
+            vinyl = is_vinyl_release(formats)
+            if vinyl or vinyl is None:
+                disc["format_checked"] = True
+                format_verified += 1
+            else:
+                # not vinyl, try to get master release
+                master_id = discogs_release.data.get('master_id')
+                if master_id:
+                    time.sleep(1)
+                    master = discogs.master(master_id)
+                    print(f"Switched to master: {entry} {disc['url']} -> {master.url}")
+                    disc["url"] = f"{master.url}"
+                    disc["id"] = master.id
+                    disc["format_checked"] = True
+                    format_switched += 1
+                else:
+                    disc["format_checked"] = True
+                    format_verified += 1
+        except Exception as e:
+            print(f"Error checking format for {entry}: {e}")
+            time.sleep(1)
+            continue
+
+    print(f"Job complete: {count} new additions, {hits} have info / {len(reg)}, {prev_attemps} previously attempted ({preorders} preorders), {failures} failures, format check: {format_verified} verified vinyl, {format_switched} switched to master")
     
     # write to file
     dig.write_registry(store, reg)

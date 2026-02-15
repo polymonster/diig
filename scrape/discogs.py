@@ -611,49 +611,49 @@ def populate_discogs_links(discogs, store):
                     hits += 1
 
     # fall through and try anything that was previously attempted
-    for entry in reg:
-        if time.monotonic() >= deadline:
-            print("terminating early to beat deadline")
-            break
-        if "discogs" in reg[entry] and "attempted" in reg[entry]["discogs"]:
-            if reg[entry]["discogs"].get("preorder"):
-                preorders += 1
-            print(f"{entry} - {concat_title(reg[entry])}")
-            try:
-                attempted_val = reg[entry]["discogs"].get("attempted")
-                if isinstance(attempted_val, bool):
-                    # First fallthrough: try algorithm 2
-                    result = release_search_2(discogs, reg[entry])
-                    next_attempt_index = 0
-                elif attempted_val == 0:
-                    # Second fallthrough: try algorithm 3 (label-based fuzzy)
-                    result = release_search_3(discogs, reg[entry])
-                    next_attempt_index = 1
-                else:
-                    # Already exhausted all algorithms
-                    if "-verbose" in sys.argv:
-                        print(f"{entry} {reg[entry]['cat']} - exhausted all {attempted_val + 1} algorithms")
+    if "-skip1" not in sys.argv:
+        for entry in reg:
+            if time.monotonic() >= deadline:
+                print("terminating early to beat deadline")
+                break
+            if "discogs" in reg[entry] and "attempted" in reg[entry]["discogs"]:
+                if reg[entry]["discogs"].get("preorder"):
+                    preorders += 1
+                print(f"{entry} - {concat_title(reg[entry])}")
+                try:
+                    attempted_val = reg[entry]["discogs"].get("attempted")
+                    if isinstance(attempted_val, bool):
+                        # First fallthrough: try algorithm 2
+                        result = release_search_2(discogs, reg[entry])
+                        next_attempt_index = 0
+                    elif attempted_val == 0:
+                        # Second fallthrough: try algorithm 3 (label-based fuzzy)
+                        result = release_search_3(discogs, reg[entry])
+                        next_attempt_index = 1
+                    else:
+                        # Already exhausted all algorithms
+                        if "-verbose" in sys.argv:
+                            print(f"{entry} {reg[entry]['cat']} - exhausted all {attempted_val + 1} algorithms")
+                        continue
+                    if result != None:
+                        reg[entry]["discogs"] = result
+                        count = count + 1
+                        hits += 1
+                    else:
+                        attempted_info = {"attempted": next_attempt_index}
+                        if reg[entry].get("store_tags", {}).get("preorder"):
+                            attempted_info["preorder"] = True
+                        reg[entry]["discogs"] = attempted_info
+                except:
+                    failures += 1
+                    print("failed with exception")
+                    time.sleep(1)
                     continue
-                if result != None:
-                    reg[entry]["discogs"] = result
-                    count = count + 1
-                    hits += 1
-                else:
-                    attempted_info = {"attempted": next_attempt_index}
-                    if reg[entry].get("store_tags", {}).get("preorder"):
-                        attempted_info["preorder"] = True
-                    reg[entry]["discogs"] = attempted_info
-            except:
-                failures += 1
-                print("failed with exception")
-                time.sleep(1)
-                continue
-
 
     # Third pass: verify format of existing discogs links
+    format_verified = 0
+    format_switched = 0
     if "-check-formats" in sys.argv:
-        format_verified = 0
-        format_switched = 0
         for entry in reg:
             if time.monotonic() >= deadline:
                 print("terminating early to beat deadline")

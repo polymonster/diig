@@ -31,7 +31,7 @@ jobs:
     - name: populate_discogs
       run: |
         cd scrape
-        python3 discogs.py -store '${{matrix.store}}' -key '${{secrets.SERVICE_ACCOUNT}}' -discogs-key '${{secrets.DISCOGS_KEY}}' -searches 100
+        python3 discogs.py -store '${{matrix.store}}' -key '${{secrets.SERVICE_ACCOUNT}}' -discogs-key '${{secrets.DISCOGS_KEY}}' -searches 100 -check-formats
     - name: commit
       run: |
         cd scrape/diig-registry

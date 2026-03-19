@@ -586,6 +586,14 @@ if __name__ == '__main__':
         fix_store(store)
         exit(0)
 
+    # backfill missing core fields (artist/title/label/cat) for a store
+    if "-backfill" in sys.argv:
+        store = sys.argv[sys.argv.index("-backfill") + 1]
+        backfill_fn = getattr(__import__(store), "backfill_missing", None)
+        if backfill_fn:
+            backfill_fn()
+        exit(0)
+
     if "-store" in sys.argv:
         # read store config
         stores = json.loads(open("stores.json", "r").read())

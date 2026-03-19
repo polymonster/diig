@@ -146,8 +146,13 @@ def scrape_page(url, store, store_dict, view, section, counter, session_scraped_
             if "artworks" in releases_dict[key]:
                 img_url_count = len(releases_dict[key]["artworks"])
 
-        # if we have no tracks or images, request product info
-        if (track_url_count == 0 or img_url_count == 0) and "-urls" in sys.argv:
+        # fetch track urls and artworks if missing and -urls flag is set
+        needs_url_fetch = (track_url_count == 0 or img_url_count == 0) and "-urls" in sys.argv
+
+        # fetch detail page if artist is missing (mandatory) or we need url info
+        needs_detail_fetch = "artist" not in releases_dict.get(key, {}) or needs_url_fetch
+
+        if needs_url_fetch:
             # based on this id we can get json by doing a post request to the API
             product_json = fetch_product_json(release_dict["internal_id"])
 
@@ -176,6 +181,7 @@ def scrape_page(url, store, store_dict, view, section, counter, session_scraped_
                     release_dict["artworks"].append(image_path.replace("100x100", "400x400"))
                     release_dict["artworks"].append(image_path.replace("100x100", ""))
 
+        if needs_detail_fetch:
             # detail info
             release_html_response = dig.request_url_limited(release_dict["link"])
             if release_html_response == None:
@@ -223,4 +229,62 @@ def scrape_page(url, store, store_dict, view, section, counter, session_scraped_
     dig.write_registry(store, releases_dict)
 
     return counter
+
+
+def backfill_missing():
+    store = "yoyaku"
+    releases_dict = dig.load_registry(store)
+
+    missing = {k: v for k, v in releases_dict.items() if "artist" not in v}
+    print(f"found {len(missing)} entries missing artist", flush=True)
+
+    updated = dict()
+    for key, release in missing.items():
+        print(f"backfilling: {key}", flush=True)
+
+        response = dig.request_url_limited(release["link"])
+        if response is None:
+            print(f"  failed to fetch: {release['link']}", flush=True)
+            continue
+
+        release_html_str = response.read().decode("utf8")
+
+        # strip related
+        related = release_html_str.find('<section class="related products')
+        if related != -1:
+            release_html_str = release_html_str[:related]
+
+        # title
+        title = dig.parse_class_single(release_html_str, "product_title entry-title", "h1")
+        release["title"] = html.unescape(dig.parse_strip_body(title))
+
+        # artist
+        pp = release_html_str.find("class=\"product-artists\"")
+        pe = release_html_str.find("</span>", pp)
+        release["artist"] = html.unescape(dig.parse_strip_body(release_html_str[pp:pe]))
+
+        # label
+        pp = release_html_str.find("class=\"product-labels\"")
+        pe = release_html_str.find("</span>", pp)
+        release["label"] = html.unescape(dig.parse_strip_body(release_html_str[pp:pe]))
+        release["label_link"] = dig.get_value(release_html_str[pp:pe], "href")
+
+        # cat
+        pp = release_html_str.find("class=\"sku\"")
+        pe = release_html_str.find("</span>", pp)
+        release["cat"] = html.unescape(dig.parse_strip_body(release_html_str[pp:pe]))
+
+        releases_dict[key] = release
+        updated[key] = release
+        print(f"  -> {release.get('artist', '?')} - {release.get('title', '?')}", flush=True)
+
+    if updated:
+        dig.write_registry(store, releases_dict)
+        print(f"wrote {len(updated)} updated entries to registry", flush=True)
+        if "-local-only" not in sys.argv:
+            dig.setup_firebase_auth()
+            dig.patch_releases(json.dumps(updated))
+            print(f"patched {len(updated)} entries to Firebase", flush=True)
+    else:
+        print("nothing to backfill", flush=True)
 

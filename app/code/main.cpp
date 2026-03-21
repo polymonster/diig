@@ -1274,6 +1274,10 @@ void* releases_view_loader(void* userdata)
     {
         u32 ri = (u32)view->releases.available_entries;
         auto release = releases_registry[entry.index];
+        
+        // skip null (from removed like?)
+        if(release.is_null())
+            continue;
 
         // simple info
         view->releases.artist[ri] = safe_str(release, "artist", "");
@@ -1283,11 +1287,19 @@ void* releases_view_loader(void* userdata)
         view->releases.cat[ri] = safe_str(release, "cat", "");
         view->releases.store[ri] = safe_str(release, "store", "");
         view->releases.label_link[ri] = safe_str(release, "label_link", "");
-        view->releases.like_count[ri] = release.value("/likes/count"_json_pointer, 0);
+        
+        // likes
+        view->releases.like_count[ri] = 0;
+        if (release.contains("likes") && release["likes"].contains("count")) {
+            view->releases.like_count[ri] = release["likes"]["count"].get<int>();
+        }
 
         // discogs info
         view->releases.discogs_url[ri] = safe_discogs_str(release, "url", "");
-        view->releases.discogs_id[ri] = release.value("/discogs/id"_json_pointer, (u64)-1);
+        view->releases.discogs_id[ri] = -1;
+        if (release.contains("discogs") && release["discogs"].contains("id")) {
+            view->releases.discogs_id[ri] = release["discogs"]["id"].get<int>();
+        }
 
         // clear
         view->releases.artwork_filepath[ri] = "";
@@ -2529,33 +2541,41 @@ namespace
                 f32 half_height = waveform_height * 0.5f;
                 f32 center_y = waveform_top + half_height;
 
-                for(u32 i = 0; i < buckets_to_draw; ++i)
-                {
-                    f32 bar_x = waveform_left + i * bar_width;
-                    f32 min_val = waveform_data.buckets[i * 2];
-                    f32 max_val = waveform_data.buckets[i * 2 + 1];
-
-                    // scale to waveform height
-                    f32 top_y = center_y - (max_val * half_height);
-                    f32 bottom_y = center_y - (min_val * half_height);
-
-                    // determine bar color - darker if already played, white if unplayed
-                    bool is_played = bar_x < progress_x;
-                    ImU32 bar_color = is_played ? IM_COL32(100, 100, 100, 128) : IM_COL32(225, 225, 225, 128);
-                    ImU32 bar_black = IM_COL32(0, 0, 0, 128);
-
-                    constexpr f32 shadow_thickness = 2.0f;
-                    draw->AddRectFilled(
-                            ImVec2(bar_x + shadow_thickness, top_y - shadow_thickness),
-                            ImVec2(bar_x + + shadow_thickness + bar_width - 1.0f, bottom_y),
-                            bar_black
-                    );
-
-                    draw->AddRectFilled(
-                            ImVec2(bar_x, top_y),
-                            ImVec2(bar_x + bar_width - 1.0f, bottom_y),
-                            bar_color
-                    );
+                for(u32 pass = 0; pass < 2; ++pass) {
+                    for(u32 i = 0; i < buckets_to_draw; ++i)
+                    {
+                        f32 bar_x = waveform_left + i * bar_width;
+                        f32 min_val = waveform_data.buckets[i * 2];
+                        f32 max_val = waveform_data.buckets[i * 2 + 1];
+                        
+                        // scale to waveform height
+                        f32 top_y = center_y - (max_val * half_height);
+                        f32 bottom_y = center_y - (min_val * half_height);
+                        
+                        // determine bar color - darker if already played, white if unplayed
+                        bool is_played = bar_x < progress_x;
+                        ImU32 bar_color = is_played ? IM_COL32(100, 100, 100, 128) : IM_COL32(225, 225, 225, 128);
+                        ImU32 bar_black = IM_COL32(0, 0, 0, 128);
+                        
+                        // drop shadow
+                        if(pass == 0) {
+                            constexpr f32 shadow_thickness = 4.0f;
+                            draw->AddRectFilled(
+                                                ImVec2(bar_x - shadow_thickness, top_y + shadow_thickness),
+                                                ImVec2(bar_x - shadow_thickness + bar_width, bottom_y + shadow_thickness),
+                                                bar_black
+                                                );
+                        }
+                        
+                        // waveform
+                        if(pass == 1) {
+                            draw->AddRectFilled(
+                                                ImVec2(bar_x, top_y),
+                                                ImVec2(bar_x + bar_width - 1.0f, bottom_y),
+                                                bar_color
+                                                );
+                        }
+                    }
                 }
 
                 // draw progress line
@@ -3128,7 +3148,10 @@ namespace
             f32 y = ImGui::GetCursorPos().y - ImGui::GetScrollY();
             if(y < (f32)h - ((f32)w * 1.1f)) // 1.1f to pad the end
             {
-                if(y > -h * 0.5f)
+                f32 texh = ctx.w; // texh is same as w (sqr)
+                float tex_mid = y - (texh * 0.25f);
+                float mid_feed = -h * 0.5f;
+                if(tex_mid > mid_feed)
                 {
                     if(ctx.top == -1)
                     {
@@ -4670,7 +4693,10 @@ void increment_server_like(const Str& id, s32 amount)
     else
     {
         // compute new value
-        val = std::max(amount + cur.value("/likes/count"_json_pointer, 0), 0);
+        if(cur.contains("likes") && cur["likes"].contains("count"))
+        {
+            val = std::max(amount + cur.value("/likes/count"_json_pointer, 0), 0);
+        }
     }
 
     // str payload

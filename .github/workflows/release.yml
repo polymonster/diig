@@ -32,43 +32,12 @@ jobs:
     - name: release_tesflight
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        DIG_IOS_DEV_64: ${{ secrets.DIG_IOS_DEV_64 }}
-        DIG_IOS_DIST_64: ${{ secrets.DIG_IOS_DIST_64 }}
-        P12_PASSWORD: ${{ secrets.P12_PASSWORD }}
-        KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
         API_KEY_H: ${{ secrets.API_KEY_H }}
         REFS_VERSION: ${{ github.ref }}
       run: |
         # select xcode 16 (self hosted)
         ls /Applications/
         sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
-
-        # create variables
-        DIG_IOS_DEV_PATH=$RUNNER_TEMP/dig_ios_dev_certificate.p12
-        DIG_IOS_DIST_PATH=$RUNNER_TEMP/dig_ios_dist_certificate.p12
-        KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
-
-        # import certificates, one for dev, one for distribution
-        echo -n "$DIG_IOS_DEV_64" | base64 --decode -o $DIG_IOS_DEV_PATH
-        echo -n "$DIG_IOS_DIST_64" | base64 --decode -o $DIG_IOS_DIST_PATH
-        ls $RUNNER_TEMP
-
-        # create temporary keychain
-        security create-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
-        security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
-        security unlock-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
-
-        # import certificates to keychain
-        security import $DIG_IOS_DEV_PATH -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
-        security import $DIG_IOS_DIST_PATH -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
-        security list-keychain -d user -s $KEYCHAIN_PATH
-
-        # apply provisioning profile
-        mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
-        cp app/dist/ios/digiosdev.mobileprovision ~/Library/MobileDevice/Provisioning\ Profiles
-        cp app/dist/ios/digiosdist.mobileprovision ~/Library/MobileDevice/Provisioning\ Profiles
-
-        ls ~/Library/MobileDevice/Provisioning\ Profiles
 
         # bump version in plist
         export VERSION=$(echo $REFS_VERSION| cut -d'/' -f 3)
@@ -81,8 +50,8 @@ jobs:
         pmtech/pmbuild ios
         pmtech/pmbuild ios -libs
         echo "$API_KEY_H" >> code/api_key.h
-        xcodebuild archive -workspace build/ios/diig_ios.xcworkspace -configuration Release -scheme diig -archivePath build/ios/diig_ios OTHER_CODE_SIGN_FLAGS="--keychain $KEYCHAIN_PATH" PROVISIONING_PROFILE_SPECIFIER="digiosdev" CODE_SIGN_STYLE="Manual"
-        xcodebuild -exportArchive -archivePath build/ios/diig_ios.xcarchive -exportPath build/ios/export -exportOptionsPlist dist/ios/ExportOptionsAgent.plist OTHER_CODE_SIGN_FLAGS="--keychain $KEYCHAIN_PATH" PROVISIONING_PROFILE_SPECIFIER="digiosdist" CODE_SIGN_STYLE="Manual"
+        xcodebuild archive -workspace build/ios/diig_ios.xcworkspace -configuration Release -scheme diig -archivePath build/ios/diig_ios -allowProvisioningUpdates CODE_SIGN_STYLE=Automatic DEVELOPMENT_TEAM=7C3Y39TX3G
+        xcodebuild -exportArchive -archivePath build/ios/diig_ios.xcarchive -exportPath build/ios/export -exportOptionsPlist dist/ios/ExportOptions.plist -allowProvisioningUpdates
         xcrun altool --upload-app -f build/ios/export/diig.ipa -t ios -u ${{secrets.APP_EMAIL}} -p ${{secrets.APP_PASSWORD}}
   release_google_play:
     needs: setup

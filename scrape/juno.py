@@ -210,7 +210,7 @@ def scrape_page(url, store, store_dict, view, section, counter, session_scraped_
         return -1
 
     # separate into items
-    releases = dig.parse_div(products[0], 'class="dv-item"')
+    releases = dig.parse_div(products[0], 'class="dv-item ')
 
     # open existing reg
     releases_dict = dig.load_registry(store)
@@ -226,7 +226,8 @@ def scrape_page(url, store, store_dict, view, section, counter, session_scraped_
         # chart pos
         if view in ["weekly_chart", "monthly_chart"]:
             # chart pos are listed
-            pos = dig.parse_nested_body(release, 4).strip()
+            pos_divs = dig.parse_class(release, 'class="productlist_widget_product_sn"', "div")
+            pos = dig.parse_strip_body(pos_divs[0]).strip() if pos_divs else "0"
             store_tags["has_charted"] = True
         else:
             # latest pos is manually tracked

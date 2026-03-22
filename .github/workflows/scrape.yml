@@ -61,6 +61,8 @@ jobs:
   sync-submodule:
     needs: scrape
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
     - uses: actions/checkout@v4
       with:
@@ -78,4 +80,5 @@ jobs:
         git config user.email github-actions@github.com
         git add scrape/diig-registry
         git diff --staged --quiet || git commit -m "- bump diig-registry submodule to latest"
+        git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
         git push origin HEAD:main

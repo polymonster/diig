@@ -94,6 +94,7 @@ import "pmtech/tools/pmbuild_ext/pmbuild_init.jsn"
                 "--renderer=metal"
                 "--platform_dir=osx"
 				"--pmtech_dir=${pmtech_dir}/"
+                "--disable_physics"
             ]
         },
 
@@ -153,6 +154,7 @@ import "pmtech/tools/pmbuild_ext/pmbuild_init.jsn"
                 "--xcode_target=ios"
                 "--pmtech_dir=${pmtech_dir}/"
                 "--plist=dist/ios/Info.plist"
+                "--disable_physics"
             ]
         }
 

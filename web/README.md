@@ -1,23 +1,38 @@
-# Nuxt Minimal Starter
+## Package Manager
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+pnpm - Get here [pnpm](https://pnpm.io/)
+
+## Environment Setup
+
+Before running the app, create a `.env` file in the `web/` directory with the following Firebase config values:
+
+```sh
+NUXT_PUBLIC_FIREBASE_API_KEY=
+NUXT_PUBLIC_FIREBASE_AUTH_DOMAIN=
+NUXT_PUBLIC_FIREBASE_DATABASE_URL=
+NUXT_PUBLIC_FIREBASE_PROJECT_ID=
+NUXT_PUBLIC_FIREBASE_STORAGE_BUCKET=
+NUXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=
+NUXT_PUBLIC_FIREBASE_APP_ID=
+NUXT_PUBLIC_FIREBASE_MEASUREMENT_ID=
+```
+
+To get these values:
+
+1. Open the Firebase Console and select the **diig** project
+2. Go to **Project Settings** (gear icon, top left)
+3. Scroll down to **Your apps** and select the web app
+4. Copy the values from the Firebase config snippet shown there
+
+The `.env` file is gitignored and should never be committed.
 
 ## Setup
 
 Make sure to install dependencies:
 
 ```bash
-# npm
-npm install
-
 # pnpm
 pnpm install
-
-# yarn
-yarn install
-
-# bun
-bun install
 ```
 
 ## Development Server
@@ -25,51 +40,8 @@ bun install
 Start the development server on `http://localhost:3000`:
 
 ```bash
-# npm
-npm run dev
-
 # pnpm
 pnpm dev
 
-# yarn
-yarn dev
-
-# bun
-bun run dev
+pnpm dev -o (opens tab for you)
 ```
-
-## Production
-
-Build the application for production:
-
-```bash
-# npm
-npm run build
-
-# pnpm
-pnpm build
-
-# yarn
-yarn build
-
-# bun
-bun run build
-```
-
-Locally preview production build:
-
-```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
-```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.

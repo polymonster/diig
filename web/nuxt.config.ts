@@ -1,6 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
+  ssr: false,
   devtools: { enabled: true },
 
   modules: [
@@ -9,7 +10,8 @@ export default defineNuxtConfig({
     '@nuxt/eslint',
     '@nuxt/test-utils',
     '@nuxtjs/tailwindcss',
-    'nuxt-vuefire'
+    'nuxt-vuefire',
+    '@pinia/nuxt',
   ],
 
   tailwindcss: {
@@ -20,7 +22,7 @@ export default defineNuxtConfig({
   vuefire: {
     auth: {
       enabled: true,
-      sessionCookie: true
+      sessionCookie: false
     },
     config: {
       apiKey: process.env.NUXT_PUBLIC_FIREBASE_API_KEY,
@@ -31,9 +33,6 @@ export default defineNuxtConfig({
       messagingSenderId: process.env.NUXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
       appId:process.env.NUXT_PUBLIC_FIREBASE_APP_ID,
       measurementId: process.env.NUXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
-    },
-    admin: {
-      serviceAccount: false, // Let App Hosting handle this
     },
   },
 })

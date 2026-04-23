@@ -1,13 +1,14 @@
 {
-  "apphosting": {
-    "backendId": "diig-web",
-    "rootDir": ".output/public",
+  "hosting": {
+    "public": ".output/public",
     "ignore": [
       "node_modules",
       ".git",
       "firebase-debug.log",
-      "firebase-debug.*.log",
-      "functions"
+      "firebase-debug.*.log"
+    ],
+    "rewrites": [
+      { "source": "**", "destination": "/index.html" }
     ]
   }
 }

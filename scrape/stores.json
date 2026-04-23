@@ -202,7 +202,8 @@
     "decks": {
         "sections": [
             "ten",
-            "hon"
+            "hon",
+            "ban"
         ],
         "section_display_names": [
             "Techno",

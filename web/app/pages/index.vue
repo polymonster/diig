@@ -60,13 +60,13 @@ const STORES = [
 ]
 
 const VIEWS = [
-  { id: 'new_releases', label: 'Latest' },
-  { id: 'chart',        label: 'Weekly Chart' },
+  { id: 'new_releases', label: 'New' },
+  { id: 'chart',        label: 'Hot' },
 ]
 
-const selectedView = ref('new_releases')
+const selectedView   = ref('new_releases')
 const sectionReleases = ref({})
-const loading = ref(false)
+const loading        = ref(false)
 
 function sectionKey(storeId, sectionId) {
   return `${storeId}__${sectionId}`
@@ -80,15 +80,15 @@ function triplet(store, section, viewId) {
 
 async function loadSection(store, section, viewId) {
   const key = sectionKey(store.id, section.id)
-  const t = triplet(store, section, viewId)
+  const t   = triplet(store, section, viewId)
   try {
     const token = await auth.currentUser.getIdToken()
-    const url = `${DB}/releases.json?orderBy="${t}"&startAt=0&auth=${token}`
-    const data = await fetch(url).then(r => r.json())
+    const url   = `${DB}/releases.json?orderBy="${t}"&startAt=0&auth=${token}`
+    const data  = await fetch(url).then(r => r.json())
     if (!data || typeof data !== 'object') { sectionReleases.value[key] = []; return }
     const items = Object.entries(data).map(([id, v]) => ({ id, ...v }))
     items.sort((a, b) => (a[t] ?? 999) - (b[t] ?? 999))
-    sectionReleases.value[key] = items.slice(0, 10)
+    sectionReleases.value[key] = items.slice(0, 40)
   } catch (e) {
     console.error(t, e)
     sectionReleases.value[key] = []
@@ -104,99 +104,83 @@ async function loadAll() {
   loading.value = false
 }
 
-watch(user, u => { if (u) loadAll() }, { immediate: true })
+watch(user, u => { if (u) { loadAll(); loadLikes() } }, { immediate: true })
 
 function selectView(viewId) {
+  stopAll()
   selectedView.value = viewId
   loadAll()
 }
 
-function artwork(release, store) {
-  const a = release.artworks
-  if (!a) return null
-  const urls = Array.isArray(a) ? a : Object.values(a)
-  if (store.id === 'redeye') {
-    return urls.find(u => u.includes('-1.')) ?? urls[0] ?? null
-  }
-  return urls[store.artIndex ?? 0] ?? urls[0] ?? null
+
+const releasesByStore = computed(() =>
+  STORES.map(store => {
+    const seen     = new Set()
+    const releases = []
+    for (const sec of store.sections) {
+      for (const r of sectionReleases.value[sectionKey(store.id, sec.id)] || []) {
+        if (!seen.has(r.id)) { seen.add(r.id); releases.push(r) }
+      }
+    }
+    return { store, releases: releases.slice(0, 40) }
+  }).filter(s => s.releases.length)
+)
+
+// ── Likes ─────────────────────────────────────────────────────────────────────
+
+const likes           = ref({})  // id -> timestamp
+const likeCountAdjust = ref({})  // id -> delta on top of server count
+
+function isLiked(id) { return id in likes.value }
+
+function likeCount(release) {
+  return Math.max(0, (release.likes?.count ?? 0) + (likeCountAdjust.value[release.id] ?? 0))
 }
+
+async function loadLikes() {
+  if (!auth.currentUser) return
+  const uid   = auth.currentUser.uid
+  const token = await auth.currentUser.getIdToken()
+  const data  = await fetch(`${DB}/users/${uid}/likes.json?auth=${token}`).then(r => r.json())
+  if (data && typeof data === 'object') likes.value = data
+}
+
+async function toggleLike(release, e) {
+  e.stopPropagation()
+  if (!auth.currentUser) return
+  const uid      = auth.currentUser.uid
+  const id       = release.id
+  const token    = await auth.currentUser.getIdToken()
+  const countUrl = `${DB}/releases/${id}/likes/count.json?auth=${token}`
+
+  if (isLiked(id)) {
+    const { [id]: _, ...rest } = likes.value
+    likes.value = rest
+    likeCountAdjust.value = { ...likeCountAdjust.value, [id]: (likeCountAdjust.value[id] ?? 0) - 1 }
+    await fetch(`${DB}/users/${uid}/likes/${id}.json?auth=${token}`, { method: 'DELETE' })
+    const cur = await fetch(countUrl).then(r => r.json()) || 0
+    await fetch(countUrl, { method: 'PUT', body: JSON.stringify(Math.max(0, cur - 1)) })
+  } else {
+    const ts = Date.now() / 1000
+    likes.value = { ...likes.value, [id]: ts }
+    likeCountAdjust.value = { ...likeCountAdjust.value, [id]: (likeCountAdjust.value[id] ?? 0) + 1 }
+    await fetch(`${DB}/users/${uid}/likes/${id}.json?auth=${token}`, { method: 'PUT', body: JSON.stringify(ts) })
+    const cur = await fetch(countUrl).then(r => r.json()) || 0
+    await fetch(countUrl, { method: 'PUT', body: JSON.stringify(cur + 1) })
+  }
+}
+
+function tags(release) { return release.store_tags || {} }
 
 // ── Player ────────────────────────────────────────────────────────────────────
 
-const activeId    = ref(null)
-const activeTrack = ref(0)
-const isPlaying   = ref(false)
-let audioEl       = null
+const menuOpen = useState('menuOpen', () => false)
 
-function toArray(val) {
-  if (!val) return []
-  return Array.isArray(val) ? val : Object.values(val)
-}
+const { activeId, activeTrack, isPlaying, releaseList, tileClick, setTrack, prevTrack, nextTrack, dotClick, computeDots, getTracks, getTrackNames, stopAll } = useAudio()
 
-function getTracks(release)    { return toArray(release.track_urls) }
-function getTrackNames(release){ return toArray(release.track_names) }
-
-function tileClick(release) {
-  if (activeId.value === release.id) {
-    if (audioEl?.paused) { audioEl.play().catch(() => {}); isPlaying.value = true }
-    else                 { audioEl?.pause();                isPlaying.value = false }
-    return
-  }
-  setTrack(release, 0)
-}
-
-function setTrack(release, idx) {
-  const urls = getTracks(release)
-  if (!urls.length) return
-  activeId.value    = release.id
-  activeTrack.value = idx
-  const url = urls[idx]
-  if (!url) return
-  if (!audioEl) {
-    audioEl = new Audio()
-  }
-  audioEl.onended = () => {
-    const next = activeTrack.value + 1
-    if (next < getTracks(release).length) setTrack(release, next)
-    else isPlaying.value = false
-  }
-  audioEl.src = url
-  audioEl.play().then(() => { isPlaying.value = true }).catch(() => {})
-}
-
-function prevTrack(release, e) {
-  e.stopPropagation()
-  if (activeTrack.value > 0) setTrack(release, activeTrack.value - 1)
-}
-
-function nextTrack(release, e) {
-  e.stopPropagation()
-  const urls = getTracks(release)
-  if (activeTrack.value < urls.length - 1) setTrack(release, activeTrack.value + 1)
-}
-
-function dotClick(release, dot, e) {
-  e.stopPropagation()
-  if (dot.index >= 0) setTrack(release, dot.index)
-}
-
-// Port of C++ compute_dots — max 5 to fit tile width
-function computeDots(n, s, max = 5) {
-  if (n <= max) {
-    return Array.from({ length: n }, (_, i) => ({ index: i, small: false, selected: i === s }))
-  }
-  const half = Math.floor(max / 2)
-  let start  = s - half
-  let end    = start + max - 1
-  if (start < 0) { start = 0;     end = max - 1 }
-  if (end >= n)  { end = n - 1;   start = n - max }
-  return Array.from({ length: max }, (_, i) => {
-    const idx  = start + i
-    const over = (start > 0 && i === 0) || (end < n - 1 && i === max - 1)
-    if (over) return { index: -1, small: true, selected: false }
-    return { index: idx, small: false, selected: idx === s }
-  })
-}
+watch(releasesByStore, val => {
+  releaseList.value = val.flatMap(({ releases }) => releases)
+})
 </script>
 
 <template>
@@ -211,7 +195,14 @@ function computeDots(n, s, max = 5) {
           :class="{ active: selectedView === v.id }"
           @click="selectView(v.id)"
         >{{ v.label }}</button>
+        <NuxtLink to="/stores" class="viewbtn stores-link">Stores &rsaquo;</NuxtLink>
       </nav>
+      <div class="header-right">
+        <NuxtLink to="/likes" class="likes-nav">
+          <span class="fa">&#xf004;</span>
+        </NuxtLink>
+        <button class="burger-btn fa" @click="menuOpen = !menuOpen">&#xf0c9;</button>
+      </div>
     </header>
 
     <div v-if="loading" class="loading">
@@ -219,36 +210,52 @@ function computeDots(n, s, max = 5) {
     </div>
 
     <main v-else class="content">
-      <div v-for="store in STORES" :key="store.id" class="store-block">
-        <h2 class="store-name">{{ store.name }}</h2>
-
-        <div v-for="section in store.sections" :key="section.id" class="section-row">
-          <h3 class="section-name">{{ section.name }}</h3>
-
-          <p v-if="!(sectionReleases[sectionKey(store.id, section.id)] || []).length" class="empty">no releases</p>
-          <div v-else style="display:flex;flex-wrap:wrap;gap:8px">
-            <div
-              v-for="release in sectionReleases[sectionKey(store.id, section.id)]"
-              :key="release.id"
-              class="tile"
-              :class="{ active: activeId === release.id, 'no-audio': !getTracks(release).length }"
-              @click="getTracks(release).length && tileClick(release)"
-            >
+      <div v-for="{ store, releases } in releasesByStore" :key="store.id" class="store-block">
+        <h2 class="store-name">
+          <NuxtLink :to="`/store/${store.id}`" class="store-link">{{ store.name }}</NuxtLink>
+        </h2>
+        <div class="tile-row">
+          <div
+            v-for="release in releases"
+            :key="release.id"
+            class="tile"
+            :class="{ active: activeId === release.id, 'no-audio': !getTracks(release).length }"
+            @click="getTracks(release).length && tileClick(release)"
+          >
+              <p v-if="release.cat" class="r-cat">{{ release.cat }}</p>
               <img
-                :src="artwork(release, store) || '/white_label.jpg'"
+                :src="artworkUrl(release) || '/white_label.jpg'"
                 :alt="release.title"
                 class="tile-art"
                 @error="e => e.target.src = '/white_label.jpg'"
               />
               <p class="r-artist">{{ release.artist }}</p>
-              <p class="r-title">{{ release.title }}</p>
+              <p class="r-title">{{ release.title || ' ' }}</p>
 
-              <!-- track name: only when active -->
-              <p v-if="activeId === release.id" class="r-trackname">
-                {{ getTrackNames(release)[activeTrack] || '' }}
-              </p>
+              <!-- like + buy left, hype right -->
+              <div class="icons-row">
+                <div class="icons-left">
+                  <button class="icon-btn like-btn" :class="{ liked: isLiked(release.id) }" @click="toggleLike(release, $event)">
+                    <span v-if="isLiked(release.id)" class="fa">&#xf004;</span><span v-else class="fa">&#xf08a;</span>
+                  </button>
+                  <a
+                    v-if="release.link"
+                    :href="release.link"
+                    target="_blank"
+                    class="icon-btn buy-btn"
+                    :class="{ preorder: tags(release).preorder, sold: tags(release).out_of_stock }"
+                    @click.stop
+                  >
+                    <span v-if="tags(release).preorder" class="fa">&#xf271;</span><span v-else class="fa">&#xf07a;</span>
+                  </a>
+                </div>
+                <div class="hype-icons">
+                  <span v-if="tags(release).has_charted"                                          class="fa hype fire"   title="Charted">&#xf06d;</span>
+                  <span v-if="tags(release).low_stock"                                            class="fa hype thermo" title="Low stock">&#xf2ca;</span>
+                  <span v-if="tags(release).has_been_out_of_stock && !tags(release).out_of_stock" class="fa hype excl"   title="Back in stock">&#xf12a;</span>
+                </div>
+              </div>
 
-              <!-- dots: always visible if tracks exist -->
               <div v-if="getTracks(release).length" class="dots-row">
                 <button
                   v-if="activeId === release.id && getTracks(release).length > 1"
@@ -257,23 +264,19 @@ function computeDots(n, s, max = 5) {
                   @click="prevTrack(release, $event)"
                 >&#8249;</button>
 
-                <svg :width="computeDots(getTracks(release).length, activeId === release.id ? activeTrack : -1).length * 12" height="12">
+                <template v-for="dots in [computeDots(getTracks(release).length, activeId === release.id ? activeTrack : -1)]" :key="0">
+                <svg :width="dots.length * 12" height="12">
                   <g
-                    v-for="(dot, i) in computeDots(getTracks(release).length, activeId === release.id ? activeTrack : -1)"
+                    v-for="(dot, i) in dots"
                     :key="i"
                     style="cursor:pointer"
                     @click="dotClick(release, dot, $event)"
                   >
-                    <!-- overflow small dot -->
                     <circle v-if="dot.small" :cx="i*12+6" cy="6" r="1.5" fill="#bbb" opacity="0.4" />
-                    <!-- play triangle on actively playing dot -->
                     <template v-else-if="dot.selected && isPlaying">
                       <polygon :points="`${i*12+4},3 ${i*12+4},9 ${i*12+9},6`" fill="#cc4d00" />
                     </template>
-                    <!-- selected but paused -->
-                    <circle v-else-if="dot.selected"
-                      :cx="i*12+6" cy="6" r="3.5" fill="#cc4d00" />
-                    <!-- normal unselected -->
+                    <circle v-else-if="dot.selected" :cx="i*12+6" cy="6" r="3.5" fill="#cc4d00" />
                     <circle v-else
                       :cx="i*12+6" cy="6" r="2.5"
                       :fill="activeId === release.id ? '#999' : '#ccc'"
@@ -281,6 +284,7 @@ function computeDots(n, s, max = 5) {
                     />
                   </g>
                 </svg>
+                </template>
 
                 <button
                   v-if="activeId === release.id && getTracks(release).length > 1"
@@ -289,7 +293,13 @@ function computeDots(n, s, max = 5) {
                   @click="nextTrack(release, $event)"
                 >&#8250;</button>
               </div>
-            </div>
+              <div v-else class="dots-row no-audio-row">
+                <span class="no-audio-label">no audio</span>
+              </div>
+
+              <div v-if="activeId === release.id" class="r-trackname-wrap">
+                <span class="r-trackname" :key="`${release.id}-${activeTrack}`">{{ getTrackNames(release)[activeTrack] || '' }}</span>
+              </div>
           </div>
         </div>
       </div>
@@ -303,7 +313,22 @@ function computeDots(n, s, max = 5) {
   src: url('/cousine-regular.ttf') format('truetype');
 }
 
+@font-face {
+  font-family: 'FontAwesome';
+  src: url('/fontawesome-webfont.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
 * { font-family: 'Cousine', monospace; box-sizing: border-box; }
+
+.fa {
+  font-family: 'FontAwesome';
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+}
 
 .page {
   min-height: 100vh;
@@ -344,8 +369,25 @@ function computeDots(n, s, max = 5) {
   transition: all 0.15s;
 }
 
-.viewbtn:hover { color: #333; }
+.viewbtn:hover  { color: #333; }
 .viewbtn.active { border-color: #0a0a0a; color: #0a0a0a; }
+
+.stores-link { text-decoration: none; }
+
+.header-right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.likes-nav {
+  font-size: 1rem;
+  color: #ccc;
+  text-decoration: none;
+  transition: color 0.15s;
+}
+.likes-nav:hover { color: #e03070; }
 
 .loading {
   display: flex;
@@ -371,53 +413,26 @@ function computeDots(n, s, max = 5) {
   padding: 1.5rem;
 }
 
-.store-block {
-  margin-bottom: 2.5rem;
-}
+.store-block { margin-bottom: 2rem; }
 
 .store-name {
   font-size: 0.7rem;
   letter-spacing: 0.15em;
   text-transform: uppercase;
-  color: #999;
-  margin: 0 0 1rem;
-}
-
-.section-row {
-  margin-bottom: 1.75rem;
-}
-
-.section-name {
-  font-size: 0.8rem;
-  color: #333;
   margin: 0 0 0.75rem;
-  font-weight: normal;
 }
 
-.tiles {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-  gap: 0.75rem;
-  width: 100%;
+.store-link {
+  color: #999;
+  text-decoration: none;
+  transition: color 0.15s;
 }
+.store-link:hover { color: #0a0a0a; }
 
-.tile {
-  cursor: default;
-}
-
-.art {
-  width: 100%;
-  aspect-ratio: 1;
-  background: #e0e0e0;
-  margin-bottom: 0.4rem;
-  overflow: hidden;
-}
-
-.art img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
+.tile-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .tile {
@@ -426,6 +441,8 @@ function computeDots(n, s, max = 5) {
   cursor: pointer;
 }
 
+.tile.no-audio { cursor: default; }
+
 .tile-art {
   width: 120px;
   height: 120px;
@@ -433,7 +450,13 @@ function computeDots(n, s, max = 5) {
   display: block;
 }
 
-.tile.active .tile-art {
+.r-cat {
+  font-size: 0.55rem;
+  color: #bbb;
+  margin: 0 0 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .r-artist {
@@ -443,7 +466,6 @@ function computeDots(n, s, max = 5) {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  text-align: center;
 }
 
 .r-title {
@@ -453,20 +475,27 @@ function computeDots(n, s, max = 5) {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  min-height: 1em;
+}
+
+.r-trackname-wrap {
+  overflow: hidden;
   text-align: center;
+  margin-top: 3px;
 }
 
 .r-trackname {
+  display: inline-block;
   font-size: 0.58rem;
   color: #cc4d00;
-  margin: 3px 0 2px;
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  text-align: center;
+  animation: trackscroll 7s ease-in-out infinite;
 }
 
-.tile.no-audio { cursor: default; }
+@keyframes trackscroll {
+  0%,  20% { transform: translateX(0); }
+  80%, 100% { transform: translateX(min(0px, calc(120px - 100%))); }
+}
 
 .dots-row {
   display: flex;
@@ -476,8 +505,10 @@ function computeDots(n, s, max = 5) {
   margin-top: 2px;
 }
 
-.dots {
-  flex-shrink: 0;
+.no-audio-label {
+  font-size: 0.5rem;
+  color: #ddd;
+  letter-spacing: 0.05em;
 }
 
 .nav-btn {
@@ -494,6 +525,59 @@ function computeDots(n, s, max = 5) {
 
 .nav-btn:not(:disabled):hover { color: #333; }
 .nav-btn:disabled { opacity: 0.25; cursor: default; }
+
+/* Icons row */
+.icons-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 4px;
+  height: 16px;
+}
+
+.icons-left {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.icon-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  color: #bbb;
+  font-size: 0.75rem;
+  line-height: 1;
+  transition: color 0.15s;
+  text-decoration: none;
+}
+
+.like-btn:hover     { color: #e03070; }
+.like-btn.liked     { color: #e03070; }
+.like-count {
+  font-family: 'Cousine', monospace;
+  font-size: 0.55rem;
+  color: inherit;
+}
+
+.buy-btn:hover      { color: #333; }
+.buy-btn.preorder   { color: #7a8a99; }
+.buy-btn.sold       { color: #ccc; opacity: 0.4; }
+
+.hype-icons {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 0.7rem;
+}
+
+.hype.fire   { color: #cc4d00; }
+.hype.thermo { color: #e09000; }
+.hype.excl   { color: #aaa; }
 
 .empty {
   font-size: 0.75rem;

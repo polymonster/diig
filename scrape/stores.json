@@ -199,6 +199,29 @@
         "scrape_rate": 5,
         "art_index": 1
     },
+    "vinylunderground": {
+        "sections": [
+            "deep-techno-electro",
+            "house-deep-house",
+            "tech-house-and-minimal",
+            "jungle-drum-n-bass-rave"
+        ],
+        "section_display_names": [
+            "Deep Techno / Electro",
+            "House / Deep House",
+            "Tech House / Minimal",
+            "Jungle / DnB / Rave"
+        ],
+        "view_order": ["new_releases"],
+        "views": {
+            "new_releases": {
+                "url": "https://vinylunderground.co.uk/collections/${{section}}/products.json?page=${{page}}&limit=40&sort_by=created-descending",
+                "page_count": 10,
+                "display_name": "Latest"
+            }
+        },
+        "scrape_rate": 5
+    },
     "decks": {
         "sections": [
             "ten",

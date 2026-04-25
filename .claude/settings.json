@@ -1,7 +1,12 @@
 {
   "permissions": {
     "allow": [
-      "Bash(python -c \":*)"
+      "Bash(python -c \":*)",
+      "WebFetch(domain:vinylunderground.co.uk)",
+      "WebSearch",
+      "Bash(curl -s \"https://vinylunderground.co.uk/products/deepchord-campfire-ep\")",
+      "Read(//tmp/**)",
+      "Bash(curl -s \"https://vinylunderground.co.uk/products/teflon-dons-coastal-commission-the-rendezvous\")"
     ]
   }
 }

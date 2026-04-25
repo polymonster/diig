@@ -8,7 +8,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        store: [redeye, juno, phonica, yoyaku, hardwax, decks]
+        store: [redeye, juno, phonica, yoyaku, hardwax, decks, vinylunderground]
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4

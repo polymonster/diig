@@ -12,6 +12,7 @@ on:
           - phonica
           - yoyaku
           - hardwax
+          - vinylunderground
 jobs:
   update-stores:
     runs-on: ubuntu-latest

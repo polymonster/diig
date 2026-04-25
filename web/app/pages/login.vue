@@ -2,9 +2,8 @@
 import { useFirebaseAuth, useCurrentUser } from 'vuefire'
 import {
   signInWithEmailAndPassword,
-  setPersistence,
   browserLocalPersistence,
-  browserSessionPersistence,
+  setPersistence,
   sendPasswordResetEmail
 } from 'firebase/auth'
 
@@ -17,55 +16,23 @@ const password = ref('')
 const loading = ref(false)
 const error = ref('')
 const success = ref('')
-const rememberMe = ref(false)
-const showForgotPassword = ref(false) // Toggle forgot password view
-const resetLoading = ref(false) // Separate loading state for password reset
+const showForgotPassword = ref(false)
+const resetLoading = ref(false)
 
-// Add email validation computed property
-const isValidEmail = computed(() => {
-  if (!email.value) return false
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)
-})
-
-// Add form validation computed property
-const isFormValid = computed(() => {
-  return isValidEmail.value && password.value.length >= 6
-})
+const isValidEmail = computed(() => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value))
+const isFormValid = computed(() => isValidEmail.value && password.value.length >= 6)
 
 watch(user, (newUser) => {
   if (newUser) router.push('/')
 }, { immediate: true })
 
 const handleEmailLogin = async () => {
-  if (!auth) return
-
-  // Validate before proceeding
-  if (!isValidEmail.value) {
-    error.value = 'Please enter a valid email address.'
-    return
-  }
-
-  if (password.value.length < 6) {
-    error.value = 'Password must be at least 6 characters.'
-    return
-  }
-
+  if (!auth || !isFormValid.value) return
   loading.value = true
   error.value = ''
-  success.value = ''
-
   try {
-    // Set persistence based on user preference
-    await setPersistence(
-      auth,
-      rememberMe.value ? browserLocalPersistence : browserSessionPersistence
-    )
-
+    await setPersistence(auth, browserLocalPersistence)
     await signInWithEmailAndPassword(auth, email.value, password.value)
-    success.value = 'Login successful! Redirecting...'
-
-    // Clear sensitive data
-    password.value = ''
   } catch (err: any) {
     error.value = getErrorMessage(err.code)
     password.value = ''
@@ -75,23 +42,13 @@ const handleEmailLogin = async () => {
 }
 
 const handlePasswordReset = async () => {
-  if (!auth) return
-
-  // Validate email before sending reset
-  if (!isValidEmail.value) {
-    error.value = 'Please enter a valid email address to reset your password.'
-    return
-  }
-
+  if (!auth || !isValidEmail.value) return
   resetLoading.value = true
   error.value = ''
   success.value = ''
-
   try {
     await sendPasswordResetEmail(auth, email.value)
-    success.value = 'Password reset email sent! Check your inbox.'
-
-    // Optionally switch back to login view after a delay
+    success.value = 'Reset link sent — check your inbox.'
     setTimeout(() => {
       showForgotPassword.value = false
       success.value = ''
@@ -103,210 +60,199 @@ const handlePasswordReset = async () => {
   }
 }
 
-const toggleForgotPassword = () => {
-  showForgotPassword.value = !showForgotPassword.value
-  error.value = ''
-  success.value = ''
-  password.value = ''
-}
+const getErrorMessage = (code: string) => ({
+  'auth/invalid-email': 'Invalid email address.',
+  'auth/user-disabled': 'This account has been disabled.',
+  'auth/user-not-found': 'Invalid email or password.',
+  'auth/wrong-password': 'Invalid email or password.',
+  'auth/invalid-credential': 'Invalid email or password.',
+  'auth/too-many-requests': 'Too many attempts — try again later.',
+} as Record<string, string>)[code] ?? 'Something went wrong, please try again.'
 
-const getErrorMessage = (code: string): string => {
-  const messages: Record<string, string> = {
-    'auth/invalid-email': 'Invalid email address.',
-    'auth/user-disabled': 'This account has been disabled.',
-    'auth/user-not-found': 'No account found with this email.',
-    'auth/wrong-password': 'Incorrect password.',
-    'auth/invalid-credential': 'Invalid email or password.',
-    'auth/too-many-requests': 'Too many failed attempts. Please try again later.',
-  }
-  return messages[code] || 'An error occurred. Please try again.'
-}
-
-const getPasswordResetErrorMessage = (code: string): string => {
-  const messages: Record<string, string> = {
-    'auth/invalid-email': 'Invalid email address.',
-    'auth/user-not-found': 'No account found with this email.',
-    'auth/too-many-requests': 'Too many requests. Please try again later.',
-  }
-  return messages[code] || 'Failed to send password reset email. Please try again.'
-}
+const getPasswordResetErrorMessage = (code: string) => ({
+  'auth/invalid-email': 'Invalid email address.',
+  'auth/user-not-found': 'No account found with that email.',
+  'auth/too-many-requests': 'Too many requests — try again later.',
+} as Record<string, string>)[code] ?? 'Failed to send reset email.'
 </script>
 
 <template>
-  <div>
-    <h1 class="text-3xl">diig - {{ showForgotPassword ? 'reset password' : 'login' }}</h1>
+  <div class="page">
+    <div class="card">
+      <h1 class="title">diig</h1>
+      <p class="subtitle">{{ showForgotPassword ? 'reset password' : 'sign in' }}</p>
 
-    <div v-if="error" class="error-message">
-      {{ error }}
-    </div>
+      <div v-if="error" class="msg error">{{ error }}</div>
+      <div v-if="success" class="msg success">{{ success }}</div>
 
-    <div v-if="success" class="success-message">
-      {{ success }}
-    </div>
-
-    <!-- Login Form -->
-    <form v-if="!showForgotPassword" @submit.prevent="handleEmailLogin">
-      <div>
-        <label for="email">Email address</label>
+      <form v-if="!showForgotPassword" @submit.prevent="handleEmailLogin">
         <input
-          id="email"
           v-model="email"
           type="email"
+          placeholder="email"
+          autocomplete="email"
           required
-          placeholder="you@example.com"
-          :class="{ 'invalid': email && !isValidEmail }"
+          class="field"
         />
-        <span v-if="email && !isValidEmail" class="error-hint">
-          Please enter a valid email address
-        </span>
-      </div>
-
-      <div>
-        <label for="password">Password</label>
         <input
-          id="password"
           v-model="password"
           type="password"
+          placeholder="password"
+          autocomplete="current-password"
           required
-          placeholder="••••••••"
-          :class="{ 'invalid': password && password.length < 6 }"
+          class="field"
         />
-        <span v-if="password && password.length < 6" class="error-hint">
-          Password must be at least 6 characters
-        </span>
-      </div>
+        <div class="actions">
+          <button type="submit" :disabled="loading || !isFormValid" class="btn">
+            {{ loading ? 'signing in...' : 'sign in' }}
+          </button>
+          <button type="button" class="ghost" @click="showForgotPassword = true">
+            forgot password
+          </button>
+        </div>
+      </form>
 
-      <div class="remember-me">
+      <form v-else @submit.prevent="handlePasswordReset">
         <input
-          id="rememberMe"
-          v-model="rememberMe"
-          type="checkbox"
-        />
-        <label for="rememberMe">Remember me</label>
-      </div>
-
-      <button
-        type="submit"
-        :disabled="loading || !isFormValid"
-      >
-        <span v-if="!loading">Sign in</span>
-        <span v-else>Signing in...</span>
-      </button>
-
-      <button
-        type="button"
-        @click="toggleForgotPassword"
-        class="forgot-password-link"
-      >
-        Forgot password?
-      </button>
-    </form>
-
-    <!-- Forgot Password Form -->
-    <form v-else @submit.prevent="handlePasswordReset">
-      <p class="reset-description">
-        Enter your email address and we'll send you a link to reset your password.
-      </p>
-
-      <div>
-        <label for="reset-email">Email address</label>
-        <input
-          id="reset-email"
           v-model="email"
           type="email"
+          placeholder="email"
+          autocomplete="email"
           required
-          placeholder="you@example.com"
-          :class="{ 'invalid': email && !isValidEmail }"
+          class="field"
         />
-        <span v-if="email && !isValidEmail" class="error-hint">
-          Please enter a valid email address
-        </span>
-      </div>
-
-      <button
-        type="submit"
-        :disabled="resetLoading || !isValidEmail"
-      >
-        <span v-if="!resetLoading">Send reset link</span>
-        <span v-else>Sending...</span>
-      </button>
-
-      <button
-        type="button"
-        @click="toggleForgotPassword"
-        class="back-to-login-link"
-      >
-        Back to login
-      </button>
-    </form>
+        <div class="actions">
+          <button type="submit" :disabled="resetLoading || !isValidEmail" class="btn">
+            {{ resetLoading ? 'sending...' : 'send reset link' }}
+          </button>
+          <button type="button" class="ghost" @click="showForgotPassword = false">
+            back to sign in
+          </button>
+        </div>
+      </form>
+    </div>
   </div>
 </template>
 
 <style scoped>
-.invalid {
-  border-color: red;
+@font-face {
+  font-family: 'Cousine';
+  src: url('/cousine-regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
 }
 
-.error-hint {
-  color: red;
-  font-size: 0.875rem;
-  margin-top: 0.25rem;
-  display: block;
+* {
+  font-family: 'Cousine', monospace;
 }
 
-.error-message {
-  color: red;
-  padding: 1rem;
-  margin-bottom: 1rem;
-  background-color: #fee;
-  border-radius: 0.25rem;
-}
-
-.success-message {
-  color: green;
-  padding: 1rem;
-  margin-bottom: 1rem;
-  background-color: #efe;
-  border-radius: 0.25rem;
-}
-
-.remember-me {
+.page {
+  min-height: 100vh;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  margin: 1rem 0;
+  justify-content: center;
+  background: #f5f5f5;
 }
 
-.remember-me input[type="checkbox"] {
-  width: auto;
+.card {
+  width: 100%;
+  max-width: 400px;
+  padding: 2.5rem;
+}
+
+.title {
+  font-size: 2rem;
+  color: #0a0a0a;
+  margin: 0 0 0.25rem;
+  letter-spacing: 0.05em;
+}
+
+.subtitle {
+  font-size: 0.85rem;
+  color: #999;
+  margin: 0 0 2rem;
+}
+
+.field {
+  display: block;
+  width: 100%;
+  padding: 0.9rem 1rem;
+  margin-bottom: 0.75rem;
+  background: #fff;
+  border: 1px solid #ccc;
+  color: #0a0a0a;
+  font-family: 'Cousine', monospace;
+  font-size: 1rem;
+  box-sizing: border-box;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.field::placeholder {
+  color: #aaa;
+}
+
+.field:focus {
+  border-color: #999;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  margin-top: 1.25rem;
+}
+
+.btn {
+  padding: 0.75rem 1.5rem;
+  background: #0a0a0a;
+  color: #fff;
+  border: none;
+  font-family: 'Cousine', monospace;
+  font-size: 0.9rem;
   cursor: pointer;
+  transition: opacity 0.15s;
 }
 
-.remember-me label {
-  cursor: pointer;
-  margin: 0;
+.btn:disabled {
+  opacity: 0.4;
+  cursor: default;
 }
 
-.forgot-password-link,
-.back-to-login-link {
+.btn:not(:disabled):hover {
+  opacity: 0.75;
+}
+
+.ghost {
   background: none;
   border: none;
-  color: #0066cc;
-  text-decoration: underline;
+  color: #aaa;
+  font-family: 'Cousine', monospace;
+  font-size: 0.85rem;
   cursor: pointer;
-  padding: 0.5rem 0;
-  margin-top: 0.5rem;
-  font-size: 0.875rem;
+  padding: 0;
+  transition: color 0.15s;
 }
 
-.forgot-password-link:hover,
-.back-to-login-link:hover {
-  color: #0052a3;
-}
-
-.reset-description {
-  margin-bottom: 1.5rem;
+.ghost:hover {
   color: #666;
-  font-size: 0.875rem;
+}
+
+.msg {
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  font-size: 0.85rem;
+}
+
+.error {
+  background: #fff0f0;
+  border: 1px solid #f0b0b0;
+  color: #a03030;
+}
+
+.success {
+  background: #f0fff0;
+  border: 1px solid #b0e0b0;
+  color: #307030;
 }
 </style>

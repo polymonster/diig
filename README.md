@@ -5,6 +5,8 @@
 
 A record digging app for people who collect records. Fast audio player, infinite scroll, offline caching. Swipe through new releases and charts from your favourite stores, tap through to buy.
 
+Available as a native iOS/Android app and a web app.
+
 <p align="center">
     <img src="https://github.com/polymonster/polymonster.github.io/blob/master/images/diig/diig.gif?raw=true" width="640" height="360"/>
 </p>
@@ -16,7 +18,7 @@ Available now on iOS and Android. Contact to join:
 - **iOS** - via TestFlight
 - **Android** - via Google Play internal testing
 
-Website coming soon. Get in touch to register interest.
+Also available as a [web app](https://diig-19d4c.web.app).
 
 ## Contributing
 
@@ -75,7 +77,7 @@ Where `-key` is a valid Firebase auth token. Run `python3 dig.py -help` for full
         },
         "new_releases": {
             "url": "https://store.com/${{section}}/new/page/${{page}}",
-            "page_count": 10In thi
+            "page_count": 10
         }
     }
 }
@@ -84,6 +86,28 @@ Where `-key` is a valid Firebase auth token. Run `python3 dig.py -help` for full
 ### Discogs
 
 Discogs links are fetched or attempted to be fetched for all releases. This algrithm is work in progress and it is tricky to find the exact match in some cases. You can add items directly to you Discogs wantlist from in the app. In time deeper integration with discogs will be implemented.
+
+## Building the Web App
+
+Built with [Nuxt](https://nuxt.com) and deployed to Firebase Hosting.
+
+### Dev server
+
+```bash
+cd web
+pnpm install
+pnpm dev
+```
+
+### Generate & deploy
+
+Requires the [Firebase CLI](https://firebase.google.com/docs/cli) (`npm install -g firebase-tools`).
+
+```bash
+cd web
+pnpm generate
+firebase deploy
+```
 
 ## Building the App
 

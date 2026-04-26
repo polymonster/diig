@@ -88,7 +88,7 @@ async function loadSection(store, section, viewId) {
     if (!data || typeof data !== 'object') { sectionReleases.value[key] = []; return }
     const items = Object.entries(data).map(([id, v]) => ({ id, ...v }))
     items.sort((a, b) => (a[t] ?? 999) - (b[t] ?? 999))
-    sectionReleases.value[key] = items.slice(0, 40)
+    sectionReleases.value[key] = items.slice(0, 32)
   } catch (e) {
     console.error(t, e)
     sectionReleases.value[key] = []
@@ -122,7 +122,7 @@ const releasesByStore = computed(() =>
         if (!seen.has(r.id)) { seen.add(r.id); releases.push(r) }
       }
     }
-    return { store, releases: releases.slice(0, 40) }
+    return { store, releases: releases.slice(0, 32) }
   }).filter(s => s.releases.length)
 )
 
@@ -181,6 +181,24 @@ const { activeId, activeTrack, isPlaying, releaseList, tileClick, setTrack, prev
 watch(releasesByStore, val => {
   releaseList.value = val.flatMap(({ releases }) => releases)
 })
+
+// ── Swipe (mobile track change) ───────────────────────────────────────────────
+
+let swipeStartX = 0
+let swipeStartY = 0
+
+function onSwipeStart(e) {
+  swipeStartX = e.touches[0].clientX
+  swipeStartY = e.touches[0].clientY
+}
+
+function onSwipeEnd(release, e) {
+  const dx = e.changedTouches[0].clientX - swipeStartX
+  const dy = e.changedTouches[0].clientY - swipeStartY
+  if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) {
+    dx < 0 ? nextTrack(release, e) : prevTrack(release, e)
+  }
+}
 </script>
 
 <template>
@@ -198,6 +216,9 @@ watch(releasesByStore, val => {
         <NuxtLink to="/stores" class="viewbtn stores-link">Stores &rsaquo;</NuxtLink>
       </nav>
       <div class="header-right">
+        <NuxtLink to="/chat" class="chat-nav">
+          <span class="fa">&#xf086;</span>
+        </NuxtLink>
         <NuxtLink to="/likes" class="likes-nav">
           <span class="fa">&#xf004;</span>
         </NuxtLink>
@@ -221,6 +242,8 @@ watch(releasesByStore, val => {
             class="tile"
             :class="{ active: activeId === release.id, 'no-audio': !getTracks(release).length }"
             @click="getTracks(release).length && tileClick(release)"
+            @touchstart.passive="onSwipeStart"
+            @touchend.passive="onSwipeEnd(release, $event)"
           >
               <p v-if="release.cat" class="r-cat">{{ release.cat }}</p>
               <img
@@ -381,6 +404,14 @@ watch(releasesByStore, val => {
   gap: 0.9rem;
 }
 
+.chat-nav {
+  font-size: 1rem;
+  color: #ccc;
+  text-decoration: none;
+  transition: color 0.15s;
+}
+.chat-nav:hover { color: #555; }
+
 .likes-nav {
   font-size: 1rem;
   color: #ccc;
@@ -436,16 +467,16 @@ watch(releasesByStore, val => {
 }
 
 .tile {
-  width: 120px;
-  flex: 0 0 120px;
+  width: 150px;
+  flex: 0 0 150px;
   cursor: pointer;
 }
 
 .tile.no-audio { cursor: default; }
 
 .tile-art {
-  width: 120px;
-  height: 120px;
+  width: 150px;
+  height: 150px;
   object-fit: cover;
   display: block;
 }
@@ -494,7 +525,16 @@ watch(releasesByStore, val => {
 
 @keyframes trackscroll {
   0%,  20% { transform: translateX(0); }
-  80%, 100% { transform: translateX(min(0px, calc(120px - 100%))); }
+  80%, 100% { transform: translateX(min(0px, calc(150px - 100%))); }
+}
+
+@media (max-width: 600px) {
+  .tile     { width: 100%; flex: 0 0 100%; }
+  .tile-art { width: 100%; height: auto; aspect-ratio: 1; }
+  @keyframes trackscroll {
+    0%,  20% { transform: translateX(0); }
+    80%, 100% { transform: translateX(min(0px, calc(100vw - 3rem - 100%))); }
+  }
 }
 
 .dots-row {

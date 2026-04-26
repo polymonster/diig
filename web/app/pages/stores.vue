@@ -9,7 +9,7 @@ const VIEW_PRIORITY = ['new_releases', 'weekly_chart', 'monthly_chart']
 
 // ── Store data (fetched from Firebase) ────────────────────────────────────────
 
-const rawStores      = ref({})
+const rawStores       = ref({})
 const selectedStoreId = ref('')
 const selectedViewId  = ref('new_releases')
 const enabledSections = ref(new Set())
@@ -24,11 +24,11 @@ const storeList = computed(() => {
       const rest     = Object.keys(vs).filter(v => !ord.includes(v))
       return {
         id,
-        name:     id.charAt(0).toUpperCase() + id.slice(1),
+        name:     d.display_name || id.charAt(0).toUpperCase() + id.slice(1),
         artIndex: d.art_index || 0,
         views: [...priority, ...rest].map(v => ({
-          id:         v,
-          label:      vs[v].display_name || v,
+          id:          v,
+          label:       vs[v].display_name || v,
           sectionless: !!vs[v].sectionless,
         })),
         sections: (d.sections || []).map((secId, i) => ({
@@ -39,14 +39,17 @@ const storeList = computed(() => {
     })
 })
 
-const selectedStore   = computed(() => storeList.value.find(s => s.id === selectedStoreId.value))
-const currentView     = computed(() => selectedStore.value?.views.find(v => v.id === selectedViewId.value))
-const isSectionless   = computed(() => currentView.value?.sectionless ?? false)
+const selectedStore = computed(() => storeList.value.find(s => s.id === selectedStoreId.value))
+const currentView   = computed(() => selectedStore.value?.views.find(v => v.id === selectedViewId.value))
+const isSectionless = computed(() => currentView.value?.sectionless ?? false)
 
 // ── Release loading ───────────────────────────────────────────────────────────
 
 const sectionReleases = ref({})
 const loading         = ref(false)
+const visibleCount    = ref(30)
+const sentinel        = ref(null)
+let   observer        = null
 
 function sectionKey(storeId, sectionId) { return `${storeId}__${sectionId}` }
 
@@ -60,7 +63,7 @@ async function loadSection(store, sectionId, viewId) {
     if (!data || typeof data !== 'object') { sectionReleases.value[key] = []; return }
     const items = Object.entries(data).map(([id, v]) => ({ id, ...v }))
     items.sort((a, b) => (a[t] ?? 999) - (b[t] ?? 999))
-    sectionReleases.value[key] = items.slice(0, 40)
+    sectionReleases.value[key] = items.slice(0, 150)
   } catch (e) {
     console.error(t, e)
     sectionReleases.value[key] = []
@@ -71,7 +74,8 @@ async function loadAll() {
   const store = selectedStore.value
   if (!store || !auth.currentUser) return
   stopAll()
-  loading.value = true
+  loading.value  = true
+  visibleCount.value = 30
   const viewId     = selectedViewId.value
   const sectionIds = isSectionless.value ? ['sectionless'] : store.sections.map(s => s.id)
   const blank      = {}
@@ -79,6 +83,8 @@ async function loadAll() {
   sectionReleases.value = blank
   await Promise.all(sectionIds.map(s => loadSection(store, s, viewId)))
   loading.value = false
+  await nextTick()
+  setupObserver()
 }
 
 const aggregatedReleases = computed(() => {
@@ -93,8 +99,21 @@ const aggregatedReleases = computed(() => {
       if (!seen.has(r.id)) { seen.add(r.id); out.push(r) }
     }
   }
-  return out.slice(0, 120)
+  return out
 })
+
+const visibleReleases = computed(() => aggregatedReleases.value.slice(0, visibleCount.value))
+
+function setupObserver() {
+  if (observer) observer.disconnect()
+  if (!sentinel.value) return
+  observer = new IntersectionObserver(entries => {
+    if (entries[0].isIntersecting) visibleCount.value += 30
+  }, { rootMargin: '200px' })
+  observer.observe(sentinel.value)
+}
+
+onUnmounted(() => { if (observer) observer.disconnect() })
 
 function toggleSection(secId) {
   const next = new Set(enabledSections.value)
@@ -178,6 +197,24 @@ const menuOpen = useState('menuOpen', () => false)
 const { activeId, activeTrack, isPlaying, releaseList, tileClick, prevTrack, nextTrack, dotClick, computeDots, getTracks, getTrackNames, stopAll } = useAudio()
 
 watch(aggregatedReleases, val => { releaseList.value = val })
+
+// ── Swipe (mobile track change) ───────────────────────────────────────────────
+
+let swipeStartX = 0
+let swipeStartY = 0
+
+function onSwipeStart(e) {
+  swipeStartX = e.touches[0].clientX
+  swipeStartY = e.touches[0].clientY
+}
+
+function onSwipeEnd(release, e) {
+  const dx = e.changedTouches[0].clientX - swipeStartX
+  const dy = e.changedTouches[0].clientY - swipeStartY
+  if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) {
+    dx < 0 ? nextTrack(release, e) : prevTrack(release, e)
+  }
+}
 </script>
 
 <template>
@@ -195,6 +232,9 @@ watch(aggregatedReleases, val => { releaseList.value = val })
       </div>
 
       <div class="header-right">
+        <NuxtLink to="/chat" class="chat-nav">
+          <span class="fa">&#xf086;</span>
+        </NuxtLink>
         <NuxtLink to="/likes" class="likes-nav">
           <span class="fa">&#xf004;</span>
         </NuxtLink>
@@ -217,15 +257,17 @@ watch(aggregatedReleases, val => { releaseList.value = val })
     </div>
 
     <main v-else class="content">
-      <p v-if="!aggregatedReleases.length" class="empty">no releases</p>
+      <p v-if="!visibleReleases.length" class="empty">no releases</p>
 
       <div v-else class="tile-row">
         <div
-          v-for="release in aggregatedReleases"
+          v-for="release in visibleReleases"
           :key="release.id"
           class="tile"
           :class="{ active: activeId === release.id, 'no-audio': !getTracks(release).length }"
           @click="getTracks(release).length && tileClick(release)"
+          @touchstart.passive="onSwipeStart"
+          @touchend.passive="onSwipeEnd(release, $event)"
         >
           <p v-if="release.cat" class="r-cat">{{ release.cat }}</p>
           <img
@@ -235,7 +277,7 @@ watch(aggregatedReleases, val => { releaseList.value = val })
             @error="e => e.target.src = '/white_label.jpg'"
           />
           <p class="r-artist">{{ release.artist }}</p>
-          <p class="r-title">{{ release.title || ' ' }}</p>
+          <p class="r-title">{{ release.title || ' ' }}</p>
 
           <div class="icons-row">
             <div class="icons-left">
@@ -306,6 +348,8 @@ watch(aggregatedReleases, val => { releaseList.value = val })
           </div>
         </div>
       </div>
+
+      <div ref="sentinel" class="sentinel" />
     </main>
   </div>
 </template>
@@ -389,6 +433,14 @@ watch(aggregatedReleases, val => { releaseList.value = val })
   gap: 0.9rem;
 }
 
+.chat-nav {
+  font-size: 1rem;
+  color: #ccc;
+  text-decoration: none;
+  transition: color 0.15s;
+}
+.chat-nav:hover { color: #555; }
+
 .likes-nav {
   font-size: 1rem;
   color: #ccc;
@@ -455,10 +507,10 @@ watch(aggregatedReleases, val => { releaseList.value = val })
   gap: 8px;
 }
 
-.tile      { width: 120px; flex: 0 0 120px; cursor: pointer; }
+.tile      { width: 150px; flex: 0 0 150px; cursor: pointer; }
 .tile.no-audio { cursor: default; }
 
-.tile-art  { width: 120px; height: 120px; object-fit: cover; display: block; }
+.tile-art  { width: 150px; height: 150px; object-fit: cover; display: block; }
 
 .r-cat {
   font-size: 0.55rem; color: #bbb;
@@ -495,7 +547,7 @@ watch(aggregatedReleases, val => { releaseList.value = val })
 
 @keyframes trackscroll {
   0%,  20% { transform: translateX(0); }
-  80%, 100% { transform: translateX(min(0px, calc(120px - 100%))); }
+  80%, 100% { transform: translateX(min(0px, calc(150px - 100%))); }
 }
 
 .dots-row {
@@ -542,4 +594,15 @@ watch(aggregatedReleases, val => { releaseList.value = val })
 .hype.excl   { color: #aaa; }
 
 .empty { font-size: 0.75rem; color: #bbb; padding: 0.5rem 0; margin: 0; }
+
+.sentinel { height: 1px; }
+
+@media (max-width: 600px) {
+  .tile     { width: 100%; flex: 0 0 100%; }
+  .tile-art { width: 100%; height: auto; aspect-ratio: 1; }
+  @keyframes trackscroll {
+    0%,  20% { transform: translateX(0); }
+    80%, 100% { transform: translateX(min(0px, calc(100vw - 3rem - 100%))); }
+  }
+}
 </style>

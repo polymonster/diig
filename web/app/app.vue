@@ -1,12 +1,41 @@
 <script setup>
-import { useCurrentUser } from 'vuefire'
+import { useFirebaseAuth, useCurrentUser } from 'vuefire'
 
+const auth = useFirebaseAuth()
 const user = useCurrentUser()
+const DB   = 'https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app'
 
 const menuOpen     = useState('menuOpen',     () => false)
 const settingsOpen = useState('settingsOpen', () => false)
 
 function ls(key, fallback = '') { return localStorage.getItem(key) || fallback }
+
+// ── Username ──────────────────────────────────────────────────────────────────
+
+const username      = ref('')
+const usernameInput = ref('')
+const usernameSaved = ref(false)
+
+watch(user, async u => {
+  if (!u) return
+  const token    = await auth.currentUser.getIdToken()
+  const userData = await fetch(`${DB}/users/${u.uid}.json?auth=${token}`).then(r => r.json())
+  const name     = userData?.username || ''
+  username.value      = name || u.email
+  usernameInput.value = name
+}, { immediate: true })
+
+async function saveUsername() {
+  if (!auth.currentUser) return
+  const token = await auth.currentUser.getIdToken()
+  await fetch(`${DB}/users/${auth.currentUser.uid}/username.json?auth=${token}`, {
+    method: 'PUT',
+    body:   JSON.stringify(usernameInput.value),
+  })
+  username.value = usernameInput.value || user.value?.email || ''
+  usernameSaved.value = true
+  setTimeout(() => { usernameSaved.value = false }, 2000)
+}
 
 const discogsToken  = ref(ls('discogsToken'))
 const discogsUser   = ref(ls('discogsUser'))
@@ -44,7 +73,7 @@ function closeAll() { menuOpen.value = false; settingsOpen.value = false }
 
     <div v-if="menuOpen" class="burger-backdrop" @click="closeAll" />
     <div v-if="menuOpen" class="burger-menu">
-      <div v-if="user" class="menu-username">{{ user.displayName || user.email }}</div>
+      <div v-if="user" class="menu-username">{{ username }}</div>
       <label class="menu-toggle">
         <span>Show Debug</span>
         <input type="checkbox" v-model="showDebug" />
@@ -57,6 +86,22 @@ function closeAll() { menuOpen.value = false; settingsOpen.value = false }
         <div class="settings-header">
           <span>Settings</span>
           <button @click="settingsOpen = false">&#10005;</button>
+        </div>
+        <div class="settings-section">
+          <label class="settings-label">Username</label>
+          <div class="settings-row">
+            <input
+              v-model="usernameInput"
+              type="text"
+              class="settings-input"
+              placeholder="your username"
+              spellcheck="false"
+              autocomplete="off"
+            />
+            <button class="settings-verify" @click="saveUsername" :disabled="!usernameInput">
+              {{ usernameSaved ? '✓' : 'save' }}
+            </button>
+          </div>
         </div>
         <div class="settings-section">
           <label class="settings-label">Discogs Token</label>

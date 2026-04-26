@@ -88,7 +88,23 @@ const { activeId, activeTrack, isPlaying, releaseList, tileClick, setTrack, prev
 
 watch(releases, val => { releaseList.value = val })
 
+// ── Swipe (mobile track change) ───────────────────────────────────────────────
 
+let swipeStartX = 0
+let swipeStartY = 0
+
+function onSwipeStart(e) {
+  swipeStartX = e.touches[0].clientX
+  swipeStartY = e.touches[0].clientY
+}
+
+function onSwipeEnd(release, e) {
+  const dx = e.changedTouches[0].clientX - swipeStartX
+  const dy = e.changedTouches[0].clientY - swipeStartY
+  if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) {
+    dx < 0 ? nextTrack(release, e) : prevTrack(release, e)
+  }
+}
 </script>
 
 <template>
@@ -118,6 +134,8 @@ watch(releases, val => { releaseList.value = val })
           class="tile"
           :class="{ active: activeId === release.id, 'no-audio': !getTracks(release).length }"
           @click="getTracks(release).length && tileClick(release)"
+          @touchstart.passive="onSwipeStart"
+          @touchend.passive="onSwipeEnd(release, $event)"
         >
           <p v-if="release.cat" class="r-cat">{{ release.cat }}</p>
           <img
@@ -298,10 +316,10 @@ watch(releases, val => { releaseList.value = val })
   gap: 8px;
 }
 
-.tile      { width: 120px; flex: 0 0 120px; cursor: pointer; }
+.tile      { width: 150px; flex: 0 0 150px; cursor: pointer; }
 .no-audio  { cursor: default; }
 
-.tile-art  { width: 120px; height: 120px; object-fit: cover; display: block; }
+.tile-art  { width: 150px; height: 150px; object-fit: cover; display: block; }
 
 .r-cat {
   font-size: 0.55rem; color: #bbb;
@@ -338,7 +356,16 @@ watch(releases, val => { releaseList.value = val })
 
 @keyframes trackscroll {
   0%,  20% { transform: translateX(0); }
-  80%, 100% { transform: translateX(min(0px, calc(120px - 100%))); }
+  80%, 100% { transform: translateX(min(0px, calc(150px - 100%))); }
+}
+
+@media (max-width: 600px) {
+  .tile     { width: 100%; flex: 0 0 100%; }
+  .tile-art { width: 100%; height: auto; aspect-ratio: 1; }
+  @keyframes trackscroll {
+    0%,  20% { transform: translateX(0); }
+    80%, 100% { transform: translateX(min(0px, calc(100vw - 3rem - 100%))); }
+  }
 }
 
 .dots-row {

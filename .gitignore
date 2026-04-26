@@ -9,4 +9,4 @@ api_key.h
 altool.sh
 service-account.json
 discogs-auth.json
-web/.firebase/
+web/.firebase/scrape/registry/

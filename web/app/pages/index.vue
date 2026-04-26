@@ -64,7 +64,7 @@ const VIEWS = [
   { id: 'chart',        label: 'Hot' },
 ]
 
-const selectedView   = ref('new_releases')
+const selectedView   = ref(localStorage.getItem('diig_view') || 'new_releases')
 const sectionReleases = ref({})
 const loading        = ref(false)
 
@@ -109,6 +109,7 @@ watch(user, u => { if (u) { loadAll(); loadLikes() } }, { immediate: true })
 function selectView(viewId) {
   stopAll()
   selectedView.value = viewId
+  localStorage.setItem('diig_view', viewId)
   loadAll()
 }
 
@@ -213,7 +214,8 @@ function onSwipeEnd(release, e) {
           :class="{ active: selectedView === v.id }"
           @click="selectView(v.id)"
         >{{ v.label }}</button>
-        <NuxtLink to="/stores" class="viewbtn stores-link">Stores &rsaquo;</NuxtLink>
+        <NuxtLink to="/stores"  class="viewbtn stores-link">Stores &rsaquo;</NuxtLink>
+        <NuxtLink to="/discogs" class="viewbtn stores-link">Discogs &rsaquo;</NuxtLink>
       </nav>
       <div class="header-right">
         <NuxtLink to="/chat" class="chat-nav">
@@ -357,6 +359,7 @@ function onSwipeEnd(release, e) {
   min-height: 100vh;
   background: #f5f5f5;
   color: #0a0a0a;
+  padding-bottom: 64px;
 }
 
 .header {
@@ -395,7 +398,7 @@ function onSwipeEnd(release, e) {
 .viewbtn:hover  { color: #333; }
 .viewbtn.active { border-color: #0a0a0a; color: #0a0a0a; }
 
-.stores-link { text-decoration: none; }
+.stores-link { text-decoration: none; white-space: nowrap; }
 
 .header-right {
   margin-left: auto;

@@ -1,5 +1,6 @@
 <script setup>
 import { useFirebaseAuth, useCurrentUser } from 'vuefire'
+import { artworkUrl } from '~/utils/artwork'
 
 const auth = useFirebaseAuth()
 const user = useCurrentUser()
@@ -65,6 +66,15 @@ const showDebug = ref(ls('showDebug') === 'true')
 watch(showDebug, val => localStorage.setItem('showDebug', String(val)))
 
 function closeAll() { menuOpen.value = false; settingsOpen.value = false }
+
+// ── Player bar ────────────────────────────────────────────────────────────────
+
+const { activeId, activeTrack, isPlaying, activeRelease, getTracks, getTrackNames, tileClick, prevTrack, nextTrack } = useAudio()
+
+function playerArt(release) { return artworkUrl(release) || '/white_label.jpg' }
+function playerToggle() { if (activeRelease.value) tileClick(activeRelease.value) }
+function playerPrev(e) { if (activeRelease.value) prevTrack(activeRelease.value, e) }
+function playerNext(e) { if (activeRelease.value) nextTrack(activeRelease.value, e) }
 </script>
 
 <template>
@@ -79,6 +89,28 @@ function closeAll() { menuOpen.value = false; settingsOpen.value = false }
         <input type="checkbox" v-model="showDebug" />
       </label>
       <button class="menu-settings-btn" @click="settingsOpen = true; menuOpen = false">Settings</button>
+    </div>
+
+    <!-- Bottom player bar -->
+    <div v-if="activeRelease" class="player-bar">
+      <img
+        :src="playerArt(activeRelease)"
+        class="player-art"
+        @error="e => e.target.src = '/white_label.jpg'"
+      />
+      <div class="player-info">
+        <span class="player-artist">{{ activeRelease.artist }}</span>
+        <span class="player-title">{{ activeRelease.title }}</span>
+        <span v-if="getTrackNames(activeRelease)[activeTrack]" class="player-track">{{ getTrackNames(activeRelease)[activeTrack] }}</span>
+      </div>
+      <div class="player-controls">
+        <button class="player-btn" :disabled="activeTrack === 0" @click="playerPrev($event)">&#8249;</button>
+        <button class="player-btn play-btn" @click="playerToggle">
+          <span v-if="isPlaying">&#9646;&#9646;</span>
+          <span v-else>&#9654;</span>
+        </button>
+        <button class="player-btn" :disabled="activeTrack >= getTracks(activeRelease).length - 1" @click="playerNext($event)">&#8250;</button>
+      </div>
     </div>
 
     <div v-if="settingsOpen" class="settings-overlay" @click.self="settingsOpen = false">
@@ -135,6 +167,11 @@ function closeAll() { menuOpen.value = false; settingsOpen.value = false }
   src: url('/fontawesome-webfont.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
+}
+
+html, body {
+  touch-action: manipulation;
+  overscroll-behavior: none;
 }
 
 .fa {
@@ -296,4 +333,89 @@ function closeAll() { menuOpen.value = false; settingsOpen.value = false }
 
 .settings-ok  { display: block; font-size: 0.6rem; color: #4a9; margin-top: 0.4rem; }
 .settings-err { display: block; font-size: 0.6rem; color: #c44; margin-top: 0.4rem; }
+
+/* Player bar */
+.player-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 1rem;
+  background: #fff;
+  border-top: 1px solid #e0e0e0;
+  box-shadow: 0 -2px 12px rgba(0,0,0,0.06);
+  font-family: 'Cousine', monospace;
+}
+
+.player-art {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.player-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.player-artist {
+  font-size: 0.65rem;
+  color: #0a0a0a;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.player-title {
+  font-size: 0.58rem;
+  color: #888;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.player-track {
+  font-size: 0.55rem;
+  color: #cc4d00;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.player-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  flex-shrink: 0;
+}
+
+.player-btn {
+  background: none;
+  border: none;
+  font-family: 'Cousine', monospace;
+  font-size: 1.2rem;
+  color: #aaa;
+  cursor: pointer;
+  padding: 0.2rem 0.35rem;
+  line-height: 1;
+  transition: color 0.1s;
+}
+
+.player-btn:not(:disabled):hover { color: #333; }
+.player-btn:disabled { opacity: 0.25; cursor: default; }
+
+.play-btn {
+  font-size: 1rem;
+  color: #0a0a0a;
+  padding: 0.2rem 0.5rem;
+}
+.play-btn:hover { color: #cc4d00; }
 </style>

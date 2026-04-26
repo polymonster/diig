@@ -1,8 +1,9 @@
 // Module-level singletons — one instance per browser tab (safe with ssr: false)
-const activeId    = ref<string | null>(null)
-const activeTrack = ref<number>(0)
-const isPlaying   = ref<boolean>(false)
-const releaseList = ref<any[]>([])  // current page's ordered flat list for cross-release autoplay
+const activeId      = ref<string | null>(null)
+const activeTrack   = ref<number>(0)
+const isPlaying     = ref<boolean>(false)
+const releaseList   = ref<any[]>([])  // current page's ordered flat list for cross-release autoplay
+const activeRelease = ref<any | null>(null)
 let audioEl: HTMLAudioElement | null = null
 
 export function useAudio() {
@@ -17,8 +18,9 @@ export function useAudio() {
   function setTrack(release: any, idx: number) {
     const urls = getTracks(release)
     if (!urls.length) return
-    activeId.value    = release.id
-    activeTrack.value = idx
+    activeId.value      = release.id
+    activeTrack.value   = idx
+    activeRelease.value = release
     const url = urls[idx]
     if (!url) return
     if (!audioEl) audioEl = new Audio()
@@ -85,12 +87,13 @@ export function useAudio() {
   function stopAll() {
     audioEl?.pause()
     if (audioEl) audioEl.src = ''
-    isPlaying.value = false
-    activeId.value  = null
+    isPlaying.value     = false
+    activeId.value      = null
+    activeRelease.value = null
   }
 
   return {
-    activeId, activeTrack, isPlaying, releaseList,
+    activeId, activeTrack, isPlaying, releaseList, activeRelease,
     tileClick, setTrack, prevTrack, nextTrack, dotClick,
     computeDots, getTracks, getTrackNames, stopAll,
   }

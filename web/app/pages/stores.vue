@@ -14,6 +14,19 @@ const selectedStoreId = ref('')
 const selectedViewId  = ref('new_releases')
 const enabledSections = ref(new Set())
 
+function getStoredPrefs(storeId) {
+  try { return JSON.parse(localStorage.getItem('diig_store_prefs') || '{}')[storeId] || null } catch { return null }
+}
+
+function saveStorePrefs() {
+  if (!selectedStoreId.value) return
+  try {
+    const all = JSON.parse(localStorage.getItem('diig_store_prefs') || '{}')
+    all[selectedStoreId.value] = { view: selectedViewId.value, sections: [...enabledSections.value] }
+    localStorage.setItem('diig_store_prefs', JSON.stringify(all))
+  } catch {}
+}
+
 const storeList = computed(() => {
   return Object.keys(rawStores.value)
     .map(id => {
@@ -120,18 +133,25 @@ function toggleSection(secId) {
   if (next.has(secId)) next.delete(secId)
   else next.add(secId)
   enabledSections.value = next
+  saveStorePrefs()
 }
 
 watch(selectedStoreId, () => {
   const store = selectedStore.value
   if (!store) return
-  enabledSections.value = new Set(store.sections.map(s => s.id))
-  selectedViewId.value  = store.views[0]?.id || 'new_releases'
+  localStorage.setItem('diig_last_store', store.id)
+  const stored = getStoredPrefs(store.id)
+  enabledSections.value = stored?.sections?.length
+    ? new Set(stored.sections)
+    : new Set(store.sections.map(s => s.id))
+  selectedViewId.value  = (stored?.view && store.views.some(v => v.id === stored.view))
+    ? stored.view
+    : (store.views[0]?.id || 'new_releases')
   loadAll()
 })
 
 watch(selectedViewId, () => {
-  if (storeList.value.length) loadAll()
+  if (storeList.value.length) { loadAll(); saveStorePrefs() }
 })
 
 async function fetchStores() {
@@ -140,9 +160,10 @@ async function fetchStores() {
   const data  = await fetch(`${DB}/stores.json?auth=${token}`).then(r => r.json())
   if (!data || typeof data !== 'object') return
   rawStores.value = data
-  if (!selectedStoreId.value) selectedStoreId.value = Object.keys(data)[0] ?? ''
-  const store = selectedStore.value
-  if (store) enabledSections.value = new Set(store.sections.map(s => s.id))
+  if (!selectedStoreId.value) {
+    const last = localStorage.getItem('diig_last_store')
+    selectedStoreId.value = (last && data[last]) ? last : Object.keys(data)[0] ?? ''
+  }
   await loadAll()
 }
 
@@ -229,6 +250,7 @@ function onSwipeEnd(release, e) {
         <select v-model="selectedViewId" class="view-select">
           <option v-for="v in (selectedStore?.views ?? [])" :key="v.id" :value="v.id">{{ v.label }}</option>
         </select>
+        <NuxtLink to="/discogs" class="discogs-link">Discogs &rsaquo;</NuxtLink>
       </div>
 
       <div class="header-right">
@@ -377,7 +399,7 @@ function onSwipeEnd(release, e) {
   -webkit-font-smoothing: antialiased;
 }
 
-.page { min-height: 100vh; background: #f5f5f5; color: #0a0a0a; }
+.page { min-height: 100vh; background: #f5f5f5; color: #0a0a0a; padding-bottom: 64px; }
 
 .header {
   display: flex;
@@ -425,6 +447,17 @@ function onSwipeEnd(release, e) {
 
 .store-select:focus,
 .view-select:focus { border-color: #aaa; }
+
+.discogs-link {
+  padding: 0.3rem 0.7rem;
+  font-size: 0.7rem;
+  font-family: 'Cousine', monospace;
+  color: #999;
+  text-decoration: none;
+  border: 1px solid transparent;
+  transition: color 0.15s;
+}
+.discogs-link:hover { color: #0a0a0a; }
 
 .header-right {
   margin-left: auto;

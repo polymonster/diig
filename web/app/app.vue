@@ -69,12 +69,10 @@ function closeAll() { menuOpen.value = false; settingsOpen.value = false }
 
 // ── Player bar ────────────────────────────────────────────────────────────────
 
-const { activeId, activeTrack, isPlaying, activeRelease, getTracks, getTrackNames, tileClick, prevTrack, nextTrack } = useAudio()
+const { activeTrack, isPlaying, activeRelease, getTracks, getTrackNames, tileClick, skipPrev, skipNext, canSkipPrev, canSkipNext } = useAudio()
 
 function playerArt(release) { return artworkUrl(release) || '/white_label.jpg' }
 function playerToggle() { if (activeRelease.value) tileClick(activeRelease.value) }
-function playerPrev(e) { if (activeRelease.value) prevTrack(activeRelease.value, e) }
-function playerNext(e) { if (activeRelease.value) nextTrack(activeRelease.value, e) }
 </script>
 
 <template>
@@ -104,12 +102,12 @@ function playerNext(e) { if (activeRelease.value) nextTrack(activeRelease.value,
         <span v-if="getTrackNames(activeRelease)[activeTrack]" class="player-track">{{ getTrackNames(activeRelease)[activeTrack] }}</span>
       </div>
       <div class="player-controls">
-        <button class="player-btn" :disabled="activeTrack === 0" @click="playerPrev($event)">&#8249;</button>
+        <button class="player-btn" :disabled="!canSkipPrev" @click="skipPrev()">&#8249;</button>
         <button class="player-btn play-btn" @click="playerToggle">
           <span v-if="isPlaying">&#9646;&#9646;</span>
           <span v-else>&#9654;</span>
         </button>
-        <button class="player-btn" :disabled="activeTrack >= getTracks(activeRelease).length - 1" @click="playerNext($event)">&#8250;</button>
+        <button class="player-btn" :disabled="!canSkipNext" @click="skipNext()">&#8250;</button>
       </div>
     </div>
 

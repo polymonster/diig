@@ -3,22 +3,21 @@
 [![scrape](https://github.com/polymonster/diig/actions/workflows/scrape.yml/badge.svg)](https://github.com/polymonster/diig/actions/workflows/scrape.yml)
 [![release](https://github.com/polymonster/diig/actions/workflows/release.yml/badge.svg)](https://github.com/polymonster/diig/actions/workflows/release.yml)
 
-A record digging app for people who collect records. Fast audio player, infinite scroll, offline caching. Swipe through new releases and charts from your favourite stores, tap through to buy.
+A music platform for record collectors. Available on the web and as a native iOS/Android app. Fast audio player, infinite scroll, offline caching. Swipe through new releases and charts from your favourite stores, tap through to buy.
 
-Available as a native iOS/Android app and a web app.
+Check out the [website](https://diig.app).
+
+<p align="center">
+    <img src="media/web.png?raw=true" width="640"/>
+</p>
+
+## Beta App
+
+Available now on iOS and Android. Contact to join:
 
 <p align="center">
     <img src="https://github.com/polymonster/polymonster.github.io/blob/master/images/diig/diig.gif?raw=true" width="640" height="360"/>
 </p>
-
-## Get the Beta
-
-Available now on iOS and Android. Contact to join:
-
-- **iOS** - via TestFlight
-- **Android** - via Google Play internal testing
-
-Also available as a [web app](https://diig.app).
 
 ## Contributing
 
@@ -35,10 +34,10 @@ Scrapers run [nightly](https://github.com/polymonster/diig/actions) to pull rele
 ```bash
 pip install google-auth google-auth-oauthlib google-auth-httplib2
 cd scrape
-python3 dig.py -urls -store juno -verbose -key "{}"
+python3 dig.py -urls -store juno -verbose -local-only
 ```
 
-Where `-key` is a valid Firebase auth token. Run `python3 dig.py -help` for full options.
+Results are written to local registry files only — no Firebase credentials needed. Run `python3 dig.py -help` for full options.
 
 ### Schemas
 

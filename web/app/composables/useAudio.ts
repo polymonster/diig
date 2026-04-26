@@ -84,6 +84,40 @@ export function useAudio() {
     })
   }
 
+  function skipPrev() {
+    if (!activeRelease.value) return
+    if (activeTrack.value > 0) { setTrack(activeRelease.value, activeTrack.value - 1); return }
+    const ci = releaseList.value.findIndex((r: any) => r.id === activeRelease.value.id)
+    for (let i = ci - 1; i >= 0; i--) {
+      const tracks = getTracks(releaseList.value[i])
+      if (tracks.length) { setTrack(releaseList.value[i], tracks.length - 1); return }
+    }
+  }
+
+  function skipNext() {
+    if (!activeRelease.value) return
+    const tracks = getTracks(activeRelease.value)
+    if (activeTrack.value < tracks.length - 1) { setTrack(activeRelease.value, activeTrack.value + 1); return }
+    const ci = releaseList.value.findIndex((r: any) => r.id === activeRelease.value.id)
+    for (let i = ci + 1; i < releaseList.value.length; i++) {
+      if (getTracks(releaseList.value[i]).length) { setTrack(releaseList.value[i], 0); return }
+    }
+  }
+
+  const canSkipPrev = computed(() => {
+    if (!activeRelease.value) return false
+    if (activeTrack.value > 0) return true
+    const ci = releaseList.value.findIndex((r: any) => r.id === activeRelease.value.id)
+    return releaseList.value.slice(0, ci).some((r: any) => getTracks(r).length > 0)
+  })
+
+  const canSkipNext = computed(() => {
+    if (!activeRelease.value) return false
+    if (activeTrack.value < getTracks(activeRelease.value).length - 1) return true
+    const ci = releaseList.value.findIndex((r: any) => r.id === activeRelease.value.id)
+    return releaseList.value.slice(ci + 1).some((r: any) => getTracks(r).length > 0)
+  })
+
   function stopAll() {
     audioEl?.pause()
     if (audioEl) audioEl.src = ''
@@ -94,7 +128,7 @@ export function useAudio() {
 
   return {
     activeId, activeTrack, isPlaying, releaseList, activeRelease,
-    tileClick, setTrack, prevTrack, nextTrack, dotClick,
+    tileClick, setTrack, prevTrack, nextTrack, skipPrev, skipNext, canSkipPrev, canSkipNext, dotClick,
     computeDots, getTracks, getTrackNames, stopAll,
   }
 }

@@ -11,6 +11,11 @@ const auth = useFirebaseAuth()
 const user = useCurrentUser()
 const router = useRouter()
 
+// ── Tabs ─────────────────────────────────────────────────────────────────────
+type Tab = 'login' | 'register'
+const tab = ref<Tab>('login')
+
+// ── Login ─────────────────────────────────────────────────────────────────────
 const email = ref('')
 const password = ref('')
 const loading = ref(false)
@@ -25,6 +30,13 @@ const isFormValid = computed(() => isValidEmail.value && password.value.length >
 watch(user, (newUser) => {
   if (newUser) router.push('/')
 }, { immediate: true })
+
+function switchTab(t: Tab) {
+  tab.value = t
+  error.value = ''
+  success.value = ''
+  showForgotPassword.value = false
+}
 
 const handleEmailLogin = async () => {
   if (!auth || !isFormValid.value) return
@@ -74,62 +86,99 @@ const getPasswordResetErrorMessage = (code: string) => ({
   'auth/user-not-found': 'No account found with that email.',
   'auth/too-many-requests': 'Too many requests — try again later.',
 } as Record<string, string>)[code] ?? 'Failed to send reset email.'
+
+// ── Register interest ─────────────────────────────────────────────────────────
+const regEmail = ref('')
+const regMessage = ref('')
+const regLoading = ref(false)
+const regDone = ref(false)
+
+const isRegEmailValid = computed(() => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(regEmail.value))
+
+const handleRegister = async () => {
+  if (!isRegEmailValid.value) return
+  regLoading.value = true
+  error.value = ''
+  try {
+    const res = await fetch('/api/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: regEmail.value, message: regMessage.value }),
+    })
+    if (!res.ok) {
+      const data = await res.json() as { message?: string }
+      throw new Error(data.message ?? 'Registration failed.')
+    }
+    regDone.value = true
+  } catch (err: any) {
+    error.value = err.message ?? 'Something went wrong, please try again.'
+  } finally {
+    regLoading.value = false
+  }
+}
 </script>
 
 <template>
   <div class="page">
     <div class="card">
       <h1 class="title">diig</h1>
-      <p class="subtitle">{{ showForgotPassword ? 'reset password' : 'sign in' }}</p>
+
+      <div class="tabs">
+        <button :class="['tab', { active: tab === 'login' }]" @click="switchTab('login')">sign in</button>
+        <button :class="['tab', { active: tab === 'register' }]" @click="switchTab('register')">register interest</button>
+      </div>
 
       <div v-if="error" class="msg error">{{ error }}</div>
       <div v-if="success" class="msg success">{{ success }}</div>
 
-      <form v-if="!showForgotPassword" @submit.prevent="handleEmailLogin">
-        <input
-          v-model="email"
-          type="email"
-          placeholder="email"
-          autocomplete="email"
-          required
-          class="field"
-        />
-        <input
-          v-model="password"
-          type="password"
-          placeholder="password"
-          autocomplete="current-password"
-          required
-          class="field"
-        />
-        <div class="actions">
-          <button type="submit" :disabled="loading || !isFormValid" class="btn">
-            {{ loading ? 'signing in...' : 'sign in' }}
-          </button>
-          <button type="button" class="ghost" @click="showForgotPassword = true">
-            forgot password
-          </button>
-        </div>
-      </form>
+      <!-- ── Sign in ── -->
+      <template v-if="tab === 'login'">
+        <form v-if="!showForgotPassword" @submit.prevent="handleEmailLogin">
+          <input v-model="email" type="email" placeholder="email" autocomplete="email" required class="field" />
+          <input v-model="password" type="password" placeholder="password" autocomplete="current-password" required class="field" />
+          <div class="actions">
+            <button type="submit" :disabled="loading || !isFormValid" class="btn">
+              {{ loading ? 'signing in...' : 'sign in' }}
+            </button>
+            <button type="button" class="ghost" @click="showForgotPassword = true">forgot password</button>
+          </div>
+        </form>
 
-      <form v-else @submit.prevent="handlePasswordReset">
-        <input
-          v-model="email"
-          type="email"
-          placeholder="email"
-          autocomplete="email"
-          required
-          class="field"
-        />
-        <div class="actions">
-          <button type="submit" :disabled="resetLoading || !isValidEmail" class="btn">
-            {{ resetLoading ? 'sending...' : 'send reset link' }}
-          </button>
-          <button type="button" class="ghost" @click="showForgotPassword = false">
-            back to sign in
-          </button>
+        <form v-else @submit.prevent="handlePasswordReset">
+          <input v-model="email" type="email" placeholder="email" autocomplete="email" required class="field" />
+          <div class="actions">
+            <button type="submit" :disabled="resetLoading || !isValidEmail" class="btn">
+              {{ resetLoading ? 'sending...' : 'send reset link' }}
+            </button>
+            <button type="button" class="ghost" @click="showForgotPassword = false">back to sign in</button>
+          </div>
+        </form>
+      </template>
+
+      <!-- ── Register interest ── -->
+      <template v-else>
+        <div v-if="regDone" class="msg success">
+          Thanks — we'll be in touch.
         </div>
-      </form>
+        <form v-else @submit.prevent="handleRegister">
+          <input v-model="regEmail" type="email" placeholder="email" autocomplete="email" required class="field" />
+          <textarea
+            v-model="regMessage"
+            placeholder="tell us about yourself, or paste an invite code"
+            class="field textarea"
+            rows="4"
+          />
+          <div class="actions">
+            <button type="submit" :disabled="regLoading || !isRegEmailValid" class="btn">
+              {{ regLoading ? 'submitting...' : 'register interest' }}
+            </button>
+          </div>
+        </form>
+      </template>
+
+      <div class="footer">
+        <NuxtLink to="/faq" class="faq-link">FAQ</NuxtLink>
+      </div>
     </div>
   </div>
 </template>
@@ -142,9 +191,7 @@ const getPasswordResetErrorMessage = (code: string) => ({
   font-style: normal;
 }
 
-* {
-  font-family: 'Cousine', monospace;
-}
+* { font-family: 'Cousine', monospace; }
 
 .page {
   min-height: 100vh;
@@ -163,15 +210,37 @@ const getPasswordResetErrorMessage = (code: string) => ({
 .title {
   font-size: 2rem;
   color: #0a0a0a;
-  margin: 0 0 0.25rem;
+  margin: 0 0 1.5rem;
   letter-spacing: 0.05em;
 }
 
-.subtitle {
-  font-size: 0.85rem;
-  color: #999;
-  margin: 0 0 2rem;
+.tabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: 1.75rem;
+  border-bottom: 1px solid #e0e0e0;
 }
+
+.tab {
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  padding: 0.4rem 0;
+  margin-right: 1.5rem;
+  font-family: 'Cousine', monospace;
+  font-size: 0.8rem;
+  color: #aaa;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.tab.active {
+  color: #0a0a0a;
+  border-bottom-color: #0a0a0a;
+}
+
+.tab:not(.active):hover { color: #666; }
 
 .field {
   display: block;
@@ -186,15 +255,13 @@ const getPasswordResetErrorMessage = (code: string) => ({
   box-sizing: border-box;
   outline: none;
   transition: border-color 0.15s;
+  resize: none;
 }
 
-.field::placeholder {
-  color: #aaa;
-}
+.field::placeholder { color: #aaa; }
+.field:focus { border-color: #999; }
 
-.field:focus {
-  border-color: #999;
-}
+.textarea { line-height: 1.5; }
 
 .actions {
   display: flex;
@@ -214,14 +281,8 @@ const getPasswordResetErrorMessage = (code: string) => ({
   transition: opacity 0.15s;
 }
 
-.btn:disabled {
-  opacity: 0.4;
-  cursor: default;
-}
-
-.btn:not(:disabled):hover {
-  opacity: 0.75;
-}
+.btn:disabled { opacity: 0.4; cursor: default; }
+.btn:not(:disabled):hover { opacity: 0.75; }
 
 .ghost {
   background: none;
@@ -233,10 +294,7 @@ const getPasswordResetErrorMessage = (code: string) => ({
   padding: 0;
   transition: color 0.15s;
 }
-
-.ghost:hover {
-  color: #666;
-}
+.ghost:hover { color: #666; }
 
 .msg {
   padding: 0.75rem 1rem;
@@ -244,15 +302,17 @@ const getPasswordResetErrorMessage = (code: string) => ({
   font-size: 0.85rem;
 }
 
-.error {
-  background: #fff0f0;
-  border: 1px solid #f0b0b0;
-  color: #a03030;
+.error  { background: #fff0f0; border: 1px solid #f0b0b0; color: #a03030; }
+.success { background: #f0fff0; border: 1px solid #b0e0b0; color: #307030; }
+
+.footer {
+  margin-top: 2rem;
+  font-size: 0.75rem;
 }
 
-.success {
-  background: #f0fff0;
-  border: 1px solid #b0e0b0;
-  color: #307030;
+.faq-link {
+  color: #aaa;
+  text-decoration: none;
 }
+.faq-link:hover { color: #555; }
 </style>

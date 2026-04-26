@@ -19,8 +19,24 @@ const errorMsg = ref('')
 const page     = ref(1)
 const hasMore  = ref(false)
 const sentinel = ref(null)
-let   observer     = null
-let   detailsAbort = null
+let   observer        = null
+let   cooldownTimer   = null
+let   detailsQueue    = []
+let   detailsRunning  = false
+let   detailsStop     = false
+
+const cooldown = ref(false)
+const busy     = computed(() => loading.value || cooldown.value)
+
+function startCooldown(secs = 8) {
+  cooldown.value = true
+  clearTimeout(cooldownTimer)
+  cooldownTimer = setTimeout(() => { cooldown.value = false }, secs * 1000)
+}
+
+watch(cooldown, val => {
+  if (!val && detailsQueue.length) setTimeout(drainDetails, 0)
+})
 
 function getHeaders() { return { Authorization: `Discogs token=${discogsToken.value}` } }
 
@@ -34,13 +50,14 @@ function saveFilters() {
 
 async function search(reset = true) {
   if (!discogsToken.value) { errorMsg.value = 'Set your Discogs token in Settings'; return }
+  if (busy.value) return
   errorMsg.value = ''
 
-  if (detailsAbort) { detailsAbort.cancelled = true }
-  detailsAbort = { cancelled: false }
-  const thisAbort = detailsAbort
-
-  if (reset) { page.value = 1; results.value = []; details.value = {} }
+  if (reset) {
+    detailsStop = true
+    detailsQueue = []
+    page.value = 1; results.value = []; details.value = {}
+  }
   loading.value  = true
   searched.value = true
   saveFilters()
@@ -54,43 +71,66 @@ async function search(reset = true) {
 
   try {
     const res = await fetch(`https://api.discogs.com/database/search?${p}`, { headers: getHeaders() })
-    if (res.status === 429) { errorMsg.value = 'Rate limited — wait a moment and try again'; return }
+    if (res.status === 429) { errorMsg.value = 'Rate limited — wait a moment and try again'; startCooldown(); return }
     if (res.status === 401) { errorMsg.value = 'Discogs token invalid — check Settings'; return }
     if (!res.ok) { errorMsg.value = `Discogs error ${res.status}`; return }
 
-    const data  = await res.json()
-    const items = (data.results || []).filter(r => r.type === 'release' || r.type === 'master')
+    const data = await res.json()
+    const seen = new Set()
+    const items = (data.results || []).filter(r => {
+      if (r.type !== 'release' && r.type !== 'master') return false
+      const key = r.master_id ? String(r.master_id) : `r-${r.id}`
+      if (seen.has(key)) return false
+      seen.add(key)
+      return true
+    })
     results.value = reset ? items : [...results.value, ...items]
     hasMore.value  = !!data.pagination?.urls?.next
     await nextTick()
     setupObserver()
-    loadDetails(items, thisAbort)
+    detailsQueue.push(...items.filter(i => i.resource_url && !(i.id in details.value)))
+    setTimeout(drainDetails, 0)
   } catch (e) {
-    errorMsg.value = 'Network error — check your connection'
+    errorMsg.value = 'Discogs request failed — try again'
     console.error(e)
   } finally {
     loading.value = false
   }
 }
 
-async function loadDetails(items, abort) {
-  for (const item of items) {
-    if (abort.cancelled) break
+function resetDetailItem(id) {
+  const { [id]: _, ...rest } = details.value
+  details.value = rest
+}
+
+async function drainDetails() {
+  if (detailsRunning) return
+  detailsRunning = true
+  detailsStop = false
+  while (detailsQueue.length && !detailsStop) {
+    const item = detailsQueue.shift()
     if (!item.resource_url || item.id in details.value) continue
     details.value = { ...details.value, [item.id]: null }
     try {
       const r = await fetch(item.resource_url, { headers: getHeaders() })
       if (r.status === 429) {
-        details.value = { ...details.value, [item.id]: {} }
-        errorMsg.value = 'Rate limited loading track details — some tiles may lack videos'
+        resetDetailItem(item.id)
+        detailsQueue.unshift(item)
+        errorMsg.value = 'Discogs rate limit reached — video loading will resume shortly'
+        startCooldown()
         break
       }
       details.value = { ...details.value, [item.id]: r.ok ? await r.json() : {} }
     } catch {
-      details.value = { ...details.value, [item.id]: {} }
+      resetDetailItem(item.id)
+      detailsQueue.unshift(item)
+      errorMsg.value = 'Discogs request interrupted — retrying shortly'
+      startCooldown(5)
+      break
     }
-    await new Promise(r => setTimeout(r, 200))
+    await new Promise(r => setTimeout(r, 1200))
   }
+  detailsRunning = false
 }
 
 function setupObserver() {
@@ -107,14 +147,15 @@ function setupObserver() {
 
 onUnmounted(() => {
   if (observer) observer.disconnect()
-  if (detailsAbort) detailsAbort.cancelled = true
-  ytStopAll()  // stop & destroy player when leaving the page
+  detailsStop = true
+  detailsQueue = []
+  ytStopAll()
 })
 
 // ── Per-tile video helpers ────────────────────────────────────────────────────
 
 function getVideos(item) { return details.value[item.id]?.videos || [] }
-function videosLoading(item) { return details.value[item.id] === null }
+function detailsFetched(item) { return item.id in details.value && details.value[item.id] !== null }
 
 function openRelease(item, e) {
   e.stopPropagation()
@@ -146,6 +187,15 @@ function computeDots(count, activeIdx) {
 const { ytActiveId, ytActiveTrack, ytPlaying, ytOpen, ytReleaseList,
         setTrack, toggle, close: ytClose, prevTrack, nextTrack,
         canPrev, canNext, stopAll: ytStopAll } = useYouTube()
+
+function tileTap(item, e) {
+  e.stopPropagation()
+  const videos = getVideos(item)
+  if (!videos.length) return
+  stopAudio()
+  if (ytActiveId.value === String(item.id)) toggle()
+  else setTrack({ ...item, videos }, 0)
+}
 
 const { stopAll: stopAudio } = useAudio()
 
@@ -191,7 +241,10 @@ onMounted(() => {
           spellcheck="false"
           autocomplete="off"
         />
-        <button type="submit" class="search-btn fa">&#xf002;</button>
+        <button type="submit" class="search-btn" :class="{ 'search-btn-busy': busy }" :disabled="busy">
+          <span v-if="busy" class="search-spinner" />
+          <span v-else class="fa">&#xf002;</span>
+        </button>
       </form>
 
       <div class="header-right">
@@ -207,23 +260,23 @@ onMounted(() => {
         type="text"
         placeholder="year"
         class="filter-input filter-year"
-        @keyup.enter="search()"
+        @keyup.enter="!busy && search()"
       />
       <input
         v-model="genreFilter"
         type="text"
         placeholder="genre"
         class="filter-input"
-        @keyup.enter="search()"
+        @keyup.enter="!busy && search()"
       />
       <input
         v-model="styleFilter"
         type="text"
         placeholder="style"
         class="filter-input"
-        @keyup.enter="search()"
+        @keyup.enter="!busy && search()"
       />
-      <select v-model="fmtFilter" class="filter-select" @change="search()">
+      <select v-model="fmtFilter" class="filter-select" @change="!busy && search()">
         <option v-for="f in FORMATS" :key="f" :value="f">{{ f || 'all formats' }}</option>
       </select>
     </div>
@@ -256,6 +309,8 @@ onMounted(() => {
             :src="artUrl(item) || '/white_label.jpg'"
             :alt="item.title"
             class="tile-art"
+            :class="{ 'has-video': getVideos(item).length }"
+            @click="tileTap(item, $event)"
             @error="e => e.target.src = '/white_label.jpg'"
           />
           <p class="r-artist">{{ parseTitle(item.title).artist || item.title }}</p>
@@ -275,10 +330,14 @@ onMounted(() => {
           </div>
 
           <!-- Tracks (YouTube videos) -->
-          <div v-if="videosLoading(item)" class="dots-row">
-            <span class="no-audio-label">...</span>
-          </div>
-          <div v-else-if="getVideos(item).length" class="dots-row">
+          <div v-if="getVideos(item).length" class="dots-row">
+            <button
+              v-if="ytActiveId === String(item.id) && getVideos(item).length > 1"
+              class="nav-btn"
+              :disabled="ytActiveTrack === 0"
+              @click.stop="prevTrack($event)"
+            >&#8249;</button>
+
             <template v-for="dots in [computeDots(getVideos(item).length, ytActiveId === String(item.id) ? ytActiveTrack : -1)]" :key="0">
               <svg :width="dots.length * 12" height="12">
                 <g
@@ -300,11 +359,20 @@ onMounted(() => {
                 </g>
               </svg>
             </template>
+
+            <button
+              v-if="ytActiveId === String(item.id) && getVideos(item).length > 1"
+              class="nav-btn"
+              :disabled="ytActiveTrack === getVideos(item).length - 1"
+              @click.stop="nextTrack($event)"
+            >&#8250;</button>
           </div>
-          <div v-else-if="details[item.id] !== undefined" class="dots-row no-audio-row">
+          <div v-else-if="detailsFetched(item)" class="dots-row no-audio-row">
             <span class="no-audio-label">no video</span>
           </div>
-          <div v-else class="dots-row" />
+          <div v-else class="dots-row">
+            <span class="no-audio-label dots-pending">...</span>
+          </div>
 
           <div v-if="ytActiveId === String(item.id)" class="r-trackname-wrap">
             <span class="r-trackname" :key="`${item.id}-${ytActiveTrack}`">{{ getVideos(item)[ytActiveTrack]?.title || '' }}</span>
@@ -418,8 +486,23 @@ onMounted(() => {
   cursor: pointer;
   font-size: 0.75rem;
   white-space: nowrap;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2rem;
 }
-.search-btn:hover { background: #333; }
+.search-btn:hover:not(:disabled) { background: #333; }
+.search-btn:disabled { opacity: 0.5; cursor: default; }
+
+.search-spinner {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
 
 .header-right {
   display: flex;
@@ -536,6 +619,7 @@ onMounted(() => {
   object-fit: cover;
   display: block;
 }
+.tile-art.has-video { cursor: pointer; }
 
 .r-cat {
   font-size: 0.55rem;
@@ -612,6 +696,32 @@ onMounted(() => {
   font-size: 0.5rem;
   color: #ddd;
   letter-spacing: 0.05em;
+}
+
+.nav-btn {
+  background: none;
+  border: none;
+  font-family: 'Cousine', monospace;
+  font-size: 1rem;
+  color: #aaa;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  transition: color 0.1s;
+}
+.nav-btn:not(:disabled):hover { color: #333; }
+.nav-btn:disabled { opacity: 0.25; cursor: default; }
+
+.dots-pending {
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  animation: dotgrow 1.5s steps(3, end) infinite;
+}
+
+@keyframes dotgrow {
+  from { max-width: 1ch; }
+  to   { max-width: 4ch; }
 }
 
 @media (max-width: 600px) {

@@ -1877,7 +1877,12 @@ namespace
                 output.section_search_names.push_back(n.c_str());
             }
 
-            output.name = store_name;
+            if(store.contains("display_name")) {
+                std::string dn = store["display_name"];
+                output.name = dn.c_str();
+            } else {
+                output.name = store_name;
+            }
 
             apply_user_store_prefs(store_name, output);
 
@@ -4077,7 +4082,7 @@ namespace
             if(ctx.data_ctx.user_data.dict.contains("username")) {
                 ctx.username = ((std::string)ctx.data_ctx.user_data.dict["username"]).c_str();
             }
-            ctx.data_ctx.user_data.mutex.unlock();
+ctx.data_ctx.user_data.mutex.unlock();
             ctx.data_ctx.user_data.status = Status::e_invalidated;
         }
     }

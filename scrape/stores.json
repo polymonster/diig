@@ -1,5 +1,6 @@
 {
     "phonica": {
+        "display_name": "Phonica",
         "sections": [
             "tech-house",
             "techno",
@@ -44,6 +45,7 @@
         "scrape_rate": 10
     },
     "juno": {
+        "display_name": "Juno",
         "sections": [
             "minimal-tech-house",
             "deep-house",
@@ -88,6 +90,7 @@
         "scrape_rate": 10
     },
     "redeye": {
+        "display_name": "Redeye",
         "sections": [
             "techno-electro",
             "house-disco",
@@ -128,6 +131,7 @@
         "scrape_rate": 10
     },
     "yoyaku": {
+        "display_name": "Yoyaku",
         "sections": [
             "breaks",
             "dub-techno",
@@ -162,6 +166,7 @@
         "art_index": 1
     },
     "hardwax": {
+        "display_name": "Hardwax",
         "sections": [
             "electro",
             "house",
@@ -200,6 +205,7 @@
         "art_index": 1
     },
     "vinylunderground": {
+        "display_name": "Vinyl Underground",
         "sections": [
             "deep-techno-electro",
             "house-deep-house",
@@ -223,6 +229,7 @@
         "scrape_rate": 5
     },
     "decks": {
+        "display_name": "Decks",
         "sections": [
             "ten",
             "hon",
@@ -230,7 +237,8 @@
         ],
         "section_display_names": [
             "Techno",
-            "House"
+            "House",
+            "Bass Music"
         ],
         "view_order": [
             "new_releases",

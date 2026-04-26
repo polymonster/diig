@@ -18,7 +18,7 @@ Available now on iOS and Android. Contact to join:
 - **iOS** - via TestFlight
 - **Android** - via Google Play internal testing
 
-Also available as a [web app](https://diig-19d4c.web.app).
+Also available as a [web app](https://diig.app).
 
 ## Contributing
 

@@ -5,59 +5,28 @@ const auth = useFirebaseAuth()
 const user = useCurrentUser()
 const DB = 'https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app'
 
-const STORES = [
-  {
-    id: 'redeye', name: 'Redeye', artIndex: 0, chartView: 'weekly_chart',
-    sections: [
-      { id: 'techno-electro', name: 'Techno / Electro' },
-      { id: 'house-disco',    name: 'House / Disco' },
-      { id: 'bass-music',     name: 'Bass Music' },
-    ],
-  },
-  {
-    id: 'juno', name: 'Juno', artIndex: 0, chartView: 'weekly_chart',
-    sections: [
-      { id: 'minimal-tech-house', name: 'Minimal / Tech House' },
-      { id: 'deep-house',         name: 'Deep House' },
-      { id: 'techno-music',       name: 'Techno' },
-      { id: 'breakbeat',          name: 'Breakbeat' },
-      { id: 'electro',            name: 'Electro' },
-    ],
-  },
-  {
-    id: 'phonica', name: 'Phonica', artIndex: 0, chartView: 'bestsellers',
-    sections: [
-      { id: 'tech-house', name: 'Tech House / Minimal' },
-      { id: 'techno',     name: 'Techno / Electro' },
-      { id: 'house',      name: 'House' },
-    ],
-  },
-  {
-    id: 'yoyaku', name: 'Yoyaku', artIndex: 1, chartView: 'weekly_chart',
-    sections: [
-      { id: 'breaks',     name: 'Breaks' },
-      { id: 'dub-techno', name: 'Dub Techno' },
-      { id: 'minimal',    name: 'Minimal' },
-      { id: 'electro',    name: 'Electro' },
-      { id: 'house',      name: 'House' },
-    ],
-  },
-  {
-    id: 'hardwax', name: 'Hardwax', artIndex: 1, chartView: 'this_week', sectionlessChart: true,
-    sections: [
-      { id: 'electro', name: 'Electro' },
-      { id: 'house',   name: 'House' },
-      { id: 'techno',  name: 'Techno' },
-    ],
-  },
-  {
-    id: 'decks', name: 'Decks', artIndex: 1, chartView: 'buzz_chart',
-    sections: [
-      { id: 'ten', name: 'Techno' },
-      { id: 'hon', name: 'House' },
-    ],
-  },
-]
+const stores = ref([])
+
+async function fetchStores() {
+  if (!auth.currentUser) return
+  const token = await auth.currentUser.getIdToken()
+  const data  = await fetch(`${DB}/stores.json?auth=${token}`).then(r => r.json())
+  if (!data || typeof data !== 'object') return
+  stores.value = Object.entries(data).map(([id, d]) => {
+    const chartView = (d.view_order || [])[1] || 'weekly_chart'
+    return {
+      id,
+      name:             d.display_name || id,
+      artIndex:         d.art_index || 0,
+      chartView,
+      sectionlessChart: !!(d.views?.[chartView]?.sectionless),
+      sections:         (d.sections || []).map((secId, i) => ({
+        id:   secId,
+        name: (d.section_display_names || [])[i] || secId,
+      })),
+    }
+  })
+}
 
 const VIEWS = [
   { id: 'new_releases', label: 'New' },
@@ -86,7 +55,7 @@ async function loadSection(store, section, viewId) {
     const url   = `${DB}/releases.json?orderBy="${t}"&startAt=0&auth=${token}`
     const data  = await fetch(url).then(r => r.json())
     if (!data || typeof data !== 'object') { sectionReleases.value[key] = []; return }
-    const items = Object.entries(data).map(([id, v]) => ({ id, ...v }))
+    const items = Object.entries(data).map(([id, v]) => ({ ...v, id }))
     items.sort((a, b) => (a[t] ?? 999) - (b[t] ?? 999))
     sectionReleases.value[key] = items.slice(0, 32)
   } catch (e) {
@@ -98,13 +67,13 @@ async function loadSection(store, section, viewId) {
 async function loadAll() {
   loading.value = true
   const blank = {}
-  for (const s of STORES) for (const sec of s.sections) blank[sectionKey(s.id, sec.id)] = []
+  for (const s of stores.value) for (const sec of s.sections) blank[sectionKey(s.id, sec.id)] = []
   sectionReleases.value = blank
-  await Promise.all(STORES.flatMap(s => s.sections.map(sec => loadSection(s, sec, selectedView.value))))
+  await Promise.all(stores.value.flatMap(s => s.sections.map(sec => loadSection(s, sec, selectedView.value))))
   loading.value = false
 }
 
-watch(user, u => { if (u) { loadAll(); loadLikes() } }, { immediate: true })
+watch(user, async u => { if (u) { await fetchStores(); loadAll(); loadLikes() } }, { immediate: true })
 
 function selectView(viewId) {
   stopAll()
@@ -115,7 +84,7 @@ function selectView(viewId) {
 
 
 const releasesByStore = computed(() =>
-  STORES.map(store => {
+  stores.value.map(store => {
     const seen     = new Set()
     const releases = []
     for (const sec of store.sections) {
@@ -134,9 +103,6 @@ const likeCountAdjust = ref({})  // id -> delta on top of server count
 
 function isLiked(id) { return id in likes.value }
 
-function likeCount(release) {
-  return Math.max(0, (release.likes?.count ?? 0) + (likeCountAdjust.value[release.id] ?? 0))
-}
 
 async function loadLikes() {
   if (!auth.currentUser) return
@@ -154,20 +120,22 @@ async function toggleLike(release, e) {
   const token    = await auth.currentUser.getIdToken()
   const countUrl = `${DB}/releases/${id}/likes/count.json?auth=${token}`
 
+  const json = (body) => ({ method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
+
   if (isLiked(id)) {
     const { [id]: _, ...rest } = likes.value
     likes.value = rest
     likeCountAdjust.value = { ...likeCountAdjust.value, [id]: (likeCountAdjust.value[id] ?? 0) - 1 }
     await fetch(`${DB}/users/${uid}/likes/${id}.json?auth=${token}`, { method: 'DELETE' })
     const cur = await fetch(countUrl).then(r => r.json()) || 0
-    await fetch(countUrl, { method: 'PUT', body: JSON.stringify(Math.max(0, cur - 1)) })
+    await fetch(countUrl, json(Math.max(0, cur - 1)))
   } else {
-    const ts = Date.now() / 1000
+    const ts = 1696155367 + Date.now()
     likes.value = { ...likes.value, [id]: ts }
     likeCountAdjust.value = { ...likeCountAdjust.value, [id]: (likeCountAdjust.value[id] ?? 0) + 1 }
-    await fetch(`${DB}/users/${uid}/likes/${id}.json?auth=${token}`, { method: 'PUT', body: JSON.stringify(ts) })
+    await fetch(`${DB}/users/${uid}/likes/${id}.json?auth=${token}`, json(ts))
     const cur = await fetch(countUrl).then(r => r.json()) || 0
-    await fetch(countUrl, { method: 'PUT', body: JSON.stringify(cur + 1) })
+    await fetch(countUrl, json(cur + 1))
   }
 }
 
@@ -177,7 +145,7 @@ function tags(release) { return release.store_tags || {} }
 
 const menuOpen = useState('menuOpen', () => false)
 
-const { activeId, activeTrack, isPlaying, releaseList, tileClick, setTrack, prevTrack, nextTrack, dotClick, computeDots, getTracks, getTrackNames, stopAll } = useAudio()
+const { activeId, activeTrack, isPlaying, releaseList, tileClick, prevTrack, nextTrack, dotClick, computeDots, getTracks, getTrackNames, stopAll } = useAudio()
 
 watch(releasesByStore, val => {
   releaseList.value = val.flatMap(({ releases }) => releases)
@@ -255,7 +223,7 @@ function onSwipeEnd(release, e) {
                 @error="e => e.target.src = '/white_label.jpg'"
               />
               <p class="r-artist">{{ release.artist }}</p>
-              <p class="r-title">{{ release.title || ' ' }}</p>
+              <p class="r-title">{{ release.title || ' ' }}</p>
 
               <!-- like + buy left, hype right -->
               <div class="icons-row">
@@ -289,7 +257,7 @@ function onSwipeEnd(release, e) {
                   @click="prevTrack(release, $event)"
                 >&#8249;</button>
 
-                <template v-for="dots in [computeDots(getTracks(release).length, activeId === release.id ? activeTrack : -1)]" :key="0">
+                <template v-for="(dots, i) in [computeDots(getTracks(release).length, activeId === release.id ? activeTrack : -1)]" :key="i">
                 <svg :width="dots.length * 12" height="12">
                   <g
                     v-for="(dot, i) in dots"

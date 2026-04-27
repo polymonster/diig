@@ -14,7 +14,7 @@ export default defineNuxtConfig({
   modules: [
     '@nuxt/image',
     '@nuxt/icon',
-    '@nuxt/eslint',
+    ['@nuxt/eslint', { config: { typescript: true } }],
     '@nuxt/test-utils',
     '@nuxtjs/tailwindcss',
     'nuxt-vuefire',

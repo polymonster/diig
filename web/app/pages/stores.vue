@@ -332,7 +332,7 @@ function onSwipeEnd(release, e) {
               @click="prevTrack(release, $event)"
             >&#8249;</button>
 
-            <template v-for="dots in [computeDots(getTracks(release).length, activeId === release.id ? activeTrack : -1)]" :key="0">
+            <template v-for="(dots, i) in [computeDots(getTracks(release).length, activeId === release.id ? activeTrack : -1)]" :key="i">
             <svg :width="dots.length * 12" height="12">
               <g
                 v-for="(dot, i) in dots"

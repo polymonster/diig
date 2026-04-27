@@ -338,7 +338,7 @@ onMounted(() => {
               @click.stop="prevTrack($event)"
             >&#8249;</button>
 
-            <template v-for="dots in [computeDots(getVideos(item).length, ytActiveId === String(item.id) ? ytActiveTrack : -1)]" :key="0">
+            <template v-for="(dots, i) in [computeDots(getVideos(item).length, ytActiveId === String(item.id) ? ytActiveTrack : -1)]" :key="i">
               <svg :width="dots.length * 12" height="12">
                 <g
                   v-for="(dot, i) in dots"

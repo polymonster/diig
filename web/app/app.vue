@@ -69,7 +69,7 @@ function closeAll() { menuOpen.value = false; settingsOpen.value = false }
 
 // ── Player bar ────────────────────────────────────────────────────────────────
 
-const { activeTrack, isPlaying, activeRelease, getTracks, getTrackNames, tileClick, skipPrev, skipNext, canSkipPrev, canSkipNext } = useAudio()
+const { activeTrack, isPlaying, activeRelease, getTrackNames, tileClick, skipPrev, skipNext, canSkipPrev, canSkipNext } = useAudio()
 
 function playerArt(release) { return artworkUrl(release) || '/white_label.jpg' }
 function playerToggle() { if (activeRelease.value) tileClick(activeRelease.value) }

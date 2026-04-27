@@ -23,7 +23,7 @@ async function loadLikedReleases() {
     entries.map(async ([id, ts]) => {
       try {
         const data = await fetch(`${DB}/releases/${id}.json?auth=${token}`).then(r => r.json())
-        return data ? { id, ts, ...data } : null
+        return data ? { ...data, id, ts } : null
       } catch { return null }
     })
   )
@@ -40,9 +40,6 @@ const likeCountAdjust = ref({})
 
 function isLiked(id) { return id in likes.value }
 
-function likeCount(release) {
-  return Math.max(0, (release.likes?.count ?? 0) + (likeCountAdjust.value[release.id] ?? 0))
-}
 
 async function toggleLike(release, e) {
   e.stopPropagation()
@@ -52,6 +49,8 @@ async function toggleLike(release, e) {
   const token    = await auth.currentUser.getIdToken()
   const countUrl = `${DB}/releases/${id}/likes/count.json?auth=${token}`
 
+  const json = (body) => ({ method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
+
   if (isLiked(id)) {
     const { [id]: _, ...rest } = likes.value
     likes.value = rest
@@ -59,14 +58,14 @@ async function toggleLike(release, e) {
     releases.value = releases.value.filter(r => r.id !== id)
     await fetch(`${DB}/users/${uid}/likes/${id}.json?auth=${token}`, { method: 'DELETE' })
     const cur = await fetch(countUrl).then(r => r.json()) || 0
-    await fetch(countUrl, { method: 'PUT', body: JSON.stringify(Math.max(0, cur - 1)) })
+    await fetch(countUrl, json(Math.max(0, cur - 1)))
   } else {
-    const ts = Date.now() / 1000
+    const ts = 1696155367 + Date.now()
     likes.value = { ...likes.value, [id]: ts }
     likeCountAdjust.value = { ...likeCountAdjust.value, [id]: (likeCountAdjust.value[id] ?? 0) + 1 }
-    await fetch(`${DB}/users/${uid}/likes/${id}.json?auth=${token}`, { method: 'PUT', body: JSON.stringify(ts) })
+    await fetch(`${DB}/users/${uid}/likes/${id}.json?auth=${token}`, json(ts))
     const cur = await fetch(countUrl).then(r => r.json()) || 0
-    await fetch(countUrl, { method: 'PUT', body: JSON.stringify(cur + 1) })
+    await fetch(countUrl, json(cur + 1))
   }
 }
 
@@ -92,7 +91,7 @@ function storeName(release) {
 
 const menuOpen = useState('menuOpen', () => false)
 
-const { activeId, activeTrack, isPlaying, releaseList, tileClick, setTrack, prevTrack, nextTrack, dotClick, computeDots, getTracks, getTrackNames, stopAll } = useAudio()
+const { activeId, activeTrack, isPlaying, releaseList, tileClick, prevTrack, nextTrack, dotClick, computeDots, getTracks, getTrackNames } = useAudio()
 
 watch(releases, val => { releaseList.value = val })
 
@@ -188,7 +187,7 @@ function onSwipeEnd(release, e) {
               @click="prevTrack(release, $event)"
             >&#8249;</button>
 
-            <template v-for="dots in [computeDots(getTracks(release).length, activeId === release.id ? activeTrack : -1)]" :key="0">
+            <template v-for="(dots, i) in [computeDots(getTracks(release).length, activeId === release.id ? activeTrack : -1)]" :key="i">
             <svg :width="dots.length * 12" height="12">
               <g
                 v-for="(dot, i) in dots"

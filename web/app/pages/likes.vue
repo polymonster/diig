@@ -80,6 +80,14 @@ onMounted(async () => {
 
 function tags(release) { return release.store_tags || {} }
 
+const STORE_NAMES = {
+  redeye: 'Redeye', juno: 'Juno', phonica: 'Phonica',
+  yoyaku: 'Yoyaku', hardwax: 'Hardwax', decks: 'Decks',
+}
+function storeName(release) {
+  return STORE_NAMES[release.store] || release.store || ''
+}
+
 // ── Player ────────────────────────────────────────────────────────────────────
 
 const menuOpen = useState('menuOpen', () => false)
@@ -137,7 +145,7 @@ function onSwipeEnd(release, e) {
           @touchstart.passive="onSwipeStart"
           @touchend.passive="onSwipeEnd(release, $event)"
         >
-          <p v-if="release.cat" class="r-cat">{{ release.cat }}</p>
+          <p class="r-cat">{{ release.cat }}</p>
           <img
             :src="artworkUrl(release) || '/white_label.jpg'"
             :alt="release.title"
@@ -146,6 +154,7 @@ function onSwipeEnd(release, e) {
           />
           <p class="r-artist">{{ release.artist }}</p>
           <p class="r-title">{{ release.title || ' ' }}</p>
+          <p class="r-store">{{ storeName(release) }}</p>
 
           <!-- like + buy left, hype right -->
           <div class="icons-row">
@@ -324,6 +333,13 @@ function onSwipeEnd(release, e) {
 .r-cat {
   font-size: 0.55rem; color: #bbb;
   margin: 0 0 2px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  min-height: 1em;
+}
+
+.r-store {
+  font-size: 0.55rem; color: #bbb;
+  margin: 1px 0 0;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 

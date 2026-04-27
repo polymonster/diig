@@ -15,13 +15,22 @@ export function useAudio() {
   function getTracks(release: any): any[]     { return toArray(release.track_urls) }
   function getTrackNames(release: any): any[] { return toArray(release.track_names) }
 
+  function audioUrl(url: string): string {
+    try {
+      if (new URL(url).hostname === 'media.hardwax.com') {
+        return `/api/audio-proxy?url=${encodeURIComponent(url)}`
+      }
+    } catch {}
+    return url
+  }
+
   function setTrack(release: any, idx: number) {
     const urls = getTracks(release)
     if (!urls.length) return
     activeId.value      = release.id
     activeTrack.value   = idx
     activeRelease.value = release
-    const url = urls[idx]
+    const url = audioUrl(urls[idx])
     if (!url) return
     if (!audioEl) audioEl = new Audio()
     audioEl.onended = () => {

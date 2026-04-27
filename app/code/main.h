@@ -296,6 +296,7 @@ struct DataContext
 struct StoreView
 {
     Str                 store_name = "";
+    Str                 store_display_name = "";
     Str                 selected_view = "";
     std::vector<Str>    selected_sections = {};
     size_t              art_index = 0;
@@ -328,6 +329,7 @@ struct ChartItem
 struct Store
 {
     Str              name;
+    Str              display_name;
     std::vector<Str> view_search_names;
     std::vector<Str> view_display_names;
     std::vector<u32> view_sectionless;

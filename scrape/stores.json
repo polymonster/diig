@@ -25,7 +25,7 @@
             "new_releases": {
                 "url": "https://www.phonicarecords.com/genre/${{category_id}}/${{section}}/all/latest/desc/${{counter}}",
                 "api_url":  "https://www.phonicarecords.com/api/product/json_category",
-                "page_count": 8,
+                "page_count": 3,
                 "display_name": "Latest"
             },
             "bestsellers": {
@@ -109,7 +109,7 @@
         "views": {
             "new_releases": {
                 "url": "https://www.redeyerecords.co.uk/${{section}}/new-releases/page-${{page}}",
-                "page_count": 20,
+                "page_count": 5,
                 "display_name": "Latest"
             },
             "weekly_chart": {
@@ -124,7 +124,7 @@
             },
             "back_catalogue": {
                 "url": "https://www.redeyerecords.co.uk/${{section}}/back-catalogue/page-${{page}}",
-                "page_count": 10,
+                "page_count": 4,
                 "display_name": "Back Catalogue"
             }
         },
@@ -153,7 +153,7 @@
         "views": {
             "new_releases": {
                 "url": "https://yoyaku.io/style/${{section}}/page/${{page}}/?orderby=date",
-                "page_count": 25,
+                "page_count": 5,
                 "display_name": "Latest"
             },
             "weekly_chart": {
@@ -185,7 +185,7 @@
         "views": {
             "new_releases": {
                 "url": "https://hardwax.com/${{section}}/?page=${{page}}",
-                "page_count": 25,
+                "page_count": 5,
                 "display_name": "Latest"
             },
             "this_week": {
@@ -222,7 +222,7 @@
         "views": {
             "new_releases": {
                 "url": "https://vinylunderground.co.uk/collections/${{section}}/products.json?page=${{page}}&limit=40&sort_by=created-descending",
-                "page_count": 10,
+                "page_count": 4,
                 "display_name": "Latest"
             }
         },
@@ -248,7 +248,7 @@
         "views": {
             "new_releases": {
                 "url": "https://www.decks.de/decks/workfloor/lists/list_db.php?now_Was=news&wo=${{section}}&aktuell=${{page}}",
-                "page_count": 10,
+                "page_count": 4,
                 "display_name": "Latest"
             },
             "buzz_chart": {

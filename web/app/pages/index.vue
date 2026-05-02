@@ -96,6 +96,40 @@ const releasesByStore = computed(() =>
   }).filter(s => s.releases.length)
 )
 
+// ── Auto-play on scroll (mobile) ─────────────────────────────────────────────
+
+const flatReleases = computed(() => releasesByStore.value.flatMap(({ releases }) => releases))
+
+let scrollRaf = null
+
+function centeredReleaseId() {
+  const cy = window.innerHeight / 2
+  let bestId = null
+  let bestDist = Infinity
+  document.querySelectorAll('[data-release-id]').forEach(el => {
+    const r = el.getBoundingClientRect()
+    const dist = Math.abs((r.top + r.height / 2) - cy)
+    if (dist < bestDist) { bestDist = dist; bestId = el.dataset.releaseId }
+  })
+  return bestId
+}
+
+function onScrollPlay() {
+  // only auto-advance while something is already playing (audio unlocked by user)
+  if (!isPlaying.value) return
+  if (scrollRaf) return
+  scrollRaf = requestAnimationFrame(() => {
+    scrollRaf = null
+    const id = centeredReleaseId()
+    if (!id || activeId.value === id) return
+    const release = flatReleases.value.find(r => r.id === id)
+    if (release && getTracks(release).length) tileClick(release)
+  })
+}
+
+onMounted(() => { if (process.client) window.addEventListener('scroll', onScrollPlay, { passive: true }) })
+onUnmounted(() => { if (process.client) window.removeEventListener('scroll', onScrollPlay) })
+
 // ── Likes ─────────────────────────────────────────────────────────────────────
 
 const likes           = ref({})  // id -> timestamp
@@ -145,7 +179,7 @@ function tags(release) { return release.store_tags || {} }
 
 const menuOpen = useState('menuOpen', () => false)
 
-const { activeId, activeTrack, isPlaying, releaseList, tileClick, prevTrack, nextTrack, dotClick, computeDots, getTracks, getTrackNames, stopAll } = useAudio()
+const { activeId, activeTrack, isPlaying, releaseList, tileClick, setTrack, prevTrack, nextTrack, dotClick, computeDots, getTracks, getTrackNames, stopAll } = useAudio()
 
 watch(releasesByStore, val => {
   releaseList.value = val.flatMap(({ releases }) => releases)
@@ -155,16 +189,19 @@ watch(releasesByStore, val => {
 
 let swipeStartX = 0
 let swipeStartY = 0
+const swipeDir = ref(0)
 
 function onSwipeStart(e) {
   swipeStartX = e.touches[0].clientX
   swipeStartY = e.touches[0].clientY
+  swipeDir.value = 0
 }
 
 function onSwipeEnd(release, e) {
   const dx = e.changedTouches[0].clientX - swipeStartX
   const dy = e.changedTouches[0].clientY - swipeStartY
   if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) {
+    swipeDir.value = dx < 0 ? -1 : 1
     dx < 0 ? nextTrack(release, e) : prevTrack(release, e)
   }
 }
@@ -211,17 +248,22 @@ function onSwipeEnd(release, e) {
             :key="release.id"
             class="tile"
             :class="{ active: activeId === release.id, 'no-audio': !getTracks(release).length }"
+            :data-release-id="release.id"
             @click="getTracks(release).length && tileClick(release)"
             @touchstart.passive="onSwipeStart"
             @touchend.passive="onSwipeEnd(release, $event)"
           >
               <p v-if="release.cat" class="r-cat">{{ release.cat }}</p>
-              <img
-                :src="artworkUrl(release) || '/white_label.jpg'"
-                :alt="release.title"
-                class="tile-art"
-                @error="e => e.target.src = '/white_label.jpg'"
-              />
+              <div class="artwork-wrap">
+                <img
+                  :key="activeId === release.id ? `art-${release.id}-${activeTrack}` : `art-${release.id}`"
+                  :src="artworkUrl(release) || '/white_label.jpg'"
+                  :alt="release.title"
+                  class="tile-art"
+                  :class="activeId === release.id && swipeDir !== 0 ? (swipeDir < 0 ? 'slide-left' : 'slide-right') : ''"
+                  @error="e => e.target.src = '/white_label.jpg'"
+                />
+              </div>
               <p class="r-artist">{{ release.artist }}</p>
               <p class="r-title">{{ release.title || ' ' }}</p>
 
@@ -290,8 +332,8 @@ function onSwipeEnd(release, e) {
                 <span class="no-audio-label">no audio</span>
               </div>
 
-              <div v-if="activeId === release.id" class="r-trackname-wrap">
-                <span class="r-trackname" :key="`${release.id}-${activeTrack}`">{{ getTrackNames(release)[activeTrack] || '' }}</span>
+              <div class="r-trackname-wrap">
+                <span class="r-trackname" :key="`${release.id}-${activeTrack}`">{{ activeId === release.id ? (getTrackNames(release)[activeTrack] || '') : '' }}</span>
               </div>
           </div>
         </div>
@@ -445,11 +487,30 @@ function onSwipeEnd(release, e) {
 
 .tile.no-audio { cursor: default; }
 
+.artwork-wrap {
+  overflow: hidden;
+  width: 150px;
+  height: 150px;
+}
+
 .tile-art {
   width: 150px;
   height: 150px;
   object-fit: cover;
   display: block;
+}
+
+.tile-art.slide-left  { animation: slide-in-left  0.25s ease-out; }
+.tile-art.slide-right { animation: slide-in-right 0.25s ease-out; }
+
+@keyframes slide-in-left {
+  from { transform: translateX(100%); }
+  to   { transform: translateX(0); }
+}
+
+@keyframes slide-in-right {
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(0); }
 }
 
 .r-cat {
@@ -484,6 +545,7 @@ function onSwipeEnd(release, e) {
   overflow: hidden;
   text-align: center;
   margin-top: 3px;
+  min-height: 1em;
 }
 
 .r-trackname {
@@ -500,8 +562,38 @@ function onSwipeEnd(release, e) {
 }
 
 @media (max-width: 600px) {
-  .tile     { width: 100%; flex: 0 0 100%; }
-  .tile-art { width: 100%; height: auto; aspect-ratio: 1; }
+  /* header: row 1 = logo + icons, row 2 = nav */
+  .header {
+    flex-wrap: wrap;
+    gap: 0;
+    padding: 0.75rem 1rem 0;
+  }
+  .header-right { margin-left: auto; }
+  .viewnav {
+    order: 3;
+    width: 100%;
+    padding: 0.35rem 0 0.35rem;
+    border-top: 1px solid #f0f0f0;
+    margin-top: 0.5rem;
+    gap: 0;
+  }
+  .viewnav .viewbtn { flex: 1; text-align: center; padding: 0.3rem 0.4rem; }
+
+  /* tiles */
+  .tile { width: 100%; flex: 0 0 100%; }
+
+  /* artwork: full-width on mobile */
+  .artwork-wrap {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1;
+  }
+  .tile-art {
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 1;
+  }
+
   @keyframes trackscroll {
     0%,  20% { transform: translateX(0); }
     80%, 100% { transform: translateX(min(0px, calc(100vw - 3rem - 100%))); }

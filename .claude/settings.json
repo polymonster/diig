@@ -8,7 +8,8 @@
       "Read(//tmp/**)",
       "Bash(curl *)",
       "Edit(*)",
-      "Write(*)"
+      "Write(*)",
+      "PowerShell(Copy-Item \"c:\\\\Users\\\\alex_\\\\dev\\\\diig\\\\app\\\\dist\\\\icon\\\\dig_icon.png\" \"c:\\\\Users\\\\alex_\\\\dev\\\\diig\\\\web\\\\public\\\\icon.png\")"
     ]
   }
 }

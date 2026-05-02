@@ -115,6 +115,7 @@ function centeredReleaseId() {
 }
 
 function onScrollPlay() {
+  if (window.innerWidth > 600) return
   // only auto-advance while something is already playing (audio unlocked by user)
   if (!isPlaying.value) return
   if (scrollRaf) return
@@ -457,13 +458,20 @@ function onSwipeEnd(release, e) {
   padding: 1.5rem;
 }
 
-.store-block { margin-bottom: 2rem; }
+.store-block {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 150px);
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
 
 .store-name {
+  grid-column: 1 / -1;
   font-size: 0.7rem;
   letter-spacing: 0.15em;
   text-transform: uppercase;
-  margin: 0 0 0.75rem;
+  margin: 0 0 0.25rem;
 }
 
 .store-link {
@@ -474,9 +482,7 @@ function onSwipeEnd(release, e) {
 .store-link:hover { color: #0a0a0a; }
 
 .tile-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
+  display: contents;
 }
 
 .tile {
@@ -580,7 +586,8 @@ function onSwipeEnd(release, e) {
   .viewnav .viewbtn { flex: 1; text-align: center; padding: 0.3rem 0.4rem; }
 
   /* tiles */
-  .tile { width: 100%; flex: 0 0 100%; }
+  .store-block { grid-template-columns: 1fr; }
+  .tile { width: 100%; }
 
   /* artwork: full-width on mobile */
   .artwork-wrap {

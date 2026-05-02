@@ -1,5 +1,6 @@
 {
     "phonica": {
+        "display_name": "Phonica",
         "sections": [
             "tech-house",
             "techno",
@@ -24,7 +25,11 @@
             "new_releases": {
                 "url": "https://www.phonicarecords.com/genre/${{category_id}}/${{section}}/all/latest/desc/${{counter}}",
                 "api_url":  "https://www.phonicarecords.com/api/product/json_category",
+<<<<<<< HEAD
                 "page_count": 8,
+=======
+                "page_count": 3,
+>>>>>>> 9352b35758812a89f9898822bdac82826010705e
                 "display_name": "Latest"
             },
             "bestsellers": {
@@ -44,6 +49,7 @@
         "scrape_rate": 10
     },
     "juno": {
+        "display_name": "Juno",
         "sections": [
             "minimal-tech-house",
             "deep-house",
@@ -88,6 +94,7 @@
         "scrape_rate": 10
     },
     "redeye": {
+        "display_name": "Redeye",
         "sections": [
             "techno-electro",
             "house-disco",
@@ -106,7 +113,11 @@
         "views": {
             "new_releases": {
                 "url": "https://www.redeyerecords.co.uk/${{section}}/new-releases/page-${{page}}",
+<<<<<<< HEAD
                 "page_count": 20,
+=======
+                "page_count": 5,
+>>>>>>> 9352b35758812a89f9898822bdac82826010705e
                 "display_name": "Latest"
             },
             "weekly_chart": {
@@ -121,13 +132,18 @@
             },
             "back_catalogue": {
                 "url": "https://www.redeyerecords.co.uk/${{section}}/back-catalogue/page-${{page}}",
+<<<<<<< HEAD
                 "page_count": 10,
+=======
+                "page_count": 4,
+>>>>>>> 9352b35758812a89f9898822bdac82826010705e
                 "display_name": "Back Catalogue"
             }
         },
         "scrape_rate": 10
     },
     "yoyaku": {
+        "display_name": "Yoyaku",
         "sections": [
             "breaks",
             "dub-techno",
@@ -149,7 +165,11 @@
         "views": {
             "new_releases": {
                 "url": "https://yoyaku.io/style/${{section}}/page/${{page}}/?orderby=date",
+<<<<<<< HEAD
                 "page_count": 25,
+=======
+                "page_count": 5,
+>>>>>>> 9352b35758812a89f9898822bdac82826010705e
                 "display_name": "Latest"
             },
             "weekly_chart": {
@@ -162,6 +182,10 @@
         "art_index": 1
     },
     "hardwax": {
+<<<<<<< HEAD
+=======
+        "display_name": "Hardwax",
+>>>>>>> 9352b35758812a89f9898822bdac82826010705e
         "sections": [
             "electro",
             "house",
@@ -180,7 +204,11 @@
         "views": {
             "new_releases": {
                 "url": "https://hardwax.com/${{section}}/?page=${{page}}",
+<<<<<<< HEAD
                 "page_count": 25,
+=======
+                "page_count": 5,
+>>>>>>> 9352b35758812a89f9898822bdac82826010705e
                 "display_name": "Latest"
             },
             "this_week": {
@@ -200,6 +228,10 @@
         "art_index": 1
     },
     "vinylunderground": {
+<<<<<<< HEAD
+=======
+        "display_name": "Vinyl Underground",
+>>>>>>> 9352b35758812a89f9898822bdac82826010705e
         "sections": [
             "deep-techno-electro",
             "house-deep-house",
@@ -216,13 +248,21 @@
         "views": {
             "new_releases": {
                 "url": "https://vinylunderground.co.uk/collections/${{section}}/products.json?page=${{page}}&limit=40&sort_by=created-descending",
+<<<<<<< HEAD
                 "page_count": 10,
+=======
+                "page_count": 4,
+>>>>>>> 9352b35758812a89f9898822bdac82826010705e
                 "display_name": "Latest"
             }
         },
         "scrape_rate": 5
     },
     "decks": {
+<<<<<<< HEAD
+=======
+        "display_name": "Decks",
+>>>>>>> 9352b35758812a89f9898822bdac82826010705e
         "sections": [
             "ten",
             "hon",
@@ -230,7 +270,12 @@
         ],
         "section_display_names": [
             "Techno",
+<<<<<<< HEAD
             "House"
+=======
+            "House",
+            "Bass Music"
+>>>>>>> 9352b35758812a89f9898822bdac82826010705e
         ],
         "view_order": [
             "new_releases",
@@ -240,7 +285,11 @@
         "views": {
             "new_releases": {
                 "url": "https://www.decks.de/decks/workfloor/lists/list_db.php?now_Was=news&wo=${{section}}&aktuell=${{page}}",
+<<<<<<< HEAD
                 "page_count": 10,
+=======
+                "page_count": 4,
+>>>>>>> 9352b35758812a89f9898822bdac82826010705e
                 "display_name": "Latest"
             },
             "buzz_chart": {

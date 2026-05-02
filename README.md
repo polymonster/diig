@@ -3,20 +3,22 @@
 [![scrape](https://github.com/polymonster/diig/actions/workflows/scrape.yml/badge.svg)](https://github.com/polymonster/diig/actions/workflows/scrape.yml)
 [![release](https://github.com/polymonster/diig/actions/workflows/release.yml/badge.svg)](https://github.com/polymonster/diig/actions/workflows/release.yml)
 
-A record digging app for people who collect records. Fast audio player, infinite scroll, offline caching. Swipe through new releases and charts from your favourite stores, tap through to buy.
+A music platform for record collectors. Available on the web and as a native iOS/Android app. Fast audio player, infinite scroll, offline caching. Swipe through new releases and charts from your favourite stores, tap through to buy.
+
+Check out the [website](https://diig.app).
+
+<p align="center">
+    <img src="media/web.png?raw=true" width="640"/>
+</p>
+
+## Beta App
+
+Available now on iOS and Android. Contact to join:
 
 <p align="center">
     <img src="https://github.com/polymonster/polymonster.github.io/blob/master/images/diig/diig.gif?raw=true" width="640" height="360"/>
 </p>
-
-## Get the Beta
-
-Available now on iOS and Android. Contact to join:
-
-- **iOS** - via TestFlight
-- **Android** - via Google Play internal testing
-
-Website coming soon. Get in touch to register interest.
+>>>>>>> 9352b35758812a89f9898822bdac82826010705e
 
 ## Contributing
 
@@ -33,10 +35,10 @@ Scrapers run [nightly](https://github.com/polymonster/diig/actions) to pull rele
 ```bash
 pip install google-auth google-auth-oauthlib google-auth-httplib2
 cd scrape
-python3 dig.py -urls -store juno -verbose -key "{}"
+python3 dig.py -urls -store juno -verbose -local-only
 ```
 
-Where `-key` is a valid Firebase auth token. Run `python3 dig.py -help` for full options.
+Results are written to local registry files only — no Firebase credentials needed. Run `python3 dig.py -help` for full options.
 
 ### Schemas
 
@@ -75,7 +77,7 @@ Where `-key` is a valid Firebase auth token. Run `python3 dig.py -help` for full
         },
         "new_releases": {
             "url": "https://store.com/${{section}}/new/page/${{page}}",
-            "page_count": 10In thi
+            "page_count": 10
         }
     }
 }
@@ -85,10 +87,33 @@ Where `-key` is a valid Firebase auth token. Run `python3 dig.py -help` for full
 
 Discogs links are fetched or attempted to be fetched for all releases. This algrithm is work in progress and it is tricky to find the exact match in some cases. You can add items directly to you Discogs wantlist from in the app. In time deeper integration with discogs will be implemented.
 
+## Building the Web App
+
+Built with [Nuxt](https://nuxt.com) and deployed to Firebase Hosting.
+
+### Dev server
+
+```bash
+cd web
+pnpm install
+pnpm dev
+```
+
+### Generate & deploy
+
+Requires the [Firebase CLI](https://firebase.google.com/docs/cli) (`npm install -g firebase-tools`).
+
+```bash
+cd web
+pnpm generate
+firebase deploy
+```
+
 ## Building the App
 
 Built with C++, Objective-C and [ImGui](https://github.com/ocornut/imgui) on top of [pmtech](https://github.com/polymonster/pmtech).
 
+>>>>>>> 9352b35758812a89f9898822bdac82826010705e
 ```bash
 git submodule update --init --recursive
 cd app

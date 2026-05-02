@@ -1,0 +1,75 @@
+name: app ci
+
+on:
+  push:
+    branches: [main]
+    paths: [app/**]
+  pull_request:
+    branches: [main]
+    paths: [app/**]
+
+jobs:
+  build-ios:
+    name: build ios
+    runs-on: [self-hosted, macOS]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          token: ${{ secrets.DIIG_REG_TOKEN }}
+          clean: true
+
+      - name: select xcode
+        run: sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
+
+      - name: stub api key
+        run: echo 'static constexpr const char* k_api_key = "";' > app/code/api_key.h
+
+      - name: generate project
+        run: |
+          cd app
+          pmtech/pmbuild ios
+          pmtech/pmbuild ios -libs
+
+      - name: build (simulator, no signing)
+        run: |
+          xcodebuild build \
+            -workspace app/build/ios/diig_ios.xcworkspace \
+            -scheme diig \
+            -configuration Debug \
+            -sdk iphonesimulator \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO
+
+  build-android:
+    name: build android
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          token: ${{ secrets.DIIG_REG_TOKEN }}
+
+      - uses: actions/setup-java@v4
+        with:
+          java-version: 21
+          distribution: temurin
+
+      - uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: 8.14.3
+
+      - name: stub api key
+        run: echo 'static constexpr const char* k_api_key = "";' > app/code/api_key.h
+
+      - name: generate project
+        run: |
+          cd app
+          pmtech/pmbuild android
+
+      - name: build debug
+        run: |
+          cd app/build/android
+          gradle wrapper
+          ./gradlew assembleDebug

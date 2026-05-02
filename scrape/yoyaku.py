@@ -153,6 +153,14 @@ def scrape_page(url, store, store_dict, view, section, counter, session_scraped_
         needs_detail_fetch = "artist" not in releases_dict.get(key, {}) or needs_url_fetch
 
         if needs_url_fetch:
+            # internal_id may be missing if releases_ex was shorter than releases
+            # fall back to a previously stored value if available
+            if "internal_id" not in release_dict:
+                release_dict["internal_id"] = releases_dict.get(key, {}).get("internal_id", "")
+            if not release_dict["internal_id"]:
+                needs_url_fetch = False
+                
+        if needs_url_fetch:
             # based on this id we can get json by doing a post request to the API
             product_json = fetch_product_json(release_dict["internal_id"])
 

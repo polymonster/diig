@@ -1878,7 +1878,11 @@ namespace
             }
 
             output.name = store_name;
-
+            if(store.contains("display_name")) {
+                std::string dn = store["display_name"];
+                output.display_name = dn.c_str();
+            }
+            
             apply_user_store_prefs(store_name, output);
 
             // now change the store feed
@@ -2060,7 +2064,7 @@ namespace
 
             // store select
             ImGui::SameLine();
-            ImGui::Text("%s:", ctx.store.name.c_str());
+            ImGui::Text("%s:", ctx.store.display_name.c_str());
             ImVec2 store_menu_pos = ImGui::GetItemRectMin();
             store_menu_pos.y = ImGui::GetItemRectMax().y;
 
@@ -2072,7 +2076,11 @@ namespace
             if(ImGui::BeginPopup("Store Select")) {
                 for(auto& item : ctx.stores.items()) {
                     const c8* store_name = item.key().c_str();
-                    if(ImGui::MenuItem(item.key().c_str())) {
+                    std::string dn = store_name;
+                    if(item.value().contains("display_name")) {
+                        dn = item.value()["display_name"];
+                    }
+                    if(ImGui::MenuItem(dn.c_str())) {
                         ctx.store = change_store(store_name);
                     }
                 }
@@ -2300,8 +2308,6 @@ namespace
 
         ImGui::SetCursorPosX(ctx.w - offset);
         ImGui::Text("%s", ctx.view->page == Page::likes ? ICON_FA_HEART : ICON_FA_HEART_O);
-
-        f32 rad = ctx.w * k_page_button_press_radius_ratio;
 
         if(lenient_button_tap(0.1) && !ctx.scroll_lock_x && ! ctx.scroll_lock_y)
         {
@@ -4077,7 +4083,7 @@ namespace
             if(ctx.data_ctx.user_data.dict.contains("username")) {
                 ctx.username = ((std::string)ctx.data_ctx.user_data.dict["username"]).c_str();
             }
-            ctx.data_ctx.user_data.mutex.unlock();
+ctx.data_ctx.user_data.mutex.unlock();
             ctx.data_ctx.user_data.status = Status::e_invalidated;
         }
     }
@@ -4304,6 +4310,7 @@ void audio_player_toggle_like() {
     auto& releases = ctx.view->releases;
 
     if(releases.flags[r] & EntityFlags::liked) {
+<<<<<<< HEAD
         add_like(releases.key[r]);
         releases.like_count[r]++;
         releases.flags[r] |= EntityFlags::liked;
@@ -4311,6 +4318,15 @@ void audio_player_toggle_like() {
     else {
         remove_like(releases.key[r]);
         releases.like_count[r] = std::max<u32>(releases.like_count[r]--, 0);
+=======
+        remove_like(releases.key[r]);
+        releases.like_count[r] = std::max<u32>(releases.like_count[r]--, 0);
+        releases.flags[r] &= ~EntityFlags::liked;
+    }
+    else {
+        add_like(releases.key[r]);
+        releases.like_count[r]++;
+>>>>>>> 9352b35758812a89f9898822bdac82826010705e
         releases.flags[r] |= EntityFlags::liked;
     }
 }

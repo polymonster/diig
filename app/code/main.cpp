@@ -4310,15 +4310,6 @@ void audio_player_toggle_like() {
     auto& releases = ctx.view->releases;
 
     if(releases.flags[r] & EntityFlags::liked) {
-<<<<<<< HEAD
-        add_like(releases.key[r]);
-        releases.like_count[r]++;
-        releases.flags[r] |= EntityFlags::liked;
-    }
-    else {
-        remove_like(releases.key[r]);
-        releases.like_count[r] = std::max<u32>(releases.like_count[r]--, 0);
-=======
         remove_like(releases.key[r]);
         releases.like_count[r] = std::max<u32>(releases.like_count[r]--, 0);
         releases.flags[r] &= ~EntityFlags::liked;
@@ -4326,7 +4317,6 @@ void audio_player_toggle_like() {
     else {
         add_like(releases.key[r]);
         releases.like_count[r]++;
->>>>>>> 9352b35758812a89f9898822bdac82826010705e
         releases.flags[r] |= EntityFlags::liked;
     }
 }

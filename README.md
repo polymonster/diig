@@ -18,7 +18,6 @@ Available now on iOS and Android. Contact to join:
 <p align="center">
     <img src="https://github.com/polymonster/polymonster.github.io/blob/master/images/diig/diig.gif?raw=true" width="640" height="360"/>
 </p>
->>>>>>> 9352b35758812a89f9898822bdac82826010705e
 
 ## Contributing
 

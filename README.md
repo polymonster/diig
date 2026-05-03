@@ -113,7 +113,6 @@ firebase deploy
 
 Built with C++, Objective-C and [ImGui](https://github.com/ocornut/imgui) on top of [pmtech](https://github.com/polymonster/pmtech).
 
->>>>>>> 9352b35758812a89f9898822bdac82826010705e
 ```bash
 git submodule update --init --recursive
 cd app

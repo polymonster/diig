@@ -60,7 +60,7 @@ def request_url_limited(url, head_only = False):
     try:
         if head_only:
             request = urllib.request.Request(safe_url, method='HEAD')
-            response = urllib.request.urlopen(request)
+            response = urllib.request.urlopen(request, timeout=30)
             if response.status == 200:
                 return response
             else:
@@ -79,7 +79,7 @@ def request_url_limited(url, head_only = False):
                 url=safe_url,
                 headers=headers
             )
-            return urllib.request.urlopen(req)
+            return urllib.request.urlopen(req, timeout=30)
     except urllib.error.HTTPError:
         print("error: url not found {}".format(safe_url))
         return None
@@ -210,6 +210,20 @@ def sort_func(kv):
             return now.timestamp() - kv[1]["added"]
 
 
+# remove <style> and <script> blocks so their content can't be mistaken for HTML tags
+def strip_scripts_styles(html_str):
+    for tag in ["style", "script"]:
+        while True:
+            start = html_str.find(f"<{tag}")
+            if start == -1:
+                break
+            end = html_str.find(f"</{tag}>", start)
+            if end == -1:
+                break
+            html_str = html_str[:start] + html_str[end + len(f"</{tag}>"):]
+    return html_str
+
+
 # parse entireity of a div section
 def parse_div(html_str, div_class):
     divs = []
@@ -250,6 +264,9 @@ def parse_class(html_str, html_class, ty):
         if first == -1:
             break
         start = html_str[:first].rfind("<{} ".format(ty))
+        if start == -1:
+            html_str = html_str[first + len(html_class):]
+            continue
         stack = 1
         iter_pos = first
         while stack > 0:

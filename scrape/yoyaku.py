@@ -81,6 +81,7 @@ def scrape_page(url, store, store_dict, view, section, counter, session_scraped_
             # ignore charts
             html_str = html_str[:sidebar]
 
+    html_str = dig.strip_scripts_styles(html_str)
     releases = dig.parse_class(html_str, "class=\"ct-media-container\"", "a")
 
     # open existing reg

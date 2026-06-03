@@ -72,6 +72,8 @@ def get_json(driver, url, api_url, id, offset):
 
     # Make the request using the same session
     response = session.post(api_url, data=payload, headers=headers)
+    if not response.text:
+        raise json.JSONDecodeError("empty response", "", 0)
     j = json.loads(response.text)
 
     return j
@@ -107,11 +109,11 @@ def scrape_page(url, store, store_dict, view, section, counter, session_scraped_
             api_url = store_dict["views"][view]["api_url"]
             products = get_json(driver, url, api_url, category_id, pos)
             break
-        except (InvalidSessionIdException, WebDriverException, ReadTimeoutError):
+        except (InvalidSessionIdException, WebDriverException, ReadTimeoutError, json.JSONDecodeError):
             attempts += 1
             if attempts > 5:
                 raise
-            print(f"Failed to get_json with exception. retrying after {attempts} attempts")
+            print(f"Failed to get_json, retrying (attempt {attempts}/5)")
             dig.scrape_yield()
 
     store_url = "https://www.phonicarecords.com"

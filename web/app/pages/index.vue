@@ -180,7 +180,7 @@ function tags(release) { return release.store_tags || {} }
 
 const menuOpen = useState('menuOpen', () => false)
 
-const { activeId, activeTrack, isPlaying, releaseList, tileClick, setTrack, prevTrack, nextTrack, dotClick, computeDots, getTracks, getTrackNames, stopAll } = useAudio()
+const { activeId, activeTrack, isPlaying, releaseList, tileClickAudio: tileClick, playAudio: setTrack, prevTrack, nextTrack, dotClick, computeDots, getTracks, getTrackNames, stopAll } = usePlayer()
 
 watch(releasesByStore, val => {
   releaseList.value = val.flatMap(({ releases }) => releases)
@@ -203,7 +203,7 @@ function onSwipeEnd(release, e) {
   const dy = e.changedTouches[0].clientY - swipeStartY
   if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) {
     swipeDir.value = dx < 0 ? -1 : 1
-    dx < 0 ? nextTrack(release, e) : prevTrack(release, e)
+    dx < 0 ? nextTrack(e) : prevTrack(e)
   }
 }
 </script>
@@ -297,7 +297,7 @@ function onSwipeEnd(release, e) {
                   v-if="activeId === release.id && getTracks(release).length > 1"
                   class="nav-btn"
                   :disabled="activeTrack === 0"
-                  @click="prevTrack(release, $event)"
+                  @click="prevTrack($event)"
                 >&#8249;</button>
 
                 <template v-for="(dots, i) in [computeDots(getTracks(release).length, activeId === release.id ? activeTrack : -1)]" :key="i">
@@ -306,7 +306,7 @@ function onSwipeEnd(release, e) {
                     v-for="(dot, i) in dots"
                     :key="i"
                     style="cursor:pointer"
-                    @click="dotClick(release, dot, $event)"
+                    @click="dotClick(release, dot.index, $event)"
                   >
                     <circle v-if="dot.small" :cx="i*12+6" cy="6" r="1.5" fill="#bbb" opacity="0.4" />
                     <template v-else-if="dot.selected && isPlaying">
@@ -326,7 +326,7 @@ function onSwipeEnd(release, e) {
                   v-if="activeId === release.id && getTracks(release).length > 1"
                   class="nav-btn"
                   :disabled="activeTrack === getTracks(release).length - 1"
-                  @click="nextTrack(release, $event)"
+                  @click="nextTrack($event)"
                 >&#8250;</button>
               </div>
               <div v-else class="dots-row no-audio-row">

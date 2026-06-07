@@ -16,6 +16,7 @@ async function loadLikedReleases() {
 
   const likesData = await fetch(`${DB}/users/${uid}/likes.json?auth=${token}`).then(r => r.json())
   if (!likesData || typeof likesData !== 'object') { loading.value = false; return }
+  likes.value = likesData
 
   const entries = Object.entries(likesData).sort((a, b) => b[1] - a[1])
 
@@ -69,13 +70,6 @@ async function toggleLike(release, e) {
   }
 }
 
-onMounted(async () => {
-  if (!auth.currentUser) return
-  const uid   = auth.currentUser.uid
-  const token = await auth.currentUser.getIdToken()
-  const data  = await fetch(`${DB}/users/${uid}/likes.json?auth=${token}`).then(r => r.json())
-  if (data && typeof data === 'object') likes.value = data
-})
 
 function tags(release) { return release.store_tags || {} }
 
@@ -91,7 +85,7 @@ function storeName(release) {
 
 const menuOpen = useState('menuOpen', () => false)
 
-const { activeId, activeTrack, isPlaying, releaseList, tileClick, prevTrack, nextTrack, dotClick, computeDots, getTracks, getTrackNames } = useAudio()
+const { activeId, activeTrack, isPlaying, releaseList, tileClickAudio: tileClick, prevTrack, nextTrack, dotClick, computeDots, getTracks, getTrackNames } = usePlayer()
 
 watch(releases, val => { releaseList.value = val })
 
@@ -109,7 +103,7 @@ function onSwipeEnd(release, e) {
   const dx = e.changedTouches[0].clientX - swipeStartX
   const dy = e.changedTouches[0].clientY - swipeStartY
   if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) {
-    dx < 0 ? nextTrack(release, e) : prevTrack(release, e)
+    dx < 0 ? nextTrack(e) : prevTrack(e)
   }
 }
 </script>
@@ -184,7 +178,7 @@ function onSwipeEnd(release, e) {
               v-if="activeId === release.id && getTracks(release).length > 1"
               class="nav-btn"
               :disabled="activeTrack === 0"
-              @click="prevTrack(release, $event)"
+              @click="prevTrack($event)"
             >&#8249;</button>
 
             <template v-for="(dots, i) in [computeDots(getTracks(release).length, activeId === release.id ? activeTrack : -1)]" :key="i">
@@ -193,7 +187,7 @@ function onSwipeEnd(release, e) {
                 v-for="(dot, i) in dots"
                 :key="i"
                 style="cursor:pointer"
-                @click="dotClick(release, dot, $event)"
+                @click="dotClick(release, dot.index, $event)"
               >
                 <circle v-if="dot.small" :cx="i*12+6" cy="6" r="1.5" fill="#bbb" opacity="0.4" />
                 <template v-else-if="dot.selected && isPlaying">
@@ -213,7 +207,7 @@ function onSwipeEnd(release, e) {
               v-if="activeId === release.id && getTracks(release).length > 1"
               class="nav-btn"
               :disabled="activeTrack === getTracks(release).length - 1"
-              @click="nextTrack(release, $event)"
+              @click="nextTrack($event)"
             >&#8250;</button>
           </div>
           <div v-else class="dots-row no-audio-row">

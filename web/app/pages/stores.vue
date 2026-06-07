@@ -200,7 +200,7 @@ async function toggleLike(release, e) {
     const cur = await fetch(countUrl).then(r => r.json()) || 0
     await fetch(countUrl, { method: 'PUT', body: JSON.stringify(Math.max(0, cur - 1)) })
   } else {
-    const ts = Date.now() / 1000
+    const ts = 1696155367 + Date.now()
     likes.value = { ...likes.value, [id]: ts }
     likeCountAdjust.value = { ...likeCountAdjust.value, [id]: (likeCountAdjust.value[id] ?? 0) + 1 }
     await fetch(`${DB}/users/${uid}/likes/${id}.json?auth=${token}`, { method: 'PUT', body: JSON.stringify(ts) })
@@ -215,7 +215,7 @@ function tags(release) { return release.store_tags || {} }
 
 const menuOpen = useState('menuOpen', () => false)
 
-const { activeId, activeTrack, isPlaying, releaseList, tileClick, prevTrack, nextTrack, dotClick, computeDots, getTracks, getTrackNames, stopAll } = useAudio()
+const { activeId, activeTrack, isPlaying, releaseList, tileClickAudio: tileClick, prevTrack, nextTrack, dotClick, computeDots, getTracks, getTrackNames, stopAll } = usePlayer()
 
 watch(aggregatedReleases, val => { releaseList.value = val })
 
@@ -329,7 +329,7 @@ function onSwipeEnd(release, e) {
               v-if="activeId === release.id && getTracks(release).length > 1"
               class="nav-btn"
               :disabled="activeTrack === 0"
-              @click="prevTrack(release, $event)"
+              @click="prevTrack($event)"
             >&#8249;</button>
 
             <template v-for="(dots, i) in [computeDots(getTracks(release).length, activeId === release.id ? activeTrack : -1)]" :key="i">
@@ -338,7 +338,7 @@ function onSwipeEnd(release, e) {
                 v-for="(dot, i) in dots"
                 :key="i"
                 style="cursor:pointer"
-                @click="dotClick(release, dot, $event)"
+                @click="dotClick(release, dot.index, $event)"
               >
                 <circle v-if="dot.small" :cx="i*12+6" cy="6" r="1.5" fill="#bbb" opacity="0.4" />
                 <template v-else-if="dot.selected && isPlaying">
@@ -358,7 +358,7 @@ function onSwipeEnd(release, e) {
               v-if="activeId === release.id && getTracks(release).length > 1"
               class="nav-btn"
               :disabled="activeTrack === getTracks(release).length - 1"
-              @click="nextTrack(release, $event)"
+              @click="nextTrack($event)"
             >&#8250;</button>
           </div>
           <div v-else class="dots-row no-audio-row">

@@ -1,7 +1,7 @@
 <script setup>
 const menuOpen = useState('menuOpen', () => false)
 
-const discogsToken = ref('')
+const discogsToken = ref(localStorage.getItem('discogsToken') || '')
 
 const query       = ref(localStorage.getItem('diig_dq_q')     || '')
 const yearFilter  = ref(localStorage.getItem('diig_dq_year')  || '')
@@ -9,7 +9,12 @@ const genreFilter = ref(localStorage.getItem('diig_dq_genre') || '')
 const styleFilter = ref(localStorage.getItem('diig_dq_style') || '')
 const fmtFilter   = ref(localStorage.getItem('diig_dq_fmt') === 'Vinyl' ? '' : (localStorage.getItem('diig_dq_fmt') || ''))
 
-const FORMATS = ['', 'Vinyl', 'LP', '12"', '7"', 'CD', 'Cassette', 'Digital', 'Box Set']
+const FORMATS  = ['', 'Vinyl', 'LP', '12"', '7"', 'CD', 'Cassette', 'Digital', 'Box Set']
+const SORT_MODES = [
+  { value: '',          label: 'relevance' },
+  { value: 'year-desc', label: 'year ↓' },
+  { value: 'year-asc',  label: 'year ↑' },
+]
 
 const results  = ref([])
 const details  = ref({})
@@ -25,8 +30,18 @@ let   detailsQueue    = []
 let   detailsRunning  = false
 let   detailsStop     = false
 
-const cooldown = ref(false)
-const busy     = computed(() => loading.value || cooldown.value)
+const cooldown     = ref(false)
+const busy         = computed(() => loading.value || cooldown.value)
+const sortMode     = ref('')
+const artistFilter = ref('')
+const labelFilter  = ref('')
+
+const displayResults = computed(() => {
+  let r = results.value
+  if (artistFilter.value) r = r.filter(i => parseTitle(i.title).artist === artistFilter.value)
+  if (labelFilter.value)  r = r.filter(i => (details.value[i.id]?.labels ?? []).some(l => l.name === labelFilter.value))
+  return r
+})
 
 function startCooldown(secs = 8) {
   cooldown.value = true
@@ -37,6 +52,8 @@ function startCooldown(secs = 8) {
 watch(cooldown, val => {
   if (!val && detailsQueue.length) setTimeout(drainDetails, 0)
 })
+
+watch(sortMode, () => { if (searched.value && !busy.value) search() })
 
 function getHeaders() { return { Authorization: `Discogs token=${discogsToken.value}` } }
 
@@ -57,6 +74,7 @@ async function search(reset = true) {
     detailsStop = true
     detailsQueue = []
     page.value = 1; results.value = []; details.value = {}
+    artistFilter.value = ''; labelFilter.value = ''
   }
   loading.value  = true
   searched.value = true
@@ -68,6 +86,7 @@ async function search(reset = true) {
   if (genreFilter.value)   p.set('genre',  genreFilter.value)
   if (styleFilter.value)   p.set('style',  styleFilter.value)
   if (fmtFilter.value)     p.set('format', fmtFilter.value)
+  if (sortMode.value)      { p.set('sort', 'year'); p.set('sort_order', sortMode.value === 'year-asc' ? 'asc' : 'desc') }
 
   try {
     const res = await fetch(`https://api.discogs.com/database/search?${p}`, { headers: getHeaders() })
@@ -184,43 +203,34 @@ function computeDots(count, activeIdx) {
 
 // ── YouTube composable ────────────────────────────────────────────────────────
 
-const { ytActiveId, ytActiveTrack, ytPlaying, ytOpen, ytReleaseList,
-        setTrack, toggle, close: ytClose, prevTrack, nextTrack,
-        canPrev, canNext, stopAll: ytStopAll } = useYouTube()
+const { activeId: ytActiveId, activeTrack: ytActiveTrack, isPlaying: ytPlaying,
+        releaseList: ytReleaseList, activeRelease: ytActiveRelease,
+        playVideo, tileClickVideo, prevTrack, nextTrack,
+        canPrev, canNext, stopAll: ytStopAll } = usePlayer()
 
 function tileTap(item, e) {
   e.stopPropagation()
   const videos = getVideos(item)
   if (!videos.length) return
-  stopAudio()
-  if (ytActiveId.value === String(item.id)) toggle()
-  else setTrack({ ...item, videos }, 0)
+  tileClickVideo({ ...item, videos })
 }
 
-const { stopAll: stopAudio } = useAudio()
-
-// keep ytReleaseList in sync for cross-release navigation within discogs
-watch([results, details], () => {
-  ytReleaseList.value = results.value.map(item => ({
+// keep ytReleaseList in sync — use displayResults so navigation follows visible items
+watch([results, details, artistFilter, labelFilter], () => {
+  ytReleaseList.value = displayResults.value.map(item => ({
     ...item,
     videos: details.value[item.id]?.videos ?? [],
   }))
 }, { deep: true })
 
-const ytCurrentRelease = computed(() => ytReleaseList.value.find(r => String(r.id) === ytActiveId.value) ?? null)
-const ytCurrentArtist  = computed(() => parseTitle(ytCurrentRelease.value?.title || '').artist || ytCurrentRelease.value?.title || '')
-const ytCurrentTrack   = computed(() => ytCurrentRelease.value?.videos?.[ytActiveTrack.value]?.title || '')
-
 function playDot(item, idx, e) {
   e.stopPropagation()
-  stopAudio()  // stop stores audio player if playing
-  setTrack({ ...item, videos: getVideos(item) }, idx)
+  playVideo({ ...item, videos: getVideos(item) }, idx)
 }
 
 // ── Init ──────────────────────────────────────────────────────────────────────
 
 onMounted(() => {
-  discogsToken.value = localStorage.getItem('discogsToken') || ''
   if (discogsToken.value && (query.value.trim() || yearFilter.value || genreFilter.value || styleFilter.value)) {
     search()
   }
@@ -279,6 +289,20 @@ onMounted(() => {
       <select v-model="fmtFilter" class="filter-select" @change="!busy && search()">
         <option v-for="f in FORMATS" :key="f" :value="f">{{ f || 'all formats' }}</option>
       </select>
+      <select v-model="sortMode" class="filter-select sort-select">
+        <option v-for="s in SORT_MODES" :key="s.value" :value="s.value">{{ s.label }}</option>
+      </select>
+    </div>
+
+    <div v-if="artistFilter || labelFilter" class="active-filters">
+      <span v-if="artistFilter" class="filter-chip">
+        artist: {{ artistFilter }}
+        <button class="chip-clear" @click="artistFilter = ''">&#10005;</button>
+      </span>
+      <span v-if="labelFilter" class="filter-chip">
+        label: {{ labelFilter }}
+        <button class="chip-clear" @click="labelFilter = ''">&#10005;</button>
+      </span>
     </div>
 
     <div v-if="errorMsg" class="error-banner">{{ errorMsg }}</div>
@@ -295,10 +319,14 @@ onMounted(() => {
       no results
     </div>
 
-    <main v-else-if="results.length" class="content" :style="ytOpen ? 'padding-bottom: 96px' : ''">
+    <div v-else-if="results.length && !displayResults.length" class="empty-state">
+      no results match filters
+    </div>
+
+    <main v-else-if="displayResults.length" class="content" :style="ytActiveRelease ? 'padding-bottom: 96px' : ''">
       <div class="tile-row">
         <div
-          v-for="item in results"
+          v-for="item in displayResults"
           :key="item.id"
           class="tile"
           :class="{ active: ytActiveId === String(item.id) }"
@@ -313,8 +341,17 @@ onMounted(() => {
             @click="tileTap(item, $event)"
             @error="e => e.target.src = '/white_label.jpg'"
           />
-          <p class="r-artist">{{ parseTitle(item.title).artist || item.title }}</p>
+          <p
+            class="r-artist"
+            :class="{ 'r-filterable': parseTitle(item.title).artist }"
+            @click.stop="parseTitle(item.title).artist && (artistFilter = parseTitle(item.title).artist)"
+          >{{ parseTitle(item.title).artist || item.title }}</p>
           <p class="r-title">{{ parseTitle(item.title).artist ? parseTitle(item.title).title : '' }}</p>
+          <p
+            v-if="details[item.id]?.labels?.[0]?.name"
+            class="r-label r-filterable"
+            @click.stop="labelFilter = details[item.id].labels[0].name"
+          >{{ details[item.id].labels[0].name }}</p>
 
           <div class="icons-row">
             <div class="icons-left">
@@ -386,24 +423,7 @@ onMounted(() => {
       <div ref="sentinel" style="height:1px" />
     </main>
 
-    <!-- YouTube player bar — v-show keeps #yt-iframe in DOM so the YT API can target it -->
-    <div v-show="ytOpen" class="yt-bar">
-      <div id="yt-iframe" class="yt-iframe" />
-      <div class="yt-info">
-        <p class="yt-artist">{{ ytCurrentArtist }}</p>
-        <div class="r-trackname-wrap">
-          <span class="r-trackname" :key="`${ytActiveId}-${ytActiveTrack}`">{{ ytCurrentTrack }}</span>
-        </div>
-      </div>
-      <div class="yt-controls">
-        <button class="yt-btn nav-btn" :disabled="!canPrev" @click="prevTrack()">&#8249;</button>
-        <button class="yt-btn play-btn" @click="toggle()">
-          <span v-if="ytPlaying">&#9646;&#9646;</span><span v-else>&#9654;</span>
-        </button>
-        <button class="yt-btn nav-btn" :disabled="!canNext" @click="nextTrack()">&#8250;</button>
-      </div>
-      <button class="yt-close" @click="ytClose()">&#10005;</button>
-    </div>
+    <!-- YT iframe always in DOM, off-screen so YouTube can play freely -->
   </div>
 </template>
 
@@ -556,6 +576,40 @@ onMounted(() => {
   cursor: pointer;
 }
 .filter-select:focus { border-color: #aaa; }
+.sort-select { margin-left: auto; }
+
+.active-filters {
+  display: flex;
+  gap: 0.4rem;
+  padding: 0.4rem 1.5rem;
+  background: #fff;
+  border-bottom: 1px solid #ececec;
+  flex-wrap: wrap;
+}
+
+.filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.18rem 0.5rem;
+  font-size: 0.6rem;
+  font-family: 'Cousine', monospace;
+  background: #0a0a0a;
+  color: #fff;
+  border-radius: 2px;
+}
+
+.chip-clear {
+  background: none;
+  border: none;
+  color: #aaa;
+  cursor: pointer;
+  padding: 0;
+  font-size: 0.55rem;
+  line-height: 1;
+  font-family: 'Cousine', monospace;
+}
+.chip-clear:hover { color: #fff; }
 
 .empty-state {
   display: flex;
@@ -648,6 +702,20 @@ onMounted(() => {
   text-overflow: ellipsis;
   min-height: 1em;
 }
+
+.r-label {
+  font-size: 0.55rem;
+  color: #bbb;
+  margin: 1px 0 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.r-filterable {
+  cursor: pointer;
+}
+.r-filterable:hover { text-decoration: underline; text-decoration-style: dotted; }
 
 .icons-row {
   display: flex;
@@ -766,78 +834,4 @@ onMounted(() => {
   }
 }
 
-/* ── YouTube player bar ───────────────────────────────────────────────────── */
-
-.yt-bar {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 200;
-  height: 80px;
-  background: #0a0a0a;
-  border-top: 1px solid #222;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.5rem 1rem;
-}
-
-.yt-iframe {
-  flex-shrink: 0;
-  width: 120px;
-  height: 68px;
-  background: #000;
-  overflow: hidden;
-}
-
-.yt-info {
-  flex: 1;
-  min-width: 0;
-  overflow: hidden;
-}
-
-.yt-artist {
-  font-size: 0.55rem;
-  color: #666;
-  margin: 0 0 2px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.yt-controls {
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-  flex-shrink: 0;
-}
-
-.yt-btn {
-  background: none;
-  border: none;
-  color: #ccc;
-  cursor: pointer;
-  font-family: 'Cousine', monospace;
-  line-height: 1;
-  padding: 0.3rem 0.4rem;
-  transition: color 0.1s;
-}
-.yt-btn.nav-btn  { font-size: 1.4rem; }
-.yt-btn.play-btn { font-size: 0.75rem; }
-.yt-btn:disabled { opacity: 0.25; cursor: default; }
-.yt-btn:not(:disabled):hover { color: #cc4d00; }
-
-.yt-close {
-  background: none;
-  border: none;
-  color: #444;
-  cursor: pointer;
-  font-family: 'Cousine', monospace;
-  font-size: 0.65rem;
-  padding: 0.3rem 0.4rem;
-  flex-shrink: 0;
-  transition: color 0.1s;
-}
-.yt-close:hover { color: #aaa; }
 </style>

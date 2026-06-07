@@ -84,10 +84,42 @@ function closeAll() { menuOpen.value = false; settingsOpen.value = false }
 
 // ── Player bar ────────────────────────────────────────────────────────────────
 
-const { activeTrack, isPlaying, activeRelease, getTrackNames, tileClick, skipPrev, skipNext, canSkipPrev, canSkipNext } = useAudio()
+const {
+  activeTrack, isPlaying, activeRelease, mode,
+  getTracks, getTrackNames, getVideos,
+  playAudio, tileClickAudio: tileClick,
+  playVideo, toggle,
+  prevTrack: skipPrev, nextTrack: skipNext, canPrev: canSkipPrev, canNext: canSkipNext,
+  currentTime, duration, volume, seek, setVolume,
+} = usePlayer()
 
-function playerArt(release) { return artworkUrl(release) || '/white_label.jpg' }
-function playerToggle() { if (activeRelease.value) tileClick(activeRelease.value) }
+const trackListOpen = ref(false)
+const volOpen       = ref(false)
+
+watch(activeRelease, () => { trackListOpen.value = false })
+
+function parseTitle(raw) {
+  const sep = raw?.indexOf(' - ') ?? -1
+  return sep === -1 ? { artist: '', title: raw || '' } : { artist: raw.slice(0, sep), title: raw.slice(sep + 3) }
+}
+
+function playerArt(release) {
+  if (mode.value === 'video') return release?.cover_image || release?.thumb || '/white_label.jpg'
+  return artworkUrl(release) || '/white_label.jpg'
+}
+
+function playerToggle() {
+  if (!activeRelease.value) return
+  if (mode.value === 'video') toggle()
+  else tileClick(activeRelease.value)
+}
+
+function formatTime(s) {
+  if (!s || !isFinite(s)) return '0:00'
+  const m = Math.floor(s / 60)
+  const sec = Math.floor(s % 60)
+  return `${m}:${sec.toString().padStart(2, '0')}`
+}
 </script>
 
 <template>
@@ -104,25 +136,111 @@ function playerToggle() { if (activeRelease.value) tileClick(activeRelease.value
       <button class="menu-settings-btn" @click="settingsOpen = true; menuOpen = false">Settings</button>
     </div>
 
-    <!-- Bottom player bar -->
-    <div v-if="activeRelease" class="player-bar">
-      <img
-        :src="playerArt(activeRelease)"
-        class="player-art"
-        @error="e => e.target.src = '/white_label.jpg'"
-      />
-      <div class="player-info">
-        <span class="player-artist">{{ activeRelease.artist }}</span>
-        <span class="player-title">{{ activeRelease.title }}</span>
-        <span v-if="getTrackNames(activeRelease)[activeTrack]" class="player-track">{{ getTrackNames(activeRelease)[activeTrack] }}</span>
-      </div>
-      <div class="player-controls">
-        <button class="player-btn" :disabled="!canSkipPrev" @click="skipPrev()">&#8249;</button>
-        <button class="player-btn play-btn" @click="playerToggle">
-          <span v-if="isPlaying">&#9646;&#9646;</span>
-          <span v-else>&#9654;</span>
-        </button>
-        <button class="player-btn" :disabled="!canSkipNext" @click="skipNext()">&#8250;</button>
+    <!-- YouTube iframe — always in DOM so the API target persists across navigation -->
+    <div class="yt-iframe-offscreen"><div id="yt-iframe" /></div>
+
+    <!-- Bottom player bar — handles both audio and video modes -->
+    <div v-if="activeRelease" class="player-bar" @click.self="trackListOpen = false">
+
+      <!-- Track list drop-up -->
+      <Transition name="slide-up">
+        <div v-if="trackListOpen" class="track-list">
+          <template v-if="mode !== 'video'">
+            <div
+              v-for="(name, idx) in getTrackNames(activeRelease)"
+              :key="idx"
+              class="track-item"
+              :class="{ active: idx === activeTrack }"
+              @click="playAudio(activeRelease, idx); trackListOpen = false"
+            >
+              <span class="track-item-num">{{ idx + 1 }}</span>
+              <span class="track-item-name">{{ name || `Track ${idx + 1}` }}</span>
+              <span v-if="idx === activeTrack && isPlaying" class="track-item-playing">&#9654;</span>
+            </div>
+          </template>
+          <template v-else>
+            <div
+              v-for="(video, idx) in getVideos(activeRelease)"
+              :key="idx"
+              class="track-item"
+              :class="{ active: idx === activeTrack }"
+              @click="playVideo(activeRelease, idx); trackListOpen = false"
+            >
+              <span class="track-item-num">{{ idx + 1 }}</span>
+              <span class="track-item-name">{{ video.title }}</span>
+              <span v-if="idx === activeTrack && isPlaying" class="track-item-playing">&#9654;</span>
+            </div>
+          </template>
+        </div>
+      </Transition>
+
+      <!-- Main row -->
+      <div class="player-main">
+        <img
+          :src="playerArt(activeRelease)"
+          class="player-art"
+          @error="e => e.target.src = '/white_label.jpg'"
+        />
+
+        <div class="player-info" @click="trackListOpen = !trackListOpen">
+          <span class="player-artist">{{ mode === 'video' ? parseTitle(activeRelease.title).artist : (activeRelease.artist || '') }}</span>
+          <span class="player-title">{{ mode === 'video' ? parseTitle(activeRelease.title).title : activeRelease.title }}</span>
+          <span class="player-track">
+            {{ mode === 'video'
+              ? (getVideos(activeRelease)[activeTrack]?.title || '')
+              : (getTrackNames(activeRelease)[activeTrack] || `Track ${activeTrack + 1}`)
+            }}
+            <span v-if="(mode === 'video' ? getVideos(activeRelease) : getTracks(activeRelease)).length > 1" class="player-chevron">{{ trackListOpen ? '&#9662;' : '&#9652;' }}</span>
+          </span>
+        </div>
+
+        <div v-if="mode !== 'video'" class="scrub-inline">
+          <span class="scrub-time">{{ formatTime(currentTime) }}</span>
+          <input
+            class="scrub"
+            type="range"
+            min="0"
+            :max="duration || 100"
+            :value="currentTime"
+            :disabled="!duration"
+            @change="seek(+$event.target.value)"
+            @input="seek(+$event.target.value)"
+          />
+          <span class="scrub-time">{{ formatTime(duration) }}</span>
+        </div>
+        <div v-else class="player-spacer" />
+
+        <div v-if="mode !== 'video'" class="vol-wrap">
+          <button class="player-btn vol-btn" @click.stop="volOpen = !volOpen">
+            <span class="fa">{{ volume === 0 ? '&#xf026;' : volume < 0.5 ? '&#xf027;' : '&#xf028;' }}</span>
+          </button>
+          <div v-if="volOpen" class="vol-popout" @click.stop>
+            <input
+              class="vol-slider"
+              type="range" min="0" max="1" step="0.01"
+              :value="volume"
+              @input="setVolume(+$event.target.value)"
+            />
+          </div>
+        </div>
+
+        <a
+          v-if="mode === 'video' && getVideos(activeRelease)[activeTrack]?.uri"
+          :href="getVideos(activeRelease)[activeTrack].uri"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="player-btn yt-link-btn"
+          @click.stop
+        ><span class="fa">&#xf16a;</span></a>
+
+        <div class="player-controls">
+          <button class="player-btn" :disabled="!canSkipPrev" @click="skipPrev()">&#8249;</button>
+          <button class="player-btn play-btn" @click="playerToggle">
+            <span v-if="isPlaying">&#9646;&#9646;</span>
+            <span v-else>&#9654;</span>
+          </button>
+          <button class="player-btn" :disabled="!canSkipNext" @click="skipNext()">&#8250;</button>
+        </div>
       </div>
     </div>
 
@@ -365,29 +483,38 @@ html, body {
   right: 0;
   z-index: 200;
   display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.5rem 1rem;
+  flex-direction: column;
   background: #fff;
   border-top: 1px solid #e0e0e0;
   box-shadow: 0 -2px 12px rgba(0,0,0,0.06);
   font-family: 'Cousine', monospace;
 }
 
+.player-main {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.4rem 1rem 0.5rem;
+}
+
 .player-art {
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   object-fit: cover;
   flex-shrink: 0;
 }
 
 .player-info {
-  flex: 1;
+  flex: 0 1 28%;
   display: flex;
   flex-direction: column;
   gap: 1px;
-  min-width: 0;
+  min-width: 60px;
+  overflow: hidden;
+  cursor: pointer;
+  user-select: none;
 }
+.player-info:hover .player-chevron { opacity: 1; }
 
 .player-artist {
   font-size: 0.65rem;
@@ -411,6 +538,12 @@ html, body {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.player-chevron {
+  font-size: 0.45rem;
+  opacity: 0.5;
+  margin-left: 2px;
 }
 
 .player-controls {
@@ -441,6 +574,115 @@ html, body {
   padding: 0.2rem 0.5rem;
 }
 .play-btn:hover { color: #cc4d00; }
+
+/* Scrub bar (inline) */
+.scrub-inline {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+.player-spacer { flex: 1; }
+
+.scrub-time {
+  font-size: 0.48rem;
+  color: #bbb;
+  flex-shrink: 0;
+  min-width: 2.4ch;
+  font-variant-numeric: tabular-nums;
+}
+.scrub-time:last-child { text-align: right; }
+
+.scrub {
+  flex: 1;
+  height: 3px;
+  accent-color: #cc4d00;
+  cursor: pointer;
+  min-width: 0;
+}
+.scrub:disabled { opacity: 0.3; cursor: default; }
+
+/* Volume */
+.vol-wrap {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.vol-btn {
+  font-size: 0.8rem;
+  padding: 0.2rem 0.3rem;
+}
+
+.vol-popout {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  right: 0;
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  padding: 0.5rem 0.6rem;
+  box-shadow: 0 -2px 8px rgba(0,0,0,0.08);
+  display: flex;
+  align-items: center;
+}
+
+.vol-slider {
+  width: 80px;
+  height: 3px;
+  accent-color: #cc4d00;
+  cursor: pointer;
+}
+
+/* Track list drop-up */
+.track-list {
+  border-top: 1px solid #f0f0f0;
+  max-height: 220px;
+  overflow-y: auto;
+  background: #fff;
+}
+
+.track-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 1rem;
+  cursor: pointer;
+  transition: background 0.1s;
+  font-size: 0.6rem;
+}
+.track-item:hover { background: #f7f7f7; }
+.track-item.active { color: #cc4d00; }
+
+.track-item-num {
+  color: #ccc;
+  width: 1.5ch;
+  flex-shrink: 0;
+  text-align: right;
+}
+.track-item.active .track-item-num { color: #cc4d00; }
+
+.track-item-name {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.track-item-playing {
+  font-size: 0.45rem;
+  color: #cc4d00;
+  flex-shrink: 0;
+}
+
+/* Slide-up transition */
+.slide-up-enter-active,
+.slide-up-leave-active { transition: max-height 0.2s ease, opacity 0.15s ease; overflow: hidden; }
+.slide-up-enter-from,
+.slide-up-leave-to    { max-height: 0; opacity: 0; }
+.slide-up-enter-to,
+.slide-up-leave-from  { max-height: 220px; opacity: 1; }
 
 .debug-overlay {
   position: fixed;
@@ -483,4 +725,19 @@ html, body {
 .debug-line.warn { color: #fa8; }
 .debug-t    { color: #555; }
 .debug-type { color: #88f; margin-right: 4px; }
+
+.yt-iframe-offscreen {
+  position: fixed;
+  left: -200px;
+  bottom: 0;
+  width: 160px;
+  height: 90px;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.yt-link-btn {
+  text-decoration: none;
+  font-size: 0.85rem;
+}
 </style>

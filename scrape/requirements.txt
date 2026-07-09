@@ -1,0 +1,7 @@
+google-auth
+python3-discogs-client
+rapidfuzz
+requests
+selenium
+urllib3
+yt-dlp

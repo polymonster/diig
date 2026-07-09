@@ -10,3 +10,4 @@ altool.sh
 service-account.json
 discogs-auth.json
 web/.firebase/scrape/registry/
+.venv/

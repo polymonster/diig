@@ -5,6 +5,7 @@ import redeye
 import json
 import os
 import time
+import re
 import urllib.request
 
 from google.oauth2 import service_account
@@ -33,6 +34,7 @@ def display_help():
     print("")
     print("  debug options:")
     print("    -fix-store <store_name> - specify a store run custom fixup code")
+    print("    -backfill <store_name> - re-scrape release pages to fill missing core fields (artist/title/label/cat) for entries in the store registry")
 
 
 # call this function to regulate scraper speed
@@ -582,6 +584,36 @@ def write_registry(store, reg):
     filepath = f"{reg_dir}/{store}.json"
     str_reg = (json.dumps(reg, indent=4))
     open(filepath, "w+").write(str_reg)
+
+
+# plain-text display fields that should never contain html markup
+RELEASE_TEXT_FIELDS = ("title", "artist", "label", "cat")
+
+# matches an html tag fragment e.g. "<a href=...>", "</span>", "<br>".
+# requires a letter after "<" and a closing ">" so real text like the "<3"
+# emoticon or "a < b" is not flagged.
+_HTML_TAG_RE = re.compile(r"</?[a-zA-Z][^<>]*>")
+
+
+# validate a single release before it is written to the registry.
+# returns a list of human readable problems (empty list == valid). this is a
+# safety net to stop malformed entries (e.g. a title with a leftover
+# "<a href=...>" fragment from a parse bug) from ever entering the registry.
+def validate_release(key, release):
+    issues = []
+    for field in RELEASE_TEXT_FIELDS:
+        val = release.get(field)
+        if val is None:
+            continue
+        if not isinstance(val, str):
+            issues.append(f"{field} is not a string: {val!r}")
+            continue
+        if _HTML_TAG_RE.search(val):
+            issues.append(f"{field} contains html markup: {val!r}")
+    # a release with no title at all is unusable
+    if not (release.get("title") or "").strip():
+        issues.append("missing title")
+    return issues
 
 
 # main

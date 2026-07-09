@@ -8,6 +8,40 @@ import json
 import datetime
 import sys
 import html
+import re
+
+
+# extract clean title text from a yoyaku product page.
+# yoyaku formats the <h1> as `<a ...>ARTIST</a> — TITLE`, so the release title
+# is only the part after the leading artist link. the old parse
+# (dig.parse_strip_body) stopped at the first "</", leaving a dangling
+# "<a href=...>ARTIST" fragment in the title field. here we drop the leading
+# artist anchor, strip any residual tags, and trim the separator.
+def clean_product_title(release_html_str: str):
+    elem = dig.parse_class_single(release_html_str, "product_title entry-title", "h1")
+    if elem is None:
+        return ""
+    # inner body between the opening <h1 ...> and the closing </h1>
+    body_start = elem.find(">")
+    body_end = elem.rfind("</h1")
+    if body_start != -1 and body_end != -1:
+        elem = elem[body_start + 1:body_end]
+    # drop a leading artist link (`<a ...>ARTIST</a> — TITLE`) so we keep only
+    # the release title portion
+    stripped = elem.lstrip()
+    if stripped[:3].lower() == "<a ":
+        close = stripped.find("</a>")
+        if close != -1:
+            after = stripped[close + len("</a>"):]
+            # only take the tail if there is an actual title after the artist,
+            # otherwise fall back to the full text (better than an empty title)
+            if after.strip(" -–—"):
+                elem = after
+    # strip any residual html tags and collapse whitespace
+    elem = re.sub(r"<[^>]*>", "", elem)
+    elem = html.unescape(" ".join(elem.split()))
+    # trim a leading dash/space separator left by the "ARTIST — TITLE" split
+    return elem.lstrip(" -–—").strip()
 
 
 def fetch_product_json(product_id: int):
@@ -203,9 +237,7 @@ def scrape_page(url, store, store_dict, view, section, counter, session_scraped_
                 release_html_str = release_html_str[:related]
 
             # title
-            title = dig.parse_class_single(release_html_str, "product_title entry-title", "h1")
-            title = dig.parse_strip_body(title)
-            release_dict["title"] = html.unescape(title)
+            release_dict["title"] = clean_product_title(release_html_str)
 
             # artist info
             pp = release_html_str.find("class=\"product-artists\"")
@@ -226,6 +258,16 @@ def scrape_page(url, store, store_dict, view, section, counter, session_scraped_
             release_dict["cat"] = dig.parse_strip_body(release_html_str[pp:pe])
             release_dict["cat"] = html.unescape(release_dict["cat"])
 
+        # validate before adding to the registry so we never persist a
+        # malformed entry (e.g. leftover html in the title). skip on failure
+        # without marking it scraped, so it is retried on the next run.
+        issues = dig.validate_release(key, release_dict)
+        if issues:
+            print(f"skipping malformed entry {key}:", flush=True)
+            for issue in issues:
+                print(f"  - {issue}", flush=True)
+            continue
+
         # track this as scraped already this session
         session_scraped_ids.append(key)
 
@@ -244,8 +286,16 @@ def backfill_missing():
     store = "yoyaku"
     releases_dict = dig.load_registry(store)
 
-    missing = {k: v for k, v in releases_dict.items() if "artist" not in v}
-    print(f"found {len(missing)} entries missing artist", flush=True)
+    # select entries that need repairing: missing artist, or a title with
+    # leftover html (e.g. a dangling "<a href=...>" fragment from the old
+    # parser). note: title == artist is NOT treated as broken - yoyaku has
+    # legitimately self-titled releases (e.g. "Revlux — Revlux").
+    def needs_backfill(v):
+        title = v.get("title") or ""
+        return "artist" not in v or "<" in title
+
+    missing = {k: v for k, v in releases_dict.items() if needs_backfill(v)}
+    print(f"found {len(missing)} entries to backfill", flush=True)
 
     updated = dict()
     for key, release in missing.items():
@@ -264,8 +314,7 @@ def backfill_missing():
             release_html_str = release_html_str[:related]
 
         # title
-        title = dig.parse_class_single(release_html_str, "product_title entry-title", "h1")
-        release["title"] = html.unescape(dig.parse_strip_body(title))
+        release["title"] = clean_product_title(release_html_str)
 
         # artist
         pp = release_html_str.find("class=\"product-artists\"")

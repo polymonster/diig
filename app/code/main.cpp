@@ -32,6 +32,7 @@ constexpr bool k_force_no_discogs_login = false;
 constexpr bool k_force_streamed_audio = false;
 constexpr bool k_show_prims = false;
 constexpr bool k_disable_waveform = false;
+constexpr u32 k_max_texture_creates_per_frame = 1;
 
 constexpr u32 k_waveform_resolution = 128;
 
@@ -929,16 +930,15 @@ void* user_data_thread(void* userdata)
             }
         }
 
-        // if we have changes from the main thread, we can write to disk
+        // if we have changes from the main thread, snapshot under the lock and write to disk outside it,
+        // so the main thread (likes / settings) never blocks behind file io
+        std::string user_data_str = "";
         ctx->user_data.mutex.lock();
         if(ctx->user_data.status == Status::e_invalidated) {
             // timestamp for merges
             ctx->user_data.dict["timestamp"] = get_like_timestamp_time();
 
-            std::string user_data_str = ctx->user_data.dict.dump(4);
-            FILE* fp = fopen(user_data_filepath.c_str(), "w");
-            fwrite(user_data_str.c_str(), user_data_str.length(), 1, fp);
-            fclose(fp);
+            user_data_str = ctx->user_data.dict.dump(4);
 
             // and also update the cloud
             update_payload = ctx->user_data.dict;
@@ -947,6 +947,14 @@ void* user_data_thread(void* userdata)
             ctx->user_data.status = Status::e_ready;
         }
         ctx->user_data.mutex.unlock();
+
+        if(!user_data_str.empty()) {
+            FILE* fp = fopen(user_data_filepath.c_str(), "w");
+            if(fp) {
+                fwrite(user_data_str.c_str(), user_data_str.length(), 1, fp);
+                fclose(fp);
+            }
+        }
 
         pen::thread_sleep_ms(66);
     }
@@ -1605,6 +1613,7 @@ namespace
     pen::job*   s_thread_info = nullptr;
     pen::timer* frame_timer;
     u32         clear_screen;
+    u32         s_textures_created_this_frame = 0;
     AppContext  ctx;
 
     template<typename T>
@@ -3197,11 +3206,6 @@ namespace
         ImGui::EndChild();
     }
 
-    void set_now_playing_artwork(void* data, u32 row_pitch, u32 depth_pitch, u32 block_size)
-    {
-        pen::music_set_now_playing_artwork(data, row_pitch / block_size, depth_pitch / row_pitch, 8, row_pitch);
-    }
-
     void issue_data_requests()
     {
         auto& releases = ctx.view->releases;
@@ -3246,18 +3250,33 @@ namespace
             }
         }
 
-        // apply loads
+        // apply loads. limit creates per frame as each one mallocs and copies the full texture payload
+        // on this thread and uploads synchronously on the render thread, spiking the frame if they cluster.
+        // prefer the entry closest to the top visible release
         std::atomic_thread_fence(std::memory_order_acquire);
-        for(size_t r = 0; r < releases.available_entries; ++r) {
-            if(releases.flags[r] & EntityFlags::artwork_loaded) {
-                if(releases.artwork_texture[r] == 0) {
-                    if(releases.artwork_tcp[r].data) {
-                        releases.artwork_texture[r] = pen::renderer_create_texture(releases.artwork_tcp[r]);
-                        pen::memory_free(releases.artwork_tcp[r].data); // data is copied for the render thread. safe to delete
-                        releases.artwork_tcp[r].data = nullptr;
+        for(u32 c = 0; c < k_max_texture_creates_per_frame; ++c) {
+            s32 best = -1;
+            s32 best_dist = INT_MAX;
+            for(size_t r = 0; r < releases.available_entries; ++r) {
+                if(releases.flags[r] & EntityFlags::artwork_loaded) {
+                    if(releases.artwork_texture[r] == 0 && releases.artwork_tcp[r].data) {
+                        s32 dist = abs((s32)r - ctx.top);
+                        if(dist < best_dist) {
+                            best_dist = dist;
+                            best = (s32)r;
+                        }
                     }
                 }
             }
+
+            if(best == -1) {
+                break;
+            }
+
+            releases.artwork_texture[best] = pen::renderer_create_texture(releases.artwork_tcp[best]);
+            pen::memory_free(releases.artwork_tcp[best].data); // data is copied for the render thread. safe to delete
+            releases.artwork_tcp[best].data = nullptr;
+            s_textures_created_this_frame++;
         }
     }
 
@@ -4130,8 +4149,15 @@ ctx.data_ctx.user_data.mutex.unlock();
             pen_main_loop_continue();
         }
 
-        ctx.dt = 1.0f / (f32)pen::timer_elapsed_ms(frame_timer);
+        f32 elapsed_ms = (f32)pen::timer_elapsed_ms(frame_timer);
+        ctx.dt = 1.0f / elapsed_ms;
         update_loading_anims();
+
+        // relay frame spikes to help catch causes of missed vsync
+        if(ctx.show_debug && elapsed_ms > 20.0f) {
+            PEN_LOG("[spike] frame %.2fms, textures created last frame: %u", elapsed_ms, s_textures_created_this_frame);
+        }
+        s_textures_created_this_frame = 0;
 
         pen::timer_start(frame_timer);
         pen::renderer_new_frame();
@@ -4460,11 +4486,13 @@ void audio_player()
             audio_ctx.play_track_url = "";
         }
 
-        // play new
+        // play new. gate on the lock free tracks_cached flag so we only hit the disk (stat) once when
+        // the track is ready to start, instead of every frame while the fetch thread is still downloading
         if(!k_force_streamed_audio)
         {
             if(audio_ctx.play_track_filepath.length() > 0 &&
                audio_ctx.invalidate_track &&
+               (releases.flags[r] & EntityFlags::tracks_cached) &&
                pen::filesystem_file_exists(audio_ctx.play_track_filepath.c_str()))
             {
                 // stop existing
@@ -4490,7 +4518,6 @@ void audio_player()
 
                 pen::music_set_now_playing(releases.artist[r], releases.title[r], track_name);
 
-                audio_ctx.read_tex_data_handle = 0;
                 audio_ctx.invalidate_track = false;
                 audio_ctx.started = false;
                 audio_ctx.stopping = false;
@@ -4500,6 +4527,7 @@ void audio_player()
         {
             if(audio_ctx.play_track_filepath.length() > 0 &&
                audio_ctx.invalidate_track &&
+               (releases.flags[r] & EntityFlags::tracks_cached) &&
                pen::filesystem_file_exists(audio_ctx.play_track_filepath.c_str()))
             {
                 // stop existing
@@ -4533,7 +4561,7 @@ void audio_player()
 
                         pen::music_set_now_playing(releases.artist[r], releases.title[r], track_name);
 
-                        audio_ctx.read_tex_data_handle = 0;
+                        audio_ctx.now_playing_artwork_filepath = ""; // music_set_now_playing rebuilds the info dict, so re-send artwork
                         audio_ctx.invalidate_track = false;
                         audio_ctx.started = false;
                         audio_ctx.stopping = false;
@@ -4574,21 +4602,24 @@ void audio_player()
             // PEN_LOG("set time %i, %i", pos_ms, len_ms);
             pen::music_set_now_playing_time_info(pos_ms, len_ms);
 
-            // read back texture data to display on lock screen
-            if(releases.artwork_texture[r] && audio_ctx.read_tex_data_handle != releases.artwork_texture[r])
+            // update lock screen artwork by decoding the cached artwork file on a worker thread.
+            // never use a gpu readback here: it flushes the pipeline mid-frame in the foreground
+            // and submitting gpu work is not permitted while backgrounded
+            if((releases.flags[r] & EntityFlags::artwork_cached) &&
+               !releases.artwork_filepath[r].empty() &&
+               !(audio_ctx.now_playing_artwork_filepath == releases.artwork_filepath[r]))
             {
-                pen::resource_read_back_params rrbp;
-                rrbp.format = releases.artwork_tcp[r].format;
-                rrbp.block_size = releases.artwork_tcp[r].block_size;
-                rrbp.data_size = releases.artwork_tcp[r].data_size;
-                rrbp.depth_pitch = releases.artwork_tcp[r].data_size;
-                rrbp.row_pitch = releases.artwork_tcp[r].width * rrbp.block_size;
-                rrbp.resource_index = releases.artwork_texture[r];
-                rrbp.call_back_function = set_now_playing_artwork;
+                audio_ctx.now_playing_artwork_filepath = releases.artwork_filepath[r];
 
-                pen::renderer_read_back_resource(rrbp);
-
-                audio_ctx.read_tex_data_handle = releases.artwork_texture[r];
+                Str filepath = releases.artwork_filepath[r];
+                std::thread artwork_thread([filepath]() {
+                    auto tcp = load_texture_from_disk(filepath);
+                    if(tcp.data) {
+                        pen::music_set_now_playing_artwork(tcp.data, tcp.width, tcp.height, 8, tcp.width * 4);
+                        free(tcp.data);
+                    }
+                });
+                artwork_thread.detach();
             }
 
             put::audio_group_state gstate;
@@ -4982,10 +5013,6 @@ void* data_cache_enumerate(void* userdata) {
     // track all folders
     std::vector<DirInfo> cached_releases;
 
-    auto tt = pen::scope_timer("cache enum", true);
-
-    s32 last_top = 26;
-
     s32 size_setting = get_user_setting("setting_cache_size", 0);
 
     s32 size_ranges[] = {
@@ -4997,110 +5024,111 @@ void* data_cache_enumerate(void* userdata) {
 
     s32 cache_range = size_ranges[size_setting];
 
-    for(;;) {
-
-        // apply updates when we have moved an amount
-        if(abs(last_top - (s32)view->top_pos) < 25)
-        {
-            last_top = view->top_pos;
-            pen::thread_sleep_ms(66);
-            continue;
+    // this is a single sweep per view. delay it so the disk isn't hit while the view itself is
+    // loading (registry fetch, artwork and track downloads); short lived views (pull to reload,
+    // back views) will usually terminate before the sweep ever runs
+    constexpr u32 k_sweep_delay_ms = 10000;
+    for(u32 waited = 0; waited < k_sweep_delay_ms; waited += 100) {
+        if(view->terminate) {
+            view->threads_terminated++;
+            return nullptr;
         }
+        pen::thread_sleep_ms(100);
+    }
 
-        last_top = view->top_pos;
+    auto tt = pen::scope_timer("cache enum", true);
 
-        // enum cache stats
-        pen::fs_tree_node dir;
-        pen::filesystem_enum_directory(cache_dir.c_str(), dir, 1, "**/*.*");
-        view->data_ctx->cached_release_folders = 0;
-        view->data_ctx->cached_release_bytes = 0;
-        for(u32 i = 0; i < dir.num_children; ++i) {
-            Str path = cache_dir;
-            path.append(dir.children[i].name);
-
-            pen::fs_tree_node release_dir;
-            pen::filesystem_enum_directory(path.c_str(), release_dir);
-            view->data_ctx->cached_release_folders++;
-
-            auto info = get_folder_info_recursive(release_dir, path.c_str());
-            view->data_ctx->cached_release_bytes += info.size;
-
-            pen::filesystem_enum_free_mem(release_dir);
-
-            cached_releases.push_back(info);
-        }
-        pen::filesystem_enum_free_mem(dir);
-
-        // uncapped
-        if(size_setting == 3)
-        {
+    // enum cache stats, throttled so the stat bursts don't saturate disk access
+    pen::fs_tree_node dir;
+    pen::filesystem_enum_directory(cache_dir.c_str(), dir, 1, "**/*.*");
+    view->data_ctx->cached_release_folders = 0;
+    view->data_ctx->cached_release_bytes = 0;
+    for(u32 i = 0; i < dir.num_children; ++i) {
+        // early out to terminate
+        if(view->terminate) {
+            pen::filesystem_enum_free_mem(dir);
             view->threads_terminated++;
             return nullptr;
         }
 
-        // sort the items
-        std::sort(begin(cached_releases),end(cached_releases),[](DirInfo a, DirInfo b) { return a.mtime < b.mtime; });
+        Str path = cache_dir;
+        path.append(dir.children[i].name);
 
-        // wait until we have at least 200 entries
-        while(view->release_pos_status != Status::e_ready) {
-            // return early if something went wrong
-            if(view->status == Status::e_not_available) {
-                view->threads_terminated++;
-                return nullptr;
-            }
-            // early out to terminate
-            if(view->terminate) {
-                view->threads_terminated++;
-                return nullptr;
-            }
-            pen::thread_sleep_ms(1);
+        pen::fs_tree_node release_dir;
+        pen::filesystem_enum_directory(path.c_str(), release_dir);
+        view->data_ctx->cached_release_folders++;
+
+        auto info = get_folder_info_recursive(release_dir, path.c_str());
+        view->data_ctx->cached_release_bytes += info.size;
+
+        pen::filesystem_enum_free_mem(release_dir);
+
+        cached_releases.push_back(info);
+
+        if((i & 15) == 15) {
+            pen::thread_sleep_ms(5);
+        }
+    }
+    pen::filesystem_enum_free_mem(dir);
+
+    // uncapped
+    if(size_setting == 3)
+    {
+        view->threads_terminated++;
+        return nullptr;
+    }
+
+    // sort the items
+    std::sort(begin(cached_releases),end(cached_releases),[](DirInfo a, DirInfo b) { return a.mtime < b.mtime; });
+
+    // wait until we have at least 200 entries
+    while(view->release_pos_status != Status::e_ready) {
+        // return early if something went wrong
+        if(view->status == Status::e_not_available) {
+            view->threads_terminated++;
+            return nullptr;
+        }
+        // early out to terminate
+        if(view->terminate) {
+            view->threads_terminated++;
+            return nullptr;
+        }
+        pen::thread_sleep_ms(1);
+    }
+
+    // iterate through releases in reverse remvoing items not in the view, throttled between deletes
+    for(ssize_t i = cached_releases.size()-1; i >= cache_range; --i) {
+
+        DirInfo ii = cached_releases[i];
+        auto bn = str_basename(ii.path);
+        u32 bnh = PEN_HASH(bn.c_str());
+
+        bool remove = true;
+        if(view->release_pos.find(bnh) != view->release_pos.end()) {
+            remove = view->release_pos[bnh] > cache_range;
         }
 
-        // iterate through releases in reverse remvoing items not in the view
-        for(ssize_t i = cached_releases.size()-1; i >= cache_range; --i) {
-
-            DirInfo ii = cached_releases[i];
-            auto bn = str_basename(ii.path);
-            u32 bnh = PEN_HASH(bn.c_str());
-            PEN_LOG("scan %s", bn.c_str());
-
-            if(view->release_pos.find(bnh) != view->release_pos.end()) {
-                if(view->release_pos[bnh] > cache_range) {
-                    PEN_LOG("should remove out of range %s", bn.c_str());
-                    cached_releases.erase(cached_releases.begin() + i);
-                    bool result = pen::os_delete_directory(ii.path);
-                    if(result) {
-                        PEN_LOG("deleted: %s", ii.path.c_str());
-                        view->data_ctx->cached_release_bytes -= ii.size;
-                        view->data_ctx->cached_release_folders--;
-                    }
-                }
+        if(remove) {
+            cached_releases.erase(cached_releases.begin() + i);
+            bool result = pen::os_delete_directory(ii.path);
+            if(result) {
+                PEN_LOG("deleted: %s", ii.path.c_str());
+                view->data_ctx->cached_release_bytes -= ii.size;
+                view->data_ctx->cached_release_folders--;
             }
-            else {
-                PEN_LOG("should remove not in list %s", bn.c_str());
-                cached_releases.erase(cached_releases.begin() + i);
-                bool result = pen::os_delete_directory(ii.path);
-                if(result) {
-                    PEN_LOG("deleted: %s", ii.path.c_str());
-                    view->data_ctx->cached_release_bytes -= ii.size;
-                    view->data_ctx->cached_release_folders--;
-                }
-            }
-
-            // early out to terminate
-            if(view->terminate) {
-                view->threads_terminated++;
-                return nullptr;
-            }
+            pen::thread_sleep_ms(5);
         }
 
+        // early out to terminate
         if(view->terminate) {
             view->threads_terminated++;
             return nullptr;
         }
     }
 
-    // flag terminated
+    // flag terminated. this thread makes a single pass and exits, the old scrolled distance
+    // re-trigger was dead code (top_pos is never written) and kept the thread alive forever,
+    // which also blocked cleanup_views from ever freeing the view
     view->threads_terminated++;
     return nullptr;
 }

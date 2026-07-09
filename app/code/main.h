@@ -349,7 +349,7 @@ struct AudioPlayerContext
     u32     waveform_handle = -1;
     bool    started = false;
     bool    stopping = false;  // true when explicitly stopped, false on natural completion
-    u32     read_tex_data_handle = 0;
+    Str     now_playing_artwork_filepath = "";
     Str     play_track_filepath = "";
     Str     play_track_url = "";
     bool    invalidate_track = false;

@@ -399,7 +399,7 @@ def release_search_2(discogs, release):
     title = strip_format_suffix(concat_title_3(release))
     searches = list()
     # searches based on catno, if we have one
-    if len(release['cat']) > 0:
+    if len(release.get('cat', '')) > 0:
         searches.extend([
             {
                 "search": throttled_search(discogs.search,
@@ -422,18 +422,18 @@ def release_search_2(discogs, release):
 def release_search(discogs, release):
     searches = list()
     # searches based on catno, if we have one
-    if len(release['cat']) > 0:
+    if len(release.get('cat', '')) > 0:
         searches.extend([
             {
                 "search": throttled_search(discogs.search,
-                    catno=release['cat'],
+                    catno=release.get('cat', ''),
                     type='release'
                 ),
                 "search_keys": ['catno'],
             },
             {
                 "search": throttled_search(discogs.search,
-                    q=search_title(release['cat'])
+                    q=search_title(release.get('cat', ''))
                 ),
                 "search_keys": [],
             }
@@ -483,7 +483,7 @@ def release_search(discogs, release):
                     raise
             count += 1
             if check_search_limit(count):
-                print(f"No results found for (after {count} attempts): {concat_title(release)} ({release['cat']})")
+                print(f"No results found for (after {count} attempts): {concat_title(release)} ({release.get('cat', '')})")
                 return None
             if "-verbose" in sys.argv:
                 if hasattr(result, "title"):
@@ -504,7 +504,7 @@ def release_search(discogs, release):
             # match by catno if the search was not artist / title
             if "catno" not in search["search_keys"]:
                 if result.data.get("catno"):
-                    if caseless_spaceless_cmp(result.data.get("catno"), release['cat']):
+                    if caseless_spaceless_cmp(result.data.get("catno"), release.get('cat', '')):
                         score += 1
                         break
             # now match based on label
@@ -542,7 +542,7 @@ def release_search(discogs, release):
             "url": f"{result.url}",
             "id": result.id
         }
-    print(f"No results found for: {concat_title(release)} ({release['cat']})")
+    print(f"No results found for: {concat_title(release)} ({release.get('cat', '')})")
     for search in searches:
         for result in search["search"]:
             if hasattr(result, "title"):
@@ -564,6 +564,16 @@ def collection_dump(discogs):
             time.sleep(1)
 
 
+# skip registry entries that are missing core fields (e.g. legacy partial
+# entries) instead of crashing the whole job on a KeyError
+def skip_invalid_entry(key, release):
+    issues = dig.validate_release(key, release)
+    if issues:
+        print(f"skipping invalid registry entry {key}: {'; '.join(issues)}")
+        return True
+    return False
+
+
 def populate_discogs_links(discogs, store):
     reg = dig.load_registry(store)
 
@@ -581,7 +591,9 @@ def populate_discogs_links(discogs, store):
         for entry in reg:
             if time.monotonic() >= deadline:
                 print("terminating early to beat deadline")
-                break        
+                break
+            if skip_invalid_entry(entry, reg[entry]):
+                continue
             if "discogs" not in reg[entry] or "-recheck" in sys.argv:
                 print(f"{entry} - {concat_title(reg[entry])}")
                 try:
@@ -603,11 +615,11 @@ def populate_discogs_links(discogs, store):
             else:
                 if "attempted" in reg[entry]["discogs"]:
                     if "-verbose" in sys.argv:
-                        print(f"{entry} {reg[entry]['cat']} - previously attempted and failed to find")
+                        print(f"{entry} {reg[entry].get('cat', '')} - previously attempted and failed to find")
                     prev_attemps += 1
                 else:
                     if "-verbose" in sys.argv:
-                        print(f"{entry} {reg[entry]['cat']} - already exists")
+                        print(f"{entry} {reg[entry].get('cat', '')} - already exists")
                     hits += 1
 
     # fall through and try anything that was previously attempted
@@ -616,6 +628,8 @@ def populate_discogs_links(discogs, store):
             if time.monotonic() >= deadline:
                 print("terminating early to beat deadline")
                 break
+            if skip_invalid_entry(entry, reg[entry]):
+                continue
             if "discogs" in reg[entry] and "attempted" in reg[entry]["discogs"]:
                 if reg[entry]["discogs"].get("preorder"):
                     preorders += 1
@@ -633,7 +647,7 @@ def populate_discogs_links(discogs, store):
                     else:
                         # Already exhausted all algorithms
                         if "-verbose" in sys.argv:
-                            print(f"{entry} {reg[entry]['cat']} - exhausted all {attempted_val + 1} algorithms")
+                            print(f"{entry} {reg[entry].get('cat', '')} - exhausted all {attempted_val + 1} algorithms")
                         continue
                     if result != None:
                         reg[entry]["discogs"] = result
@@ -701,7 +715,7 @@ def populate_discogs_links(discogs, store):
     
     # write to file
     dig.write_registry(store, reg)
-    dig.patch_releases(json.dumps(reg))
+    dig.patch_releases(reg)
 
 
 def populate_discogs_likes(discogs, likes_file):
@@ -713,6 +727,8 @@ def populate_discogs_likes(discogs, likes_file):
             reg = json.loads(open(reg_file, "r").read())
             for entry in likes:
                 if entry in reg:
+                    if skip_invalid_entry(entry, reg[entry]):
+                        continue
                     if "discogs" not in reg[entry] or "-recheck" in sys.argv:
                         print(f"{entry} - {concat_title(reg[entry])}")
                         try:
@@ -732,11 +748,11 @@ def populate_discogs_likes(discogs, likes_file):
                             continue
                 else:
                     if "attempted" in reg[entry]["discogs"]:
-                        print(f"{entry} {reg[entry]['cat']} - previously attempted and failed to find")
+                        print(f"{entry} {reg[entry].get('cat', '')} - previously attempted and failed to find")
                     else:
-                        print(f"{entry} {reg[entry]['cat']} - already exists")
+                        print(f"{entry} {reg[entry].get('cat', '')} - already exists")
             open(reg_file, "w").write(json.dumps(reg, indent=4))
-            dig.patch_releases(json.dumps(reg))
+            dig.patch_releases(reg)
 
 
 def main():

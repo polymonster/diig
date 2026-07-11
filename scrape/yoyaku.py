@@ -341,7 +341,7 @@ def backfill_missing():
         print(f"wrote {len(updated)} updated entries to registry", flush=True)
         if "-local-only" not in sys.argv:
             dig.setup_firebase_auth()
-            dig.patch_releases(json.dumps(updated))
+            dig.patch_releases(updated)
             print(f"patched {len(updated)} entries to Firebase", flush=True)
     else:
         print("nothing to backfill", flush=True)

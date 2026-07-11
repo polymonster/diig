@@ -356,11 +356,25 @@ def auth_session():
     return AuthorizedSession(credentials)
 
 
-# write entire registry contents
-def patch_releases(entries: str, throw_assert=False):
+# write entire registry contents. every entry is validated here so partial or
+# malformed releases can never reach the cloud registry, whichever code path
+# tries to upload them (nightly patch, fix-store, backfill)
+def patch_releases(entries: dict, throw_assert=False):
+    valid = dict()
+    for key, release in entries.items():
+        issues = validate_release(key, release)
+        if issues:
+            print(f"not patching invalid entry {key}:", flush=True)
+            for issue in issues:
+                print(f"  - {issue}", flush=True)
+            continue
+        valid[key] = release
+    if not valid:
+        print("no valid entries to patch", flush=True)
+        return
     authed_session = auth_session()
     response = authed_session.patch(
-        "https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app/releases.json", entries)
+        "https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app/releases.json", json.dumps(valid))
     if throw_assert:
         print(response.reason)
         assert(response.status_code == 200)
@@ -437,11 +451,10 @@ def patch_store(store):
         for release in releases:
             patch_single = dict()
             patch_single[release] = releases[release]
-            patch_single_str = json.dumps(patch_single, indent=4)
-            print(patch_single_str)
-            patch_releases(patch_single_str, throw_assert=True)
+            print(json.dumps(patch_single, indent=4))
+            patch_releases(patch_single, throw_assert=True)
     else:
-        patch_releases(json.dumps(releases), throw_assert=True)
+        patch_releases(releases, throw_assert=True)
 
 
 # patch store releases
@@ -460,7 +473,7 @@ def fix_store(store):
         if "-verbose" in sys.argv:
             print(patch_single_str)
     write_registry(store, releases)
-    patch_releases(json.dumps(releases), throw_assert=True)
+    patch_releases(releases, throw_assert=True)
 
 
 # scrape a store based on rules defined in stores.json config
@@ -578,8 +591,15 @@ def load_registry(store):
     return dict()
 
 
-# write the registry back
+# write the registry back. invalid entries are kept in the local file so
+# -backfill can find and repair them, but they are warned about here and
+# excluded from cloud patches (see patch_releases)
 def write_registry(store, reg):
+    invalid = [key for key, release in reg.items() if validate_release(key, release)]
+    if invalid:
+        examples = ", ".join(invalid[:5])
+        print(f"warning: {store} registry contains {len(invalid)} invalid entries "
+              f"(kept locally for -backfill, excluded from cloud patch): {examples}", flush=True)
     reg_dir = "diig-registry"
     filepath = f"{reg_dir}/{store}.json"
     str_reg = (json.dumps(reg, indent=4))
@@ -600,6 +620,8 @@ _HTML_TAG_RE = re.compile(r"</?[a-zA-Z][^<>]*>")
 # safety net to stop malformed entries (e.g. a title with a leftover
 # "<a href=...>" fragment from a parse bug) from ever entering the registry.
 def validate_release(key, release):
+    if not isinstance(release, dict):
+        return [f"release is not a dict: {release!r}"]
     issues = []
     for field in RELEASE_TEXT_FIELDS:
         val = release.get(field)
@@ -613,6 +635,10 @@ def validate_release(key, release):
     # a release with no title at all is unusable
     if not (release.get("title") or "").strip():
         issues.append("missing title")
+    # the artist key must exist (consumers such as the discogs job index it
+    # directly), but an empty string is legitimate for various-artists releases
+    if "artist" not in release:
+        issues.append("missing artist key")
     return issues
 
 

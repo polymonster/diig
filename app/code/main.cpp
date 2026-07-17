@@ -4102,7 +4102,7 @@ namespace
             if(ctx.data_ctx.user_data.dict.contains("username")) {
                 ctx.username = ((std::string)ctx.data_ctx.user_data.dict["username"]).c_str();
             }
-ctx.data_ctx.user_data.mutex.unlock();
+            ctx.data_ctx.user_data.mutex.unlock();
             ctx.data_ctx.user_data.status = Status::e_invalidated;
         }
     }

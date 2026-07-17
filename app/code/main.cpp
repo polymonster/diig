@@ -12,6 +12,7 @@
 #include "input.h"
 #include "data_struct.h"
 #include "main.h"
+#include "ios/store_bridge.h"
 #include "audio/audio.h"
 #include "imgui_ext.h"
 #include "maths/maths.h"
@@ -29,6 +30,15 @@
 
 constexpr bool k_force_login = false;
 constexpr bool k_force_no_discogs_login = false;
+
+constexpr bool k_subscriptions_enabled = true; // master switch for the subscription gate, ship dark until store setup is live
+constexpr bool k_force_paywall = false; // dev: show the paywall even when entitled
+constexpr const c8* k_store_product_ids = "diig.pro.monthly,diig.pro.yearly";
+constexpr const c8* k_rc_entitlement_id = "pro";
+constexpr const c8* k_terms_url = "https://diig.app/terms";
+constexpr const c8* k_privacy_url = "https://diig.app/privacy";
+constexpr f64 k_entitlement_offline_grace_ms = 72.0 * 60.0 * 60.0 * 1000.0;
+
 constexpr bool k_force_streamed_audio = false;
 constexpr bool k_show_prims = false;
 constexpr bool k_disable_waveform = false;
@@ -269,6 +279,53 @@ namespace curl
         Str urlk = url;
         urlk.appendf("?key=%s", k_api_key);
         return urlk;
+    }
+
+    nlohmann::json get_bearer(const c8* url, const c8* bearer, long& http_code) {
+        http_code = 0;
+
+        CURL* curl = curl_easy_init();
+        if(!curl) {
+            return {};
+        }
+
+        char auth_header[256];
+        snprintf(auth_header, sizeof(auth_header), "Authorization: Bearer %s", bearer);
+
+        struct curl_slist* headers = nullptr;
+        headers = curl_slist_append(headers, auth_header);
+        headers = curl_slist_append(headers, "Accept: application/json");
+
+        DataBuffer db = {};
+        curl_easy_setopt(curl, CURLOPT_URL, url);
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+        curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
+        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, false);
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_function);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &db);
+
+        CURLcode res = curl_easy_perform(curl);
+        if(res == CURLE_OK) {
+            curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &http_code);
+        }
+        else {
+            PEN_LOG("curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+        }
+
+        curl_slist_free_all(headers);
+        curl_easy_cleanup(curl);
+
+        if(db.data)
+        {
+            try {
+                return nlohmann::json::parse((const c8*)db.data);
+            }
+            catch(...) {
+                return {};
+            }
+        }
+
+        return {};
     }
 
     nlohmann::json discogs_request(
@@ -2315,18 +2372,27 @@ namespace
         f32 text_size = ImGui::CalcTextSize(ICON_FA_HEART).x;
         f32 offset = ((text_size + spacing) * 2.0) + k_indent2;
 
-        ImGui::SetCursorPosX(ctx.w - offset);
-        ImGui::Text("%s", ctx.view->page == Page::likes ? ICON_FA_HEART : ICON_FA_HEART_O);
-
-        if(lenient_button_tap(0.1) && !ctx.scroll_lock_x && ! ctx.scroll_lock_y)
+        // no likes shortcut while gated on the paywall
+        bool gated = ctx.view->page == Page::paywall;
+        if(!gated)
         {
-            change_page(Page::likes);
+            ImGui::SetCursorPosX(ctx.w - offset);
+            ImGui::Text("%s", ctx.view->page == Page::likes ? ICON_FA_HEART : ICON_FA_HEART_O);
+
+            if(lenient_button_tap(0.1) && !ctx.scroll_lock_x && ! ctx.scroll_lock_y)
+            {
+                change_page(Page::likes);
+            }
+
+            ImGui::SameLine();
+            ImGui::Spacing();
+
+            ImGui::SameLine();
         }
-
-        ImGui::SameLine();
-        ImGui::Spacing();
-
-        ImGui::SameLine();
+        else
+        {
+            ImGui::SetCursorPosX(ctx.w - ((text_size + spacing) + k_indent2));
+        }
         ImGui::Text("%s", ICON_FA_BARS);
 
         // options menu button
@@ -2369,8 +2435,10 @@ namespace
                 ImGui::Separator();
             }
 
-            if(right_align_menu_item("Settings", pad)) {
-                change_page(Page::settings);
+            if(!gated) {
+                if(right_align_menu_item("Settings", pad)) {
+                    change_page(Page::settings);
+                }
             }
 
             if(ctx.show_debug) {
@@ -2389,6 +2457,7 @@ namespace
                 ImGui::Separator();
                 if(right_align_menu_item("Log Out", pad)) {
                     ctx.view->page = Page::login_or_signup;
+                    ctx.entitlement.status = Entitlement::e_unknown;
                     audio_player_stop_existing();
                 }
             }
@@ -3900,6 +3969,162 @@ namespace
         pen::input_set_key_up(PK_RETURN);
     }
 
+    f64 time_now_ms() {
+        return (f64)(std::chrono::system_clock::now().time_since_epoch() / std::chrono::milliseconds(1));
+    }
+
+    // parses "2026-08-15T19:23:03Z" style timestamps into ms since epoch, 0 on failure
+    f64 parse_iso8601_ms(const std::string& iso) {
+        s32 y, mo, d, h, mi, s;
+        if(sscanf(iso.c_str(), "%d-%d-%dT%d:%d:%d", &y, &mo, &d, &h, &mi, &s) != 6) {
+            return 0.0;
+        }
+        tm t = {};
+        t.tm_year = y - 1900;
+        t.tm_mon = mo - 1;
+        t.tm_mday = d;
+        t.tm_hour = h;
+        t.tm_min = mi;
+        t.tm_sec = s;
+        return (f64)timegm(&t) * 1000.0;
+    }
+
+    // last known good entitlement so the app still opens offline within a grace window
+    void cache_entitlement(bool active, f64 expires_ms) {
+        nlohmann::json j = {
+            {"active", active},
+            {"expires_ms", expires_ms},
+            {"cached_at", time_now_ms()}
+        };
+        pen::os_set_keychain_item("com.pmtech.dig", "entitlement", j.dump().c_str());
+    }
+
+    void set_entitlement(bool active, f64 expires_ms, const c8* source) {
+        cache_entitlement(active, expires_ms);
+        ctx.entitlement.expires_ms = expires_ms;
+        ctx.entitlement.source = source;
+        ctx.entitlement.status = active ? Entitlement::e_entitled : Entitlement::e_not_entitled;
+    }
+
+    // checks subscription entitlement on a background thread. device storekit first,
+    // then revenuecat which also covers promotional (comped) memberships and
+    // subscriptions purchased on other platforms, finally falling back to the last
+    // cached result within the offline grace window
+    void* entitlement_check(void* userdata) {
+        std::string uid = "";
+        ctx.data_ctx.auth.mutex.lock();
+        if(ctx.data_ctx.auth.dict.contains("localId")) {
+            uid = ctx.data_ctx.auth.dict["localId"];
+        }
+        ctx.data_ctx.auth.mutex.unlock();
+
+        // start the native store bridge (no-op off ios)
+        ios_store_set_user(uid.c_str());
+        ios_store_init(k_rc_api_key, k_store_product_ids);
+
+        // device storekit entitlement, polled while the bridge starts up
+        char buf[4096];
+        for(u32 waited = 0; waited < 5000; waited += 100) {
+            if(!ios_store_get_state_json(buf, sizeof(buf))) {
+                break; // no native store on this platform
+            }
+            try {
+                auto state = nlohmann::json::parse(buf);
+                auto& ent = state["entitlement"];
+                if(ent["checked"]) {
+                    if(ent["active"]) {
+                        set_entitlement(true, ent["expires_ms"], "app_store");
+                        return nullptr;
+                    }
+                    break; // nothing on device, ask revenuecat
+                }
+            }
+            catch(...) {
+                break;
+            }
+            pen::thread_sleep_ms(100);
+        }
+
+        // revenuecat subscriber lookup
+        if(strlen(k_rc_api_key) && !uid.empty()) {
+            Str url;
+            url.appendf("https://api.revenuecat.com/v1/subscribers/%s", uid.c_str());
+
+            long http_code = 0;
+            auto response = curl::get_bearer(url.c_str(), k_rc_api_key, http_code);
+            if(http_code >= 200 && http_code < 300) {
+                bool active = false;
+                f64 expires_ms = 0.0;
+                try {
+                    auto& ents = response["subscriber"]["entitlements"];
+                    if(ents.contains(k_rc_entitlement_id)) {
+                        auto& ent = ents[k_rc_entitlement_id];
+                        if(ent.contains("expires_date") && !ent["expires_date"].is_null()) {
+                            expires_ms = parse_iso8601_ms(ent["expires_date"]);
+                            active = expires_ms > time_now_ms();
+                        }
+                        else {
+                            active = true; // no expiry = lifetime / promotional
+                        }
+                    }
+                }
+                catch(...) {
+                }
+                set_entitlement(active, expires_ms, "revenuecat");
+                return nullptr;
+            }
+        }
+
+        // offline or lookup failed, fall back to last known good within grace
+        Str cached = pen::os_get_keychain_item("com.pmtech.dig", "entitlement");
+        if(!cached.empty()) {
+            try {
+                auto j = nlohmann::json::parse(cached.c_str());
+                bool active = j.value("active", false);
+                f64 expires_ms = j.value("expires_ms", 0.0);
+                f64 cached_at = j.value("cached_at", 0.0);
+                f64 valid_until = std::max(expires_ms, cached_at) + k_entitlement_offline_grace_ms;
+                if(active && time_now_ms() < valid_until) {
+                    ctx.entitlement.expires_ms = expires_ms;
+                    ctx.entitlement.source = "cached";
+                    ctx.entitlement.status = Entitlement::e_entitled;
+                    return nullptr;
+                }
+            }
+            catch(...) {
+            }
+        }
+
+        ctx.entitlement.status = Entitlement::e_not_entitled;
+        return nullptr;
+    }
+
+    // returns true when the user can pass the subscription gate, otherwise kicks
+    // the async check or routes to the paywall page
+    bool entitlement_gate() {
+        if(!k_subscriptions_enabled) {
+            return true;
+        }
+        switch(ctx.entitlement.status.load()) {
+            case Entitlement::e_unknown:
+                ctx.entitlement.status = Entitlement::e_checking;
+                pen::thread_create(entitlement_check, 1024 * 1024, nullptr, pen::e_thread_start_flags::detached);
+                return false;
+            case Entitlement::e_checking:
+                return false;
+            case Entitlement::e_not_entitled:
+                ctx.view->page = Page::paywall;
+                return false;
+            default:
+                break;
+        }
+        if(k_force_paywall) {
+            ctx.view->page = Page::paywall;
+            return false;
+        }
+        return true;
+    }
+
     void login_complete() {
         // copy auth credentials
         ctx.data_ctx.auth.mutex.lock();
@@ -3920,6 +4145,12 @@ namespace
         }
 
         ctx.firebase_token = ((std::string)ctx.data_ctx.auth.dict["idToken"]).c_str();
+
+        // subscription gate, waits on the async entitlement check and routes to
+        // the paywall page when there is no active subscription
+        if(!entitlement_gate()) {
+            return;
+        }
 
         // kick off reg loader now we have auth
         pen::thread_create(registry_loader, 10 * 1024 * 1024, &ctx.data_ctx, pen::e_thread_start_flags::detached);
@@ -4028,6 +4259,137 @@ namespace
         }
     }
 
+    void paywall_menu() {
+        // poll the native store bridge state
+        static nlohmann::json s_store_state = {};
+        char buf[4096];
+        if(ios_store_get_state_json(buf, sizeof(buf))) {
+            try {
+                s_store_state = nlohmann::json::parse(buf);
+            }
+            catch(...) {
+            }
+        }
+
+        // purchase or restore has completed, pass the gate and continue into the app
+        if(!k_force_paywall) {
+            try {
+                if(!s_store_state.empty()) {
+                    auto& ent = s_store_state["entitlement"];
+                    if(ent["checked"] && ent["active"]) {
+                        set_entitlement(true, ent["expires_ms"], "app_store");
+                        ctx.view->page = Page::login_complete;
+                        return;
+                    }
+                }
+            }
+            catch(...) {
+            }
+        }
+
+        bool purchasing = s_store_state.value("purchasing", false);
+        bool pending = s_store_state.value("pending", false);
+        bool restoring = s_store_state.value("restoring", false);
+        bool products_loaded = s_store_state.value("products_loaded", false);
+        std::string error_message = s_store_state.value("last_error", "");
+
+        f32 padding = 0.0;
+        ImVec2 boxsize = {};
+        get_input_box_sizes(boxsize, padding);
+
+        ImGui::Indent();
+
+        // title
+        ImGui::SetWindowFontScale(k_text_size_h2);
+        ImGui::Spacing();
+        ImGui::TextCentred("diig Pro");
+
+        ImGui::SetWindowFontScale(k_text_size_body);
+        ImGui::TextWrapped("A subscription is required to use diig. Subscriptions auto-renew and can be cancelled anytime.");
+        ImGui::Dummy(ImVec2(0.0, padding));
+
+        ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(padding * 0.5, padding * 0.5));
+        ImGui::SetWindowFontScale(k_text_size_h3);
+
+        if(purchasing || restoring) {
+            ImGui::TextCentred(pending ? "Waiting for approval..." : "Processing...");
+        }
+        else if(s_store_state.empty()) {
+            // no native store on this platform (desktop builds), memberships come
+            // from the web or a comped grant
+            ImGui::TextWrapped("Subscribe from the diig app or diig.app, then refresh your membership below.");
+        }
+        else if(!products_loaded) {
+            ImGui::TextCentred("Loading...");
+        }
+        else {
+            // product buttons with localised prices from the store
+            for(auto& product : s_store_state["products"]) {
+                std::string id = product.value("id", "");
+                std::string price = product.value("price", "");
+                std::string period = product.value("period", "");
+
+                Str label;
+                if(!period.empty()) {
+                    label.appendf("%s / %s", price.c_str(), period.c_str());
+                }
+                else {
+                    label.appendf("%s", price.c_str());
+                }
+
+                if(ImGui::Button(label.c_str())) {
+                    pen::os_haptic_selection_feedback();
+                    ios_store_purchase(id.c_str());
+                }
+                ImGui::Dummy(ImVec2(0.0, padding * 0.25));
+            }
+        }
+
+        ImGui::Dummy(ImVec2(0.0, padding));
+        ImGui::SetWindowFontScale(k_text_size_body);
+
+        if(!s_store_state.empty() && !purchasing && !restoring) {
+            ImGui::Text("Restore Purchases");
+            if(ImGui::IsItemClicked()) {
+                pen::os_haptic_selection_feedback();
+                ios_store_restore();
+            }
+            ImGui::Dummy(ImVec2(0.0, padding * 0.5));
+        }
+
+        // re-runs the entitlement check, picks up comped memberships and web purchases
+        ImGui::Text("Refresh Membership");
+        if(ImGui::IsItemClicked()) {
+            pen::os_haptic_selection_feedback();
+            ctx.entitlement.status = Entitlement::e_unknown;
+            ctx.view->page = Page::login_complete;
+        }
+
+        ImGui::PopStyleVar();
+
+        // required links for auto renewing subscriptions
+        ImGui::Dummy(ImVec2(0.0, padding));
+        ImGui::SetWindowFontScale(k_text_size_small);
+        ImGui::Text("Terms of Use");
+        if(ImGui::IsItemClicked()) {
+            ctx.open_url_request = k_terms_url;
+        }
+        ImGui::SameLine();
+        ImGui::Text("Privacy Policy");
+        if(ImGui::IsItemClicked()) {
+            ctx.open_url_request = k_privacy_url;
+        }
+
+        // error
+        ImGui::Dummy(ImVec2(0.0, padding));
+        ImGui::SetWindowFontScale(k_text_size_body);
+        ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.5f, 0.0f, 0.0f, 1.0f));
+        ImGui::TextWrapped("%s", error_message.c_str());
+        ImGui::PopStyleColor();
+
+        ImGui::Unindent();
+    }
+
     void main_window() {
         s32 w, h;
         pen::window_get_size(w, h);
@@ -4071,6 +4433,9 @@ namespace
                 break;
                 case Page::settings:
                     settings_menu();
+                break;
+                case Page::paywall:
+                    paywall_menu();
                 break;
                 default:
                     store_menu();
@@ -4998,6 +5363,28 @@ void settings_menu()
     }
 
     discogs_token_input();
+
+    // subscription management
+    if(k_subscriptions_enabled) {
+        ImGui::Text("%s", "Subscription");
+        if(ctx.entitlement.status == Entitlement::e_entitled) {
+            ImGui::SetWindowFontScale(k_text_size_body);
+            if(ctx.entitlement.expires_ms > 0.0) {
+                time_t expires_s = (time_t)(ctx.entitlement.expires_ms / 1000.0);
+                tm* t = localtime(&expires_s);
+                ImGui::Text("Active, renews %04d-%02d-%02d", t->tm_year + 1900, t->tm_mon + 1, t->tm_mday);
+            }
+            else {
+                ImGui::Text("Active");
+            }
+            ImGui::SetWindowFontScale(k_text_size_h3);
+        }
+        ImGui::Text("Manage Subscription");
+        if(ImGui::IsItemClicked()) {
+            pen::os_haptic_selection_feedback();
+            ios_store_manage_subscriptions();
+        }
+    }
 
     ImGui::Unindent();
 

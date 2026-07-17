@@ -4,6 +4,27 @@ dofile "pmtech/tools/premake/options.lua"
 dofile "pmtech/tools/premake/globals.lua"
 dofile "pmtech/tools/premake/app_template.lua"
 
+-- premake alpha11 has no swift support in its xcode exporter; patch .swift into
+-- the Sources build phase so the storekit bridge compiles (ios only)
+if platform == "ios" then
+	require("xcode")
+	local xcode = premake.modules.xcode
+
+	premake.override(xcode, "getbuildcategory", function(base, node)
+		if path.getextension(node.name) == ".swift" then
+			return "Sources"
+		end
+		return base(node)
+	end)
+
+	premake.override(xcode, "getfiletype", function(base, node, cfg)
+		if path.getextension(node.path) == ".swift" then
+			return "sourcecode.swift"
+		end
+		return base(node, cfg)
+	end)
+end
+
 -- Solution
 solution ("diig_" .. platform_dir)
 	location ("build/" .. platform_dir )
@@ -95,11 +116,13 @@ if platform == "ios" then
         ["PRODUCT_BUNDLE_IDENTIFIER"] = "com.pmtech.dig",
 		["DEVELOPMENT_TEAM"] = "7C3Y39TX3G", -- personal team (Alex Dixon)
 		["IPHONEOS_DEPLOYMENT_TARGET"] = 15.0,
-		["SKIP_INSTALL"] = "NO"
+		["SKIP_INSTALL"] = "NO",
+		["SWIFT_VERSION"] = "5.0"
     }
 
 	files {
-		"dist/ios/Images.xcassets"
+		"dist/ios/Images.xcassets",
+		"code/ios/store_bridge.swift"
 	}
 
 	xcodebuildresources {
@@ -107,7 +130,8 @@ if platform == "ios" then
 	}
 
 	links {
-		"CoreGraphics.framework"
+		"CoreGraphics.framework",
+		"StoreKit.framework"
 	}
 
 	linkoptions {

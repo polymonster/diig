@@ -216,7 +216,8 @@ namespace Page
         login_complete,
         feed,
         likes,
-        settings
+        settings,
+        paywall
     };
 
     const c8* display_names[] = {
@@ -226,6 +227,25 @@ namespace Page
     };
 }
 typedef u32 Page_t;
+
+namespace Entitlement
+{
+    enum Entitlement
+    {
+        e_unknown,          // not yet checked
+        e_checking,         // check in flight on a background thread
+        e_entitled,         // active subscription (or comped / grace)
+        e_not_entitled      // checked and no active subscription
+    };
+}
+typedef u32 Entitlement_t;
+
+struct EntitlementState
+{
+    std::atomic<Entitlement_t>  status = { Entitlement::e_unknown };
+    std::atomic<f64>            expires_ms = { 0.0 };   // 0 = lifetime / promotional
+    Str                         source = "";            // app_store, revenuecat, cached (written before status flips)
+};
 
 namespace Status
 {
@@ -361,6 +381,7 @@ struct AppContext
 {
     DataContext             data_ctx = {};
     AudioPlayerContext      audio_ctx = {};
+    EntitlementState        entitlement = {};
     s32                     w, h = 0;
     f32                     status_bar_height = 0.0f;
     f32                     dt;

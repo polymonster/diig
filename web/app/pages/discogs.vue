@@ -258,7 +258,6 @@ onMounted(() => {
       </form>
 
       <div class="header-right">
-        <NuxtLink to="/chat"  class="chat-nav"><span class="fa">&#xf086;</span></NuxtLink>
         <NuxtLink to="/likes" class="likes-nav"><span class="fa">&#xf004;</span></NuxtLink>
         <button class="burger-btn fa" @click="menuOpen = !menuOpen">&#xf0c9;</button>
       </div>
@@ -531,13 +530,12 @@ onMounted(() => {
   flex-shrink: 0;
 }
 
-.chat-nav, .likes-nav {
+.likes-nav {
   font-size: 1rem;
   color: #ccc;
   text-decoration: none;
   transition: color 0.15s;
 }
-.chat-nav:hover  { color: #555; }
 .likes-nav:hover { color: #e03070; }
 
 .filter-bar {

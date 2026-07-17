@@ -1,9 +1,10 @@
 <script setup>
 import { useFirebaseAuth, useCurrentUser } from 'vuefire'
 
-const auth = useFirebaseAuth()
-const user = useCurrentUser()
-const DB   = 'https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app'
+const auth  = useFirebaseAuth()
+const user  = useCurrentUser()
+const route = useRoute()
+const DB    = 'https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app'
 
 const VIEW_PRIORITY = ['new_releases', 'weekly_chart', 'monthly_chart']
 
@@ -161,8 +162,12 @@ async function fetchStores() {
   if (!data || typeof data !== 'object') return
   rawStores.value = data
   if (!selectedStoreId.value) {
-    const last = localStorage.getItem('diig_last_store')
-    selectedStoreId.value = (last && data[last]) ? last : Object.keys(data)[0] ?? ''
+    // deep link (?store=juno) wins, then last visited, then first store
+    const wanted = route.query.store
+    const last   = localStorage.getItem('diig_last_store')
+    selectedStoreId.value = (wanted && data[wanted]) ? wanted
+      : (last && data[last]) ? last
+      : Object.keys(data)[0] ?? ''
   }
   await loadAll()
 }
@@ -256,9 +261,6 @@ function onSwipeEnd(release, e) {
       </div>
 
       <div class="header-right">
-        <NuxtLink to="/chat" class="chat-nav">
-          <span class="fa">&#xf086;</span>
-        </NuxtLink>
         <NuxtLink to="/likes" class="likes-nav">
           <span class="fa">&#xf004;</span>
         </NuxtLink>
@@ -467,14 +469,6 @@ function onSwipeEnd(release, e) {
   align-items: center;
   gap: 0.9rem;
 }
-
-.chat-nav {
-  font-size: 1rem;
-  color: #ccc;
-  text-decoration: none;
-  transition: color 0.15s;
-}
-.chat-nav:hover { color: #555; }
 
 .likes-nav {
   font-size: 1rem;

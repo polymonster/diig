@@ -178,6 +178,10 @@ const handleRegister = async () => {
 
       <div class="footer">
         <NuxtLink to="/faq" class="faq-link">FAQ</NuxtLink>
+        <span class="footer-sep">&middot;</span>
+        <NuxtLink to="/privacy" class="faq-link">Privacy</NuxtLink>
+        <span class="footer-sep">&middot;</span>
+        <NuxtLink to="/terms" class="faq-link">Terms</NuxtLink>
       </div>
     </div>
   </div>
@@ -315,4 +319,9 @@ const handleRegister = async () => {
   text-decoration: none;
 }
 .faq-link:hover { color: #555; }
+
+.footer-sep {
+  color: #ddd;
+  margin: 0 0.4rem;
+}
 </style>

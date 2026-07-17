@@ -73,7 +73,7 @@ async function loadAll() {
   loading.value = false
 }
 
-watch(user, async u => { if (u) { await fetchStores(); loadAll(); loadLikes() } }, { immediate: true })
+watch(user, async u => { if (u) { await fetchStores(); loadStoreOrder(); loadAll(); loadLikes() } }, { immediate: true })
 
 function selectView(viewId) {
   stopAll()
@@ -83,8 +83,54 @@ function selectView(viewId) {
 }
 
 
+// ── Store ordering ───────────────────────────────────────────────────────────
+
+const storeOrder = ref([])  // array of store ids, user preferred order
+
+// stores sorted by the user's preferred order; unknown (new) stores keep their
+// default position at the end
+const sortedStores = computed(() => {
+  const order = storeOrder.value
+  return [...stores.value].sort((a, b) => {
+    const ia = order.indexOf(a.id)
+    const ib = order.indexOf(b.id)
+    return (ia === -1 ? order.length : ia) - (ib === -1 ? order.length : ib)
+  })
+})
+
+async function loadStoreOrder() {
+  // account copy wins so the order follows the user across devices,
+  // localStorage is the fallback
+  try {
+    if (auth.currentUser) {
+      const token = await auth.currentUser.getIdToken()
+      const data  = await fetch(`${DB}/users/${auth.currentUser.uid}/web_prefs/store_order.json?auth=${token}`).then(r => r.json())
+      if (Array.isArray(data) && data.length) {
+        storeOrder.value = data
+        localStorage.setItem('diig_store_order', JSON.stringify(data))
+        return
+      }
+    }
+  } catch { /* fall back to local */ }
+  try {
+    const local = JSON.parse(localStorage.getItem('diig_store_order') || '[]')
+    if (Array.isArray(local)) storeOrder.value = local
+  } catch { /* default order */ }
+}
+
+async function saveStoreOrder() {
+  localStorage.setItem('diig_store_order', JSON.stringify(storeOrder.value))
+  if (!auth.currentUser) return
+  try {
+    const token = await auth.currentUser.getIdToken()
+    await fetch(`${DB}/users/${auth.currentUser.uid}/web_prefs/store_order.json?auth=${token}`, {
+      method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(storeOrder.value),
+    })
+  } catch (e) { console.error('store order save', e) }
+}
+
 const releasesByStore = computed(() =>
-  stores.value.map(store => {
+  sortedStores.value.map(store => {
     const seen     = new Set()
     const releases = []
     for (const sec of store.sections) {
@@ -95,6 +141,18 @@ const releasesByStore = computed(() =>
     return { store, releases: releases.slice(0, 32) }
   }).filter(s => s.releases.length)
 )
+
+// swap a store block with its visible neighbour and persist the full order
+function moveStore(storeId, dir) {
+  const visible = releasesByStore.value.map(x => x.store.id)
+  const i = visible.indexOf(storeId)
+  const j = i + dir
+  if (i === -1 || j < 0 || j >= visible.length) return
+  ;[visible[i], visible[j]] = [visible[j], visible[i]]
+  const rest = sortedStores.value.map(s => s.id).filter(id => !visible.includes(id))
+  storeOrder.value = [...visible, ...rest]
+  saveStoreOrder()
+}
 
 // ── Auto-play on scroll (mobile) ─────────────────────────────────────────────
 
@@ -226,9 +284,6 @@ function onSwipeEnd(release, e) {
         <NuxtLink to="/discogs" class="viewbtn stores-link">Discogs &rsaquo;</NuxtLink>
       </nav>
       <div class="header-right">
-        <NuxtLink to="/chat" class="chat-nav">
-          <span class="fa">&#xf086;</span>
-        </NuxtLink>
         <NuxtLink to="/likes" class="likes-nav">
           <span class="fa">&#xf004;</span>
         </NuxtLink>
@@ -241,9 +296,13 @@ function onSwipeEnd(release, e) {
     </div>
 
     <main v-else class="content">
-      <div v-for="{ store, releases } in releasesByStore" :key="store.id" class="store-block">
+      <div v-for="({ store, releases }, si) in releasesByStore" :key="store.id" class="store-block">
         <h2 class="store-name">
-          <NuxtLink :to="`/store/${store.id}`" class="store-link">{{ store.name }}</NuxtLink>
+          <NuxtLink :to="`/stores?store=${store.id}`" class="store-link">{{ store.name }}</NuxtLink>
+          <span class="order-btns">
+            <button class="order-btn fa" :disabled="si === 0" title="Move up" @click="moveStore(store.id, -1)">&#xf077;</button>
+            <button class="order-btn fa" :disabled="si === releasesByStore.length - 1" title="Move down" @click="moveStore(store.id, 1)">&#xf078;</button>
+          </span>
         </h2>
         <div class="tile-row">
           <div
@@ -420,14 +479,6 @@ function onSwipeEnd(release, e) {
   gap: 0.9rem;
 }
 
-.chat-nav {
-  font-size: 1rem;
-  color: #ccc;
-  text-decoration: none;
-  transition: color 0.15s;
-}
-.chat-nav:hover { color: #555; }
-
 .likes-nav {
   font-size: 1rem;
   color: #ccc;
@@ -482,6 +533,24 @@ function onSwipeEnd(release, e) {
   transition: color 0.15s;
 }
 .store-link:hover { color: #0a0a0a; }
+
+.order-btns {
+  margin-left: 0.6rem;
+  display: inline-flex;
+  gap: 0.4rem;
+}
+
+.order-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 0.6rem;
+  color: #ccc;
+  cursor: pointer;
+  transition: color 0.15s;
+}
+.order-btn:hover:not(:disabled) { color: #0a0a0a; }
+.order-btn:disabled { opacity: 0.25; cursor: default; }
 
 .tile-row {
   display: contents;

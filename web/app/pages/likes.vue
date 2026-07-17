@@ -18,7 +18,8 @@ async function loadLikedReleases() {
   if (!likesData || typeof likesData !== 'object') { loading.value = false; return }
   likes.value = likesData
 
-  const entries = Object.entries(likesData).sort((a, b) => b[1] - a[1])
+  // filter out 0 un-like tombstones
+  const entries = Object.entries(likesData).filter(([, ts]) => ts > 0).sort((a, b) => b[1] - a[1])
 
   const results = await Promise.all(
     entries.map(async ([id, ts]) => {
@@ -39,7 +40,7 @@ watch(user, u => { if (u) loadLikedReleases() }, { immediate: true })
 const likes           = ref({})
 const likeCountAdjust = ref({})
 
-function isLiked(id) { return id in likes.value }
+function isLiked(id) { return (likes.value[id] ?? 0) > 0 }
 
 
 async function toggleLike(release, e) {
@@ -53,11 +54,13 @@ async function toggleLike(release, e) {
   const json = (body) => ({ method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
 
   if (isLiked(id)) {
-    const { [id]: _, ...rest } = likes.value
-    likes.value = rest
+    // write a 0 tombstone rather than deleting, so the un-like syncs to
+    // devices that merge a cached copy of the likes (deleted keys are
+    // indistinguishable from never-liked)
+    likes.value = { ...likes.value, [id]: 0 }
     likeCountAdjust.value = { ...likeCountAdjust.value, [id]: (likeCountAdjust.value[id] ?? 0) - 1 }
     releases.value = releases.value.filter(r => r.id !== id)
-    await fetch(`${DB}/users/${uid}/likes/${id}.json?auth=${token}`, { method: 'DELETE' })
+    await fetch(`${DB}/users/${uid}/likes/${id}.json?auth=${token}`, json(0))
     const cur = await fetch(countUrl).then(r => r.json()) || 0
     await fetch(countUrl, json(Math.max(0, cur - 1)))
   } else {

@@ -879,8 +879,9 @@ void* user_data_thread(void* userdata)
                     try {
                         auto cloud_user_data = nlohmann::json::parse(fetch.data);
                         if(cloud_user_data.contains("timestamp")) {
+                            ctx->user_data.mutex.lock();
                             ctx->user_data.dict.merge_patch(cloud_user_data);
-
+                            ctx->user_data.mutex.unlock();
                         }
                     }
                     catch(...) {
@@ -1004,7 +1005,8 @@ void update_likes_registry() {
                 like_true = like.value();
             }
             else if(like.value().is_number()) {
-                like_true = true;
+                // 0 is an un-like tombstone
+                like_true = like.value() > 0.0f;
                 timestamp = like.value();
             }
 
@@ -1155,7 +1157,8 @@ void* releases_view_loader(void* userdata)
                 like_true = like.value();
             }
             else if(like.value().is_number()) {
-                like_true = true;
+                // 0 is an un-like tombstone
+                like_true = like.value() > 0.0;
                 timestamp = like.value();
             }
 
@@ -4791,9 +4794,10 @@ void add_like(const Str& id)
 void remove_like(const Str& id)
 {
     ctx.data_ctx.user_data.mutex.lock();
-    if(ctx.data_ctx.user_data.dict.contains("likes")) {
-        ctx.data_ctx.user_data.dict["likes"].erase(id.c_str());
-    }
+    // write a 0 tombstone rather than erasing, so the un-like syncs to other
+    // devices (a missing key cannot be distinguished from never-liked when
+    // merging with the cloud copy)
+    ctx.data_ctx.user_data.dict["likes"][id.c_str()] = 0;
     ctx.data_ctx.user_data.mutex.unlock();
     ctx.data_ctx.user_data.status = Status::e_invalidated;
 

@@ -174,7 +174,7 @@ watch(user, u => { if (u) { fetchStores(); loadLikes() } }, { immediate: true })
 const likes           = ref({})
 const likeCountAdjust = ref({})
 
-function isLiked(id) { return id in likes.value }
+function isLiked(id) { return (likes.value[id] ?? 0) > 0 }
 
 async function loadLikes() {
   if (!auth.currentUser) return
@@ -193,10 +193,12 @@ async function toggleLike(release, e) {
   const countUrl = `${DB}/releases/${id}/likes/count.json?auth=${token}`
 
   if (isLiked(id)) {
-    const { [id]: _, ...rest } = likes.value
-    likes.value = rest
+    // write a 0 tombstone rather than deleting, so the un-like syncs to
+    // devices that merge a cached copy of the likes (deleted keys are
+    // indistinguishable from never-liked)
+    likes.value = { ...likes.value, [id]: 0 }
     likeCountAdjust.value = { ...likeCountAdjust.value, [id]: (likeCountAdjust.value[id] ?? 0) - 1 }
-    await fetch(`${DB}/users/${uid}/likes/${id}.json?auth=${token}`, { method: 'DELETE' })
+    await fetch(`${DB}/users/${uid}/likes/${id}.json?auth=${token}`, { method: 'PUT', body: JSON.stringify(0) })
     const cur = await fetch(countUrl).then(r => r.json()) || 0
     await fetch(countUrl, { method: 'PUT', body: JSON.stringify(Math.max(0, cur - 1)) })
   } else {

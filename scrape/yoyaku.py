@@ -26,22 +26,23 @@ def clean_product_title(release_html_str: str):
     body_end = elem.rfind("</h1")
     if body_start != -1 and body_end != -1:
         elem = elem[body_start + 1:body_end]
-    # drop a leading artist link (`<a ...>ARTIST</a> — TITLE`) so we keep only
-    # the release title portion
+    # drop the leading artist links so we keep only the release title portion.
+    # there may be several (`<a>ARTIST</a>, <a>ARTIST</a> — TITLE`), so cut
+    # after the last one
     stripped = elem.lstrip()
     if stripped[:3].lower() == "<a ":
-        close = stripped.find("</a>")
+        close = stripped.rfind("</a>")
         if close != -1:
             after = stripped[close + len("</a>"):]
-            # only take the tail if there is an actual title after the artist,
+            # only take the tail if there is an actual title after the artists,
             # otherwise fall back to the full text (better than an empty title)
-            if after.strip(" -–—"):
+            if after.strip(" -–—,"):
                 elem = after
     # strip any residual html tags and collapse whitespace
     elem = re.sub(r"<[^>]*>", "", elem)
     elem = html.unescape(" ".join(elem.split()))
     # trim a leading dash/space separator left by the "ARTIST — TITLE" split
-    return elem.lstrip(" -–—").strip()
+    return elem.lstrip(" -–—,").strip()
 
 
 def fetch_product_json(product_id: int):
@@ -259,9 +260,15 @@ def scrape_page(url, store, store_dict, view, section, counter, session_scraped_
             release_dict["cat"] = html.unescape(release_dict["cat"])
 
         # validate before adding to the registry so we never persist a
-        # malformed entry (e.g. leftover html in the title). skip on failure
-        # without marking it scraped, so it is retried on the next run.
-        issues = dig.validate_release(key, release_dict)
+        # malformed entry (e.g. leftover html in the title). when the registry
+        # already holds the detail info, release_dict is only a partial
+        # fragment (store/link/id/pos), so validate the merged result rather
+        # than the fragment. skip on failure without marking it scraped, so it
+        # is retried on the next run.
+        merged_entry = dict()
+        dig.merge_dicts(merged_entry, releases_dict.get(key, dict()))
+        dig.merge_dicts(merged_entry, release_dict)
+        issues = dig.validate_release(key, merged_entry)
         if issues:
             print(f"skipping malformed entry {key}:", flush=True)
             for issue in issues:
@@ -292,7 +299,7 @@ def backfill_missing():
     # legitimately self-titled releases (e.g. "Revlux — Revlux").
     def needs_backfill(v):
         title = v.get("title") or ""
-        return "artist" not in v or "<" in title
+        return "artist" not in v or "<" in title or not title.strip()
 
     missing = {k: v for k, v in releases_dict.items() if needs_backfill(v)}
     print(f"found {len(missing)} entries to backfill", flush=True)

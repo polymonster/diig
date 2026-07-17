@@ -810,7 +810,7 @@ void* user_data_thread(void* userdata)
     Str userid = "";
     Str tokenid = "";
     Str user_url = "https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app/users/";
-    Str likes_url = "https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app/likes/";
+    Str likes_url = "https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app/likes.json";
 
     nlohmann::json update_payload = {};
 
@@ -902,13 +902,9 @@ void* user_data_thread(void* userdata)
                 CURLcode code;
                 auto response = curl::patch(url.c_str(), payload_str.c_str(), code);
 
-                // sync likes
+                // sync likes with a single multi-location patch: {"<release>/<user>": 1, ...}
+                nlohmann::json likes_payload = nlohmann::json::object();
                 for(auto& like : update_payload["likes"].items()) {
-                    // construct url for the release in likes section
-                    Str like_release_url = likes_url;
-                    like_release_url.appendf("%s.json", like.key().c_str());
-                    like_release_url.appendf("?auth=%s", tokenid.c_str());
-
                     // unpack bool or numerical like
                     bool like_val = false;
                     if(like.value().is_boolean()) {
@@ -918,12 +914,19 @@ void* user_data_thread(void* userdata)
                         like_val = like.value() > 0.0f;
                     }
 
-                    // patch payload for user specific like
-                    Str like_payload = "";
-                    like_payload.appendf("{\"%s\": %i }", userid.c_str(), (s32)like_val);
+                    Str like_path = "";
+                    like_path.appendf("%s/%s", like.key().c_str(), userid.c_str());
+                    likes_payload[like_path.c_str()] = (s32)like_val;
+                }
+
+                if(!likes_payload.empty()) {
+                    Str likes_patch_url = likes_url;
+                    likes_patch_url.appendf("?auth=%s", tokenid.c_str());
+
+                    std::string likes_payload_str = likes_payload.dump();
 
                     CURLcode code;
-                    auto response = curl::patch(like_release_url.c_str(), like_payload.c_str(), code);
+                    auto response = curl::patch(likes_patch_url.c_str(), likes_payload_str.c_str(), code);
                 }
 
                 update_cloud = false;
@@ -1139,95 +1142,90 @@ void* releases_view_loader(void* userdata)
         }
 
         auto likes = get_likes();
-        if(!likes.empty() && likes.size() != likes_registry.size()) {
-            PEN_LOG("populate likes from feed");
 
-            // populate likes feed from the db
-            for(auto& like : likes.items()) {
+        // populate from cache where possible and only fetch releases which are
+        // missing, so adding a single new like does not refetch the whole feed
+        bool fetched_missing = false;
+        for(auto& like : likes.items()) {
 
-                // like value might be bool or number
-                bool like_true = false;
-                f64 timestamp = 0.0f;
-                if(like.value().is_boolean()) {
-                    like_true = like.value();
-                }
-                else if(like.value().is_number()) {
-                    like_true = true;
-                    timestamp = like.value();
-                }
-
-                if(like_true) {
-                    Str search_url = "https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app/releases.json";
-                    search_url.appendf("?orderBy=\"$key\"&equalTo=\"%s\"&timeout=1s", like.key().c_str());
-                    search_url = append_auth(search_url);
-
-                    auto db = curl::download(search_url.c_str());
-                    if(db.data)
-                    {
-                        nlohmann::json release;
-                        try {
-                            release = nlohmann::json::parse(db.data);
-                            releases_registry[like.key()] = release[like.key()];
-
-                            view_chart.push_back({
-                                like.key(),
-                                timestamp
-                            });
-                        }
-                        catch(...) {
-                            //
-                        }
-
-                        free(db.data);
-                    }
-                    else {
-                    }
-                }
+            // like value might be bool or number
+            bool like_true = false;
+            f64 timestamp = 0.0f;
+            if(like.value().is_boolean()) {
+                like_true = like.value();
+            }
+            else if(like.value().is_number()) {
+                like_true = true;
+                timestamp = like.value();
             }
 
-            // write to cache
-            if(view_chart.size() == likes.size())
-            {
-                PEN_LOG("caching likes registry");
-
-                // cache async
-                std::thread cache_thread([releases_registry, filepath]() {
-                    FILE* fp = fopen(filepath.c_str(), "wb");
-                    std::string j = releases_registry.dump();
-                    fwrite(j.c_str(), j.length(), 1, fp);
-                    fclose(fp);
-                });
-                cache_thread.detach();
+            if(!like_true) {
+                continue;
             }
-        }
-        else {
-            // populate likes feed from cache
-            PEN_LOG("populate likes from cache");
 
-            // use likes registry
-            releases_registry = likes_registry;
+            // use cached release info if we have it
+            if(likes_registry.contains(like.key()) && !likes_registry[like.key()].is_null()) {
+                releases_registry[like.key()] = likes_registry[like.key()];
 
-            for(auto& like : likes.items()) {
-
-                // like value might be bool or number
-                bool like_true = false;
-                f64 timestamp = 0.0f;
-                if(like.value().is_boolean()) {
-                    like_true = like.value();
-                }
-                else if(like.value().is_number()) {
-                    like_true = true;
-                    timestamp = like.value();
-                }
-
-                // add to view chart
                 view_chart.push_back({
                     like.key(),
                     timestamp
                 });
+                continue;
             }
 
-            // trigger an update
+            // fetch missing release info
+            PEN_LOG("fetch missing like: %s", like.key().c_str());
+            Str search_url = "https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app/releases.json";
+            search_url.appendf("?orderBy=\"$key\"&equalTo=\"%s\"&timeout=1s", like.key().c_str());
+            search_url = append_auth(search_url);
+
+            auto db = curl::download(search_url.c_str());
+            if(db.data)
+            {
+                nlohmann::json release;
+                try {
+                    release = nlohmann::json::parse(db.data);
+                    if(release.contains(like.key()) && !release[like.key()].is_null()) {
+                        releases_registry[like.key()] = release[like.key()];
+                        fetched_missing = true;
+
+                        view_chart.push_back({
+                            like.key(),
+                            timestamp
+                        });
+                    }
+                }
+                catch(...) {
+                    //
+                }
+
+                free(db.data);
+            }
+            else {
+            }
+        }
+
+        // write to cache if we fetched anything new or pruned removed likes.
+        // releases_registry is rebuilt from liked keys only, so entries for
+        // un-liked releases drop out here
+        if(fetched_missing || releases_registry.size() != likes_registry.size())
+        {
+            PEN_LOG("caching likes registry");
+
+            // cache async
+            std::thread cache_thread([releases_registry, filepath]() {
+                FILE* fp = fopen(filepath.c_str(), "wb");
+                if(fp) {
+                    std::string j = releases_registry.dump();
+                    fwrite(j.c_str(), j.length(), 1, fp);
+                    fclose(fp);
+                }
+            });
+            cache_thread.detach();
+        }
+        else {
+            // trigger a background refresh of the cache (up-to-date out of stock info etc)
             update_likes_registry();
         }
 
@@ -3956,14 +3954,12 @@ namespace
                             PEN_LOG("%s", sec.c_str());
                         }
 
-                        ctx.store = change_store(((std::string)ctx.data_ctx.user_data.dict["last_store"]).c_str());
+                        ctx.store = change_store(store_preference.c_str());
                     }
                     else
                     {
                         ctx.store = change_store("juno");
                     }
-
-                    ctx.data_ctx.user_data.mutex.unlock();
                 }
                 else {
                     ctx.store = change_store(ctx.store.name);

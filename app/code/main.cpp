@@ -42,6 +42,13 @@ using namespace pen;
 void settings_menu();
 void* data_cache_enumerate(void* userdata);
 
+// discogs browsing (defined below the app context)
+void discogs_filter_menu();
+Str  discogs_get_token();
+Str  discogs_build_search_url();
+Str  discogs_filter_summary();
+bool discogs_has_filters();
+
 namespace
 {
     void*  user_setup(void* params);
@@ -275,7 +282,8 @@ namespace curl
         const char *method,       // "GET", "POST", "PUT", "DELETE"
         const char *url,          // full URL
         const char *token,        // Discogs personal access token
-        const char *body          // optional JSON body (NULL for GET)
+        const char *body,         // optional JSON body (NULL for GET)
+        long *out_http_code = nullptr // optional http status (429 / 401 detection)
     ) {
 
         // curl
@@ -298,6 +306,11 @@ namespace curl
 
         curl_easy_setopt(curl, CURLOPT_URL, url);
         curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+
+        // timeouts so a hung request can never permanently block a loader thread
+        curl_easy_setopt(curl, CURLOPT_TIMEOUT, 15L);
+        curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, 10L);
+        curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1L);
 
         // data
         DataBuffer db = {};
@@ -322,6 +335,9 @@ namespace curl
         CURLcode res = curl_easy_perform(curl);
         if (res == CURLE_OK)
             curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &http_code);
+
+        if (out_http_code)
+            *out_http_code = http_code;
 
         // cleanup
         curl_slist_free_all(headers);
@@ -992,6 +1008,49 @@ inline Str safe_str(nlohmann::json& j, const c8* key, const Str& default_value)
     return default_value;
 }
 
+Str yt_video_id_from_url(const Str& url)
+{
+    // handles youtube.com/watch?v=<id> and youtu.be/<id> forms
+    const c8* start = nullptr;
+    const c8* s = url.c_str();
+
+    const c8* v = strstr(s, "?v=");
+    if(!v) {
+        v = strstr(s, "&v=");
+    }
+
+    if(v) {
+        start = v + 3;
+    }
+    else {
+        const c8* short_form = strstr(s, "youtu.be/");
+        if(short_form) {
+            start = short_form + strlen("youtu.be/");
+        }
+    }
+
+    if(!start) {
+        return "";
+    }
+
+    Str id = "";
+    for(const c8* c = start; *c; ++c) {
+        bool valid =
+            (*c >= 'a' && *c <= 'z') ||
+            (*c >= 'A' && *c <= 'Z') ||
+            (*c >= '0' && *c <= '9') ||
+            *c == '-' || *c == '_';
+
+        if(!valid) {
+            break;
+        }
+
+        id.append(*c);
+    }
+
+    return id;
+}
+
 void update_likes_registry() {
     // kick off a job to update the likes cache, (get up-to-date out of stock info etc)
     std::thread cache_thread([]() {
@@ -1129,6 +1188,124 @@ void* releases_view_loader(void* userdata)
             }
 
             releases_registry.merge_patch(async_registry.dict);
+        }
+    }
+    else if(view->page == Page::discogs) {
+
+        // live discogs search; results are synthesised into the same registry
+        // format the store feeds use so the populate path below is shared
+        Str token = discogs_get_token();
+        if(token.empty()) {
+            view->status = Status::e_not_available;
+            view->threads_terminated++;
+            return nullptr;
+        }
+
+        Str search_url = discogs_build_search_url();
+
+        long http_code = 0;
+        auto search = curl::discogs_request("GET", search_url.c_str(), token.c_str(), nullptr, &http_code);
+
+        if(http_code == 429) {
+            // rate limited: cool off once and retry
+            for(u32 s = 0; s < 80 && !view->terminate; ++s) {
+                pen::thread_sleep_ms(100);
+            }
+            search = curl::discogs_request("GET", search_url.c_str(), token.c_str(), nullptr, &http_code);
+        }
+
+        if(http_code != 200 || !search.contains("results")) {
+            view->status = Status::e_not_available;
+            view->threads_terminated++;
+            return nullptr;
+        }
+
+        u32 pos = 0;
+        std::set<std::string> master_dedup;
+        for(auto& r : search["results"]) {
+
+            // only releases and masters
+            std::string type = r.value("type", "");
+            if(type != "release" && type != "master") {
+                continue;
+            }
+
+            u64 id = 0;
+            if(r.contains("id") && r["id"].is_number()) {
+                id = r["id"].get<u64>();
+            }
+
+            // dedup releases which share a master
+            std::string dedup_key = "r-" + std::to_string(id);
+            if(r.contains("master_id") && r["master_id"].is_number() && r["master_id"].get<u64>() != 0) {
+                dedup_key = "m-" + std::to_string(r["master_id"].get<u64>());
+            }
+            if(master_dedup.count(dedup_key)) {
+                continue;
+            }
+            master_dedup.insert(dedup_key);
+
+            // discogs search gives a combined "Artist - Title"
+            std::string combined = r.value("title", "");
+            std::string artist = combined;
+            std::string title = "";
+            size_t sep = combined.find(" - ");
+            if(sep != std::string::npos) {
+                artist = combined.substr(0, sep);
+                title = combined.substr(sep + 3);
+            }
+
+            // catno and year share the small print
+            std::string cat = r.value("catno", "");
+            std::string year = "";
+            if(r.contains("year")) {
+                if(r["year"].is_string()) {
+                    year = r["year"];
+                }
+                else if(r["year"].is_number()) {
+                    year = std::to_string(r["year"].get<s64>());
+                }
+            }
+            if(!year.empty()) {
+                cat = cat.empty() ? year : cat + " - " + year;
+            }
+
+            std::string cover = r.value("cover_image", "");
+            if(cover.empty()) {
+                cover = r.value("thumb", "");
+            }
+
+            std::string uri = r.value("uri", "");
+            std::string link = uri.empty() ? "" : ("https://www.discogs.com" + uri);
+
+            nlohmann::json release = {
+                {"artist", artist},
+                {"title", title},
+                {"cat", cat},
+                {"store", "discogs"},
+                {"id", std::to_string(id)},
+                {"link", link},
+                {"resource_url", r.value("resource_url", "")},
+                {"artworks", nlohmann::json::array()},
+                {"discogs", {{"url", link}, {"id", id}}}
+            };
+
+            if(!cover.empty()) {
+                release["artworks"].push_back(cover);
+            }
+
+            // search results carry label names directly
+            if(r.contains("label") && r["label"].is_array() && r["label"].size() > 0) {
+                release["label"] = r["label"][0];
+            }
+
+            std::string key = "discogs-" + std::to_string(id);
+            releases_registry[key] = release;
+
+            view_chart.push_back({
+                key,
+                (f64)pos++
+            });
         }
     }
     else {
@@ -1325,6 +1502,13 @@ void* releases_view_loader(void* userdata)
         view->releases.id[ri] = safe_str(release, "id", "");
         view->releases.key[ri] = entry.index;
 
+        // discogs items fetch their tracks (videos) lazily from the detail url;
+        // tracks_youtube also keeps data_cache_fetch away from the track arrays
+        view->releases.resource_url[ri] = safe_str(release, "resource_url", "");
+        if(!view->releases.resource_url[ri].empty()) {
+            view->releases.flags[ri] |= EntityFlags::details_pending | EntityFlags::tracks_youtube;
+        }
+
         // assign artwork url
         if(release["artworks"].size() > 0)
         {
@@ -1408,6 +1592,91 @@ void* releases_view_loader(void* userdata)
         view->releases.available_entries++;
     }
 
+    // discogs: serialised detail fetch queue turning release videos into tracks,
+    // spaced out to respect the discogs rate limit (~60 requests per minute)
+    if(view->page == Page::discogs) {
+        Str token = discogs_get_token();
+        for(size_t i = 0; i < view->releases.available_entries; ++i) {
+            if(view->terminate) {
+                break;
+            }
+
+            if(!(view->releases.flags[i] & EntityFlags::details_pending)) {
+                continue;
+            }
+
+            long http_code = 0;
+            auto detail = curl::discogs_request(
+                "GET", view->releases.resource_url[i].c_str(), token.c_str(), nullptr, &http_code);
+
+            if(http_code == 429) {
+                // rate limited: cool off then retry this item
+                for(u32 s = 0; s < 80 && !view->terminate; ++s) {
+                    pen::thread_sleep_ms(100);
+                }
+                --i;
+                continue;
+            }
+
+            // videos become playable tracks via the hidden youtube player.
+            // the video list is noisy: the same video can appear more than once
+            // and some uris are not youtube at all, so dedupe on video id and
+            // keep only playable entries. track names are the video titles
+            std::vector<Str> video_names;
+            std::vector<Str> video_urls;
+            std::set<std::string> seen_video_ids;
+
+            if(detail.contains("videos") && detail["videos"].is_array()) {
+                for(auto& video : detail["videos"]) {
+                    Str uri = safe_str(video, "uri", "");
+
+                    Str vid = yt_video_id_from_url(uri);
+                    if(vid.empty()) {
+                        continue;
+                    }
+
+                    if(!seen_video_ids.insert(vid.c_str()).second) {
+                        continue;
+                    }
+
+                    video_names.push_back(safe_str(video, "title", ""));
+                    video_urls.push_back(uri);
+                }
+            }
+
+            u32 count = (u32)video_names.size();
+            if(count > 0) {
+                Str* names = new Str[count];
+                Str* urls = new Str[count];
+                Str* filepaths = new Str[count];
+
+                for(u32 t = 0; t < count; ++t) {
+                    names[t] = video_names[t];
+                    urls[t] = video_urls[t];
+                    filepaths[t] = video_urls[t];
+                }
+
+                view->releases.track_names[i] = names;
+                view->releases.track_urls[i] = urls;
+                view->releases.track_filepaths[i] = filepaths;
+
+                std::atomic_thread_fence(std::memory_order_release);
+                view->releases.track_name_count[i] = count;
+                view->releases.track_url_count[i] = count;
+                view->releases.track_filepath_count[i] = count;
+            }
+
+            std::atomic_thread_fence(std::memory_order_release);
+            view->releases.flags[i] |= EntityFlags::tracks_cached;
+            view->releases.flags[i] &= ~((u64)EntityFlags::details_pending);
+
+            // spacing between requests
+            for(u32 s = 0; s < 12 && !view->terminate; ++s) {
+                pen::thread_sleep_ms(100);
+            }
+        }
+    }
+
     view->threads_terminated++;
     return nullptr;
 }
@@ -1472,7 +1741,11 @@ void* data_cache_fetch(void* userdata) {
             }
 
             // cache tracks
-            if(!(view->releases.flags[i] & EntityFlags::tracks_cached)) {
+            if(view->releases.flags[i] & (EntityFlags::details_pending | EntityFlags::tracks_youtube)) {
+                // discogs items get their tracks from the detail queue in
+                // releases_view_loader; nothing to download here
+            }
+            else if(!(view->releases.flags[i] & EntityFlags::tracks_cached)) {
                 if(view->releases.track_url_count[i] > 0 && view->releases.track_filepaths[i] == nullptr) {
                     view->releases.track_filepaths[i] = new Str[view->releases.track_url_count[i]];
                     for(u32 t = 0; t < view->releases.track_url_count[i]; ++t) {
@@ -1684,6 +1957,11 @@ namespace
     ReleasesView* reload_view() {
         if(ctx.view)
         {
+            // discogs views search live and carry no store view
+            if(ctx.view->page == Page::discogs) {
+                return new_view(Page::discogs, {});
+            }
+
             auto store_view = store_view_from_store(ctx.view->page, ctx.store);
             return new_view(ctx.view->page, store_view);
         }
@@ -1693,7 +1971,7 @@ namespace
 
     void change_page(Page_t page) {
         // first we add the current view into background views
-        if(ctx.view && ctx.view->page == Page::feed) {
+        if(ctx.view && (ctx.view->page == Page::feed || ctx.view->page == Page::discogs)) {
             ctx.back_view = ctx.view;
             ctx.background_views.insert(ctx.view);
         }
@@ -1703,12 +1981,24 @@ namespace
         ctx.reload_view = nullptr;
     }
 
+    void change_discogs_view() {
+        // first we add the current view into background views
+        if(ctx.view && (ctx.view->page == Page::feed || ctx.view->page == Page::discogs)) {
+            ctx.back_view = ctx.view;
+            ctx.background_views.insert(ctx.view);
+        }
+
+        // with nothing to search yet go straight to the filters page
+        ctx.view = new_view(discogs_has_filters() ? Page::discogs : Page::discogs_filters, {});
+        ctx.reload_view = nullptr;
+    }
+
     void change_store_view(Page_t page, const Store& store) {
         StoreView view = store_view_from_store(page, store);
 
         if(!view.store_name.empty() && !view.selected_view.empty()) {
             // first we add the current view into background views
-            if(ctx.view && ctx.view->page == Page::feed) {
+            if(ctx.view && (ctx.view->page == Page::feed || ctx.view->page == Page::discogs)) {
                 ctx.back_view = ctx.view;
                 ctx.background_views.insert(ctx.view);
             }
@@ -1966,6 +2256,7 @@ namespace
                         releases.store[i].clear();
                         releases.artwork_url[i].clear();
                         releases.label_link[i].clear();
+                        releases.resource_url[i].clear();
                     }
 
                     // cleanup memory from the soa itself
@@ -2023,7 +2314,15 @@ namespace
             f32 ss = ImGui::GetFontSize() * 2.0f;
             ImGui::Dummy(ImVec2(0.0f, ss));
 
-            ImGui::TextCentred("No items...");
+            if(ctx.view->page == Page::discogs && discogs_get_token().empty()) {
+                ImGui::TextCentred("Set your Discogs token in Settings");
+            }
+            else if(ctx.view->page == Page::discogs) {
+                ImGui::TextCentred("No results...");
+            }
+            else {
+                ImGui::TextCentred("No items...");
+            }
         }
         else if(ctx.reload_view || ctx.view->releases.available_entries == 0) {
             ImGui::SetWindowFontScale(2.0f);
@@ -2074,7 +2373,7 @@ namespace
 
             // store select
             ImGui::SameLine();
-            ImGui::Text("%s:", ctx.store.display_name.c_str());
+            ImGui::Text("%s:", cur_page == Page::discogs ? "Discogs" : ctx.store.display_name.c_str());
             ImVec2 store_menu_pos = ImGui::GetItemRectMin();
             store_menu_pos.y = ImGui::GetItemRectMax().y;
 
@@ -2094,6 +2393,12 @@ namespace
                         ctx.store = change_store(store_name);
                     }
                 }
+
+                ImGui::Separator();
+                if(ImGui::MenuItem("Discogs")) {
+                    change_discogs_view();
+                }
+
                 ImGui::EndPopup();
             }
         }
@@ -2196,6 +2501,20 @@ namespace
                 ImGui::SetWindowFontScale(k_text_size_body);
             }
         }
+        else if(cur_page == Page::discogs)
+        {
+            // discogs page: current filter summary, tap to edit
+            ImGui::SetWindowFontScale(k_text_size_h2);
+            ImGui::SameLine();
+
+            Str summary = discogs_filter_summary();
+            ImGui::Text("%s", summary.c_str());
+            if(ImGui::IsItemClicked()) {
+                change_page(Page::discogs_filters);
+            }
+
+            ImGui::SetWindowFontScale(k_text_size_body);
+        }
         else
         {
             // likes page
@@ -2291,12 +2610,20 @@ namespace
     {
         ImGui::SetWindowFontScale(k_text_size_h1);
 
-        if(ctx.view->page == Page::likes || ctx.view->page == Page::settings)
+        if(ctx.view->page == Page::likes || ctx.view->page == Page::settings || ctx.view->page == Page::discogs_filters)
         {
             ImGui::Dummy(ImVec2(k_indent1, 0.0f));
             ImGui::SameLine();
 
-            ImGui::Text("%s %s", ICON_FA_CHEVRON_LEFT, ctx.view->page == Page::likes ? "Likes" : "Settings");
+            const c8* page_title = "Settings";
+            if(ctx.view->page == Page::likes) {
+                page_title = "Likes";
+            }
+            else if(ctx.view->page == Page::discogs_filters) {
+                page_title = "Filters";
+            }
+
+            ImGui::Text("%s %s", ICON_FA_CHEVRON_LEFT, page_title);
             if(ImGui::IsItemClicked())
             {
                 ctx.view = ctx.back_view;
@@ -2992,45 +3319,59 @@ namespace
 
         ImGui::Indent();
 
-        ImGui::PushID("like");
+        // discogs items are not part of the firebase likes registry; the more
+        // menu's add-to-wantlist covers saving them
+        bool hide_heart = releases.store[r] == "discogs";
+
         bool scrolling = ctx.scroll_lock_x || ctx.scroll_lock_y;
-        if(releases.flags[r] & EntityFlags::liked)
-        {
-            ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(225.0f/255.0f, 48.0f/255.0f, 108.0f/255.0f, 1.0f));
-            ImGui::Text("%s", ICON_FA_HEART);
-            if(!scrolling && lenient_button_tap(0.1))
-            {
-                pen::os_haptic_selection_feedback();
-                remove_like(releases.key[r]);
-                releases.like_count[r] = std::max<u32>(releases.like_count[r]--, 0);
-                releases.flags[r] &= ~EntityFlags::liked;
-            }
-            ImGui::PopStyleColor();
-        }
-        else
-        {
-            ImGui::Text("%s", ICON_FA_HEART_O);
-            if(!scrolling && lenient_button_tap(0.1))
-            {
-                pen::os_haptic_selection_feedback();
-                add_like(releases.key[r]);
-                releases.like_count[r]++;
-                releases.flags[r] |= EntityFlags::liked;
-            }
-        }
-        f32 indent_x = ImGui::GetItemRectMin().x;
-        ImGui::PopID();
+        f32 indent_x = 0.0f;
 
-        ImGui::SameLine();
-        ImGui::Spacing();
+        if(!hide_heart)
+        {
+            ImGui::PushID("like");
+            if(releases.flags[r] & EntityFlags::liked)
+            {
+                ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(225.0f/255.0f, 48.0f/255.0f, 108.0f/255.0f, 1.0f));
+                ImGui::Text("%s", ICON_FA_HEART);
+                if(!scrolling && lenient_button_tap(0.1))
+                {
+                    pen::os_haptic_selection_feedback();
+                    remove_like(releases.key[r]);
+                    releases.like_count[r] = std::max<u32>(releases.like_count[r]--, 0);
+                    releases.flags[r] &= ~EntityFlags::liked;
+                }
+                ImGui::PopStyleColor();
+            }
+            else
+            {
+                ImGui::Text("%s", ICON_FA_HEART_O);
+                if(!scrolling && lenient_button_tap(0.1))
+                {
+                    pen::os_haptic_selection_feedback();
+                    add_like(releases.key[r]);
+                    releases.like_count[r]++;
+                    releases.flags[r] |= EntityFlags::liked;
+                }
+            }
+            indent_x = ImGui::GetItemRectMin().x;
+            ImGui::PopID();
 
-        ImGui::SameLine();
+            ImGui::SameLine();
+            ImGui::Spacing();
+
+            ImGui::SameLine();
+        }
+
         ImGui::PushID("buy");
         if(releases.store_tags[r] & StoreTags::preorder) {
             ImGui::Text("%s", ICON_FA_CALENDAR_PLUS_O);
         }
         else {
             ImGui::Text("%s", ICON_FA_CART_PLUS);
+        }
+
+        if(hide_heart) {
+            indent_x = ImGui::GetItemRectMin().x;
         }
 
         if(!scrolling && lenient_button_tap(0.1)) {
@@ -4071,6 +4412,9 @@ namespace
                 case Page::settings:
                     settings_menu();
                 break;
+                case Page::discogs_filters:
+                    discogs_filter_menu();
+                break;
                 default:
                     store_menu();
                     view_menu();
@@ -4322,6 +4666,62 @@ void* pen::user_entry( void* params )
     return PEN_THREAD_OK;
 }
 
+//
+// discogs browsing
+//
+
+Str discogs_get_token()
+{
+    return ctx.discogs_token;
+}
+
+bool discogs_has_filters()
+{
+    return !get_user_setting("discogs_q", std::string("")).empty() ||
+           !get_user_setting("discogs_year", std::string("")).empty() ||
+           !get_user_setting("discogs_genre", std::string("")).empty() ||
+           !get_user_setting("discogs_style", std::string("")).empty() ||
+           !get_user_setting("discogs_format", std::string("")).empty();
+}
+
+Str discogs_build_search_url()
+{
+    Str url = "https://api.discogs.com/database/search?per_page=50&page=1";
+
+    CURL* curl = curl_easy_init();
+    auto append_param = [&](const c8* name, const std::string& value) {
+        if(value.empty()) {
+            return;
+        }
+
+        c8* escaped = curl_easy_escape(curl, value.c_str(), (int)value.length());
+        if(escaped) {
+            url.appendf("&%s=%s", name, escaped);
+            curl_free(escaped);
+        }
+    };
+
+    append_param("q", get_user_setting("discogs_q", std::string("")));
+    append_param("year", get_user_setting("discogs_year", std::string("")));
+    append_param("genre", get_user_setting("discogs_genre", std::string("")));
+    append_param("style", get_user_setting("discogs_style", std::string("")));
+    append_param("format", get_user_setting("discogs_format", std::string("")));
+
+    s32 sort = get_user_setting("discogs_sort", 0);
+    if(sort == 1) {
+        url.append("&sort=year&sort_order=desc");
+    }
+    else if(sort == 2) {
+        url.append("&sort=year&sort_order=asc");
+    }
+
+    if(curl) {
+        curl_easy_cleanup(curl);
+    }
+
+    return url;
+}
+
 void audio_player_tick()
 {
     renderer_consume_cmd_buffer_non_blocking();
@@ -4395,6 +4795,18 @@ void audio_player_next(bool prev)
 void audio_player_pause(bool pause) {
     auto& audio_ctx = ctx.audio_ctx;
 
+    // playback owned by the hidden youtube player
+    if(audio_ctx.yt_active)
+    {
+        if(pause) {
+            pen::os_yt_pause();
+        }
+        else {
+            pen::os_yt_play();
+        }
+        return;
+    }
+
     // stop existing
     if(is_valid(audio_ctx.si))
     {
@@ -4411,6 +4823,14 @@ void audio_player_stop_existing() {
 
     // mark as explicitly stopping to avoid false "natural next" triggers
     audio_ctx.stopping = true;
+
+    // silence the hidden youtube player; yt_player re-flags yt_active when it
+    // starts the next video
+    if(audio_ctx.yt_active)
+    {
+        pen::os_yt_stop();
+        audio_ctx.yt_active = false;
+    }
 
     // stop existing
     if(is_valid(audio_ctx.si))
@@ -4447,6 +4867,112 @@ void audio_player_stop_existing() {
     audio_ctx.started = false;
 }
 
+void advance_next_track()
+{
+    auto& releases = ctx.view->releases;
+
+    // move to next track
+    PEN_LOG("natural next");
+    u32 next_track = releases.select_track[ctx.top] + 1;
+    if(next_track < releases.track_filepath_count[ctx.top])
+    {
+        ctx.scroll_delta.x = 0.0;
+        releases.select_track[ctx.top] += 1;
+        releases.flags[ctx.top] |= EntityFlags::transitioning;
+
+        if(os_is_backgrounded())
+        {
+            ctx.audio_ctx.play_track_filepath = releases.track_filepaths[ctx.top][releases.select_track[ctx.top]];
+            ctx.audio_ctx.invalidate_track = true;
+        }
+    }
+    else {
+        // move to next release
+        ctx.scroll_delta = vec2f::zero();
+        u32 next_release = ctx.top + 1;
+        if(next_release < releases.available_entries) {
+            ctx.view->target_scroll_y = releases.posy[next_release];
+        }
+
+        if(os_is_backgrounded())
+        {
+            ctx.top += 1;
+            u32 sel = releases.select_track[ctx.top];
+            if(sel < releases.track_filepath_count[ctx.top])
+            {
+                ctx.audio_ctx.play_track_filepath = releases.track_filepaths[ctx.top][sel];
+                ctx.audio_ctx.invalidate_track = true;
+            }
+        }
+    }
+}
+
+void yt_player()
+{
+    auto& releases = ctx.view->releases;
+    auto& audio_ctx = ctx.audio_ctx;
+    u32 r = ctx.top;
+
+    // start a new video
+    if(audio_ctx.invalidate_track && audio_ctx.play_track_filepath.length() > 0)
+    {
+        Str vid = yt_video_id_from_url(audio_ctx.play_track_filepath);
+        if(!vid.empty())
+        {
+            // hand playback over from fmod to the hidden youtube player
+            PEN_LOG("yt load: %s", vid.c_str());
+            audio_player_stop_existing();
+            pen::os_yt_init();
+            pen::os_yt_load_video(vid);
+
+            u32 t = releases.select_track[r];
+            Str track_name = "";
+            if(t < releases.track_name_count[r]) {
+                track_name = releases.track_names[r][t];
+            }
+            pen::music_set_now_playing(releases.artist[r], releases.title[r], track_name);
+
+            audio_ctx.yt_active = true;
+            audio_ctx.invalidate_track = false;
+            audio_ctx.stopping = false;
+        }
+        else
+        {
+            audio_ctx.invalidate_track = false;
+        }
+    }
+
+    if(!audio_ctx.yt_active) {
+        return;
+    }
+
+    // mirror mute
+    pen::os_yt_set_mute(audio_ctx.mute);
+
+    auto state = pen::os_yt_get_state();
+    pen::music_set_now_playing_time_info(state.position_ms, state.duration_ms);
+
+    if(state.state == pen::e_yt_state::ended)
+    {
+        // stop resets the polled state to idle so the advance only triggers once
+        pen::os_yt_stop();
+        advance_next_track();
+    }
+    else if(state.state == pen::e_yt_state::error)
+    {
+        // embed disabled (101 / 150) or unplayable: blank the filepath so the
+        // carousel skips this track, then advance
+        pen::os_yt_stop();
+
+        u32 sel = releases.select_track[r];
+        if(sel < releases.track_filepath_count[r]) {
+            releases.track_filepaths[r][sel] = "";
+        }
+
+        advance_next_track();
+    }
+}
+
 void audio_player()
 {
     if(!ctx.view)
@@ -4477,6 +5003,27 @@ void audio_player()
             return;
         }
 
+        // discogs items play through the hidden youtube player
+        if(releases.flags[r] & EntityFlags::tracks_youtube)
+        {
+            yt_player();
+            return;
+        }
+        else if(audio_ctx.yt_active)
+        {
+            // handed back to fmod: silence the webview player
+            PEN_LOG("yt -> fmod handoff");
+            pen::os_yt_stop();
+            audio_ctx.yt_active = false;
+
+#if PEN_PLATFORM_IOS
+            // webview playback interrupts fmod's audio session on ios and the app
+            // only reinits on background transitions; a full reinit (close + init)
+            // reactivates the session so new streams are audible again
+            put::audio_reinit();
+#endif
+        }
+
         if(ctx.top == -1)
         {
             // stop existing
@@ -4497,6 +5044,7 @@ void audio_player()
                 // stop existing
                 audio_player_stop_existing();
 
+                PEN_LOG("fmod start: %s", audio_ctx.play_track_filepath.c_str());
                 audio_ctx.si = put::audio_create_stream(audio_ctx.play_track_filepath.c_str());
                 audio_ctx.ci = put::audio_create_channel_for_sound(audio_ctx.si);
                 audio_ctx.gi = put::audio_create_channel_group();
@@ -4628,44 +5176,7 @@ void audio_player()
             if(audio_ctx.started && !audio_ctx.stopping && gstate.play_state == put::e_audio_play_state::not_playing)
             {
                 audio_player_stop_existing();
-
-                // move to next track
-                PEN_LOG("natural next");
-                u32 next_track = releases.select_track[ctx.top] + 1;
-                if(next_track < releases.track_filepath_count[ctx.top])
-                {
-                    ctx.scroll_delta.x = 0.0;
-                    releases.select_track[ctx.top] += 1;
-                    releases.flags[ctx.top] |= EntityFlags::transitioning;
-
-                    if(os_is_backgrounded())
-                    {
-                        ctx.audio_ctx.play_track_filepath = releases.track_filepaths[ctx.top][releases.select_track[ctx.top]];
-                        ctx.audio_ctx.invalidate_track = true;
-                    }
-                }
-                else {
-                    // move to next release
-                    ctx.scroll_delta = vec2f::zero();
-                    u32 next_release = ctx.top + 1;
-                    if(next_release < releases.available_entries) {
-                        ctx.view->target_scroll_y = releases.posy[next_release];
-                    }
-
-                    if(os_is_backgrounded())
-                    {
-                        ctx.top += 1;
-                        u32 sel = releases.select_track[ctx.top];
-                        if(sel < releases.track_filepath_count[ctx.top])
-                        {
-                            ctx.audio_ctx.play_track_filepath = releases.track_filepaths[ctx.top][sel];
-                            ctx.audio_ctx.invalidate_track = true;
-                        }
-                    }
-                }
-
-                //
-
+                advance_next_track();
             }
             else if(gstate.play_state == put::e_audio_play_state::playing)
             {
@@ -5000,6 +5511,158 @@ void settings_menu()
     discogs_token_input();
 
     ImGui::Unindent();
+
+    ImGui::SetWindowFontScale(k_text_size_body);
+}
+
+namespace
+{
+    // combo option strings use adjacent literals so \0 separators cannot merge
+    // with following digits into octal escapes
+    const c8* k_discogs_format_options =
+        "All\0" "Vinyl\0" "LP\0" "12\"\0" "7\"\0" "CD\0" "Cassette\0" "Digital\0" "Box Set\0";
+
+    const c8* k_discogs_format_values[] = {
+        "", "Vinyl", "LP", "12\"", "7\"", "CD", "Cassette", "Digital", "Box Set"
+    };
+
+    const c8* k_discogs_sort_options =
+        "Relevance\0" "Year (newest)\0" "Year (oldest)\0";
+
+    const c8* k_discogs_sort_names[] = {
+        "", "Newest", "Oldest"
+    };
+
+    void discogs_filter_text_input(const c8* label, const c8* id, const c8* hint, c8* buf, bool& any_active)
+    {
+        ImGui::Text("%s", label);
+
+        f32 padding = 0.0;
+        ImVec2 boxsize = {};
+        get_input_box_sizes(boxsize, padding, false);
+
+        ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(padding, padding));
+        ImGui::InputTextEx(id, hint, buf, k_login_buf_size, boxsize, 0, nullptr, nullptr);
+        ImGui::PopStyleVar();
+
+        paste_input(buf, k_login_buf_size);
+        any_active |= ImGui::IsItemActive();
+    }
+}
+
+Str discogs_filter_summary()
+{
+    Str summary = "";
+
+    auto append_part = [&](const std::string& part) {
+        if(part.empty()) {
+            return;
+        }
+        if(!summary.empty()) {
+            summary.append(" / ");
+        }
+        summary.append(part.c_str());
+    };
+
+    append_part(get_user_setting("discogs_q", std::string("")));
+    append_part(get_user_setting("discogs_genre", std::string("")));
+    append_part(get_user_setting("discogs_style", std::string("")));
+    append_part(get_user_setting("discogs_year", std::string("")));
+    append_part(get_user_setting("discogs_format", std::string("")));
+
+    s32 sort = get_user_setting("discogs_sort", 0);
+    if(sort > 0 && sort < (s32)PEN_ARRAY_SIZE(k_discogs_sort_names)) {
+        append_part(k_discogs_sort_names[sort]);
+    }
+
+    if(summary.empty()) {
+        summary = "Tap to search...";
+    }
+
+    return summary;
+}
+
+void discogs_filter_menu()
+{
+    ImGui::SetWindowFontScale(k_text_size_h3);
+
+    ImGui::Spacing();
+    ImGui::Spacing();
+    ImGui::Spacing();
+
+    ImGui::Indent();
+
+    static c8 q_buf[k_login_buf_size] = {0};
+    static c8 year_buf[k_login_buf_size] = {0};
+    static c8 genre_buf[k_login_buf_size] = {0};
+    static c8 style_buf[k_login_buf_size] = {0};
+    static int s_format = 0;
+    static int s_sort = 0;
+
+    // populate from saved filters once
+    static bool init = true;
+    if(init)
+    {
+        auto load_buf = [](const c8* key, c8* buf) {
+            std::string value = get_user_setting(key, std::string(""));
+            strncpy(buf, value.c_str(), std::min<size_t>(value.length(), k_login_buf_size - 1));
+        };
+
+        load_buf("discogs_q", q_buf);
+        load_buf("discogs_year", year_buf);
+        load_buf("discogs_genre", genre_buf);
+        load_buf("discogs_style", style_buf);
+
+        s_format = get_user_setting("discogs_format_index", 0);
+        s_sort = get_user_setting("discogs_sort", 0);
+        init = false;
+    }
+
+    bool any_active = false;
+    discogs_filter_text_input("Search", "##discogs_q", "artist, label, release...", q_buf, any_active);
+    discogs_filter_text_input("Year", "##discogs_year", "e.g. 1994", year_buf, any_active);
+    discogs_filter_text_input("Genre", "##discogs_genre", "e.g. Electronic", genre_buf, any_active);
+    discogs_filter_text_input("Style", "##discogs_style", "e.g. Techno", style_buf, any_active);
+
+    ImGui::Text("%s", "Format");
+    ImGui::Combo("##discogs_format", &s_format, k_discogs_format_options);
+
+    ImGui::Text("%s", "Sort");
+    ImGui::Combo("##discogs_sort", &s_sort, k_discogs_sort_options);
+
+    ImGui::Spacing();
+
+    if(discogs_get_token().empty())
+    {
+        ImGui::TextWrapped("A Discogs access token is required to search.");
+        if(ImGui::Button("Open Settings")) {
+            change_page(Page::settings);
+        }
+    }
+    else if(ImGui::Button("Search"))
+    {
+        // persist filters; the discogs view loader reads them back
+        set_user_setting("discogs_q", std::string(q_buf));
+        set_user_setting("discogs_year", std::string(year_buf));
+        set_user_setting("discogs_genre", std::string(genre_buf));
+        set_user_setting("discogs_style", std::string(style_buf));
+        set_user_setting("discogs_format_index", s_format);
+        set_user_setting("discogs_format", std::string(k_discogs_format_values[s_format]));
+        set_user_setting("discogs_sort", s_sort);
+
+        // swap in a fresh search view; back_view keeps pointing at the feed
+        // this page was opened from
+        ctx.view = new_view(Page::discogs, {});
+        ctx.reload_view = nullptr;
+    }
+
+    ImGui::Unindent();
+
+    // OSK
+    pen::os_enable_paste_popup(any_active);
+    pen::os_show_on_screen_keyboard(any_active);
+    pen::input_set_key_up(PK_BACK); // reset any back presses
+    pen::input_set_key_up(PK_RETURN);
 
     ImGui::SetWindowFontScale(k_text_size_body);
 }

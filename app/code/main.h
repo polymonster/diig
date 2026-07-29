@@ -172,7 +172,9 @@ namespace EntityFlags
         liked = 1<<8,
         hovered = 1<<9,
         cache_url_requested = 1<<10,
-        visible = 1<<11
+        visible = 1<<11,
+        tracks_youtube = 1<<12,
+        details_pending = 1<<13
     };
 }
 
@@ -216,13 +218,17 @@ namespace Page
         login_complete,
         feed,
         likes,
-        settings
+        settings,
+        discogs,
+        discogs_filters
     };
 
     const c8* display_names[] = {
         "Feed"
         "Likes"
         "Settings"
+        "Discogs"
+        "Discogs Filters"
     };
 }
 typedef u32 Page_t;
@@ -273,6 +279,7 @@ struct soa
     cmp_array<u32>                          like_count;
     cmp_array<Str>                          discogs_url;
     cmp_array<u64>                          discogs_id;
+    cmp_array<Str>                          resource_url;
     std::atomic<size_t>                     available_entries = {0};
     std::atomic<size_t>                     soa_size = {0};
 };
@@ -355,6 +362,7 @@ struct AudioPlayerContext
     bool    invalidate_track = false;
     bool    play_bg = false;
     bool    mute = false;
+    bool    yt_active = false; // playback owned by the hidden youtube player, not fmod
 };
 
 struct AppContext

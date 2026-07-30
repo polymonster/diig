@@ -308,6 +308,7 @@ namespace curl
 
         curl_easy_setopt(curl, CURLOPT_URL, url);
         curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, false);
 
         // timeouts so a hung request can never permanently block a loader thread
         curl_easy_setopt(curl, CURLOPT_TIMEOUT, 15L);
@@ -5444,13 +5445,21 @@ void paste_input(c8* buf, size_t buf_len)
         {
             // strip out newlines for this case
             clip = str_replace_chars(clip, '\n', ' ');
+            clip = str_replace_chars(clip, '\r', ' ');
+
+            // clipboard sources can pad the value with whitespace, which would otherwise
+            // land inside tokens verbatim and be rejected by the server
+            std::string trimmed = clip.c_str();
+            size_t first = trimmed.find_first_not_of(" \t");
+            size_t last = trimmed.find_last_not_of(" \t");
+            trimmed = first == std::string::npos ? "" : trimmed.substr(first, last - first + 1);
 
             // rescind active
             ImGui::ClearActiveID();
 
             // clear inout buffer and paste
             memset(&buf[0], 0x0, buf_len);
-            strncpy(&buf[0], clip.c_str(), std::min<size_t>(clip.length(), buf_len));
+            strncpy(&buf[0], trimmed.c_str(), std::min<size_t>(trimmed.length(), buf_len - 1));
 
             // clear clipboard now we used the result
             pen::os_clear_clipboard_string();
@@ -5485,9 +5494,25 @@ void discogs_token_input()
 
     bool any_active = ImGui::IsItemActive();
 
-    if(strlen(key_buf) > 0)
+    // verifying a token that is already stored does nothing, so while the field still
+    // holds the logged in token the same button becomes the way back out. editing it
+    // switches back to verify so a different token can be swapped in
+    if(!ctx.discogs_token.empty() && ctx.discogs_token == key_buf)
     {
-        if(ImGui::Button("Verify"))
+        if(ImGui::Button("Log Out"))
+        {
+            // drop the stored token so the discogs page and menu items gate off again
+            pen::os_set_keychain_item("com.pmtech.dig", "discogs", "");
+            ctx.discogs_token.clear();
+            ctx.discogs_username.clear();
+            memset(&key_buf[0], 0x0, k_login_buf_size);
+
+            verify_message = "Logged out of discogs";
+        }
+    }
+    else if(strlen(key_buf) > 0)
+    {
+        if(ImGui::Button("Log In"))
         {
             // validate the key and set
             auto response = curl::discogs_request("GET", "https://api.discogs.com/oauth/identity", key_buf, nullptr);
@@ -5503,9 +5528,13 @@ void discogs_token_input()
                     pen::os_set_keychain_item("com.pmtech.dig", "discogs", key_buf);
                     ctx.discogs_token = key_buf;
 
-                    // set the message
+                    // the username gates the discogs menu items elsewhere, so set it here
+                    // as well as on startup, otherwise it stays empty until the next launch
                     std::string username = response["username"];
-                    verify_message.appendf("Token verified as: %s", username.c_str());
+                    ctx.discogs_username = username.c_str();
+
+                    // set the message
+                    verify_message.setf("Token verified as: %s", username.c_str());
                 }
                 else if(response.contains("message"))
                 {

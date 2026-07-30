@@ -107,11 +107,20 @@ if platform == "ios" then
 	}
 
 	links {
-		"CoreGraphics.framework"
+		"CoreGraphics.framework",
+		"WebKit.framework"
 	}
 
 	linkoptions {
 		"-ld_classic"
+	}
+end
+
+-- osx dist overrides
+configuration{}
+if platform == "osx" then
+	links {
+		"WebKit.framework"
 	}
 end
 

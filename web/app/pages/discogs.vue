@@ -1,13 +1,22 @@
 <script setup>
+import { DISCOGS_GENRES, DISCOGS_STYLES } from '~/utils/discogs_taxonomy'
+
 const menuOpen = useState('menuOpen', () => false)
 
 const discogsToken = ref(localStorage.getItem('discogsToken') || '')
 
-const query       = ref(localStorage.getItem('diig_dq_q')     || '')
-const yearFilter  = ref(localStorage.getItem('diig_dq_year')  || '')
-const genreFilter = ref(localStorage.getItem('diig_dq_genre') || '')
-const styleFilter = ref(localStorage.getItem('diig_dq_style') || '')
-const fmtFilter   = ref(localStorage.getItem('diig_dq_fmt') === 'Vinyl' ? '' : (localStorage.getItem('diig_dq_fmt') || ''))
+function loadArray(key) {
+  try { const v = JSON.parse(localStorage.getItem(key) || '[]'); return Array.isArray(v) ? v : [] }
+  catch { return [] }
+}
+
+const query      = ref(localStorage.getItem('diig_dq_q')    || '')
+const yearFilter = ref(localStorage.getItem('diig_dq_year') || '')
+const genres     = ref(loadArray('diig_dq_genres'))
+const styles     = ref(loadArray('diig_dq_styles'))
+const genreInput = ref('')
+const styleInput = ref('')
+const fmtFilter  = ref(localStorage.getItem('diig_dq_fmt') === 'Vinyl' ? '' : (localStorage.getItem('diig_dq_fmt') || ''))
 
 const FORMATS  = ['', 'Vinyl', 'LP', '12"', '7"', 'CD', 'Cassette', 'Digital', 'Box Set']
 const SORT_MODES = [
@@ -38,10 +47,55 @@ const labelFilter  = ref('')
 
 const displayResults = computed(() => {
   let r = results.value
+  const yr = parseYearRange(yearFilter.value)
+  if (yr) r = r.filter(i => { const y = parseInt(i.year); return y >= yr[0] && y <= yr[1] })
   if (artistFilter.value) r = r.filter(i => parseTitle(i.title).artist === artistFilter.value)
   if (labelFilter.value)  r = r.filter(i => (details.value[i.id]?.labels ?? []).some(l => l.name === labelFilter.value))
   return r
 })
+
+// a single exact year is sent to the api; a range like 1990-2000 has no api
+// equivalent so it filters loaded results client-side
+function parseYearRange(raw) {
+  const m = raw.trim().match(/^(\d{4})\s*-\s*(\d{4})$/)
+  if (!m) return null
+  let a = +m[1], b = +m[2]
+  if (a > b) [a, b] = [b, a]
+  return [a, b]
+}
+
+// genre/style typeahead over the curated taxonomy; free-typed values allowed too
+function suggestions(pool, input, selected) {
+  const q = input.trim().toLowerCase()
+  const sel = new Set(selected.map(s => s.toLowerCase()))
+  return pool
+    .filter(o => !sel.has(o.toLowerCase()) && (!q || o.toLowerCase().includes(q)))
+    .slice(0, 8)
+}
+const genreSuggestions = computed(() => genreInput.value ? suggestions(DISCOGS_GENRES, genreInput.value, genres.value) : [])
+const styleSuggestions = computed(() => styleInput.value ? suggestions(DISCOGS_STYLES, styleInput.value, styles.value) : [])
+
+// keyed by 'genre'/'style' rather than passing the refs — in the template
+// top-level refs are auto-unwrapped, so a ref passed as an arg arrives as its
+// plain value and could not be mutated
+function chipRefs(kind) {
+  return kind === 'genre'
+    ? { list: genres, input: genreInput }
+    : { list: styles, input: styleInput }
+}
+function addChip(kind, value) {
+  const { list, input } = chipRefs(kind)
+  const v = (value ?? input.value).trim()
+  if (!v) return
+  if (!list.value.some(x => x.toLowerCase() === v.toLowerCase())) list.value = [...list.value, v]
+  input.value = ''
+  if (searched.value && !busy.value) search()
+}
+function removeChip(kind, value) {
+  const { list } = chipRefs(kind)
+  list.value = list.value.filter(x => x !== value)
+  if (searched.value && !busy.value) search()
+}
 
 function startCooldown(secs = 8) {
   cooldown.value = true
@@ -58,11 +112,11 @@ watch(sortMode, () => { if (searched.value && !busy.value) search() })
 function getHeaders() { return { Authorization: `Discogs token=${discogsToken.value}` } }
 
 function saveFilters() {
-  localStorage.setItem('diig_dq_q',     query.value)
-  localStorage.setItem('diig_dq_year',  yearFilter.value)
-  localStorage.setItem('diig_dq_genre', genreFilter.value)
-  localStorage.setItem('diig_dq_style', styleFilter.value)
-  localStorage.setItem('diig_dq_fmt',   fmtFilter.value)
+  localStorage.setItem('diig_dq_q',      query.value)
+  localStorage.setItem('diig_dq_year',   yearFilter.value)
+  localStorage.setItem('diig_dq_genres', JSON.stringify(genres.value))
+  localStorage.setItem('diig_dq_styles', JSON.stringify(styles.value))
+  localStorage.setItem('diig_dq_fmt',    fmtFilter.value)
 }
 
 async function search(reset = true) {
@@ -81,12 +135,17 @@ async function search(reset = true) {
   saveFilters()
 
   const p = new URLSearchParams({ per_page: '50', page: String(page.value) })
-  if (query.value.trim())  p.set('q',      query.value.trim())
-  if (yearFilter.value)    p.set('year',   yearFilter.value)
-  if (genreFilter.value)   p.set('genre',  genreFilter.value)
-  if (styleFilter.value)   p.set('style',  styleFilter.value)
-  if (fmtFilter.value)     p.set('format', fmtFilter.value)
-  if (sortMode.value)      { p.set('sort', 'year'); p.set('sort_order', sortMode.value === 'year-asc' ? 'asc' : 'desc') }
+  if (query.value.trim()) p.set('q', query.value.trim())
+
+  // exact year -> api param; a range is applied client-side in displayResults
+  const yr = yearFilter.value.trim()
+  if (/^\d{4}$/.test(yr)) p.set('year', yr)
+
+  // repeated genre/style params narrow results (discogs ANDs them)
+  for (const g of genres.value) p.append('genre', g)
+  for (const s of styles.value) p.append('style', s)
+  if (fmtFilter.value) p.set('format', fmtFilter.value)
+  if (sortMode.value)  { p.set('sort', 'year'); p.set('sort_order', sortMode.value === 'year-asc' ? 'asc' : 'desc') }
 
   try {
     const res = await fetch(`https://api.discogs.com/database/search?${p}`, { headers: getHeaders() })
@@ -206,7 +265,7 @@ function computeDots(count, activeIdx) {
 const { activeId: ytActiveId, activeTrack: ytActiveTrack, isPlaying: ytPlaying,
         releaseList: ytReleaseList, activeRelease: ytActiveRelease,
         playVideo, tileClickVideo, prevTrack, nextTrack,
-        canPrev, canNext, stopAll: ytStopAll } = usePlayer()
+        stopAll: ytStopAll } = usePlayer()
 
 function tileTap(item, e) {
   e.stopPropagation()
@@ -231,7 +290,7 @@ function playDot(item, idx, e) {
 // ── Init ──────────────────────────────────────────────────────────────────────
 
 onMounted(() => {
-  if (discogsToken.value && (query.value.trim() || yearFilter.value || genreFilter.value || styleFilter.value)) {
+  if (discogsToken.value && (query.value.trim() || yearFilter.value || genres.value.length || styles.value.length)) {
     search()
   }
 })
@@ -267,30 +326,57 @@ onMounted(() => {
       <input
         v-model="yearFilter"
         type="text"
-        placeholder="year"
+        placeholder="year / 1990-2000"
         class="filter-input filter-year"
         @keyup.enter="!busy && search()"
       />
-      <input
-        v-model="genreFilter"
-        type="text"
-        placeholder="genre"
-        class="filter-input"
-        @keyup.enter="!busy && search()"
-      />
-      <input
-        v-model="styleFilter"
-        type="text"
-        placeholder="style"
-        class="filter-input"
-        @keyup.enter="!busy && search()"
-      />
+      <div class="ta">
+        <input
+          v-model="genreInput"
+          type="text"
+          placeholder="+ genre"
+          class="filter-input"
+          spellcheck="false"
+          autocomplete="off"
+          @keyup.enter.prevent="addChip('genre', genreSuggestions[0])"
+          @keydown.tab="genreSuggestions[0] && addChip('genre', genreSuggestions[0])"
+        />
+        <ul v-if="genreSuggestions.length" class="ta-menu">
+          <li v-for="s in genreSuggestions" :key="s" @mousedown.prevent="addChip('genre', s)">{{ s }}</li>
+        </ul>
+      </div>
+      <div class="ta">
+        <input
+          v-model="styleInput"
+          type="text"
+          placeholder="+ style"
+          class="filter-input"
+          spellcheck="false"
+          autocomplete="off"
+          @keyup.enter.prevent="addChip('style', styleSuggestions[0])"
+          @keydown.tab="styleSuggestions[0] && addChip('style', styleSuggestions[0])"
+        />
+        <ul v-if="styleSuggestions.length" class="ta-menu">
+          <li v-for="s in styleSuggestions" :key="s" @mousedown.prevent="addChip('style', s)">{{ s }}</li>
+        </ul>
+      </div>
       <select v-model="fmtFilter" class="filter-select" @change="!busy && search()">
         <option v-for="f in FORMATS" :key="f" :value="f">{{ f || 'all formats' }}</option>
       </select>
       <select v-model="sortMode" class="filter-select sort-select">
         <option v-for="s in SORT_MODES" :key="s.value" :value="s.value">{{ s.label }}</option>
       </select>
+    </div>
+
+    <div v-if="genres.length || styles.length" class="active-filters">
+      <span v-for="g in genres" :key="'g-' + g" class="filter-chip">
+        {{ g }}
+        <button class="chip-clear" @click="removeChip('genre', g)">&#10005;</button>
+      </span>
+      <span v-for="s in styles" :key="'s-' + s" class="filter-chip filter-chip-style">
+        {{ s }}
+        <button class="chip-clear" @click="removeChip('style', s)">&#10005;</button>
+      </span>
     </div>
 
     <div v-if="artistFilter || labelFilter" class="active-filters">
@@ -560,7 +646,36 @@ onMounted(() => {
   background: #fafafa;
 }
 .filter-input:focus { border-color: #aaa; background: #fff; }
-.filter-year { width: 60px; }
+.filter-year { width: 110px; }
+
+.ta { position: relative; display: inline-block; }
+
+.ta-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 20;
+  margin: 2px 0 0;
+  padding: 2px;
+  list-style: none;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  min-width: 150px;
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.ta-menu li {
+  padding: 0.3rem 0.5rem;
+  font-size: 0.65rem;
+  font-family: 'Cousine', monospace;
+  color: #444;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.ta-menu li:hover { background: #f0f0f0; color: #0a0a0a; }
 
 .filter-select {
   padding: 0.28rem 0.5rem;
@@ -608,6 +723,8 @@ onMounted(() => {
   font-family: 'Cousine', monospace;
 }
 .chip-clear:hover { color: #fff; }
+
+.filter-chip-style { background: #444; }
 
 .empty-state {
   display: flex;

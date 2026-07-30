@@ -12,6 +12,7 @@
 #include "input.h"
 #include "data_struct.h"
 #include "main.h"
+#include "yt_player.h"
 #include "audio/audio.h"
 #include "imgui_ext.h"
 #include "maths/maths.h"
@@ -48,6 +49,7 @@ Str  discogs_get_token();
 Str  discogs_build_search_url();
 Str  discogs_filter_summary();
 bool discogs_has_filters();
+bool discogs_year_range(s32& lo, s32& hi);
 
 namespace
 {
@@ -1220,6 +1222,11 @@ void* releases_view_loader(void* userdata)
             return nullptr;
         }
 
+        // a year range (e.g. 1990-2000) has no discogs api equivalent, so filter
+        // the returned results by year client-side
+        s32 range_lo = 0, range_hi = 0;
+        bool range_active = discogs_year_range(range_lo, range_hi);
+
         u32 pos = 0;
         std::set<std::string> master_dedup;
         for(auto& r : search["results"]) {
@@ -1266,6 +1273,14 @@ void* releases_view_loader(void* userdata)
                     year = std::to_string(r["year"].get<s64>());
                 }
             }
+            // drop releases outside a requested year range
+            if(range_active) {
+                s32 yr = year.empty() ? -1 : atoi(year.c_str());
+                if(yr < range_lo || yr > range_hi) {
+                    continue;
+                }
+            }
+
             if(!year.empty()) {
                 cat = cat.empty() ? year : cat + " - " + year;
             }
@@ -3363,7 +3378,11 @@ namespace
         }
 
         ImGui::PushID("buy");
-        if(releases.store_tags[r] & StoreTags::preorder) {
+        if(releases.store[r] == "discogs") {
+            // discogs links open the release page, not a shopping cart
+            ImGui::Text("%s", ICON_FA_GLOBE);
+        }
+        else if(releases.store_tags[r] & StoreTags::preorder) {
             ImGui::Text("%s", ICON_FA_CALENDAR_PLUS_O);
         }
         else {
@@ -4675,12 +4694,40 @@ Str discogs_get_token()
     return ctx.discogs_token;
 }
 
+std::vector<std::string> discogs_get_list(const c8* key)
+{
+    return get_user_setting(key, std::vector<std::string>{});
+}
+
+// parses the discogs_year setting as a range like "1990-2000" (whitespace
+// tolerant). returns false for a single year or empty/garbage
+bool discogs_year_range(s32& lo, s32& hi)
+{
+    std::string raw = get_user_setting("discogs_year", std::string(""));
+
+    std::string s;
+    for(char c : raw) {
+        if(c != ' ' && c != '\t') {
+            s.push_back(c);
+        }
+    }
+
+    s32 a = 0, b = 0;
+    if(sscanf(s.c_str(), "%d-%d", &a, &b) == 2) {
+        lo = std::min(a, b);
+        hi = std::max(a, b);
+        return true;
+    }
+
+    return false;
+}
+
 bool discogs_has_filters()
 {
     return !get_user_setting("discogs_q", std::string("")).empty() ||
            !get_user_setting("discogs_year", std::string("")).empty() ||
-           !get_user_setting("discogs_genre", std::string("")).empty() ||
-           !get_user_setting("discogs_style", std::string("")).empty() ||
+           !discogs_get_list("discogs_genres").empty() ||
+           !discogs_get_list("discogs_styles").empty() ||
            !get_user_setting("discogs_format", std::string("")).empty();
 }
 
@@ -4702,9 +4749,29 @@ Str discogs_build_search_url()
     };
 
     append_param("q", get_user_setting("discogs_q", std::string("")));
-    append_param("year", get_user_setting("discogs_year", std::string("")));
-    append_param("genre", get_user_setting("discogs_genre", std::string("")));
-    append_param("style", get_user_setting("discogs_style", std::string("")));
+
+    // a single exact year is an api param; a range is filtered client-side in
+    // the loader since the api has no year-range param
+    s32 lo = 0, hi = 0;
+    if(!discogs_year_range(lo, hi)) {
+        std::string year = get_user_setting("discogs_year", std::string(""));
+        bool digits = !year.empty();
+        for(char c : year) {
+            if(c < '0' || c > '9') { digits = false; break; }
+        }
+        if(digits) {
+            append_param("year", year);
+        }
+    }
+
+    // repeated genre/style params narrow results (discogs ANDs them)
+    for(auto& g : discogs_get_list("discogs_genres")) {
+        append_param("genre", g);
+    }
+    for(auto& s : discogs_get_list("discogs_styles")) {
+        append_param("style", s);
+    }
+
     append_param("format", get_user_setting("discogs_format", std::string("")));
 
     s32 sort = get_user_setting("discogs_sort", 0);
@@ -4799,10 +4866,10 @@ void audio_player_pause(bool pause) {
     if(audio_ctx.yt_active)
     {
         if(pause) {
-            pen::os_yt_pause();
+            yt::pause();
         }
         else {
-            pen::os_yt_play();
+            yt::play();
         }
         return;
     }
@@ -4828,7 +4895,7 @@ void audio_player_stop_existing() {
     // starts the next video
     if(audio_ctx.yt_active)
     {
-        pen::os_yt_stop();
+        yt::stop();
         audio_ctx.yt_active = false;
     }
 
@@ -4922,8 +4989,8 @@ void yt_player()
             // hand playback over from fmod to the hidden youtube player
             PEN_LOG("yt load: %s", vid.c_str());
             audio_player_stop_existing();
-            pen::os_yt_init();
-            pen::os_yt_load_video(vid);
+            yt::init();
+            yt::load_video(vid.c_str());
 
             u32 t = releases.select_track[r];
             Str track_name = "";
@@ -4947,22 +5014,22 @@ void yt_player()
     }
 
     // mirror mute
-    pen::os_yt_set_mute(audio_ctx.mute);
+    yt::set_mute(audio_ctx.mute);
 
-    auto state = pen::os_yt_get_state();
+    auto state = yt::get_state();
     pen::music_set_now_playing_time_info(state.position_ms, state.duration_ms);
 
-    if(state.state == pen::e_yt_state::ended)
+    if(state.state == yt::e_state::ended)
     {
         // stop resets the polled state to idle so the advance only triggers once
-        pen::os_yt_stop();
+        yt::stop();
         advance_next_track();
     }
-    else if(state.state == pen::e_yt_state::error)
+    else if(state.state == yt::e_state::error)
     {
         // embed disabled (101 / 150) or unplayable: blank the filepath so the
         // carousel skips this track, then advance
-        pen::os_yt_stop();
+        yt::stop();
 
         u32 sel = releases.select_track[r];
         if(sel < releases.track_filepath_count[r]) {
@@ -5013,7 +5080,7 @@ void audio_player()
         {
             // handed back to fmod: silence the webview player
             PEN_LOG("yt -> fmod handoff");
-            pen::os_yt_stop();
+            yt::stop();
             audio_ctx.yt_active = false;
 
 #if PEN_PLATFORM_IOS
@@ -5533,6 +5600,51 @@ namespace
         "", "Newest", "Oldest"
     };
 
+    // curated discogs taxonomy for the genre / style typeaheads. free-typed
+    // values are allowed too, so anything missing here can still be entered.
+    // keep consistent with web/app/utils/discogs_taxonomy.ts
+    const c8* k_discogs_genres[] = {
+        "Blues", "Brass & Military", "Children's", "Classical", "Electronic",
+        "Folk, World, & Country", "Funk / Soul", "Hip Hop", "Jazz", "Latin",
+        "Non-Music", "Pop", "Reggae", "Rock", "Stage & Screen"
+    };
+
+    const c8* k_discogs_styles[] = {
+        "Abstract", "Acid", "Acid House", "Acid Jazz", "Ambient", "Bassline", "Beatdown",
+        "Berlin-School", "Big Beat", "Breakbeat", "Breaks", "Breakcore", "Broken Beat",
+        "Chiptune", "Dance-pop", "Dark Ambient", "Darkwave", "Deep House", "Disco",
+        "Downtempo", "Drone", "Drum n Bass", "Dub", "Dub Techno", "Dubstep",
+        "EBM", "Electro", "Electroclash", "Euro House", "Euro-Disco",
+        "Eurodance", "Experimental", "Freestyle", "Future Jazz", "Gabber", "Garage House",
+        "Ghetto", "Ghetto House", "Glitch", "Goa Trance", "Grime", "Hard House",
+        "Hard Techno", "Hard Trance", "Hardcore", "Hardstyle", "Happy Hardcore", "Hi NRG",
+        "House", "IDM", "Illbient", "Industrial", "Italo-Disco", "Italodance", "Jungle",
+        "Juke", "Leftfield", "Minimal", "Minimal Techno", "Modern Classical", "Musique Concrete",
+        "Neofolk", "New Age", "New Beat", "Noise", "Nu-Disco", "Progressive House",
+        "Progressive Trance", "Psy-Trance", "Rhythmic Noise", "Schranz", "Speed Garage",
+        "Speedcore", "Synth-pop", "Synthwave", "Tech House", "Techno", "Trance", "Tribal",
+        "Tribal House", "Trip Hop", "UK Garage", "Vaporwave", "Witch House",
+        "Boom Bap", "Conscious", "Cut-up/DJ", "Gangsta", "G-Funk", "Instrumental",
+        "Jazzy Hip-Hop", "Trap", "Turntablism",
+        "Acoustic", "Alternative Rock", "Art Rock", "Blues Rock", "Classic Rock",
+        "Death Metal", "Doom Metal", "Emo", "Folk Rock", "Garage Rock", "Glam",
+        "Goth Rock", "Grunge", "Hard Rock", "Heavy Metal", "Indie Rock", "Krautrock",
+        "Lo-Fi", "Math Rock", "New Wave", "No Wave", "Post-Punk", "Post-Rock",
+        "Prog Rock", "Psychedelic Rock", "Punk", "Rock & Roll", "Rockabilly",
+        "Shoegaze", "Ska", "Space Rock", "Stoner Rock", "Surf", "Thrash",
+        "Afrobeat", "Boogie", "Contemporary R&B", "Funk", "Gospel", "Neo Soul",
+        "New Jack Swing", "P.Funk", "Rhythm & Blues", "Soul", "Swingbeat",
+        "Bebop", "Big Band", "Bossa Nova", "Contemporary Jazz", "Cool Jazz",
+        "Free Jazz", "Fusion", "Hard Bop", "Jazz-Funk", "Latin Jazz", "Modal",
+        "Post Bop", "Smooth Jazz", "Soul-Jazz", "Spiritual Jazz", "Swing",
+        "Dancehall", "Lovers Rock", "Ragga", "Reggae", "Reggae-Pop",
+        "Rocksteady", "Roots Reggae", "Steppers",
+        "Afro-Cuban", "Cajun", "Celtic", "Cumbia", "Flamenco", "Folk", "Highlife",
+        "Salsa", "Samba", "Soukous", "Zouk",
+        "Ballad", "Bollywood", "Chanson", "City Pop", "Europop", "J-pop", "K-pop",
+        "Novelty", "Schlager", "Vocal"
+    };
+
     void discogs_filter_text_input(const c8* label, const c8* id, const c8* hint, c8* buf, bool& any_active)
     {
         ImGui::Text("%s", label);
@@ -5547,6 +5659,167 @@ namespace
 
         paste_input(buf, k_login_buf_size);
         any_active |= ImGui::IsItemActive();
+    }
+
+    bool discogs_ci_equal(const std::string& a, const std::string& b)
+    {
+        if(a.size() != b.size()) {
+            return false;
+        }
+        for(size_t i = 0; i < a.size(); ++i) {
+            c8 ca = (a[i] >= 'A' && a[i] <= 'Z') ? a[i] + 32 : a[i];
+            c8 cb = (b[i] >= 'A' && b[i] <= 'Z') ? b[i] + 32 : b[i];
+            if(ca != cb) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    // a removable-chip list with a combo-popup typeahead over the taxonomy pool.
+    // the suggestion list lives in the combo popup so it floats over content
+    // instead of pushing the page down. chips are tapped to remove
+    void discogs_chip_input(const c8* label, const c8* id, const c8* hint, c8* buf,
+                            const c8** pool, u32 pool_count,
+                            std::vector<std::string>& list, bool& any_active)
+    {
+        ImGui::Text("%s", label);
+
+        f32 padding = 0.0;
+        ImVec2 boxsize = {};
+        get_input_box_sizes(boxsize, padding, false);
+
+        auto add_value = [&](const std::string& v) {
+            if(v.empty()) {
+                buf[0] = 0;
+                return;
+            }
+            for(auto& e : list) {
+                if(discogs_ci_equal(e, v)) {
+                    buf[0] = 0;
+                    return;
+                }
+            }
+            list.push_back(v);
+            buf[0] = 0;
+        };
+
+        // existing chips, wrapped to the content width; tap to remove. padded
+        // for a bigger tap target
+        ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(padding, padding * 0.7f));
+        ImGuiStyle& style = ImGui::GetStyle();
+        f32 window_x2 = ImGui::GetWindowPos().x + ImGui::GetWindowContentRegionMax().x;
+        s32 remove_idx = -1;
+        for(size_t i = 0; i < list.size(); ++i) {
+            Str chip = "";
+            chip.appendf("%s  x##%s_chip_%zu", list[i].c_str(), id, i);
+            if(ImGui::Button(chip.c_str())) {
+                remove_idx = (s32)i;
+            }
+
+            if(i + 1 < list.size()) {
+                Str next = "";
+                next.appendf("%s  x", list[i + 1].c_str());
+                f32 next_w = ImGui::CalcTextSize(next.c_str()).x + style.FramePadding.x * 2.0f;
+                if(ImGui::GetItemRectMax().x + style.ItemSpacing.x + next_w < window_x2) {
+                    ImGui::SameLine();
+                }
+            }
+        }
+        ImGui::PopStyleVar();
+        if(remove_idx >= 0) {
+            list.erase(list.begin() + (size_t)remove_idx);
+        }
+
+        // add via a combo popup so the filtered list overlays rather than
+        // reflowing the page
+        ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(padding, padding));
+        ImGui::SetNextItemWidth(boxsize.x);
+
+        // clamp the popup so it drops down to near the bottom of the screen (with
+        // one input box of padding) and scrolls, instead of filling the screen.
+        // BeginCombo skips its own item-count height cap when a size constraint
+        // is already set, so this wins
+        f32 combo_top = ImGui::GetCursorScreenPos().y + ImGui::GetFrameHeight();
+        f32 max_popup_h = ImGui::GetIO().DisplaySize.y - combo_top - boxsize.y;
+        if(max_popup_h < boxsize.y * 3.0f) {
+            max_popup_h = boxsize.y * 3.0f;
+        }
+        ImGui::SetNextWindowSizeConstraints(ImVec2(0.0f, 0.0f), ImVec2(FLT_MAX, max_popup_h));
+
+        bool combo_open = ImGui::BeginCombo(id, hint, ImGuiComboFlags_None);
+        ImGui::PopStyleVar();
+
+        if(combo_open)
+        {
+            // filter field, focused on open
+            if(ImGui::IsWindowAppearing()) {
+                buf[0] = 0;
+                ImGui::SetKeyboardFocusHere();
+            }
+            ImGui::SetNextItemWidth(-FLT_MIN);
+            bool entered = ImGui::InputTextEx("##flt", "type to filter...", buf, k_login_buf_size,
+                                              ImVec2(0, 0), ImGuiInputTextFlags_EnterReturnsTrue, nullptr, nullptr);
+            paste_input(buf, k_login_buf_size);
+            any_active |= ImGui::IsItemActive();
+
+            std::string ql;
+            for(char c : std::string(buf)) {
+                ql.push_back((c >= 'A' && c <= 'Z') ? c + 32 : c);
+            }
+
+            // offer the raw typed value when it isn't already in the taxonomy,
+            // so custom styles/genres can still be added
+            if(buf[0] != 0) {
+                bool exact = false;
+                for(u32 p = 0; p < pool_count; ++p) {
+                    if(discogs_ci_equal(pool[p], buf)) { exact = true; break; }
+                }
+                if(!exact) {
+                    Str s = "";
+                    s.appendf("Add \"%s\"##addraw_%s", buf, id);
+                    if(ImGui::Selectable(s.c_str())) {
+                        add_value(std::string(buf));
+                        ImGui::CloseCurrentPopup();
+                    }
+                }
+            }
+
+            for(u32 p = 0; p < pool_count; ++p) {
+                std::string opt = pool[p];
+                if(buf[0] != 0) {
+                    std::string ol;
+                    for(char c : opt) {
+                        ol.push_back((c >= 'A' && c <= 'Z') ? c + 32 : c);
+                    }
+                    if(ol.find(ql) == std::string::npos) {
+                        continue;
+                    }
+                }
+
+                bool selected = false;
+                for(auto& e : list) {
+                    if(discogs_ci_equal(e, opt)) { selected = true; break; }
+                }
+                if(selected) {
+                    continue;
+                }
+
+                Str sid = "";
+                sid.appendf("%s##sug_%s_%u", opt.c_str(), id, p);
+                if(ImGui::Selectable(sid.c_str())) {
+                    add_value(opt);
+                    ImGui::CloseCurrentPopup();
+                }
+            }
+
+            if(entered) {
+                add_value(std::string(buf));
+                ImGui::CloseCurrentPopup();
+            }
+
+            ImGui::EndCombo();
+        }
     }
 }
 
@@ -5565,8 +5838,12 @@ Str discogs_filter_summary()
     };
 
     append_part(get_user_setting("discogs_q", std::string("")));
-    append_part(get_user_setting("discogs_genre", std::string("")));
-    append_part(get_user_setting("discogs_style", std::string("")));
+    for(auto& g : discogs_get_list("discogs_genres")) {
+        append_part(g);
+    }
+    for(auto& s : discogs_get_list("discogs_styles")) {
+        append_part(s);
+    }
     append_part(get_user_setting("discogs_year", std::string("")));
     append_part(get_user_setting("discogs_format", std::string("")));
 
@@ -5598,6 +5875,8 @@ void discogs_filter_menu()
     static c8 style_buf[k_login_buf_size] = {0};
     static int s_format = 0;
     static int s_sort = 0;
+    static std::vector<std::string> s_genres;
+    static std::vector<std::string> s_styles;
 
     // populate from saved filters once
     static bool init = true;
@@ -5610,8 +5889,9 @@ void discogs_filter_menu()
 
         load_buf("discogs_q", q_buf);
         load_buf("discogs_year", year_buf);
-        load_buf("discogs_genre", genre_buf);
-        load_buf("discogs_style", style_buf);
+
+        s_genres = get_user_setting("discogs_genres", std::vector<std::string>{});
+        s_styles = get_user_setting("discogs_styles", std::vector<std::string>{});
 
         s_format = get_user_setting("discogs_format_index", 0);
         s_sort = get_user_setting("discogs_sort", 0);
@@ -5620,18 +5900,31 @@ void discogs_filter_menu()
 
     bool any_active = false;
     discogs_filter_text_input("Search", "##discogs_q", "artist, label, release...", q_buf, any_active);
-    discogs_filter_text_input("Year", "##discogs_year", "e.g. 1994", year_buf, any_active);
-    discogs_filter_text_input("Genre", "##discogs_genre", "e.g. Electronic", genre_buf, any_active);
-    discogs_filter_text_input("Style", "##discogs_style", "e.g. Techno", style_buf, any_active);
+    discogs_filter_text_input("Year", "##discogs_year", "1994 or 1990-2000", year_buf, any_active);
+    discogs_chip_input("Genre", "##discogs_genre", "+ add genre", genre_buf,
+                       k_discogs_genres, PEN_ARRAY_SIZE(k_discogs_genres), s_genres, any_active);
+    discogs_chip_input("Style", "##discogs_style", "+ add style", style_buf,
+                       k_discogs_styles, PEN_ARRAY_SIZE(k_discogs_styles), s_styles, any_active);
+
+    // shared sizing so the combos and button match the input boxes and get a
+    // bigger, easier-to-tap footprint
+    f32 widget_pad = 0.0f;
+    ImVec2 widget_box = {};
+    get_input_box_sizes(widget_box, widget_pad, false);
+
+    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(widget_pad, widget_pad));
 
     ImGui::Text("%s", "Format");
+    ImGui::SetNextItemWidth(widget_box.x);
     ImGui::Combo("##discogs_format", &s_format, k_discogs_format_options);
 
     ImGui::Text("%s", "Sort");
+    ImGui::SetNextItemWidth(widget_box.x);
     ImGui::Combo("##discogs_sort", &s_sort, k_discogs_sort_options);
 
     ImGui::Spacing();
 
+    bool do_search = false;
     if(discogs_get_token().empty())
     {
         ImGui::TextWrapped("A Discogs access token is required to search.");
@@ -5641,11 +5934,18 @@ void discogs_filter_menu()
     }
     else if(ImGui::Button("Search"))
     {
+        do_search = true;
+    }
+
+    ImGui::PopStyleVar();
+
+    if(do_search)
+    {
         // persist filters; the discogs view loader reads them back
         set_user_setting("discogs_q", std::string(q_buf));
         set_user_setting("discogs_year", std::string(year_buf));
-        set_user_setting("discogs_genre", std::string(genre_buf));
-        set_user_setting("discogs_style", std::string(style_buf));
+        set_user_setting("discogs_genres", s_genres);
+        set_user_setting("discogs_styles", s_styles);
         set_user_setting("discogs_format_index", s_format);
         set_user_setting("discogs_format", std::string(k_discogs_format_values[s_format]));
         set_user_setting("discogs_sort", s_sort);

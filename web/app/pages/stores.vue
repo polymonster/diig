@@ -320,6 +320,7 @@ function onSwipeEnd(release, e) {
               >
                 <span v-if="tags(release).preorder" class="fa">&#xf271;</span><span v-else class="fa">&#xf07a;</span>
               </a>
+              <span v-if="tags(release).out_of_stock" class="fa sold-excl" title="Sold out">&#xf12a;</span>
             </div>
             <div class="hype-icons">
               <span v-if="tags(release).has_charted"                                          class="fa hype fire"   title="Charted">&#xf06d;</span>
@@ -615,7 +616,8 @@ function onSwipeEnd(release, e) {
 
 .buy-btn:hover    { color: #333; }
 .buy-btn.preorder { color: #7a8a99; }
-.buy-btn.sold     { color: #ccc; opacity: 0.4; }
+.buy-btn.sold     { color: #bbb; }
+.sold-excl        { color: #bbb; font-size: 0.75rem; line-height: 1; }
 
 .hype-icons { display: flex; align-items: center; gap: 3px; font-size: 0.7rem; }
 .hype.fire   { color: #cc4d00; }

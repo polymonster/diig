@@ -71,7 +71,7 @@ function debugLog(type, msg) {
   if (debugLogs.value.length > 50) debugLogs.value.pop()
 }
 
-if (process.client) {
+if (import.meta.client) {
   const origError = console.error.bind(console)
   console.error = (...args) => { debugLog('err', args.join(' ')); origError(...args) }
   const origWarn = console.warn.bind(console)

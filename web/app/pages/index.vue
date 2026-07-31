@@ -203,8 +203,8 @@ function onScrollPlay() {
   })
 }
 
-onMounted(() => { if (process.client) window.addEventListener('scroll', onScrollPlay, { passive: true }) })
-onUnmounted(() => { if (process.client) window.removeEventListener('scroll', onScrollPlay) })
+onMounted(() => { if (import.meta.client) window.addEventListener('scroll', onScrollPlay, { passive: true }) })
+onUnmounted(() => { if (import.meta.client) window.removeEventListener('scroll', onScrollPlay) })
 
 // ── Likes ─────────────────────────────────────────────────────────────────────
 
@@ -257,7 +257,7 @@ function tags(release) { return release.store_tags || {} }
 
 const menuOpen = useState('menuOpen', () => false)
 
-const { activeId, activeTrack, isPlaying, releaseList, tileClickAudio: tileClick, playAudio: setTrack, prevTrack, nextTrack, dotClick, computeDots, getTracks, getTrackNames, stopAll } = usePlayer()
+const { activeId, activeTrack, isPlaying, releaseList, tileClickAudio: tileClick, prevTrack, nextTrack, dotClick, computeDots, getTracks, getTrackNames, stopAll } = usePlayer()
 
 watch(releasesByStore, val => {
   releaseList.value = val.flatMap(({ releases }) => releases)

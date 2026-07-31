@@ -29,7 +29,8 @@ jobs:
         cd app
         pmtech/pmbuild ios
         echo "$API_KEY_H" >> code/api_key.h
-        xcodebuild archive -workspace build/ios/diig_ios.xcworkspace -configuration Release -scheme diig -archivePath build/ios/diig_ios -allowProvisioningUpdates CODE_SIGN_STYLE=Automatic DEVELOPMENT_TEAM=7C3Y39TX3G
+
+        xcodebuild build -workspace build/ios/diig_ios.xcworkspace -configuration Release -scheme diig CODE_SIGNING_ALLOWED=NO
   build-android:
     runs-on: ubuntu-latest
     steps:

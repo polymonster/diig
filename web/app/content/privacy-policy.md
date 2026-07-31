@@ -38,7 +38,7 @@ We use no third-party analytics, no advertising SDKs, and no tracking cookies.
 
 ## Data retention and deletion
 
-Your data is kept while your account exists. You can request a copy of your data or complete deletion of your account and all associated data by emailing **CONTACT_EMAIL_HERE**. Deletion requests are actioned within 30 days.
+Your data is kept while your account exists. You can permanently delete your account and all associated data at any time — in the app from **Settings → Delete account**, or on the web at [diig.app/delete-account](https://diig.app/delete-account). Deletion takes effect immediately and cannot be undone. To request a copy of your data, email **CONTACT_EMAIL_HERE**.
 
 ## Children
 

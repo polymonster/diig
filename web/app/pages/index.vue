@@ -37,6 +37,9 @@ const selectedView   = ref(localStorage.getItem('diig_view') || 'new_releases')
 const sectionReleases = ref({})
 const loading        = ref(false)
 
+// bumped on each loadAll so superseded (e.g. view-switch) fetches don't write
+let loadToken = 0
+
 function sectionKey(storeId, sectionId) {
   return `${storeId}__${sectionId}`
 }
@@ -47,30 +50,38 @@ function triplet(store, section, viewId) {
   return `${store.id}-${section.id}-${v}`
 }
 
-async function loadSection(store, section, viewId) {
+async function loadSection(store, section, viewId, runToken) {
   const key = sectionKey(store.id, section.id)
   const t   = triplet(store, section, viewId)
   try {
     const token = await auth.currentUser.getIdToken()
     const url   = `${DB}/releases.json?orderBy="${t}"&startAt=0&auth=${token}`
     const data  = await fetch(url).then(r => r.json())
+    if (runToken !== loadToken) return // a newer load superseded this one; don't write stale data
     if (!data || typeof data !== 'object') { sectionReleases.value[key] = []; return }
     const items = Object.entries(data).map(([id, v]) => ({ ...v, id }))
     items.sort((a, b) => (a[t] ?? 999) - (b[t] ?? 999))
     sectionReleases.value[key] = items.slice(0, 32)
   } catch (e) {
     console.error(t, e)
-    sectionReleases.value[key] = []
+    if (runToken === loadToken) sectionReleases.value[key] = []
   }
 }
 
 async function loadAll() {
+  const myToken = ++loadToken // supersede any in-flight sequential load
   loading.value = true
   const blank = {}
   for (const s of stores.value) for (const sec of s.sections) blank[sectionKey(s.id, sec.id)] = []
   sectionReleases.value = blank
-  await Promise.all(stores.value.flatMap(s => s.sections.map(sec => loadSection(s, sec, selectedView.value))))
-  loading.value = false
+  // load store by store in display order: each store's sections are fetched
+  // together, but stores fill in top-down so the first appears without waiting
+  // on the rest. releasesByStore updates reactively as each store lands
+  for (const s of sortedStores.value) {
+    if (myToken !== loadToken) return // a newer load (e.g. view switch) took over
+    await Promise.all(s.sections.map(sec => loadSection(s, sec, selectedView.value, myToken)))
+  }
+  if (myToken === loadToken) loading.value = false
 }
 
 watch(user, async u => { if (u) { await fetchStores(); loadStoreOrder(); loadAll(); loadLikes() } }, { immediate: true })
@@ -85,7 +96,13 @@ function selectView(viewId) {
 
 // ── Store ordering ───────────────────────────────────────────────────────────
 
-const storeOrder = ref([])  // array of store ids, user preferred order
+// seed from the cached order synchronously so the feed loads top-down in the
+// right order without waiting on the account copy (loadStoreOrder refines it)
+function readStoredOrder() {
+  try { const v = JSON.parse(localStorage.getItem('diig_store_order') || '[]'); return Array.isArray(v) ? v : [] }
+  catch { return [] }
+}
+const storeOrder = ref(readStoredOrder())  // array of store ids, user preferred order
 
 // stores sorted by the user's preferred order; unknown (new) stores keep their
 // default position at the end
@@ -291,7 +308,7 @@ function onSwipeEnd(release, e) {
       </div>
     </header>
 
-    <div v-if="loading" class="loading">
+    <div v-if="loading && !releasesByStore.length" class="loading">
       <img src="/spinner.png" class="spinner" alt="loading" />
     </div>
 
@@ -401,6 +418,10 @@ function onSwipeEnd(release, e) {
           </div>
         </div>
       </div>
+
+      <div v-if="loading && releasesByStore.length" class="loading-more">
+        <img src="/spinner.png" class="spinner-sm" alt="loading more" />
+      </div>
     </main>
   </div>
 </template>
@@ -498,6 +519,18 @@ function onSwipeEnd(release, e) {
 .spinner {
   width: 80px;
   height: 80px;
+  animation: spin 1.2s linear infinite;
+}
+
+.loading-more {
+  display: flex;
+  justify-content: center;
+  padding: 1rem 0 2rem;
+}
+
+.spinner-sm {
+  width: 36px;
+  height: 36px;
   animation: spin 1.2s linear infinite;
 }
 

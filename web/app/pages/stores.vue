@@ -1,9 +1,10 @@
 <script setup>
 import { useFirebaseAuth, useCurrentUser } from 'vuefire'
 
-const auth = useFirebaseAuth()
-const user = useCurrentUser()
-const DB   = 'https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app'
+const auth  = useFirebaseAuth()
+const user  = useCurrentUser()
+const route = useRoute()
+const DB    = 'https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app'
 
 const VIEW_PRIORITY = ['new_releases', 'weekly_chart', 'monthly_chart']
 
@@ -161,8 +162,12 @@ async function fetchStores() {
   if (!data || typeof data !== 'object') return
   rawStores.value = data
   if (!selectedStoreId.value) {
-    const last = localStorage.getItem('diig_last_store')
-    selectedStoreId.value = (last && data[last]) ? last : Object.keys(data)[0] ?? ''
+    // deep link (?store=juno) wins, then last visited, then first store
+    const wanted = route.query.store
+    const last   = localStorage.getItem('diig_last_store')
+    selectedStoreId.value = (wanted && data[wanted]) ? wanted
+      : (last && data[last]) ? last
+      : Object.keys(data)[0] ?? ''
   }
   await loadAll()
 }
@@ -174,7 +179,7 @@ watch(user, u => { if (u) { fetchStores(); loadLikes() } }, { immediate: true })
 const likes           = ref({})
 const likeCountAdjust = ref({})
 
-function isLiked(id) { return id in likes.value }
+function isLiked(id) { return (likes.value[id] ?? 0) > 0 }
 
 async function loadLikes() {
   if (!auth.currentUser) return
@@ -193,10 +198,12 @@ async function toggleLike(release, e) {
   const countUrl = `${DB}/releases/${id}/likes/count.json?auth=${token}`
 
   if (isLiked(id)) {
-    const { [id]: _, ...rest } = likes.value
-    likes.value = rest
+    // write a 0 tombstone rather than deleting, so the un-like syncs to
+    // devices that merge a cached copy of the likes (deleted keys are
+    // indistinguishable from never-liked)
+    likes.value = { ...likes.value, [id]: 0 }
     likeCountAdjust.value = { ...likeCountAdjust.value, [id]: (likeCountAdjust.value[id] ?? 0) - 1 }
-    await fetch(`${DB}/users/${uid}/likes/${id}.json?auth=${token}`, { method: 'DELETE' })
+    await fetch(`${DB}/users/${uid}/likes/${id}.json?auth=${token}`, { method: 'PUT', body: JSON.stringify(0) })
     const cur = await fetch(countUrl).then(r => r.json()) || 0
     await fetch(countUrl, { method: 'PUT', body: JSON.stringify(Math.max(0, cur - 1)) })
   } else {
@@ -254,9 +261,6 @@ function onSwipeEnd(release, e) {
       </div>
 
       <div class="header-right">
-        <NuxtLink to="/chat" class="chat-nav">
-          <span class="fa">&#xf086;</span>
-        </NuxtLink>
         <NuxtLink to="/likes" class="likes-nav">
           <span class="fa">&#xf004;</span>
         </NuxtLink>
@@ -316,6 +320,7 @@ function onSwipeEnd(release, e) {
               >
                 <span v-if="tags(release).preorder" class="fa">&#xf271;</span><span v-else class="fa">&#xf07a;</span>
               </a>
+              <span v-if="tags(release).out_of_stock" class="fa sold-excl" title="Sold out">&#xf12a;</span>
             </div>
             <div class="hype-icons">
               <span v-if="tags(release).has_charted"                                          class="fa hype fire"   title="Charted">&#xf06d;</span>
@@ -466,14 +471,6 @@ function onSwipeEnd(release, e) {
   gap: 0.9rem;
 }
 
-.chat-nav {
-  font-size: 1rem;
-  color: #ccc;
-  text-decoration: none;
-  transition: color 0.15s;
-}
-.chat-nav:hover { color: #555; }
-
 .likes-nav {
   font-size: 1rem;
   color: #ccc;
@@ -619,7 +616,8 @@ function onSwipeEnd(release, e) {
 
 .buy-btn:hover    { color: #333; }
 .buy-btn.preorder { color: #7a8a99; }
-.buy-btn.sold     { color: #ccc; opacity: 0.4; }
+.buy-btn.sold     { color: #bbb; }
+.sold-excl        { color: #bbb; font-size: 0.75rem; line-height: 1; }
 
 .hype-icons { display: flex; align-items: center; gap: 3px; font-size: 0.7rem; }
 .hype.fire   { color: #cc4d00; }

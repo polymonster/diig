@@ -254,6 +254,11 @@ def scrape_page(url, store, store_dict, view, section, counter, session_scraped_
         if release.find("<strong>VARIOUS</strong>") != -1:
             artist_elem = "<strong>VARIOUS"
             offset = 0
+        elif release.count('<a class="text-md"') < 2:
+            # some forthcoming pre-order listings have no artist link at all,
+            # just a title anchor, so leave the artist empty
+            artist_elem = ""
+            offset = 0
         else:
             (offset, artist_elem) = dig.find_parse_elem(release, 0, '<a class="text-md"', "</a>")
 
@@ -270,8 +275,6 @@ def scrape_page(url, store, store_dict, view, section, counter, session_scraped_
             store_tags["has_sold_out"] = True
         else:
             store_tags["out_of_stock"] = False
-
-        # TODO: preorder
 
         # extract values from the html sections
         release_dict["link"] = parse_link(link_elem)

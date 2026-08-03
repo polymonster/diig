@@ -37,6 +37,9 @@ const selectedView   = ref(localStorage.getItem('diig_view') || 'new_releases')
 const sectionReleases = ref({})
 const loading        = ref(false)
 
+// bumped on each loadAll so superseded (e.g. view-switch) fetches don't write
+let loadToken = 0
+
 function sectionKey(storeId, sectionId) {
   return `${storeId}__${sectionId}`
 }
@@ -47,33 +50,41 @@ function triplet(store, section, viewId) {
   return `${store.id}-${section.id}-${v}`
 }
 
-async function loadSection(store, section, viewId) {
+async function loadSection(store, section, viewId, runToken) {
   const key = sectionKey(store.id, section.id)
   const t   = triplet(store, section, viewId)
   try {
     const token = await auth.currentUser.getIdToken()
     const url   = `${DB}/releases.json?orderBy="${t}"&startAt=0&auth=${token}`
     const data  = await fetch(url).then(r => r.json())
+    if (runToken !== loadToken) return // a newer load superseded this one; don't write stale data
     if (!data || typeof data !== 'object') { sectionReleases.value[key] = []; return }
     const items = Object.entries(data).map(([id, v]) => ({ ...v, id }))
     items.sort((a, b) => (a[t] ?? 999) - (b[t] ?? 999))
     sectionReleases.value[key] = items.slice(0, 32)
   } catch (e) {
     console.error(t, e)
-    sectionReleases.value[key] = []
+    if (runToken === loadToken) sectionReleases.value[key] = []
   }
 }
 
 async function loadAll() {
+  const myToken = ++loadToken // supersede any in-flight sequential load
   loading.value = true
   const blank = {}
   for (const s of stores.value) for (const sec of s.sections) blank[sectionKey(s.id, sec.id)] = []
   sectionReleases.value = blank
-  await Promise.all(stores.value.flatMap(s => s.sections.map(sec => loadSection(s, sec, selectedView.value))))
-  loading.value = false
+  // load store by store in display order: each store's sections are fetched
+  // together, but stores fill in top-down so the first appears without waiting
+  // on the rest. releasesByStore updates reactively as each store lands
+  for (const s of sortedStores.value) {
+    if (myToken !== loadToken) return // a newer load (e.g. view switch) took over
+    await Promise.all(s.sections.map(sec => loadSection(s, sec, selectedView.value, myToken)))
+  }
+  if (myToken === loadToken) loading.value = false
 }
 
-watch(user, async u => { if (u) { await fetchStores(); loadAll(); loadLikes() } }, { immediate: true })
+watch(user, async u => { if (u) { await fetchStores(); loadStoreOrder(); loadAll(); loadLikes() } }, { immediate: true })
 
 function selectView(viewId) {
   stopAll()
@@ -83,8 +94,60 @@ function selectView(viewId) {
 }
 
 
+// ── Store ordering ───────────────────────────────────────────────────────────
+
+// seed from the cached order synchronously so the feed loads top-down in the
+// right order without waiting on the account copy (loadStoreOrder refines it)
+function readStoredOrder() {
+  try { const v = JSON.parse(localStorage.getItem('diig_store_order') || '[]'); return Array.isArray(v) ? v : [] }
+  catch { return [] }
+}
+const storeOrder = ref(readStoredOrder())  // array of store ids, user preferred order
+
+// stores sorted by the user's preferred order; unknown (new) stores keep their
+// default position at the end
+const sortedStores = computed(() => {
+  const order = storeOrder.value
+  return [...stores.value].sort((a, b) => {
+    const ia = order.indexOf(a.id)
+    const ib = order.indexOf(b.id)
+    return (ia === -1 ? order.length : ia) - (ib === -1 ? order.length : ib)
+  })
+})
+
+async function loadStoreOrder() {
+  // account copy wins so the order follows the user across devices,
+  // localStorage is the fallback
+  try {
+    if (auth.currentUser) {
+      const token = await auth.currentUser.getIdToken()
+      const data  = await fetch(`${DB}/users/${auth.currentUser.uid}/web_prefs/store_order.json?auth=${token}`).then(r => r.json())
+      if (Array.isArray(data) && data.length) {
+        storeOrder.value = data
+        localStorage.setItem('diig_store_order', JSON.stringify(data))
+        return
+      }
+    }
+  } catch { /* fall back to local */ }
+  try {
+    const local = JSON.parse(localStorage.getItem('diig_store_order') || '[]')
+    if (Array.isArray(local)) storeOrder.value = local
+  } catch { /* default order */ }
+}
+
+async function saveStoreOrder() {
+  localStorage.setItem('diig_store_order', JSON.stringify(storeOrder.value))
+  if (!auth.currentUser) return
+  try {
+    const token = await auth.currentUser.getIdToken()
+    await fetch(`${DB}/users/${auth.currentUser.uid}/web_prefs/store_order.json?auth=${token}`, {
+      method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(storeOrder.value),
+    })
+  } catch (e) { console.error('store order save', e) }
+}
+
 const releasesByStore = computed(() =>
-  stores.value.map(store => {
+  sortedStores.value.map(store => {
     const seen     = new Set()
     const releases = []
     for (const sec of store.sections) {
@@ -95,6 +158,18 @@ const releasesByStore = computed(() =>
     return { store, releases: releases.slice(0, 32) }
   }).filter(s => s.releases.length)
 )
+
+// swap a store block with its visible neighbour and persist the full order
+function moveStore(storeId, dir) {
+  const visible = releasesByStore.value.map(x => x.store.id)
+  const i = visible.indexOf(storeId)
+  const j = i + dir
+  if (i === -1 || j < 0 || j >= visible.length) return
+  ;[visible[i], visible[j]] = [visible[j], visible[i]]
+  const rest = sortedStores.value.map(s => s.id).filter(id => !visible.includes(id))
+  storeOrder.value = [...visible, ...rest]
+  saveStoreOrder()
+}
 
 // ── Auto-play on scroll (mobile) ─────────────────────────────────────────────
 
@@ -128,15 +203,15 @@ function onScrollPlay() {
   })
 }
 
-onMounted(() => { if (process.client) window.addEventListener('scroll', onScrollPlay, { passive: true }) })
-onUnmounted(() => { if (process.client) window.removeEventListener('scroll', onScrollPlay) })
+onMounted(() => { if (import.meta.client) window.addEventListener('scroll', onScrollPlay, { passive: true }) })
+onUnmounted(() => { if (import.meta.client) window.removeEventListener('scroll', onScrollPlay) })
 
 // ── Likes ─────────────────────────────────────────────────────────────────────
 
 const likes           = ref({})  // id -> timestamp
 const likeCountAdjust = ref({})  // id -> delta on top of server count
 
-function isLiked(id) { return id in likes.value }
+function isLiked(id) { return (likes.value[id] ?? 0) > 0 }
 
 
 async function loadLikes() {
@@ -158,10 +233,12 @@ async function toggleLike(release, e) {
   const json = (body) => ({ method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
 
   if (isLiked(id)) {
-    const { [id]: _, ...rest } = likes.value
-    likes.value = rest
+    // write a 0 tombstone rather than deleting, so the un-like syncs to
+    // devices that merge a cached copy of the likes (deleted keys are
+    // indistinguishable from never-liked)
+    likes.value = { ...likes.value, [id]: 0 }
     likeCountAdjust.value = { ...likeCountAdjust.value, [id]: (likeCountAdjust.value[id] ?? 0) - 1 }
-    await fetch(`${DB}/users/${uid}/likes/${id}.json?auth=${token}`, { method: 'DELETE' })
+    await fetch(`${DB}/users/${uid}/likes/${id}.json?auth=${token}`, json(0))
     const cur = await fetch(countUrl).then(r => r.json()) || 0
     await fetch(countUrl, json(Math.max(0, cur - 1)))
   } else {
@@ -180,7 +257,7 @@ function tags(release) { return release.store_tags || {} }
 
 const menuOpen = useState('menuOpen', () => false)
 
-const { activeId, activeTrack, isPlaying, releaseList, tileClickAudio: tileClick, playAudio: setTrack, prevTrack, nextTrack, dotClick, computeDots, getTracks, getTrackNames, stopAll } = usePlayer()
+const { activeId, activeTrack, isPlaying, releaseList, tileClickAudio: tileClick, prevTrack, nextTrack, dotClick, computeDots, getTracks, getTrackNames, stopAll } = usePlayer()
 
 watch(releasesByStore, val => {
   releaseList.value = val.flatMap(({ releases }) => releases)
@@ -224,9 +301,6 @@ function onSwipeEnd(release, e) {
         <NuxtLink to="/discogs" class="viewbtn stores-link">Discogs &rsaquo;</NuxtLink>
       </nav>
       <div class="header-right">
-        <NuxtLink to="/chat" class="chat-nav">
-          <span class="fa">&#xf086;</span>
-        </NuxtLink>
         <NuxtLink to="/likes" class="likes-nav">
           <span class="fa">&#xf004;</span>
         </NuxtLink>
@@ -234,14 +308,18 @@ function onSwipeEnd(release, e) {
       </div>
     </header>
 
-    <div v-if="loading" class="loading">
+    <div v-if="loading && !releasesByStore.length" class="loading">
       <img src="/spinner.png" class="spinner" alt="loading" />
     </div>
 
     <main v-else class="content">
-      <div v-for="{ store, releases } in releasesByStore" :key="store.id" class="store-block">
+      <div v-for="({ store, releases }, si) in releasesByStore" :key="store.id" class="store-block">
         <h2 class="store-name">
-          <NuxtLink :to="`/store/${store.id}`" class="store-link">{{ store.name }}</NuxtLink>
+          <NuxtLink :to="`/stores?store=${store.id}`" class="store-link">{{ store.name }}</NuxtLink>
+          <span class="order-btns">
+            <button class="order-btn fa" :disabled="si === 0" title="Move up" @click="moveStore(store.id, -1)">&#xf077;</button>
+            <button class="order-btn fa" :disabled="si === releasesByStore.length - 1" title="Move down" @click="moveStore(store.id, 1)">&#xf078;</button>
+          </span>
         </h2>
         <div class="tile-row">
           <div
@@ -284,6 +362,7 @@ function onSwipeEnd(release, e) {
                   >
                     <span v-if="tags(release).preorder" class="fa">&#xf271;</span><span v-else class="fa">&#xf07a;</span>
                   </a>
+                  <span v-if="tags(release).out_of_stock" class="fa sold-excl" title="Sold out">&#xf12a;</span>
                 </div>
                 <div class="hype-icons">
                   <span v-if="tags(release).has_charted"                                          class="fa hype fire"   title="Charted">&#xf06d;</span>
@@ -338,6 +417,10 @@ function onSwipeEnd(release, e) {
               </div>
           </div>
         </div>
+      </div>
+
+      <div v-if="loading && releasesByStore.length" class="loading-more">
+        <img src="/spinner.png" class="spinner-sm" alt="loading more" />
       </div>
     </main>
   </div>
@@ -418,14 +501,6 @@ function onSwipeEnd(release, e) {
   gap: 0.9rem;
 }
 
-.chat-nav {
-  font-size: 1rem;
-  color: #ccc;
-  text-decoration: none;
-  transition: color 0.15s;
-}
-.chat-nav:hover { color: #555; }
-
 .likes-nav {
   font-size: 1rem;
   color: #ccc;
@@ -444,6 +519,18 @@ function onSwipeEnd(release, e) {
 .spinner {
   width: 80px;
   height: 80px;
+  animation: spin 1.2s linear infinite;
+}
+
+.loading-more {
+  display: flex;
+  justify-content: center;
+  padding: 1rem 0 2rem;
+}
+
+.spinner-sm {
+  width: 36px;
+  height: 36px;
   animation: spin 1.2s linear infinite;
 }
 
@@ -480,6 +567,24 @@ function onSwipeEnd(release, e) {
   transition: color 0.15s;
 }
 .store-link:hover { color: #0a0a0a; }
+
+.order-btns {
+  margin-left: 0.6rem;
+  display: inline-flex;
+  gap: 0.4rem;
+}
+
+.order-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 0.6rem;
+  color: #ccc;
+  cursor: pointer;
+  transition: color 0.15s;
+}
+.order-btn:hover:not(:disabled) { color: #0a0a0a; }
+.order-btn:disabled { opacity: 0.25; cursor: default; }
 
 .tile-row {
   display: contents;
@@ -676,7 +781,8 @@ function onSwipeEnd(release, e) {
 
 .buy-btn:hover      { color: #333; }
 .buy-btn.preorder   { color: #7a8a99; }
-.buy-btn.sold       { color: #ccc; opacity: 0.4; }
+.buy-btn.sold       { color: #bbb; }
+.sold-excl          { color: #bbb; font-size: 0.75rem; line-height: 1; }
 
 .hype-icons {
   display: flex;

@@ -35,5 +35,16 @@
   },
   "devDependencies": {
     "@types/nodemailer": "^8.0.0"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@firebase/util",
+      "@parcel/watcher",
+      "esbuild",
+      "protobufjs",
+      "sharp",
+      "unrs-resolver",
+      "vue-demi"
+    ]
   }
 }

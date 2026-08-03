@@ -4659,11 +4659,7 @@ namespace
 
         ImGui::Indent();
 
-        // title
-        ImGui::SetWindowFontScale(k_text_size_h2);
         ImGui::Spacing();
-        ImGui::TextCentred("diig Pro");
-
         ImGui::SetWindowFontScale(k_text_size_body);
         ImGui::TextWrapped("A subscription is required to use diig. Subscriptions auto-renew and can be cancelled anytime.");
         ImGui::Dummy(ImVec2(0.0, padding));
@@ -4796,6 +4792,7 @@ namespace
                 break;
                 case Page::paywall:
                     paywall_menu();
+                break;
                 case Page::discogs_filters:
                     discogs_filter_menu();
                 break;
@@ -4841,7 +4838,6 @@ namespace
         apply_clicks();
         audio_player();
         issue_data_requests();
-        issue_open_url_requests();
     }
 
     void setup_stores() {
@@ -4907,6 +4903,9 @@ namespace
 
             main_window();
         }
+        
+        // always update
+        issue_open_url_requests();
 
         // present
         put::dev_ui::render();
@@ -5998,6 +5997,16 @@ void settings_menu()
     ImGui::Text("%s", "Account");
     if(ImGui::Button("Delete Account")) {
         ctx.open_url_request = "https://diig.app/delete-account";
+    }
+
+    // legal links open the website pages in the browser
+    ImGui::Spacing();
+    ImGui::Text("%s", "Legal");
+    if(ImGui::Button("Terms of Use")) {
+        ctx.open_url_request = k_terms_url;
+    }
+    if(ImGui::Button("Privacy Policy")) {
+        ctx.open_url_request = k_privacy_url;
     }
 
     ImGui::Unindent();

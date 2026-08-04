@@ -226,7 +226,7 @@
                 "display_name": "Latest"
             },
             "bestsellers": {
-                "url": "https://vinylunderground.co.uk/collections/${{section}}/products.json?page=${{page}}&limit=40&sort_by=sort_by=best-selling",
+                "url": "https://vinylunderground.co.uk/collections/${{section}}/products.json?page=${{page}}&limit=40&sort_by=best-selling",
                 "page_count": 4,
                 "display_name": "Bestsellers"
             }

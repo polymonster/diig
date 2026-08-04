@@ -218,12 +218,17 @@
             "Tech House / Minimal",
             "Jungle / DnB / Rave"
         ],
-        "view_order": ["new_releases"],
+        "view_order": ["new_releases", "bestsellers"],
         "views": {
             "new_releases": {
                 "url": "https://vinylunderground.co.uk/collections/${{section}}/products.json?page=${{page}}&limit=40&sort_by=created-descending",
                 "page_count": 4,
                 "display_name": "Latest"
+            },
+            "bestsellers": {
+                "url": "https://vinylunderground.co.uk/collections/${{section}}/products.json?page=${{page}}&limit=40&sort_by=sort_by=best-selling",
+                "page_count": 4,
+                "display_name": "Bestsellers"
             }
         },
         "scrape_rate": 5

@@ -1,4 +1,5 @@
-const PUBLIC_PATHS = ['/login', '/faq', '/privacy', '/terms']
+// /live is public so a broadcast link can be shared with anyone
+const PUBLIC_PATHS = ['/login', '/faq', '/privacy', '/terms', '/live']
 
 export default defineNuxtRouteMiddleware(async (to) => {
   const currentUser = await getCurrentUser()

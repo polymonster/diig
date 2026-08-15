@@ -256,6 +256,7 @@ function tags(release) { return release.store_tags || {} }
 // ── Player ────────────────────────────────────────────────────────────────────
 
 const menuOpen = useState('menuOpen', () => false)
+const { isLive } = useLiveStatus()
 
 const { activeId, activeTrack, isPlaying, releaseList, tileClickAudio: tileClick, prevTrack, nextTrack, dotClick, computeDots, getTracks, getTrackNames, stopAll } = usePlayer()
 
@@ -301,6 +302,9 @@ function onSwipeEnd(release, e) {
         <NuxtLink to="/discogs" class="viewbtn stores-link">Discogs &rsaquo;</NuxtLink>
       </nav>
       <div class="header-right">
+        <NuxtLink v-if="isLive" to="/live" class="live-nav">
+          <span class="live-nav-dot" />live
+        </NuxtLink>
         <NuxtLink to="/likes" class="likes-nav">
           <span class="fa">&#xf004;</span>
         </NuxtLink>

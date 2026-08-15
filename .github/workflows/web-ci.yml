@@ -49,6 +49,8 @@ jobs:
           NUXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.NUXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID }}
           NUXT_PUBLIC_FIREBASE_APP_ID: ${{ secrets.NUXT_PUBLIC_FIREBASE_APP_ID }}
           NUXT_PUBLIC_FIREBASE_MEASUREMENT_ID: ${{ secrets.NUXT_PUBLIC_FIREBASE_MEASUREMENT_ID }}
+          NUXT_PUBLIC_CF_STREAM_UID: ${{ secrets.NUXT_PUBLIC_CF_STREAM_UID }}
+          NUXT_PUBLIC_CF_CUSTOMER_CODE: ${{ secrets.NUXT_PUBLIC_CF_CUSTOMER_CODE }}
 
       - name: audit
         run: pnpm audit --audit-level moderate

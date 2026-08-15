@@ -31,6 +31,15 @@ export default defineNuxtConfig({
     viewer: true,
   },
 
+  // Cloudflare Stream live input. Neither value is a secret — both appear in
+  // every public playback URL. The ingest key lives in OBS only, never here.
+  runtimeConfig: {
+    public: {
+      cfStreamUid:    process.env.NUXT_PUBLIC_CF_STREAM_UID    || '',
+      cfCustomerCode: process.env.NUXT_PUBLIC_CF_CUSTOMER_CODE || '',
+    },
+  },
+
   vuefire: {
     auth: {
       enabled: true,

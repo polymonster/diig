@@ -4,8 +4,21 @@ export default defineNuxtConfig({
   ssr: false,
   app: {
     head: {
+      // Link-preview tags must be static in the HTML shell: ssr is false, and
+      // scrapers (iMessage, WhatsApp, Slack, Twitter) don't run JS, so
+      // useHead() in a page is invisible to them. These are the site-wide
+      // defaults; scripts/og-live.mjs overrides them for /live after generate.
+      title: 'diig',
       meta: [
         { name: 'viewport', content: 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' },
+        { name: 'description', content: 'record digging' },
+        { property: 'og:site_name', content: 'diig' },
+        { property: 'og:type', content: 'website' },
+        { property: 'og:title', content: 'diig' },
+        { property: 'og:description', content: 'record digging' },
+        { property: 'og:url', content: 'https://diig.app' },
+        { property: 'og:image', content: 'https://diig.app/icon.png' },
+        { name: 'twitter:card', content: 'summary_large_image' },
       ],
       link: [
         { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },

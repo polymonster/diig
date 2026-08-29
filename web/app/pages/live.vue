@@ -3,7 +3,7 @@ const menuOpen = useState('menuOpen', () => false)
 
 // Faster cadence than the site-wide nav badge — on this page the offline→live
 // flip should feel immediate.
-const { isLive, checking, meta, configured, iframeUrl } = useLiveStatus(10_000)
+const { isLive, checking, meta, configured, iframeUrl, recordingUrl } = useLiveStatus(10_000)
 
 // Don't talk over the mix: kill any snippet or Discogs clip still going in the
 // bottom player bar.
@@ -47,6 +47,23 @@ watch(isLive, live => { if (live) stopAll() })
           <span class="live-label">live</span>
           <span v-if="meta?.artist" class="now-artist">{{ meta.artist }}</span>
           <span v-if="meta?.title" class="now-title">{{ meta.title }}</span>
+        </div>
+      </template>
+
+      <template v-else-if="recordingUrl">
+        <div class="stage">
+          <iframe
+            :src="recordingUrl"
+            class="stream"
+            title="diig last mix"
+            allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture"
+            allowfullscreen
+          />
+        </div>
+
+        <div class="now">
+          <span class="replay-label">{{ meta?.lastTitle || 'last mix' }}</span>
+          <span v-if="meta?.next" class="now-title">next &mdash; {{ meta.next }}</span>
         </div>
       </template>
 
@@ -186,6 +203,13 @@ watch(isLive, live => { if (live) stopAll() })
   font-size: 0.6rem;
   letter-spacing: 0.12em;
   color: #cc4d00;
+  text-transform: uppercase;
+}
+
+.replay-label {
+  font-size: 0.6rem;
+  letter-spacing: 0.12em;
+  color: #999;
   text-transform: uppercase;
 }
 

@@ -315,7 +315,7 @@ function onSwipeEnd(release, e) {
             @touchstart.passive="onSwipeStart"
             @touchend.passive="onSwipeEnd(release, $event)"
           >
-              <p v-if="release.cat" class="r-cat">{{ release.cat }}</p>
+              <p v-if="labelCat(release)" class="r-cat">{{ labelCat(release) }}</p>
               <div class="artwork-wrap">
                 <img
                   :key="activeId === release.id ? `art-${release.id}-${activeTrack}` : `art-${release.id}`"

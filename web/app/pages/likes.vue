@@ -141,7 +141,7 @@ function onSwipeEnd(release, e) {
           @touchstart.passive="onSwipeStart"
           @touchend.passive="onSwipeEnd(release, $event)"
         >
-          <p class="r-cat">{{ release.cat }}</p>
+          <p v-if="labelCat(release)" class="r-cat">{{ labelCat(release) }}</p>
           <img
             :src="artworkUrl(release) || '/white_label.jpg'"
             :alt="release.title"

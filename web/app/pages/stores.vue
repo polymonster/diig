@@ -75,7 +75,9 @@ async function loadSection(store, sectionId, viewId) {
     const url   = `${DB}/releases.json?orderBy="${t}"&startAt=0&auth=${token}`
     const data  = await fetch(url).then(r => r.json())
     if (!data || typeof data !== 'object') { sectionReleases.value[key] = []; return }
-    const items = Object.entries(data).map(([id, v]) => ({ id, ...v }))
+    // spread first so the firebase key wins; release records carry their own
+    // store-local 'id' field which would otherwise shadow it
+    const items = Object.entries(data).map(([id, v]) => ({ ...v, id }))
     items.sort((a, b) => (a[t] ?? 999) - (b[t] ?? 999))
     sectionReleases.value[key] = items.slice(0, 150)
   } catch (e) {
@@ -197,22 +199,24 @@ async function toggleLike(release, e) {
   const token    = await auth.currentUser.getIdToken()
   const countUrl = `${DB}/releases/${id}/likes/count.json?auth=${token}`
 
+  const json = (body) => ({ method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
+
   if (isLiked(id)) {
     // write a 0 tombstone rather than deleting, so the un-like syncs to
     // devices that merge a cached copy of the likes (deleted keys are
     // indistinguishable from never-liked)
     likes.value = { ...likes.value, [id]: 0 }
     likeCountAdjust.value = { ...likeCountAdjust.value, [id]: (likeCountAdjust.value[id] ?? 0) - 1 }
-    await fetch(`${DB}/users/${uid}/likes/${id}.json?auth=${token}`, { method: 'PUT', body: JSON.stringify(0) })
+    await fetch(`${DB}/users/${uid}/likes/${id}.json?auth=${token}`, json(0))
     const cur = await fetch(countUrl).then(r => r.json()) || 0
-    await fetch(countUrl, { method: 'PUT', body: JSON.stringify(Math.max(0, cur - 1)) })
+    await fetch(countUrl, json(Math.max(0, cur - 1)))
   } else {
     const ts = 1696155367 + Date.now()
     likes.value = { ...likes.value, [id]: ts }
     likeCountAdjust.value = { ...likeCountAdjust.value, [id]: (likeCountAdjust.value[id] ?? 0) + 1 }
-    await fetch(`${DB}/users/${uid}/likes/${id}.json?auth=${token}`, { method: 'PUT', body: JSON.stringify(ts) })
+    await fetch(`${DB}/users/${uid}/likes/${id}.json?auth=${token}`, json(ts))
     const cur = await fetch(countUrl).then(r => r.json()) || 0
-    await fetch(countUrl, { method: 'PUT', body: JSON.stringify(cur + 1) })
+    await fetch(countUrl, json(cur + 1))
   }
 }
 
@@ -295,7 +299,7 @@ function onSwipeEnd(release, e) {
           @touchstart.passive="onSwipeStart"
           @touchend.passive="onSwipeEnd(release, $event)"
         >
-          <p v-if="release.cat" class="r-cat">{{ release.cat }}</p>
+          <p v-if="labelCat(release)" class="r-cat">{{ labelCat(release) }}</p>
           <img
             :src="artworkUrl(release) || '/white_label.jpg'"
             :alt="release.title"

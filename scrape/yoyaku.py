@@ -11,6 +11,71 @@ import html
 import re
 
 
+# yoyaku reworked the product page markup: the old flat `class="product-artists"`
+# / `class="product-labels"` / `class="sku"` spans were replaced by a
+# `<dl class="product-facts">` block whose entries carry compound classes, e.g.
+# `<div class="product-fact product-fact--primary product-artists">`. the old
+# exact-class lookups no longer match anything on the main product (they only hit
+# the copies inside the related-products section, which we strip), so artist,
+# label and cat all silently parsed to "". these helpers target the new markup.
+def strip_markup(fragment: str):
+    return html.unescape(" ".join(re.sub(r"<[^>]*>", " ", fragment).split())).strip()
+
+
+# pull the inner html of a single `product-fact ... <cls>` block from the facts list
+def parse_product_fact(release_html_str: str, cls: str):
+    match = re.search(
+        r"<div[^>]*class=\"[^\"]*\bproduct-fact\b[^\"]*\b" + cls + r"\b[^\"]*\"[^>]*>(.*?)</div>",
+        release_html_str,
+        re.S,
+    )
+    if match is None:
+        return ""
+    # drop the <dt> label ("Artist(s)", "Label"), we only want the <dd> value
+    return re.sub(r"<dt>.*?</dt>", "", match.group(1), flags=re.S)
+
+
+# the wordpress post id doubles as the product id used by the track api. the
+# listing pages only expose it via a `post-<id>` class on `li.product`, which is
+# absent from the bestseller/chart sidebar markup - so ~32% of the registry never
+# got one and could never fetch audio or artwork. the detail page always carries
+# it in the body class, so use that as the authoritative source.
+def parse_post_id(release_html_str: str):
+    match = re.search(r"\bpostid-(\d+)", release_html_str)
+    return match.group(1) if match else ""
+
+
+# build the [100x100, 400x400, full] artwork set the registry expects from any
+# single upload url, whichever sized variant we happened to find.
+def artwork_set(image_url: str):
+    if not image_url:
+        return []
+    base = re.sub(r"-\d+x\d+(?=\.[a-z]+$)", "", image_url)
+    stem, _, ext = base.rpartition(".")
+    return [f"{stem}-100x100.{ext}", f"{stem}-400x400.{ext}", base]
+
+
+# artwork fallback straight off the product page, for releases the track api has
+# no data for (no audio previews) or that we have no product id for. multi-image
+# releases render a slider of `ct-media-container` thumbs, single-image releases
+# render one full size `wp-post-image`.
+def parse_gallery_artwork(release_html_str: str):
+    gallery = re.search(r"class=\"[^\"]*woocommerce-product-gallery[^\"]*\"(.*)", release_html_str, re.S)
+    scope = gallery.group(1) if gallery else release_html_str
+    slides = re.findall(r"<span class=\"ct-media-container\"[^>]*>\s*<img[^>]*src=\"([^\"]+)\"", scope)
+    if slides:
+        return artwork_set(slides[0])
+    post_image = re.search(r"<img[^>]*class=\"[^\"]*wp-post-image[^\"]*\"[^>]*>", scope)
+    if post_image is None:
+        # attribute order varies, try src-first form
+        post_image = re.search(r"<img[^>]*wp-post-image[^>]*>", scope)
+    if post_image:
+        src = dig.get_value(post_image.group(0), "src")
+        if src:
+            return artwork_set(src)
+    return []
+
+
 # extract clean title text from a yoyaku product page.
 # yoyaku formats the <h1> as `<a ...>ARTIST</a> — TITLE`, so the release title
 # is only the part after the leading artist link. the old parse
@@ -43,6 +108,42 @@ def clean_product_title(release_html_str: str):
     elem = html.unescape(" ".join(elem.split()))
     # trim a leading dash/space separator left by the "ARTIST — TITLE" split
     return elem.lstrip(" -–—,").strip()
+
+
+# parse every field we take off the product detail page into release_dict.
+# shared by the scrape and the backfill so the two can never drift apart.
+def parse_detail_page(release_html_str: str, release_dict: dict):
+    # strip related products, they repeat the same markup for other releases
+    related = release_html_str.find('<section class="related products')
+    if related != -1:
+        release_html_str = release_html_str[:related]
+
+    release_dict["title"] = clean_product_title(release_html_str)
+
+    # artist. empty is legitimate for various-artists releases
+    release_dict["artist"] = strip_markup(parse_product_fact(release_html_str, "product-artists"))
+
+    # label. the <dd> holds the label link followed by the catalogue number span,
+    # so cut at the span to keep the label name on its own
+    label_fact = parse_product_fact(release_html_str, "product-labels")
+    label_name = re.split(r"<span[^>]*class=\"[^\"]*product-fact__catalog", label_fact, maxsplit=1)[0]
+    release_dict["label"] = strip_markup(label_name)
+    release_dict["label_link"] = dig.get_value(label_fact, "href")
+
+    # cat. `class="sku"` is gone; the catalogue number now lives in a span inside
+    # the label fact, prefixed by a screen-reader-only "Catalogue number:" label
+    catalog = re.search(r"class=\"[^\"]*product-fact__catalog[^\"]*\"[^>]*>(.*?)</span>\s*</dd>", label_fact, re.S)
+    if catalog:
+        release_dict["cat"] = re.sub(r"^Catalogue number:\s*", "", strip_markup(catalog.group(1)))
+    else:
+        release_dict["cat"] = ""
+
+    # the product id, needed for the track api
+    post_id = parse_post_id(release_html_str)
+    if post_id:
+        release_dict["internal_id"] = post_id
+
+    return release_html_str
 
 
 def fetch_product_json(product_id: int):
@@ -188,15 +289,25 @@ def scrape_page(url, store, store_dict, view, section, counter, session_scraped_
         # fetch detail page if artist is missing (mandatory) or we need url info
         needs_detail_fetch = "artist" not in releases_dict.get(key, {}) or needs_url_fetch
 
+        # the detail page is parsed first because it is the only reliable source
+        # of the product id: the chart sidebar has no `li.product` markup to read
+        # `post-<id>` from, so chart-only releases previously never got one and so
+        # never fetched any audio or artwork
+        release_html_str = ""
+        if needs_detail_fetch:
+            release_html_response = dig.request_url_limited(release_dict["link"])
+            if release_html_response == None:
+                return -1
+            release_html_str = release_html_response.read().decode("utf8")
+            release_html_str = parse_detail_page(release_html_str, release_dict)
+
         if needs_url_fetch:
             # internal_id may be missing if releases_ex was shorter than releases
             # fall back to a previously stored value if available
-            if "internal_id" not in release_dict:
+            if not release_dict.get("internal_id"):
                 release_dict["internal_id"] = releases_dict.get(key, {}).get("internal_id", "")
-            if not release_dict["internal_id"]:
-                needs_url_fetch = False
-                
-        if needs_url_fetch:
+
+        if needs_url_fetch and release_dict.get("internal_id"):
             # based on this id we can get json by doing a post request to the API
             product_json = fetch_product_json(release_dict["internal_id"])
 
@@ -220,44 +331,14 @@ def scrape_page(url, store, store_dict, view, section, counter, session_scraped_
                         image_path = track["image"]
 
                 # infer image set
-                if len("image") > 0:
-                    release_dict["artworks"].append(image_path)
-                    release_dict["artworks"].append(image_path.replace("100x100", "400x400"))
-                    release_dict["artworks"].append(image_path.replace("100x100", ""))
+                if image_path:
+                    release_dict["artworks"] = artwork_set(image_path)
 
-        if needs_detail_fetch:
-            # detail info
-            release_html_response = dig.request_url_limited(release_dict["link"])
-            if release_html_response == None:
-                return -1
-            release_html_str = release_html_response.read().decode("utf8")
-
-            # strip related
-            related = release_html_str.find('<section class="related products')
-            if related != -1:
-                release_html_str = release_html_str[:related]
-
-            # title
-            release_dict["title"] = clean_product_title(release_html_str)
-
-            # artist info
-            pp = release_html_str.find("class=\"product-artists\"")
-            pe = release_html_str.find("</span>", pp)
-            release_dict["artist"] = dig.parse_strip_body(release_html_str[pp:pe])
-            release_dict["artist"] = html.unescape(release_dict["artist"])
-
-            # label info
-            pp = release_html_str.find("class=\"product-labels\"")
-            pe = release_html_str.find("</span>", pp)
-            release_dict["label"] = dig.parse_strip_body(release_html_str[pp:pe])
-            release_dict["label_link"] = dig.get_value(release_html_str[pp:pe], "href")
-            release_dict["label"] = html.unescape(release_dict["label"])
-
-            # cat
-            pp = release_html_str.find("class=\"sku\"")
-            pe = release_html_str.find("</span>", pp)
-            release_dict["cat"] = dig.parse_strip_body(release_html_str[pp:pe])
-            release_dict["cat"] = html.unescape(release_dict["cat"])
+        # some releases carry no audio previews at all, so the track api returns
+        # nothing for them. the product page still shows the sleeve, so fall back
+        # to that rather than leaving them with no artwork
+        if needs_url_fetch and not release_dict.get("artworks") and release_html_str:
+            release_dict["artworks"] = parse_gallery_artwork(release_html_str)
 
         # validate before adding to the registry so we never persist a
         # malformed entry (e.g. leftover html in the title). when the registry
@@ -297,12 +378,34 @@ def backfill_missing():
     # leftover html (e.g. a dangling "<a href=...>" fragment from the old
     # parser). note: title == artist is NOT treated as broken - yoyaku has
     # legitimately self-titled releases (e.g. "Revlux — Revlux").
+    # the markup change also left entries with no product id, no artwork, no
+    # audio, and a label field that fell back to the catalogue number, so repair
+    # those here too.
     def needs_backfill(v):
         title = v.get("title") or ""
-        return "artist" not in v or "<" in title or not title.strip()
+        if "artist" not in v or "<" in title or not title.strip():
+            return True
+        if not v.get("internal_id") or not v.get("artworks") or not v.get("track_urls"):
+            return True
+        # label parsed as the cat number is the signature of the broken parse
+        return bool(v.get("label")) and v.get("label") == v.get("cat")
 
     missing = {k: v for k, v in releases_dict.items() if needs_backfill(v)}
     print(f"found {len(missing)} entries to backfill", flush=True)
+
+    # repairing the whole backlog is two rate limited requests per entry, so do
+    # the releases the app is currently showing first (those carry a chart / new
+    # release position key) and allow the rest to be worked through in chunks
+    # with `-limit N` across several runs.
+    def in_live_view(item):
+        return any(k.startswith(f"{store}-") for k in item[1])
+
+    ordered = sorted(missing.items(), key=lambda item: not in_live_view(item))
+    if "-limit" in sys.argv:
+        limit = int(sys.argv[sys.argv.index("-limit") + 1])
+        ordered = ordered[:limit]
+        print(f"limited to {len(ordered)} entries this run", flush=True)
+    missing = dict(ordered)
 
     updated = dict()
     for key, release in missing.items():
@@ -314,34 +417,41 @@ def backfill_missing():
             continue
 
         release_html_str = response.read().decode("utf8")
+        release_html_str = parse_detail_page(release_html_str, release)
 
-        # strip related
-        related = release_html_str.find('<section class="related products')
-        if related != -1:
-            release_html_str = release_html_str[:related]
+        # audio previews and artwork, keyed off the product id we just parsed
+        if release.get("internal_id") and (not release.get("track_urls") or not release.get("artworks")):
+            product_json = fetch_product_json(release["internal_id"])
+            if "data" in product_json:
+                release["track_names"] = list()
+                release["track_urls"] = list()
+                image_path = ""
+                for track in product_json["data"]:
+                    release["track_names"].append(track.get("title", ""))
+                    release["track_urls"].append(track.get("mp3", ""))
+                    if "image" in track:
+                        image_path = track["image"]
+                if image_path:
+                    release["artworks"] = artwork_set(image_path)
 
-        # title
-        release["title"] = clean_product_title(release_html_str)
+        # releases with no audio previews get no api data at all, take the sleeve
+        # off the product page instead
+        if not release.get("artworks"):
+            release["artworks"] = parse_gallery_artwork(release_html_str)
 
-        # artist
-        pp = release_html_str.find("class=\"product-artists\"")
-        pe = release_html_str.find("</span>", pp)
-        release["artist"] = html.unescape(dig.parse_strip_body(release_html_str[pp:pe]))
-
-        # label
-        pp = release_html_str.find("class=\"product-labels\"")
-        pe = release_html_str.find("</span>", pp)
-        release["label"] = html.unescape(dig.parse_strip_body(release_html_str[pp:pe]))
-        release["label_link"] = dig.get_value(release_html_str[pp:pe], "href")
-
-        # cat
-        pp = release_html_str.find("class=\"sku\"")
-        pe = release_html_str.find("</span>", pp)
-        release["cat"] = html.unescape(dig.parse_strip_body(release_html_str[pp:pe]))
+        issues = dig.validate_release(key, release)
+        if issues:
+            print(f"  skipping malformed entry: {issues}", flush=True)
+            continue
 
         releases_dict[key] = release
         updated[key] = release
-        print(f"  -> {release.get('artist', '?')} - {release.get('title', '?')}", flush=True)
+        print(
+            f"  -> {release.get('artist', '?')} - {release.get('title', '?')}"
+            f" [{release.get('label', '?')} / {release.get('cat', '?')}]"
+            f" {len(release.get('artworks') or [])} art, {len(release.get('track_urls') or [])} trk",
+            flush=True,
+        )
 
     if updated:
         dig.write_registry(store, releases_dict)

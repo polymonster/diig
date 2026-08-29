@@ -5606,6 +5606,14 @@ void settings_menu()
 
     discogs_token_input();
 
+    // account deletion is a self-service web flow (store compliance); the app
+    // just opens it. deleting there removes the shared firebase account + data
+    ImGui::Spacing();
+    ImGui::Text("%s", "Account");
+    if(ImGui::Button("Delete Account")) {
+        ctx.open_url_request = "https://diig.app/delete-account";
+    }
+
     ImGui::Unindent();
 
     ImGui::SetWindowFontScale(k_text_size_body);

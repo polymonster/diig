@@ -10,6 +10,10 @@ import {
 const auth = useFirebaseAuth()
 const user = useCurrentUser()
 const router = useRouter()
+const route = useRoute()
+
+// shown after an account has been deleted (redirected here from /delete-account)
+const deleted = computed(() => route.query.deleted != null)
 
 // ── Tabs ─────────────────────────────────────────────────────────────────────
 type Tab = 'login' | 'register'
@@ -28,7 +32,10 @@ const isValidEmail = computed(() => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.valu
 const isFormValid = computed(() => isValidEmail.value && password.value.length >= 6)
 
 watch(user, (newUser) => {
-  if (newUser) router.push('/')
+  if (newUser) {
+    const redirect = route.query.redirect
+    router.push(typeof redirect === 'string' ? redirect : '/')
+  }
 }, { immediate: true })
 
 function switchTab(t: Tab) {
@@ -128,6 +135,7 @@ const handleRegister = async () => {
         <button :class="['tab', { active: tab === 'register' }]" @click="switchTab('register')">register interest</button>
       </div>
 
+      <div v-if="deleted" class="msg success">Your account has been deleted.</div>
       <div v-if="error" class="msg error">{{ error }}</div>
       <div v-if="success" class="msg success">{{ success }}</div>
 

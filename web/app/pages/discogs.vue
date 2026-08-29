@@ -2,6 +2,7 @@
 import { DISCOGS_GENRES, DISCOGS_STYLES } from '~/utils/discogs_taxonomy'
 
 const menuOpen = useState('menuOpen', () => false)
+const { isLive } = useLiveStatus()
 
 const discogsToken = ref(localStorage.getItem('discogsToken') || '')
 
@@ -317,6 +318,9 @@ onMounted(() => {
       </form>
 
       <div class="header-right">
+        <NuxtLink v-if="isLive" to="/live" class="live-nav">
+          <span class="live-nav-dot" />live
+        </NuxtLink>
         <NuxtLink to="/likes" class="likes-nav"><span class="fa">&#xf004;</span></NuxtLink>
         <button class="burger-btn fa" @click="menuOpen = !menuOpen">&#xf0c9;</button>
       </div>

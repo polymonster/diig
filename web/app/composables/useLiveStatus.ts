@@ -1,15 +1,27 @@
 // Live-stream status, shared across every page (the nav badge and /live both
 // read it) — module-level singletons, one poller per tab.
 //
-// Cloudflare's live-input status API needs a bearer token we can't ship in a
-// static SPA, so liveness is inferred from the HLS manifest instead: it 404s
-// while nothing is ingesting and 200s once OBS connects. Stream serves
-// manifests with permissive CORS, so a plain fetch works from the browser.
+// Liveness comes from Cloudflare's `lifecycle` endpoint on the account
+// subdomain, which needs no auth and sends `access-control-allow-origin: *`:
+//
+//   { "isInput": true, "live": false, "status": "disconnected", "videoUID": null }
+//
+// Do NOT go back to probing the HLS manifest. Once an input has broadcast at
+// least once, the offline manifest returns **204 No Content** rather than 404 —
+// and `Response.ok` is true for 204, so a status check reads as permanently
+// live. That bug shipped once already.
 
 export interface LiveMeta {
   title?: string
   artist?: string
   next?: string   // free text, e.g. "saturday 21:00 CET"
+
+  // Recording of the most recent broadcast, shown on /live while offline.
+  // Cloudflare gives each recording its own video UID, and listing a live
+  // input's recordings needs an API token we can't ship — so this is pasted
+  // in by hand from the Stream dashboard after a broadcast.
+  lastRecording?: string   // Stream video UID
+  lastTitle?: string       // optional label, falls back to "last mix"
 }
 
 const DB = 'https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app'
@@ -41,9 +53,9 @@ function host(): string {
   return `customer-${code}.cloudflarestream.com`
 }
 
-function manifestUrl(): string {
+function lifecycleUrl(): string {
   if (!uid || !code) return ''
-  return `https://${host()}/${uid}/manifest/video.m3u8`
+  return `https://${host()}/${uid}/lifecycle`
 }
 
 function iframeUrl(): string {
@@ -53,14 +65,25 @@ function iframeUrl(): string {
   return `https://${host()}/${uid}/iframe?autoplay=true&primaryColor=%23cc4d00`
 }
 
+// A recording is an ordinary Stream video, addressed by its own UID rather
+// than the live input's. Deliberately no autoplay — nobody landing on an
+// offline page expects a mix to start playing at them.
+function recordingUrl(): string {
+  const rec = meta.value?.lastRecording
+  if (!rec || !code) return ''
+  return `https://${host()}/${rec}/iframe?primaryColor=%23cc4d00`
+}
+
 async function probe(): Promise<void> {
-  const url = manifestUrl()
+  const url = lifecycleUrl()
   if (!url) { isLive.value = false; checking.value = false; return }
   if (inFlight) return
   inFlight = true
   try {
-    const res = await fetch(url, { cache: 'no-store' })
-    isLive.value = res.ok
+    const res  = await fetch(url, { cache: 'no-store' })
+    const body = res.ok ? await res.json() : null
+    // Trust the explicit boolean only — never infer from status codes.
+    isLive.value = body?.live === true
   } catch {
     // offline, blocked, or DNS — treat as not live rather than erroring the page
     isLive.value = false
@@ -124,8 +147,9 @@ export function useLiveStatus(pollMs = 60_000) {
     isLive,
     checking,
     meta,
-    configured: computed(() => Boolean(uid && code)),
-    iframeUrl:  computed(iframeUrl),
+    configured:   computed(() => Boolean(uid && code)),
+    iframeUrl:    computed(iframeUrl),
+    recordingUrl: computed(recordingUrl),
     probe,
     refreshMeta: loadMeta,
   }

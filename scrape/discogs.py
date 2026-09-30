@@ -5,6 +5,7 @@ import yt_dlp
 import re
 import sys
 import dig
+import rip
 import os
 import unicodedata
 from rapidfuzz import fuzz
@@ -755,7 +756,83 @@ def populate_discogs_likes(discogs, likes_file):
             dig.patch_releases(reg)
 
 
+def display_help():
+    print("discogs.py")
+    print("")
+    print("  -store <name>       populate discogs links for a store registry")
+    print("  -likes <file>       populate discogs links for a likes file")
+    print("  -rip                build a local library for your collection")
+    print("")
+    print("-rip options")
+    print("  -dir <path>         output directory (required)")
+    print("  -input <path>       import rips you already have instead of")
+    print("                      fetching: every folder named after a release")
+    print("                      catalogue number is matched to your")
+    print("                      collection, converted and tagged to match")
+    print("  -source <a>         soulseek, youtube or both (default both)")
+    print("                      soulseek first, release links for what is")
+    print("                      left. naming one source leaves the other")
+    print("                      alone entirely, and the ledger remembers")
+    print("                      which sources a release has been through, so")
+    print("                      each can be a session of its own")
+    print("  -count <n>          stop after n releases, for small batches")
+    print("  -folder <id|name>   collection folder, defaults to 'All'")
+    print("  -oldest             oldest added first, default is newest first")
+    print("  -release <id>       rip a single release by discogs id")
+    print("  -retry              re-attempt partial, failed and no match releases")
+    print("  -force              re-rip everything, ignoring the ledger")
+    print("  -dry-run            print the file to track matches, fetch nothing")
+    print("  -status             print what the library holds and what is")
+    print("                      missing, straight off the ledger. add -list")
+    print("                      to list the tracks no source could get, the")
+    print("                      ones only your own copy will fix")
+    print("  -audit              re-check ripped track lengths against discogs,")
+    print("                      and list every short file whether discogs has")
+    print("                      a timing for it or not, since a snippet runs")
+    print("                      about 1:30 whatever it is a snippet of")
+    print("  -short-max <s>      what counts as short for -audit, default 165")
+    print("")
+    print("  a bad rip is flagged by hand in the ledger, .diig-rip-ledger.json")
+    print("  in the output directory. add a \"flag\" note with the reason, on")
+    print("  one track or on the whole release if the record is wrong:")
+    print("      \"A1\": { ..., \"flag\": \"snippet, not the full track\" }")
+    print("      { \"id\": 123, ..., \"flag\": \"wrong record entirely\" }")
+    print("  the next run moves those files to .diig-rejected, remembers never")
+    print("  to take the same copy again, and goes looking afresh.")
+    print("  -delete-flagged     delete flagged files instead of moving them")
+    print("  -debug              print the length comparison for every track")
+    print("  -no-length-check    keep files that run far shorter than the track")
+    print("  -quality <kbps>     mp3 bitrate, defaults to 320")
+    print("  -cookies-from-browser <name>  sign requests in as you")
+    print("  -cookies <file>     netscape cookies.txt to use instead")
+    print("  -player-client <a,b>  client to present as, if requests get refused")
+    print("  -no-cover           skip embedding release artwork")
+    print("  -sleep <seconds>    base pause between downloads, jittered")
+    print("  -slow               crawl harder, for when requests get refused")
+    print("  -attempts <n>       tries per track before giving up, default 4")
+    print("  -backoff <seconds>  first wait after a block, doubles each try")
+    print("  -block-limit <n>    stop the session after n blocks in a row")
+    print("")
+    print("-rip soulseek options (needs slskd running, see scrape/slsk.py)")
+    print("  -slsk-test          check the slskd connection and exit")
+    print("  -slsk-host <url>    slskd address, default http://localhost:5030")
+    print("  -slsk-key <key>     slskd api key, else scrape/slskd-auth.json")
+    print("  -slsk-downloads <p> where slskd writes finished transfers")
+    print("  -slsk-wait <s>      how long to wait on upload queues, default 300")
+    print("  -slsk-min-bitrate <n>  ignore mp3s below n kbps")
+    print("  -slsk-search-timeout <ms>  how long peers have to answer")
+    print("")
+    print("  -api-sleep <s>      pause before each discogs api call, default 1.2")
+    print("  -discogs-attempts <n>  tries for a rate limited discogs request")
+    print("  -discogs-backoff <s>   first wait after a discogs 429, grows each try")
+    print("  -verbose            list skipped and outstanding releases, full errors")
+
+
 def main():
+    if "-help" in sys.argv:
+        display_help()
+        return
+
     if "-discogs-key" in sys.argv:
         token = sys.argv[sys.argv.index("-discogs-key") + 1]
     else:
@@ -763,12 +840,17 @@ def main():
 
     print("logging in to discogs")
     discogs = discogs_client.Client('MyDiscogsApp/1.0', user_token=token)
-    dig.setup_firebase_auth()
+
+    # ripping only talks to discogs and youtube, it needs no firebase writes
+    if "-rip" not in sys.argv:
+        dig.setup_firebase_auth()
 
     user = discogs.identity()
     print("logged in as:", user)
 
-    if "-store" in sys.argv:
+    if "-rip" in sys.argv:
+        rip.rip_collection(discogs, token)
+    elif "-store" in sys.argv:
         store = sys.argv[sys.argv.index("-store") + 1]
         populate_discogs_links(discogs, store)
     elif "-likes" in sys.argv:

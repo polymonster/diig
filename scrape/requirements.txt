@@ -1,7 +1,9 @@
 google-auth
+mutagen
 python3-discogs-client
 rapidfuzz
 requests
 selenium
+slskd-api
 urllib3
 yt-dlp

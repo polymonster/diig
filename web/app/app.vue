@@ -334,6 +334,34 @@ html, body {
 }
 .burger-btn:hover { color: #555; }
 
+/* Live badge — global rather than scoped per page, since every feed header
+   copy-pastes the same markup into .header-right. */
+.live-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-family: 'Cousine', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: #cc4d00;
+}
+
+.live-nav-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #cc4d00;
+  flex: 0 0 6px;
+  animation: live-nav-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes live-nav-pulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.25; }
+}
+
 .burger-backdrop {
   position: fixed;
   inset: 0;

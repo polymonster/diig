@@ -1,0 +1,87 @@
+name: backfill
+on:
+  workflow_dispatch:
+    inputs:
+      store:
+        description: 'Select a record store'
+        required: true
+        default: yoyaku
+        type: choice
+        options:
+          - yoyaku
+          - juno
+          - redeye
+          - phonica
+          - hardwax
+          - decks
+          - vinylunderground
+      limit:
+        description: 'Max entries to repair this run (backlogs are worked in chunks, entries currently in the feed go first)'
+        required: true
+        default: '250'
+        type: string
+      rate:
+        description: 'Seconds to wait between requests'
+        required: true
+        default: '5'
+        type: string
+      local_only:
+        description: 'Dry run against the registry only, skip patching Firebase'
+        required: false
+        default: false
+        type: boolean
+
+# a backfill rewrites the same registry files the scrapers commit to, so never
+# let two of these overlap
+concurrency:
+  group: backfill-${{ github.event.inputs.store }}
+  cancel-in-progress: false
+
+jobs:
+  backfill:
+    runs-on: ubuntu-latest
+    # a chunk of 250 entries is 2 rate limited requests each, so allow for the
+    # slowest case plus headroom rather than the default 6h cap cutting it short
+    timeout-minutes: 350
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: recursive
+        token: ${{ secrets.DIIG_REG_TOKEN }}
+    - name: install_deps
+      run: |
+        python3 -m pip install --upgrade pip
+        python3 -m pip install --upgrade google-auth
+    - name: pull_reg
+      run: |
+        cd scrape/diig-registry
+        git fetch origin main
+        git checkout main
+        git pull origin main
+    - name: backfill
+      run: |
+        cd scrape
+        if [ "${{ github.event.inputs.local_only }}" = "true" ]; then
+          LOCAL_ONLY="-local-only"
+        else
+          LOCAL_ONLY=""
+        fi
+        python3 dig.py -backfill ${{ github.event.inputs.store }} \
+          -key '${{secrets.SERVICE_ACCOUNT}}' \
+          -limit ${{ github.event.inputs.limit }} \
+          -rate ${{ github.event.inputs.rate }} \
+          -verbose $LOCAL_ONLY
+    - name: commit
+      run: |
+        cd scrape/diig-registry
+        git config user.name github-actions
+        git config user.email github-actions@github.com
+        for i in {1..5}; do
+          git add .
+          git commit -m "- backfill '${{ github.event.inputs.store }}' releases" || true
+          if git pull --rebase && git push origin HEAD:main; then
+            break
+          fi
+          echo "Push failed, retrying ($i/5)..."
+          sleep 2
+        done

@@ -34,7 +34,8 @@ def display_help():
     print("")
     print("  debug options:")
     print("    -fix-store <store_name> - specify a store run custom fixup code")
-    print("    -backfill <store_name> - re-scrape release pages to fill missing core fields (artist/title/label/cat) for entries in the store registry")
+    print("    -backfill <store_name> - re-scrape release pages to fill missing core fields (artist/title/label/cat/artwork/audio) for entries in the store registry")
+    print("      -limit <integer> - only repair this many entries, so a large backlog can be worked through in chunks across runs")
 
 
 # call this function to regulate scraper speed
@@ -667,6 +668,10 @@ if __name__ == '__main__':
         backfill_fn = getattr(__import__(store), "backfill_missing", None)
         if backfill_fn:
             backfill_fn()
+        else:
+            # otherwise the run just succeeds silently and looks like a no-op
+            print(f"error: store '{store}' has no backfill_missing implementation", flush=True)
+            exit(1)
         exit(0)
 
     if "-store" in sys.argv:

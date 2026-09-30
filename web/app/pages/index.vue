@@ -256,6 +256,7 @@ function tags(release) { return release.store_tags || {} }
 // ── Player ────────────────────────────────────────────────────────────────────
 
 const menuOpen = useState('menuOpen', () => false)
+const { isLive } = useLiveStatus()
 
 const { activeId, activeTrack, isPlaying, releaseList, tileClickAudio: tileClick, prevTrack, nextTrack, dotClick, computeDots, getTracks, getTrackNames, stopAll } = usePlayer()
 
@@ -301,6 +302,9 @@ function onSwipeEnd(release, e) {
         <NuxtLink to="/discogs" class="viewbtn stores-link">Discogs &rsaquo;</NuxtLink>
       </nav>
       <div class="header-right">
+        <NuxtLink v-if="isLive" to="/live" class="live-nav">
+          <span class="live-nav-dot" />live
+        </NuxtLink>
         <NuxtLink to="/likes" class="likes-nav">
           <span class="fa">&#xf004;</span>
         </NuxtLink>
@@ -332,7 +336,7 @@ function onSwipeEnd(release, e) {
             @touchstart.passive="onSwipeStart"
             @touchend.passive="onSwipeEnd(release, $event)"
           >
-              <p v-if="release.cat" class="r-cat">{{ release.cat }}</p>
+              <p v-if="labelCat(release)" class="r-cat">{{ labelCat(release) }}</p>
               <div class="artwork-wrap">
                 <img
                   :key="activeId === release.id ? `art-${release.id}-${activeTrack}` : `art-${release.id}`"

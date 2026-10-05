@@ -1360,6 +1360,11 @@ FILE_REASONS = {
         "or a snippet rather than the whole thing, which is common among links "
         "on a release page. the track is left missing so another source can "
         "have a go. -no-length-check accepts them anyway"),
+    "deleted": (
+        "the file was deleted from the library by hand and -filecheck took "
+        "that to mean it was wrong. the copy it came from will not be taken "
+        "again. drop the right file in the release folder and -filecheck "
+        "again to adopt it"),
 }
 
 # the two ways the release links come up empty before a download is even tried
@@ -3367,22 +3372,28 @@ def key_tracks(entry):
     if not tracks:
         return set()
 
-    openers = side_openers(tracks.keys())
     known = sorted(s for s in (track_seconds(t) for t in tracks.values()) if s)
     typical = known[len(known) // 2] if known else None
 
-    keys = set(openers)
+    minor = set()
     for position, track in tracks.items():
-        if position in keys:
-            continue
         title = str((track or {}).get("title") or "")
-        if MINOR_TITLE_RE.search(title):
-            continue
         seconds = track_seconds(track)
-        # short against everything else on this record, so a filler cut
-        if typical and seconds and seconds < typical * 0.5:
-            continue
-        keys.add(position)
+        # named like a tool, or short against everything else on this record
+        if MINOR_TITLE_RE.search(title):
+            minor.add(position)
+        elif typical and seconds and seconds < typical * 0.5:
+            minor.add(position)
+
+    # a filler cut can be a side opener too: a twelve with one track a side and
+    # a locked groove on the flip opens side B with the groove. what the record
+    # says about the track beats where the track sits
+    keys = {position for position in tracks if position not in minor}
+
+    # unless that leaves nothing, which means the reasoning does not apply to
+    # this record, and the side openers are the best guess available
+    if not keys:
+        keys = side_openers(tracks.keys())
     return keys
 
 
@@ -3443,29 +3454,60 @@ def outstanding_tracks(ledger):
     return exhausted, retryable
 
 
+def count_collection(discogs):
+    """
+    How many distinct releases the collection holds, and how many entries.
+
+    The two are not the same and only one of them can be compared with the
+    ledger. A collection has an entry per copy owned, so owning a record twice
+    is two entries and one release, while the ledger is keyed by release id and
+    collapses them. Counting entries and calling it releases makes a library
+    that is finished look three short.
+
+    Costs a page per fifty entries, which is why the answer gets remembered.
+    """
+    user = discogs_call("identity", discogs.identity)
+    folder = pick_folder(user, arg_value("-folder"))
+    if folder is None:
+        return None
+
+    seen = set()
+    entries = 0
+    for item in iter_releases(folder.releases):
+        entries += 1
+        seen.add(item.release.id)
+
+    return {
+        "folder": folder.name,
+        "entries": entries,
+        "releases": len(seen),
+        "copies": entries - len(seen),
+        "read_at": datetime.datetime.now().isoformat(timespec="seconds"),
+    }
+
+
 def collection_size(discogs, ledger):
     """
-    How many releases are in the collection, to count the ledger against.
+    The collection counts to measure the ledger against, read or remembered.
 
-    One request, and the answer is kept in the ledger so the report still has a
-    number to show when discogs is not reachable. A remembered count is marked
-    as such rather than passed off as current.
+    Remembered by default, because walking the collection is the expensive part
+    of an otherwise instant report and it only changes when records are added.
+    -refresh reads it again.
     """
+    stored = ledger.get("collection")
+    if stored and "-refresh" not in sys.argv:
+        return stored, False
+
     if discogs is not None:
         try:
-            user = discogs_call("identity", discogs.identity)
-            folder = pick_folder(user, arg_value("-folder"))
-            if folder is not None:
-                ledger["collection_count"] = folder.count
-                ledger["collection_folder"] = folder.name
-                return folder.count, folder.name, True
+            counts = count_collection(discogs)
+            if counts:
+                ledger["collection"] = counts
+                return counts, True
         except Exception as e:
-            print(f"note: could not read the collection size: {e}")
+            print(f"note: could not read the collection: {e}")
 
-    remembered = ledger.get("collection_count")
-    if remembered:
-        return remembered, ledger.get("collection_folder", ""), False
-    return None, "", False
+    return stored, False
 
 
 def status_report(root, ledger, discogs=None):
@@ -3498,14 +3540,22 @@ def status_report(root, ledger, discogs=None):
     print(f"\nlibrary status for {root}")
 
     held = len(ledger["releases"])
-    total, folder_name, current = collection_size(discogs, ledger)
-    if total:
+    counts, current = collection_size(discogs, ledger)
+    if counts:
+        folder_name = counts.get("folder", "")
+        distinct = counts.get("releases") or 0
         where = f" in '{folder_name}'" if folder_name else ""
-        when = "" if current else " (collection size from an earlier session)"
-        print(f"\n{held} / {total} releases{where} are in the ledger{when}")
-        if total > held:
-            print(f"    {total - held:5}  never looked at, run a rip to reach "
-                  f"them")
+        print(f"\n{held} / {distinct} releases{where} are in the ledger")
+        if counts.get("copies"):
+            print(f"    {counts.get('entries', 0)} collection entries, "
+                  f"{counts['copies']} of them extra copies of a record "
+                  f"already counted")
+        if not current:
+            print(f"    counted {counts.get('read_at', 'earlier')}, "
+                  f"-refresh reads the collection again")
+        if distinct > held:
+            print(f"    {distinct - held:5}  never looked at, run a rip to "
+                  f"reach them")
     else:
         print(f"\n{held} releases in the ledger")
 
@@ -3597,6 +3647,88 @@ def status_report(root, ledger, discogs=None):
             mark = "*" if key in keys else " "
             print(f"    {mark} {key:>4}  {track.get('title', '?')}")
             print(f"            {why}")
+
+
+def added_sort_key(entry):
+    """
+    When a release entered the collection, for ordering newest first.
+
+    Entries with no date fall to the end rather than to the top: an old ledger
+    entry with nothing recorded is not news.
+    """
+    return str(entry.get("date_added") or entry.get("ripped_at") or "")
+
+
+def todo_report(root, ledger):
+    """
+    The releases still needing tracks, newest in the collection first.
+
+    A worklist rather than a statistic. Newest first because that is the order
+    records get bought and the order they are wanted in, and limited by -count
+    so an evening's ripping can be a short list rather than the whole backlog.
+    """
+    unfinished = []
+    for entry in ledger["releases"].values():
+        if entry.get("status") == STATUS_COMPLETE:
+            continue
+        tracks = entry.get("tracks") or {}
+        missing = sorted(key for key, track in tracks.items()
+                         if (track or {}).get("status") != "ok")
+        # nothing itemised, so fall back to whatever the entry claims
+        if not missing:
+            missing = list(entry.get("missing") or [])
+        if not missing:
+            continue
+        keys = key_tracks(entry)
+        if "-key-only" in sys.argv and not any(k in keys for k in missing):
+            continue
+        unfinished.append((entry, missing, keys))
+
+    if not unfinished:
+        print("\nnothing outstanding, every release in the ledger is complete")
+        return
+
+    unfinished.sort(key=lambda row: added_sort_key(row[0]), reverse=True)
+    limit = arg_int("-count")
+    shown = unfinished[:limit] if limit else unfinished
+
+    total_tracks = sum(len(missing) for _e, missing, _k in unfinished)
+    print(f"\n{len(unfinished)} releases still needing {total_tracks} tracks, "
+          f"newest in the collection first")
+    if limit and limit < len(unfinished):
+        print(f"showing {len(shown)}, -count changes that")
+    if "-key-only" in sys.argv:
+        print("only releases missing a key track, -key-only")
+
+    for number, (entry, missing, keys) in enumerate(shown, start=1):
+        catno = entry.get("catno")
+        added = str(entry.get("date_added") or "")[:10]
+        done = entry.get("ripped", 0)
+        total = entry.get("total", 0)
+        print(f"\n{number}. {entry.get('artist', '?')} - "
+              f"{entry.get('title', '?')}" + (f" ({catno})" if catno else ""))
+        detail = [status_label(entry.get("status", "?"))]
+        if total:
+            detail.append(f"{done}/{total} tracks")
+        if added:
+            detail.append(f"added {added}")
+        print(f"   {', '.join(detail)}")
+        if entry.get("url"):
+            print(f"   {entry['url']}")
+
+        tracks = entry.get("tracks") or {}
+        for key in missing:
+            track = tracks.get(key) or {}
+            mark = "*" if key in keys else " "
+            why = track.get("error") or track.get("error_kind") or ""
+            title = track.get("title", "?")
+            print(f"   {mark} {key:>4}  {title}"
+                  + (f"   {clip(why, 60)}" if why else ""))
+        print(f"   rip it: -release {entry.get('id')} -retry")
+
+    print("\n* is a key track: a side opener, or one this record gives no "
+          "reason to think")
+    print("is a tool or a locked groove.")
 
 
 def expected_lengths(discogs, entry):
@@ -3777,6 +3909,387 @@ def audit_library(discogs, root, ledger, dry_run):
         save_ledger(root, ledger)
 
 
+# ----------------------------------------------------------------------------
+# bringing the ledger back in line with the disk
+# ----------------------------------------------------------------------------
+
+# ledger fields that describe the release's history rather than its contents,
+# kept when -filecheck rebuilds an entry. everything else is worked out afresh
+FILECHECK_CARRY = ("date_added", "attempts", "source_dir", "ripped_at")
+
+
+def library_files(release_dir):
+    """Audio files under a release directory, as paths relative to it."""
+    if not os.path.isdir(release_dir):
+        return []
+    return [os.path.relpath(path, release_dir)
+            for path in source_audio_files(release_dir)]
+
+
+def scan_release_files(root, entry):
+    """
+    What a release directory holds that the ledger does not know about.
+
+    Returns (deleted, new): the track keys the ledger has a file for that is no
+    longer there, and the audio files on disk the ledger does not account for.
+    Compared case insensitively, since the library lives on windows as often as
+    not and a file renamed only in case is the same file there.
+    """
+    release_dir = os.path.join(root, entry["dir"])
+    deleted = []
+    known = set()
+    for key, track in (entry.get("tracks") or {}).items():
+        track = track or {}
+        if track.get("status") != "ok" or not track.get("file"):
+            continue
+        known.add(os.path.normcase(track["file"]))
+        if not os.path.exists(os.path.join(release_dir, track["file"])):
+            deleted.append(key)
+    new = [name for name in library_files(release_dir)
+           if os.path.normcase(name) not in known]
+    return sorted(deleted), new
+
+
+def forget_deleted(entry, keys):
+    """
+    Treat a file deleted from the library as a flag on its track.
+
+    Deleting is the quick way to say a rip is wrong, so it gets the same
+    treatment a written flag does: the copy it came from is never taken again,
+    and the source that produced it is forgotten so the next ordinary run goes
+    looking afresh rather than reading the release as done.
+    """
+    tracks = entry.get("tracks") or {}
+    now = datetime.datetime.now().isoformat(timespec="seconds")
+    forget = set()
+    for key in keys:
+        track = tracks[key]
+        identity = track_identity(track)
+        if identity:
+            entry.setdefault("rejected", []).append({
+                "id": identity,
+                "track": key,
+                "reason": "deleted by hand",
+                "source": track.get("source", ""),
+                "when": now,
+            })
+        if track.get("source"):
+            forget.add(track["source"])
+        track.pop("file", None)
+        track["status"] = "missing"
+        track["error"] = "file deleted by hand"
+        track["error_kind"] = "deleted"
+    entry["sources_tried"] = [s for s in tried_sources(entry)
+                              if s not in forget]
+
+
+def recount_entry(entry):
+    """Totals and status for an entry changed without a discogs fetch."""
+    tracks = entry.get("tracks") or {}
+    total = entry.get("total") or len(tracks)
+    ripped = sum(1 for track in tracks.values()
+                 if (track or {}).get("status") == "ok")
+    missing = list(entry.get("missing") or [])
+    for key, track in tracks.items():
+        if (track or {}).get("status") != "ok" and key not in missing:
+            missing.append(key)
+    entry["ripped"] = ripped
+    entry["missing"] = missing
+    if ripped >= total:
+        entry["status"] = STATUS_COMPLETE
+    elif entry.get("status") == STATUS_QUEUED:
+        pass
+    elif ripped:
+        entry["status"] = STATUS_PARTIAL
+    else:
+        entry["status"] = STATUS_NO_MATCH
+
+
+def same_path(a, b):
+    return os.path.normcase(os.path.abspath(a)) == \
+        os.path.normcase(os.path.abspath(b))
+
+
+def adopt_dropped_file(ctx, index, src):
+    """
+    Move a file dropped into the release directory into its track's place.
+
+    The user put it there on purpose, so it is never deleted: a file that will
+    not do is left where it is and said so, and an original is only removed
+    once the converted copy has verified and been tagged. Returns True if the
+    track is now ripped.
+    """
+    track = ctx["tracks"][index]
+    key = track_key(ctx, index)
+    target = track_path(ctx, index)
+    name = os.path.relpath(src, ctx["release_dir"])
+    ext = os.path.splitext(src)[1].lower()
+
+    track_entry = new_track_entry(ctx, index)
+    track_entry["dropped_file"] = name
+    track_entry["format"] = ext
+    print(f"    [ .. ] {key} {track['title']} <- {name}")
+
+    if ext == ".mp3":
+        # check before moving, so a file that will not do keeps its own name
+        ok, detail = verify_audio(src, track["duration"])
+        if not ok:
+            print(f"    [fail] {key} {name}: {detail.get('error')}, "
+                  f"left where it is")
+            return False
+        track_entry["converted"] = False
+        if not same_path(src, target):
+            try:
+                os.replace(src, target)
+            except OSError as e:
+                print(f"    [fail] {key} could not rename {name}: {e}")
+                return False
+        return finish_track(ctx, index, target, SOURCE_LOCAL, "", track_entry)
+
+    ok, error = to_mp3(src, target, ctx["quality"])
+    track_entry["converted"] = True
+    if not ok:
+        print(f"    [fail] {key} {name}: {error}")
+        return False
+    if not finish_track(ctx, index, target, SOURCE_LOCAL, "", track_entry):
+        try:
+            if os.path.exists(target):
+                os.remove(target)
+        except OSError:
+            pass
+        print(f"    [fail] {key} {name} left where it is")
+        return False
+    try:
+        os.remove(src)
+    except OSError:
+        # the mp3 is in place, a leftover original is untidy but harmless
+        pass
+    return True
+
+
+def sync_release(release, root, token, previous, new_files):
+    """
+    Rebuild a release's ledger entry from what is in its directory.
+
+    The same make_context every source uses, so the already on disk check, the
+    file names and the tags are the ones a rip would give. On top of that, the
+    files dropped in are matched to the tracks still missing and moved into
+    their places. Returns (entry, files left unmatched, tracks adopted).
+    """
+    ctx, entry = make_context(release, root, token, previous)
+    if ctx is None:
+        return entry, new_files, 0
+
+    previous_tracks = previous.get("tracks") or {}
+    release_dir = ctx["release_dir"]
+
+    # dropped in already carrying the right name: adopted off disk by the
+    # context, but never tagged by us, so it is treated as a new file
+    named = [index for index, track in ctx["done"].items()
+             if (previous_tracks.get(track_key(ctx, index)) or {})
+             .get("status") != "ok"]
+    # the rest were ripped before, so keep what the ledger knew of where each
+    # came from. without it a later deletion has nothing to record as rejected
+    for index, track_entry in ctx["done"].items():
+        if index not in named:
+            old = previous_tracks.get(track_key(ctx, index)) or {}
+            for field, value in old.items():
+                track_entry.setdefault(field, value)
+
+    taken = {os.path.normcase(track["file"]) for track in ctx["done"].values()}
+    paths = [os.path.join(release_dir, name) for name in new_files
+             if os.path.normcase(name) not in taken]
+
+    if ((named or paths) and ctx["cover"][0] is None
+            and "-no-cover" not in sys.argv):
+        ctx["cover"] = fetch_cover(release, token)
+
+    adopted = 0
+    for index in named:
+        track_entry = ctx["done"][index]
+        track_entry["source"] = SOURCE_LOCAL
+        try:
+            tag_mp3(track_path(ctx, index), track_meta(ctx, index, ""),
+                    ctx["cover"][0], ctx["cover"][1])
+            track_entry["tagged"] = True
+        except Exception as e:
+            track_entry["tagged"] = False
+            track_entry["tag_error"] = f"{type(e).__name__}: {e}"
+        adopted += 1
+        print(f"    [ ok ] {track_key(ctx, index)} "
+              f"{ctx['tracks'][index]['title']} (already named, tagged)")
+
+    pending = pending_tracks(ctx)
+    candidates = local_candidates(paths)
+    if pending and candidates:
+        assignments, _whole, _unmatched = match_videos_to_tracks(
+            ctx["tracks"], candidates, ctx["artists"], ctx["label"],
+            ctx["catno"], ctx["artist"])
+        for index in pending:
+            match = assignments.get(index)
+            if match and adopt_dropped_file(ctx, index,
+                                            match["candidate"]["path"]):
+                adopted += 1
+
+    # still missing: keep whatever the ledger knew about why, a deletion or a
+    # source that came up empty, rather than forgetting it
+    for index in pending_tracks(ctx):
+        key = track_key(ctx, index)
+        if key not in entry["tracks"] and key in previous_tracks:
+            entry["tracks"][key] = previous_tracks[key]
+
+    entry["sources_tried"] = list(tried_sources(previous))
+    if adopted and SOURCE_LOCAL not in entry["sources_tried"]:
+        entry["sources_tried"].append(SOURCE_LOCAL)
+    finish_release(ctx)
+
+    unused = [os.path.relpath(path, release_dir) for path in paths
+              if os.path.exists(path)]
+    return entry, unused, adopted
+
+
+def stray_folders(root, ledger):
+    """Folders of audio in the library that no ledger entry owns."""
+    known = {os.path.normcase(entry["dir"])
+             for entry in ledger["releases"].values() if entry.get("dir")}
+    return [name for name in sorted(os.listdir(root))
+            if os.path.isdir(os.path.join(root, name))
+            and not name.startswith(".")
+            and os.path.normcase(name) not in known
+            and source_audio_files(os.path.join(root, name))]
+
+
+def filecheck_library(discogs, root, ledger, token, dry_run):
+    """
+    Bring the ledger back in line with what is actually in the library.
+
+    Two kinds of hand editing are picked up. A file deleted from a release
+    directory is taken as a verdict that it was wrong, recorded as rejected and
+    its source forgotten, so the next run goes looking for a better copy. A file
+    dropped into a release directory is matched to the track it belongs to,
+    renamed to the library's naming and tagged from discogs, so it is
+    indistinguishable from one that was ripped.
+
+    Deletions are settled off the ledger alone. Only a release with new files
+    costs a discogs fetch, for the tracklist to match them against.
+    """
+    count_limit = arg_int("-count")
+    releases = sorted(ledger["releases"].items(),
+                      key=lambda kv: (str(kv[1].get("artist", "")),
+                                      str(kv[1].get("title", ""))))
+
+    print(f"\nchecking files in {root} against the ledger")
+    changed = 0
+    deleted_total = 0
+    adopted_total = 0
+    unused_rows = []
+
+    try:
+        for key, entry in releases:
+            if not entry.get("dir"):
+                continue
+            if count_limit is not None and changed >= count_limit:
+                print(f"\nreached -count {count_limit}, stopping")
+                break
+
+            deleted, new = scan_release_files(root, entry)
+            if not deleted and not new:
+                continue
+
+            changed += 1
+            name = f"{entry.get('artist', '?')} - {entry.get('title', '?')}"
+            print(f"\n{name} ({key})")
+            tracks = entry.get("tracks") or {}
+            for position in deleted:
+                track = tracks[position]
+                print(f"    [gone] {position} {track.get('title', '?')}: "
+                      f"{track.get('file')}")
+            for file_name in new:
+                print(f"    [new ] {file_name}")
+            if dry_run:
+                continue
+
+            if deleted:
+                forget_deleted(entry, deleted)
+                recount_entry(entry)
+                deleted_total += len(deleted)
+
+            if new:
+                try:
+                    time.sleep(arg_float("-api-sleep", API_SLEEP))
+                    release = discogs_call(
+                        f"release {entry.get('id')}",
+                        lambda: fetch_release(discogs, entry.get("id")))
+                    synced, unused, adopted = sync_release(
+                        release, root, token, entry, new)
+                except KeyboardInterrupt:
+                    raise
+                except Exception as e:
+                    # the deletions above still stand, so keep them
+                    print(f"    failed: {type(e).__name__}: {e}")
+                    if verbose():
+                        import traceback
+                        traceback.print_exc()
+                    save_ledger(root, ledger)
+                    continue
+
+                for field in FILECHECK_CARRY:
+                    if field in entry:
+                        synced[field] = entry[field]
+                if unused:
+                    synced["unused_files"] = unused
+                    unused_rows.extend((name, f) for f in unused)
+                adopted_total += adopted
+                entry = synced
+                ledger["releases"][key] = entry
+
+            entry["checked_at"] = datetime.datetime.now().isoformat(
+                timespec="seconds")
+            save_ledger(root, ledger)
+            print(f"    -> {status_label(entry.get('status'))}: "
+                  f"{entry.get('ripped', 0)}/{entry.get('total', 0)} tracks"
+                  + (f", missing {', '.join(entry.get('missing', []))}"
+                     if entry.get("missing") else ""))
+
+    except KeyboardInterrupt:
+        print("\ninterrupted")
+
+    if not dry_run:
+        save_ledger(root, ledger)
+
+    print("\nfilecheck summary")
+    print(f"    releases changed: {changed}")
+    if dry_run:
+        print("    dry run, nothing written")
+    else:
+        print(f"    deleted files recorded: {deleted_total}")
+        print(f"    new files adopted: {adopted_total}")
+
+    if unused_rows:
+        print(f"\n{len(unused_rows)} new files matched no missing track and "
+              f"were left as they are:")
+        for name, file_name in unused_rows:
+            print(f"    {name}: {file_name}")
+        print("either the track already has a file, so delete that one first,")
+        print("or the file does not line up with the tracklist. naming it with")
+        print("the position, 'A1 ...', is the easiest thing to match.")
+
+    # not guessed at here: -input matches a folder by catalogue number
+    strays = stray_folders(root, ledger)
+    if strays:
+        print(f"\n{len(strays)} folders with audio the ledger knows nothing "
+              f"about:")
+        for name in strays:
+            print(f"    {name}")
+        print("move them out of the library and bring them in with")
+        print("    -input <folder>")
+
+    if deleted_total:
+        print("\nthe deleted tracks are missing again with their sources "
+              "forgotten, so the")
+        print("next ordinary run goes looking for a better copy.")
+
+
 def slsk_test():
     """
     Check the slskd connection and print what we are talking to.
@@ -3815,6 +4328,14 @@ def rip_collection(discogs, token):
 
     # a status report only reads the ledger, so it needs nothing else set up and
     # touches nothing. first, so it works even on a directory that is not there
+    # a worklist, read off the ledger like -status and writing nothing
+    if "-todo" in sys.argv:
+        if not os.path.isdir(root):
+            print(f"error: no library at '{root}'")
+            return
+        todo_report(root, load_ledger(root))
+        return
+
     if "-status" in sys.argv:
         if not os.path.isdir(root):
             print(f"error: no library at '{root}'")
@@ -3834,6 +4355,15 @@ def rip_collection(discogs, token):
             print(f"error: -audit needs a library to read, '{root}' is not there")
             return
         audit_library(discogs, root, load_ledger(root), dry_run)
+        return
+
+    # files added or deleted by hand, brought into the ledger. like the audit it
+    # works on a library that is already there and does nothing else after
+    if "-filecheck" in sys.argv:
+        if not os.path.isdir(root):
+            print(f"error: -filecheck needs a library to read, '{root}' is not there")
+            return
+        filecheck_library(discogs, root, load_ledger(root), token, dry_run)
         return
 
     if not os.path.isdir(root):

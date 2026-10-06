@@ -4290,6 +4290,177 @@ def filecheck_library(discogs, root, ledger, token, dry_run):
         print("next ordinary run goes looking for a better copy.")
 
 
+# ----------------------------------------------------------------------------
+# renaming loose files by their own tags
+# ----------------------------------------------------------------------------
+
+# every rename -rename makes is appended here, in the directory it was pointed
+# at, so a run that went wrong can be worked back by hand
+RENAME_LOG_NAME = ".diig-rename-log.json"
+
+def read_name_tags(path):
+    """
+    The few tags a filename is made from, whatever the format.
+
+    The easy interface covers mp3, flac, m4a and ogg with one set of names. wav
+    and aiff carry id3 inside the container and are not covered by it, so for
+    those the frames are read directly. Returns a dict, empty if the file has
+    no tags or cannot be read.
+    """
+    try:
+        import mutagen
+        media = mutagen.File(path, easy=True)
+    except Exception:
+        return {}
+    if media is None or not media.tags:
+        return {}
+
+    def first(*names):
+        for name in names:
+            try:
+                value = media.tags.get(name)
+            except Exception:
+                value = None
+            if isinstance(value, list):
+                value = value[0] if value else None
+            if value is not None and str(value).strip():
+                return normalize_unicode(str(value)).strip()
+        return ""
+
+    tags = media.tags
+    if hasattr(tags, "getall") and not hasattr(tags, "valid_keys"):
+        # raw id3 in a wav or aiff, so the frame ids rather than easy names
+        return {
+            "title": first("TIT2"),
+            "artist": first("TPE1"),
+            "album_artist": first("TPE2"),
+        }
+    return {
+        "title": first("title"),
+        "artist": first("artist"),
+        "album_artist": first("albumartist", "album artist"),
+    }
+
+
+def tagged_name(tags):
+    """
+    "Artist - Title" from a file's tags, without extension.
+
+    Loose files have no release to sit in, so no track numbers: the name alone
+    has to say what it is. None when there is no title to name it by.
+    """
+    title = tags.get("title")
+    if not title:
+        return None
+    artist = tags.get("artist") or tags.get("album_artist") or ""
+    return sanitize_filename(f"{artist} - {title}" if artist else title)
+
+
+def rename_library():
+    """
+    Rename every audio file under -dir to the library's naming, by its tags.
+
+    For music that is not in the collection, so there is no discogs to ask: the
+    file's own tags are all there is. Files stay in their folders and keep their
+    format, only the name changes. Nothing without a title tag is touched, and
+    -dry-run shows the plan first.
+    """
+    make_console_printable()
+    root = arg_value("-dir")
+    if not root:
+        print("error: -rename requires -dir <directory>")
+        return
+    root = os.path.abspath(os.path.expanduser(root))
+    if not os.path.isdir(root):
+        print(f"error: -dir '{root}' is not a directory")
+        return
+    if not check_mutagen():
+        return
+
+    # the rip library is already named this way, and a rename there would look
+    # to -filecheck like a deleted file and a new one
+    if os.path.exists(ledger_path(root)):
+        print(f"error: {root} is a rip library, it has a ledger")
+        print("       its files are already named from discogs, and renaming")
+        print("       them would put the ledger out of step")
+        return
+
+    dry_run = "-dry-run" in sys.argv
+    files = [path for path in source_audio_files(root)
+             if REJECTED_DIR not in path.split(os.sep)]
+    print(f"{'planning renames' if dry_run else 'renaming'} in {root}")
+    print(f"{len(files)} audio files")
+
+    renamed = []
+    untagged = []
+    failed = []
+    unchanged = 0
+    # names given out this run per folder, so two files with the same tags
+    # cannot both be renamed onto one name
+    claimed = {}
+
+    for path in files:
+        folder, old_name = os.path.split(path)
+        ext = os.path.splitext(old_name)[1].lower()
+        stem = tagged_name(read_name_tags(path))
+        if not stem:
+            untagged.append(path)
+            continue
+
+        taken = claimed.setdefault(folder, set())
+        new_name = stem + ext
+        count = 2
+        while (os.path.normcase(new_name) in taken or
+               (os.path.exists(os.path.join(folder, new_name))
+                and not same_path(os.path.join(folder, new_name), path))):
+            new_name = f"{stem} ({count}){ext}"
+            count += 1
+        taken.add(os.path.normcase(new_name))
+
+        if new_name == old_name:
+            unchanged += 1
+            continue
+
+        relative = os.path.relpath(folder, root)
+        where = "" if relative == "." else relative + os.sep
+        print(f"    {where}{old_name}")
+        print(f"        -> {new_name}")
+        if dry_run:
+            renamed.append((path, os.path.join(folder, new_name)))
+            continue
+        try:
+            os.rename(path, os.path.join(folder, new_name))
+            renamed.append((path, os.path.join(folder, new_name)))
+        except OSError as e:
+            failed.append((path, str(e)))
+            print(f"        [fail] {e}")
+
+    if renamed and not dry_run:
+        log_path = os.path.join(root, RENAME_LOG_NAME)
+        try:
+            log = json.loads(open(log_path, "r", encoding="utf-8").read())
+        except (OSError, ValueError):
+            log = []
+        log.append({
+            "when": datetime.datetime.now().isoformat(timespec="seconds"),
+            "renames": [{"from": os.path.relpath(a, root),
+                         "to": os.path.relpath(b, root)} for a, b in renamed],
+        })
+        open(log_path, "w", encoding="utf-8").write(json.dumps(log, indent=4))
+
+    print("\nrename summary")
+    print(f"    {'would rename' if dry_run else 'renamed'}: {len(renamed)}")
+    print(f"    already named: {unchanged}")
+    if failed:
+        print(f"    failed: {len(failed)}")
+    if untagged:
+        print(f"\n{len(untagged)} files have no title tag and were left alone:")
+        for path in untagged:
+            print(f"    {os.path.relpath(path, root)}")
+    if renamed and not dry_run:
+        print(f"\nevery rename is listed in {RENAME_LOG_NAME} in {root}")
+
+
 def slsk_test():
     """
     Check the slskd connection and print what we are talking to.

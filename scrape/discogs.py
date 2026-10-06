@@ -802,6 +802,10 @@ def display_help():
     print("                      a file dropped into a release folder is")
     print("                      matched to its track, renamed and tagged.")
     print("                      -dry-run lists the changes without acting")
+    print("  -rename             rename loose files under -dir from their own")
+    print("                      tags to 'Artist - Title', no track numbers.")
+    print("                      offline, never on a rip library, and logged")
+    print("                      to .diig-rename-log.json. try -dry-run first")
     print("")
     print("  a bad rip is flagged by hand in the ledger, .diig-rip-ledger.json")
     print("  in the output directory. add a \"flag\" note with the reason, on")
@@ -842,6 +846,11 @@ def display_help():
 def main():
     if "-help" in sys.argv:
         display_help()
+        return
+
+    # renames by the files' own tags, nothing to ask discogs
+    if "-rip" in sys.argv and "-rename" in sys.argv:
+        rip.rename_library()
         return
 
     if "-discogs-key" in sys.argv:

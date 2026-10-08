@@ -806,6 +806,10 @@ def display_help():
     print("                      tags to 'Artist - Title', no track numbers.")
     print("                      offline, never on a rip library, and logged")
     print("                      to .diig-rename-log.json. try -dry-run first")
+    print("  -tag                the other way round: tag loose files under")
+    print("                      -dir with the artist and title from an")
+    print("                      'Artist - Title' filename. fills blank tags,")
+    print("                      -force overwrites ones that differ")
     print("")
     print("  a bad rip is flagged by hand in the ledger, .diig-rip-ledger.json")
     print("  in the output directory. add a \"flag\" note with the reason, on")
@@ -848,9 +852,12 @@ def main():
         display_help()
         return
 
-    # renames by the files' own tags, nothing to ask discogs
+    # loose files, worked from their own tags and names, nothing to ask discogs
     if "-rip" in sys.argv and "-rename" in sys.argv:
         rip.rename_library()
+        return
+    if "-rip" in sys.argv and "-tag" in sys.argv:
+        rip.tag_from_names()
         return
 
     if "-discogs-key" in sys.argv:

@@ -4356,6 +4356,38 @@ def tagged_name(tags):
     return sanitize_filename(f"{artist} - {title}" if artist else title)
 
 
+def loose_root(mode):
+    """
+    The -dir a loose files mode works on, or None having said why not.
+
+    Never the rip library: its names and tags come from discogs, and changing
+    either by hand puts the ledger out of step, a rename looking to -filecheck
+    like a deleted file and a new one.
+    """
+    make_console_printable()
+    root = arg_value("-dir")
+    if not root:
+        print(f"error: {mode} requires -dir <directory>")
+        return None
+    root = os.path.abspath(os.path.expanduser(root))
+    if not os.path.isdir(root):
+        print(f"error: -dir '{root}' is not a directory")
+        return None
+    if not check_mutagen():
+        return None
+    if os.path.exists(ledger_path(root)):
+        print(f"error: {root} is a rip library, it has a ledger")
+        print("       its files are named and tagged from discogs already,")
+        print(f"       and {mode} would put the ledger out of step")
+        return None
+    return root
+
+
+def loose_files(root):
+    return [path for path in source_audio_files(root)
+            if REJECTED_DIR not in path.split(os.sep)]
+
+
 def rename_library():
     """
     Rename every audio file under -dir to the library's naming, by its tags.
@@ -4365,29 +4397,12 @@ def rename_library():
     format, only the name changes. Nothing without a title tag is touched, and
     -dry-run shows the plan first.
     """
-    make_console_printable()
-    root = arg_value("-dir")
+    root = loose_root("-rename")
     if not root:
-        print("error: -rename requires -dir <directory>")
-        return
-    root = os.path.abspath(os.path.expanduser(root))
-    if not os.path.isdir(root):
-        print(f"error: -dir '{root}' is not a directory")
-        return
-    if not check_mutagen():
-        return
-
-    # the rip library is already named this way, and a rename there would look
-    # to -filecheck like a deleted file and a new one
-    if os.path.exists(ledger_path(root)):
-        print(f"error: {root} is a rip library, it has a ledger")
-        print("       its files are already named from discogs, and renaming")
-        print("       them would put the ledger out of step")
         return
 
     dry_run = "-dry-run" in sys.argv
-    files = [path for path in source_audio_files(root)
-             if REJECTED_DIR not in path.split(os.sep)]
+    files = loose_files(root)
     print(f"{'planning renames' if dry_run else 'renaming'} in {root}")
     print(f"{len(files)} audio files")
 
@@ -4459,6 +4474,119 @@ def rename_library():
             print(f"    {os.path.relpath(path, root)}")
     if renamed and not dry_run:
         print(f"\nevery rename is listed in {RENAME_LOG_NAME} in {root}")
+
+
+def name_to_tags(path):
+    """
+    (artist, title) read off an "Artist - Title" filename, or None.
+
+    Split on the first " - " only: artist names almost never carry one, titles
+    often do, "Gypsy Woman (She's Homeless) - Basement Mix" and the like.
+    """
+    stem = normalize_unicode(os.path.splitext(os.path.basename(path))[0])
+    artist, sep, title = stem.partition(" - ")
+    artist, title = artist.strip(), title.strip()
+    if not sep or not artist or not title:
+        return None
+    return artist, title
+
+
+def write_name_tags(path, artist, title):
+    """Write artist and title onto any format mutagen can tag."""
+    import mutagen
+    media = mutagen.File(path, easy=True)
+    if media is None:
+        raise ValueError("not readable as audio")
+    if media.tags is None:
+        media.add_tags()
+    tags = media.tags
+    if hasattr(tags, "getall") and not hasattr(tags, "valid_keys"):
+        # raw id3 in a wav or aiff, so frames rather than easy names
+        from mutagen.id3 import TIT2, TPE1
+        tags.setall("TPE1", [TPE1(encoding=3, text=[artist])])
+        tags.setall("TIT2", [TIT2(encoding=3, text=[title])])
+    else:
+        tags["artist"] = [artist]
+        tags["title"] = [title]
+    media.save()
+
+
+def tag_from_names():
+    """
+    Tag every audio file under -dir with the artist and title in its name.
+
+    The other way round from -rename, for loose files with no tags at all: name
+    them "Artist - Title" first, by hand or otherwise, and this puts that into
+    the tags so players and the library see the same thing. A tag that already
+    says something different is left alone unless -force, since a filename is
+    the weaker evidence of the two.
+    """
+    root = loose_root("-tag")
+    if not root:
+        return
+
+    dry_run = "-dry-run" in sys.argv
+    force = "-force" in sys.argv
+    files = loose_files(root)
+    print(f"{'planning tags' if dry_run else 'tagging'} in {root}")
+    print(f"{len(files)} audio files")
+
+    tagged = 0
+    unchanged = 0
+    unnamed = []
+    conflicts = []
+    failed = []
+
+    for path in files:
+        name = os.path.relpath(path, root)
+        parsed = name_to_tags(path)
+        if not parsed:
+            unnamed.append(name)
+            continue
+        artist, title = parsed
+        current = read_name_tags(path)
+        have = (current.get("artist", ""), current.get("title", ""))
+        if have == (artist, title):
+            unchanged += 1
+            continue
+
+        # only blanks get filled without asking, a differing tag is reported
+        differs = [(field, old, new) for field, old, new in
+                   (("artist", have[0], artist), ("title", have[1], title))
+                   if old and old != new]
+        if differs and not force:
+            conflicts.append((name, differs))
+            continue
+
+        print(f"    {name}")
+        print(f"        artist: {artist}")
+        print(f"        title:  {title}")
+        if dry_run:
+            tagged += 1
+            continue
+        try:
+            write_name_tags(path, artist, title)
+            tagged += 1
+        except Exception as e:
+            failed.append((name, f"{type(e).__name__}: {e}"))
+            print(f"        [fail] {e}")
+
+    print("\ntag summary")
+    print(f"    {'would tag' if dry_run else 'tagged'}: {tagged}")
+    print(f"    already tagged: {unchanged}")
+    if failed:
+        print(f"    failed: {len(failed)}")
+    if conflicts:
+        print(f"\n{len(conflicts)} files already tagged with something else, "
+              f"left alone (-force overwrites):")
+        for name, differs in conflicts:
+            print(f"    {name}")
+            for field, old, new in differs:
+                print(f"        {field}: '{old}', name says '{new}'")
+    if unnamed:
+        print(f"\n{len(unnamed)} files not named 'Artist - Title', left alone:")
+        for name in unnamed:
+            print(f"    {name}")
 
 
 def slsk_test():

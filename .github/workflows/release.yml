@@ -22,37 +22,10 @@ jobs:
       upload_url: ${{ steps.create_release.outputs.upload_url }}
   release_tesflight:
     needs: setup
-    runs-on: [self-hosted, macOS]
-    steps:
-    - uses: actions/checkout@v4
-      with:
-        submodules: recursive
-        token: ${{ secrets.DIIG_REG_TOKEN }}
-        clean: true
-    - name: release_tesflight
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        API_KEY_H: ${{ secrets.API_KEY_H }}
-        REFS_VERSION: ${{ github.ref }}
-      run: |
-        # select xcode 16 (self hosted)
-        ls /Applications/
-        sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
-
-        # bump version in plist
-        export VERSION=$(echo $REFS_VERSION| cut -d'/' -f 3)
-        export VERSION=$(echo $VERSION| cut -d'.' -f 3)
-        echo "Version: $VERSION"
-        /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $VERSION" app/dist/ios/Info.plist
-
-        # build and upload
-        cd app
-        pmtech/pmbuild ios
-        pmtech/pmbuild ios -libs
-        echo "$API_KEY_H" >> code/api_key.h
-        xcodebuild archive -workspace build/ios/diig_ios.xcworkspace -configuration Release -scheme diig -archivePath build/ios/diig_ios -allowProvisioningUpdates CODE_SIGN_STYLE=Automatic DEVELOPMENT_TEAM=7C3Y39TX3G
-        xcodebuild -exportArchive -archivePath build/ios/diig_ios.xcarchive -exportPath build/ios/export -exportOptionsPlist dist/ios/ExportOptions.plist -allowProvisioningUpdates
-        xcrun altool --upload-app -f build/ios/export/diig.ipa -t ios -u ${{secrets.APP_EMAIL}} -p ${{secrets.APP_PASSWORD}}
+    uses: ./.github/workflows/ios-testflight.yml
+    with:
+      beta: false
+    secrets: inherit
   release_google_play:
     needs: setup
     runs-on: ubuntu-latest
@@ -102,4 +75,4 @@ jobs:
         packageName: pmtech.diig
         releaseFiles: "app/build/android/diig/build/outputs/bundle/release/diig-release.aab"
         track: internal
-        status: draft
+        status: completed

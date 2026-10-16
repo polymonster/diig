@@ -1,0 +1,63 @@
+name: beta
+# testflight builds expire after 90 days, so keep a perpetual beta by uploading
+# a fresh build of main once the newest one (tag release or beta) is 83 days old
+on:
+  schedule:
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+    inputs:
+      force:
+        description: 'build now, regardless of the age of the last build'
+        type: boolean
+        default: false
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+    outputs:
+      build: ${{ steps.age.outputs.build }}
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    - name: age
+      id: age
+      env:
+        GH_TOKEN: ${{ github.token }}
+        FORCE: ${{ inputs.force }}
+      run: |
+        # newest release tag uploaded by release.yml
+        TAG=$(git describe --tags --abbrev=0)
+        LAST=$(git log -1 --format=%ct "$TAG")
+        echo "last tag $TAG $(date -u -d @$LAST)"
+
+        # newest successful beta upload. runs that skipped the build also succeed,
+        # so look for a successful testflight job rather than a successful run
+        for RUN in $(gh api "repos/${{ github.repository }}/actions/workflows/beta.yml/runs?status=success&per_page=100" \
+            --jq '.workflow_runs[].id'); do
+          UPLOADED=$(gh api "repos/${{ github.repository }}/actions/runs/$RUN/jobs" \
+            --jq '[.jobs[] | select((.name | startswith("testflight")) and .conclusion == "success")][0].completed_at // empty')
+          if [ -n "$UPLOADED" ]; then
+            BETA=$(date -u -d "$UPLOADED" +%s)
+            echo "last beta $UPLOADED"
+            [ "$BETA" -gt "$LAST" ] && LAST=$BETA
+            break
+          fi
+        done
+
+        DAYS=$(( ($(date +%s) - LAST) / 86400 ))
+        echo "newest build is $DAYS days old"
+        if [ "$FORCE" = "true" ] || [ "$DAYS" -ge 83 ]; then
+          echo "build=true" >> "$GITHUB_OUTPUT"
+        else
+          echo "build=false" >> "$GITHUB_OUTPUT"
+        fi
+  testflight:
+    needs: check
+    if: ${{ needs.check.outputs.build == 'true' }}
+    uses: ./.github/workflows/ios-testflight.yml
+    with:
+      beta: true
+    secrets: inherit

@@ -1,17 +1,17 @@
-name: testflight
-# manual test of signing on a github hosted runner, without the self hosted mac.
-# the signing certificate and the provisioning profile come from secrets and the
-# app store connect api rather than a logged in xcode, so nothing is committed
-# and a renewed profile is picked up on the next run
+name: ios-testflight
+# builds, signs and uploads the ios app to testflight on a github hosted runner.
+# the signing certificate and provisioning profile come from secrets and the
+# app store connect api rather than a logged in xcode.
+# called from release.yml (tags) and beta.yml (scheduled beta builds)
 on:
-  workflow_dispatch:
+  workflow_call:
     inputs:
-      upload:
-        description: 'upload to testflight (off: build and sign only)'
+      beta:
+        description: 'beta build: build number is <last tag patch>.<run number> rather than from the tag'
         type: boolean
-        default: true
+        default: false
 jobs:
-  testflight:
+  upload:
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v4
@@ -19,7 +19,7 @@ jobs:
         submodules: recursive
         token: ${{ secrets.DIIG_REG_TOKEN }}
         clean: true
-        # full history, for the last tag
+        # full history, for the last tag on beta builds
         fetch-depth: 0
 
     # app store uploads must be built with a current sdk
@@ -35,13 +35,18 @@ jobs:
 
     - name: bump_version
       run: |
-        # last tag 0.0.57 -> 57.<run number>. higher than the 57 the last tag
-        # uploaded and lower than the 58 the next one will, so test builds
-        # never take a build number a real release needs
-        TAG=$(git describe --tags --abbrev=0)
-        PATCH=$(echo "$TAG" | cut -d'.' -f 3)
-        VERSION="$PATCH.${{ github.run_number }}"
-        echo "last tag $TAG, build $VERSION"
+        if [ "${{ inputs.beta }}" = "true" ]; then
+          # last tag 0.0.57 -> 57.<run number>. higher than the 57 the last tag
+          # uploaded and lower than the 58 the next one will, so beta builds
+          # never take a build number a real release needs
+          TAG=$(git describe --tags --abbrev=0)
+          PATCH=$(echo "$TAG" | cut -d'.' -f 3)
+          VERSION="$PATCH.${{ github.run_number }}"
+        else
+          # tag 0.0.58 -> 58
+          VERSION=$(echo "${{ github.ref_name }}" | cut -d'.' -f 3)
+        fi
+        echo "Version: $VERSION"
         /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $VERSION" app/dist/ios/Info.plist
 
     - name: import_certificate
@@ -126,7 +131,6 @@ jobs:
         ls -la build/ios/export
 
     - name: upload
-      if: ${{ inputs.upload }}
       uses: apple-actions/upload-testflight-build@v5
       with:
         app-path: app/build/ios/export/diig.ipa

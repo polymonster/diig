@@ -818,8 +818,14 @@ void* user_data_thread(void* userdata)
     nlohmann::json user_data_cache = {};
     if(mtime > 0)
     {
-        std::ifstream f(user_data_filepath.c_str());
-        user_data_cache = nlohmann::json::parse(f);
+        try {
+            std::ifstream f(user_data_filepath.c_str());
+            user_data_cache = nlohmann::json::parse(f);
+        }
+        catch(...) {
+            PEN_LOG("failed to parse cached user data: %s", user_data_filepath.c_str());
+            user_data_cache = {};
+        }
     }
 
     bool auth_cloud = false;
@@ -845,7 +851,8 @@ void* user_data_thread(void* userdata)
         // authenticate
         if(!auth_cloud) {
             if(ctx->auth.status == Status::e_ready) {
-                if(ctx->auth.dict.contains("localId") && ctx->auth.dict.contains("idToken")) {
+                if(ctx->auth.dict.contains("localId") && ctx->auth.dict["localId"].is_string() &&
+                   ctx->auth.dict.contains("idToken") && ctx->auth.dict["idToken"].is_string()) {
                     // set tokens
                     userid = ((std::string)ctx->auth.dict["localId"]).c_str();
                     tokenid = ((std::string)ctx->auth.dict["idToken"]).c_str();
@@ -4263,35 +4270,56 @@ namespace
     }
 
     void login_complete() {
-        // copy auth credentials
-        ctx.data_ctx.auth.mutex.lock();
-        ctx.data_ctx.auth.dict = ctx.auth_response;
-        ctx.data_ctx.auth.status = Status::e_ready;
-        ctx.data_ctx.auth.mutex.unlock();
+        // this runs every frame until stores are available, so only kick things off once per login
+        static bool s_login_kicked = false;
+        if(!s_login_kicked) {
+            s_login_kicked = true;
 
-        // from keychain
-        ctx.username = pen::os_get_keychain_item("com.pmtech.dig", "username");
+            // auth_response is empty when offline (auto_login allows entry with previously authenticated creds)
+            bool has_auth = ctx.auth_response.is_object()
+                && ctx.auth_response.contains("idToken") && ctx.auth_response["idToken"].is_string();
 
-        if(!k_force_no_discogs_login)
-        {
-            ctx.discogs_token = pen::os_get_keychain_item("com.pmtech.dig", "discogs");
-            if(!ctx.discogs_token.empty())
-            {
-                ctx.discogs_username = get_discogs_username(ctx.discogs_token);
+            // copy auth credentials
+            if(has_auth) {
+                ctx.data_ctx.auth.mutex.lock();
+                ctx.data_ctx.auth.dict = ctx.auth_response;
+                ctx.data_ctx.auth.status = Status::e_ready;
+                ctx.data_ctx.auth.mutex.unlock();
+
+                ctx.firebase_token = ctx.auth_response["idToken"].get<std::string>().c_str();
             }
+
+            // from keychain
+            ctx.username = pen::os_get_keychain_item("com.pmtech.dig", "username");
+
+            if(!k_force_no_discogs_login)
+            {
+                ctx.discogs_token = pen::os_get_keychain_item("com.pmtech.dig", "discogs");
+                if(!ctx.discogs_token.empty())
+                {
+                    ctx.discogs_username = get_discogs_username(ctx.discogs_token);
+                }
+            }
+
+            // kick off reg loader (falls back to cached stores when offline)
+            pen::thread_create(registry_loader, 10 * 1024 * 1024, &ctx.data_ctx, pen::e_thread_start_flags::detached);
+
+            // trigger update of likes
+            update_likes_registry();
         }
 
-        ctx.firebase_token = ((std::string)ctx.data_ctx.auth.dict["idToken"]).c_str();
-
-        // kick off reg loader now we have auth
-        pen::thread_create(registry_loader, 10 * 1024 * 1024, &ctx.data_ctx, pen::e_thread_start_flags::detached);
-
-        // trigger update of likes
-        update_likes_registry();
+        // stores fetch failed and nothing cached (ie. offline on a fresh install)
+        if(ctx.stores.empty() && ctx.data_ctx.stores.status == Status::e_not_available) {
+            f32 ss = ImGui::GetFontSize() * 2.0f;
+            ImGui::Dummy(ImVec2(0.0f, ss));
+            ImGui::TextCentred("Offline with no cached data");
+            ImGui::TextCentred("Connect to the internet and restart diig");
+        }
 
         // initialise store
         if(ctx.view && ctx.view->page == Page::login_complete) {
             if(ctx.stores.size() > 0) {
+                s_login_kicked = false;
                 if(ctx.store.name.empty()) {
 
                     // get user last visited store preferences

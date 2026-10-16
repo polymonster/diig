@@ -74,5 +74,5 @@ jobs:
         serviceAccountJsonPlainText: ${{secrets.SERVICE_ACCOUNT_JSON}}
         packageName: pmtech.diig
         releaseFiles: "app/build/android/diig/build/outputs/bundle/release/diig-release.aab"
-        track: internal
+        tracks: internal
         status: completed

@@ -22,7 +22,7 @@ if platform == "android" then
 	gradleversion "com.android.tools.build:gradle:8.2.2"
 	androidsdkversion "35"
 	androidndkversion "25.1.8937393"
-	androidminsdkversion "21"
+	androidminsdkversion "24"
 	gradlewrapper {
 		"distributionUrl=https\\://services.gradle.org/distributions/gradle-8.6-all.zip"
 	}

@@ -20,7 +20,7 @@ if platform == "android" then
     androidversionname "1.0"
 	androidmanifest "dist\\android\\AndroidManifest.xml"
 	gradleversion "com.android.tools.build:gradle:8.2.2"
-	androidsdkversion "35"
+	androidsdkversion "36"
 	androidndkversion "25.1.8937393"
 	androidminsdkversion "24"
 	gradlewrapper {

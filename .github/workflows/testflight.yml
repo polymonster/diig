@@ -27,6 +27,12 @@ jobs:
       with:
         xcode-version: latest-stable
 
+    # pmbuild imports http.server.CGIHTTPRequestHandler, which was removed in python 3.15
+    - name: setup_python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.13'
+
     - name: bump_version
       run: |
         # last tag 0.0.57 -> 57.<run number>. higher than the 57 the last tag

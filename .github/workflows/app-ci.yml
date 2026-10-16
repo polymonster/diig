@@ -15,6 +15,11 @@ jobs:
         submodules: recursive
         token: ${{ secrets.DIIG_REG_TOKEN }}
         clean: true
+    # pmbuild imports http.server.CGIHTTPRequestHandler, which was removed in python 3.15
+    - name: setup_python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.13'
     - name: release_tesflight
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -22,7 +27,6 @@ jobs:
         REFS_VERSION: ${{ github.ref }}
       run: |
         # select xcode 16 (self hosted)
-        ls /Applications/
         sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
 
         # build and upload

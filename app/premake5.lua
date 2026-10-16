@@ -98,6 +98,17 @@ if platform == "ios" then
 		["SKIP_INSTALL"] = "NO"
     }
 
+	-- ci signs manually with a profile fetched from app store connect. set on
+	-- the app target only, the static libs reject a provisioning profile
+	local ios_profile = os.getenv("IOS_PROFILE_SPECIFIER")
+	if ios_profile and ios_profile ~= "" then
+		xcodebuildsettings {
+			["CODE_SIGN_STYLE"] = "Manual",
+			["CODE_SIGN_IDENTITY"] = "Apple Distribution",
+			["PROVISIONING_PROFILE_SPECIFIER"] = ios_profile
+		}
+	end
+
 	files {
 		"dist/ios/Images.xcassets"
 	}

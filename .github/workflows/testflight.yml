@@ -1,0 +1,132 @@
+name: testflight
+# manual test of signing on a github hosted runner, without the self hosted mac.
+# the signing certificate and the provisioning profile come from secrets and the
+# app store connect api rather than a logged in xcode, so nothing is committed
+# and a renewed profile is picked up on the next run
+on:
+  workflow_dispatch:
+    inputs:
+      upload:
+        description: 'upload to testflight (off: build and sign only)'
+        type: boolean
+        default: true
+jobs:
+  testflight:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: recursive
+        token: ${{ secrets.DIIG_REG_TOKEN }}
+        clean: true
+        # full history, for the last tag
+        fetch-depth: 0
+
+    # app store uploads must be built with a current sdk
+    - uses: maxim-lobanov/setup-xcode@v1
+      with:
+        xcode-version: latest-stable
+
+    - name: bump_version
+      run: |
+        # last tag 0.0.57 -> 57.<run number>. higher than the 57 the last tag
+        # uploaded and lower than the 58 the next one will, so test builds
+        # never take a build number a real release needs
+        TAG=$(git describe --tags --abbrev=0)
+        PATCH=$(echo "$TAG" | cut -d'.' -f 3)
+        VERSION="$PATCH.${{ github.run_number }}"
+        echo "last tag $TAG, build $VERSION"
+        /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $VERSION" app/dist/ios/Info.plist
+
+    - name: import_certificate
+      uses: apple-actions/import-codesign-certs@v7
+      with:
+        p12-file-base64: ${{ secrets.IOS_DIST_P12_BASE64 }}
+        p12-password: ${{ secrets.IOS_DIST_P12_PASSWORD }}
+
+    - name: download_profile
+      id: profiles
+      uses: apple-actions/download-provisioning-profiles@v7
+      with:
+        bundle-id: com.pmtech.dig
+        profile-type: IOS_APP_STORE
+        issuer-id: ${{ secrets.APPSTORE_ISSUER_ID }}
+        api-key-id: ${{ secrets.APPSTORE_API_KEY_ID }}
+        api-private-key: ${{ secrets.APPSTORE_API_PRIVATE_KEY }}
+
+    - name: profile_name
+      env:
+        PROFILES: ${{ steps.profiles.outputs.profiles }}
+      run: |
+        echo "$PROFILES" | jq -r '.[] | "found: " + .name'
+        # skip the profiles xcode automatic signing makes for itself, they are
+        # tied to its own certificate rather than the one imported above
+        NAME=$(echo "$PROFILES" | jq -r \
+          '[.[] | select(.name | startswith("iOS Team") | not)][0].name')
+        if [ -z "$NAME" ] || [ "$NAME" = "null" ]; then
+          echo "no App Store profile for com.pmtech.dig made by hand in the"
+          echo "developer portal, see the setup notes"
+          exit 1
+        fi
+        echo "profile: $NAME"
+        echo "IOS_PROFILE_SPECIFIER=$NAME" >> "$GITHUB_ENV"
+
+    - name: build
+      env:
+        API_KEY_H: ${{ secrets.API_KEY_H }}
+      run: |
+        cd app
+        # IOS_PROFILE_SPECIFIER from the step above is read by premake5.lua
+        pmtech/pmbuild ios
+        pmtech/pmbuild ios -libs
+        echo "$API_KEY_H" >> code/api_key.h
+        xcodebuild archive \
+          -workspace build/ios/diig_ios.xcworkspace \
+          -scheme diig \
+          -configuration Release \
+          -destination 'generic/platform=iOS' \
+          -archivePath build/ios/diig_ios
+
+    - name: export
+      run: |
+        cd app
+        cat > build/ios/ExportOptions.plist <<EOF
+        <?xml version="1.0" encoding="UTF-8"?>
+        <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+        <plist version="1.0">
+        <dict>
+          <key>method</key>
+          <string>app-store-connect</string>
+          <key>signingStyle</key>
+          <string>manual</string>
+          <key>signingCertificate</key>
+          <string>Apple Distribution</string>
+          <key>teamID</key>
+          <string>7C3Y39TX3G</string>
+          <key>provisioningProfiles</key>
+          <dict>
+            <key>com.pmtech.dig</key>
+            <string>$IOS_PROFILE_SPECIFIER</string>
+          </dict>
+          <key>uploadSymbols</key>
+          <true/>
+        </dict>
+        </plist>
+        EOF
+        xcodebuild -exportArchive \
+          -archivePath build/ios/diig_ios.xcarchive \
+          -exportPath build/ios/export \
+          -exportOptionsPlist build/ios/ExportOptions.plist
+        ls -la build/ios/export
+
+    - name: upload
+      if: ${{ inputs.upload }}
+      uses: apple-actions/upload-testflight-build@v5
+      with:
+        app-path: app/build/ios/export/diig.ipa
+        app-type: ios
+        issuer-id: ${{ secrets.APPSTORE_ISSUER_ID }}
+        api-key-id: ${{ secrets.APPSTORE_API_KEY_ID }}
+        api-private-key: ${{ secrets.APPSTORE_API_PRIVATE_KEY }}
+        # done once the upload is accepted, rather than waiting on processing
+        wait-for-processing: false

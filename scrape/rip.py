@@ -316,9 +316,12 @@ def discogs_call(what, call):
             status = http_status_of(e)
             limited = status == 429
             server_error = status is not None and 500 <= status < 600
+            # a body that is not json is a gateway or error page served with a
+            # 200, the client cannot tell. as passing as a server error
+            garbled = isinstance(e, ValueError) and status is None
             if limited:
                 discogs_rate_limited = True
-            if not limited and not server_error:
+            if not limited and not server_error and not garbled:
                 raise
             if attempt + 1 >= attempts:
                 print(f"    [fail] discogs still refusing {what} after "
@@ -326,7 +329,12 @@ def discogs_call(what, call):
                 raise
             # the limit is a rolling 60 second window, so a minute clears it
             wait = base * (attempt + 1) + random.uniform(0, 10)
-            reason = "rate limited (429)" if limited else f"server error {status}"
+            if garbled:
+                # not a limit to wait out, a few seconds is plenty
+                wait = 5 * (attempt + 1)
+            reason = ("rate limited (429)" if limited
+                      else "unreadable response" if garbled
+                      else f"server error {status}")
             print(f"    [wait] discogs {reason} on {what}, retrying in "
                   f"{int(wait)}s (attempt {attempt + 2} of {attempts})")
             time.sleep(wait)
@@ -1934,6 +1942,65 @@ def collect_existing(ctx):
               f"(already on disk)")
 
 
+def collect_queued(ctx):
+    """
+    Bring in soulseek transfers that finished after their session gave up.
+
+    A queued track is left enqueued in slskd on purpose, and most of them do
+    finish, but into slskd's downloads directory rather than the library. Only
+    a soulseek pass used to go and look, so a session on any other source saw a
+    missing track and fetched it again from somewhere worse. Done here, before
+    any source runs, so every session collects them whatever it was asked for.
+
+    Whatever has not landed yet stays queued and is held back from the other
+    sources. A soulseek -retry is what settles one that never will.
+    """
+    if ctx["force"] or ctx["dry_run"]:
+        return
+    previous = (ctx["previous"] or {}).get("tracks") or {}
+    queued = {key: track for key, track in previous.items()
+              if (track or {}).get("status") == "queued"
+              and track.get("remote_file")}
+    if not queued:
+        return
+
+    downloads_dir = slsk_downloads_dir()
+    for index in pending_tracks(ctx):
+        key = track_key(ctx, index)
+        old = queued.get(key)
+        if not old:
+            continue
+        track = ctx["tracks"][index]
+        src = slsk.find_download(downloads_dir, old["remote_file"])
+        if not src:
+            # still on its way. carried forward as it was, so the release
+            # stays queued rather than looking like a gap to fill
+            ctx["held"].add(index)
+            record_track(ctx, index, dict(old))
+            continue
+
+        os.makedirs(ctx["release_dir"], exist_ok=True)
+        ensure_cover(ctx)
+        path, transcoded, error = place_file(
+            src, os.path.join(ctx["release_dir"], track_stem(ctx, index)),
+            ctx["quality"])
+        track_entry = new_track_entry(ctx, index)
+        for field in ("candidate", "match_score", "peer", "remote_file",
+                      "format", "bitrate"):
+            if field in old:
+                track_entry[field] = old[field]
+        track_entry["transcoded"] = transcoded
+        if error:
+            fail_track(ctx, index, "failed",
+                       failure("slsk_encode_failed", error, SOURCE_SOULSEEK),
+                       message=error)
+            continue
+        print(f"    [slsk] {key} {track['title']}: finished in the background")
+        url = f"slsk://{old.get('peer', '')}/" \
+              f"{slsk.remote_basename(old['remote_file'])}"
+        finish_track(ctx, index, path, SOURCE_SOULSEEK, url, track_entry)
+
+
 def track_meta(ctx, index, source_url):
     """The id3 metadata for a track, all of it from discogs."""
     track = ctx["tracks"][index]
@@ -2343,7 +2410,10 @@ def rip_tracks_youtube(ctx):
     """
     global bot_check_seen, consecutive_blocks, session_blocked
 
-    pending = pending_tracks(ctx)
+    # a track still waiting in a soulseek queue is soulseek's. taking a link
+    # for it now means a second, usually worse, copy of something on its way
+    pending = [index for index in pending_tracks(ctx)
+               if index not in ctx["held"]]
     if not pending:
         return False
 
@@ -2481,6 +2551,8 @@ def make_context(release, root, token, previous=None):
         "catno": catno,
         "url": data.get("uri", ""),
         "year": data.get("year"),
+        "genres": list(data.get("genres") or []),
+        "styles": list(data.get("styles") or []),
         "tracks": {},
         "sources_tried": [],
         # everything this release has ever been told not to take again, carried
@@ -2514,9 +2586,13 @@ def make_context(release, root, token, previous=None):
         "quality": arg_value("-quality", "320"),
         "force": "-force" in sys.argv,
         "dry_run": dry_run,
+        "token": token,
         "cover": (None, None),
+        "cover_fetched": False,
         "done": {},
         "reasons": {},
+        # track indexes still in a soulseek queue, left alone by other sources
+        "held": set(),
     }
 
     # flags first: a file that has been rejected must be gone before the disk
@@ -2524,14 +2600,21 @@ def make_context(release, root, token, previous=None):
     if not dry_run:
         apply_flags(ctx)
     collect_existing(ctx)
+    collect_queued(ctx)
 
     if not dry_run and pending_tracks(ctx):
         os.makedirs(ctx["release_dir"], exist_ok=True)
-        # the artwork is the same for every track and costs a request, so once
-        if "-no-cover" not in sys.argv:
-            ctx["cover"] = fetch_cover(release, token)
+        ensure_cover(ctx)
 
     return ctx, entry
+
+
+def ensure_cover(ctx):
+    """The artwork is the same for every track and costs a request, so once."""
+    if ctx["cover_fetched"] or "-no-cover" in sys.argv:
+        return
+    ctx["cover_fetched"] = True
+    ctx["cover"] = fetch_cover(ctx["release"], ctx["token"])
 
 
 def rip_release(release, root, token, previous=None):
@@ -4589,6 +4672,247 @@ def tag_from_names():
             print(f"    {name}")
 
 
+# ----------------------------------------------------------------------------
+# a curated subset of the library, sized for a stick
+# ----------------------------------------------------------------------------
+
+CURATED_MANIFEST = ".diig-curated.json"
+
+# what -curate puts first and last when not told otherwise. matched as plain
+# text against a release's genres and styles, case ignored
+DEFAULT_PREFER = "Electronic"
+DEFAULT_AVOID = ("metal,hardcore,grind,sludge,doom,crust,thrash,stoner,"
+                 "screamo,deathcore")
+
+# files are stored in whole clusters, so a few thousand small ones take more of
+# a stick than their sizes add up to. exfat on a 32gb stick uses 32k clusters
+CLUSTER = 32 * 1024
+
+
+def backfill_genres(discogs, ledger):
+    """
+    Put discogs genres and styles on ledger entries written before they were.
+
+    The collection pages carry both in basic_information, so the whole
+    collection costs a request per fifty releases. Anything no longer in the
+    collection is fetched on its own. Returns how many entries were filled.
+    """
+    missing = {key for key, entry in ledger["releases"].items()
+               if "genres" not in entry and entry.get("id")}
+    if not missing:
+        return 0
+
+    print(f"{len(missing)} releases have no genres in the ledger yet, "
+          f"reading them from the collection")
+    user = discogs_call("identity", discogs.identity)
+    folder = pick_folder(user, None)
+    filled = 0
+    if folder is not None:
+        for item in iter_releases(folder.releases):
+            key = str(item.release.id)
+            if key not in missing:
+                continue
+            data = getattr(item.release, "data", None) or {}
+            entry = ledger["releases"][key]
+            entry["genres"] = list(data.get("genres") or [])
+            entry["styles"] = list(data.get("styles") or [])
+            missing.discard(key)
+            filled += 1
+
+    for key in sorted(missing):
+        entry = ledger["releases"][key]
+        try:
+            time.sleep(arg_float("-api-sleep", API_SLEEP))
+            release = discogs_call(f"release {entry['id']}",
+                                   lambda: fetch_release(discogs, entry["id"]))
+        except Exception as e:
+            print(f"    could not fetch release {entry['id']}: {e}")
+            continue
+        data = release.data or {}
+        entry["genres"] = list(data.get("genres") or [])
+        entry["styles"] = list(data.get("styles") or [])
+        filled += 1
+    return filled
+
+
+def word_list(flag, default):
+    return [w.strip().lower() for w in (arg_value(flag, default) or "").split(",")
+            if w.strip()]
+
+
+def curate_tier(entry, prefer, avoid):
+    """
+    0 preferred, 1 neutral, 2 avoided.
+
+    Preferred wins over avoided, so an electronic record with a hardcore style,
+    which on discogs means the rave kind, is still preferred.
+    """
+    tags = [t.lower() for t in (entry.get("genres") or []) +
+            (entry.get("styles") or [])]
+    if any(word in tag for word in prefer for tag in tags):
+        return 0
+    if any(word in tag for word in avoid for tag in tags):
+        return 2
+    return 1
+
+
+def release_files(root, entry):
+    """The ripped files of a release that are really on disk, with sizes."""
+    release_dir = os.path.join(root, entry.get("dir") or "")
+    files = []
+    for track in (entry.get("tracks") or {}).values():
+        if (track or {}).get("status") != "ok" or not track.get("file"):
+            continue
+        path = os.path.join(release_dir, track["file"])
+        try:
+            files.append((track["file"], os.path.getsize(path)))
+        except OSError:
+            continue
+    return files
+
+
+def on_disk_size(size):
+    return -(-size // CLUSTER) * CLUSTER
+
+
+def curate_library(discogs, root, ledger, dry_run):
+    """
+    Copy the best of the library that fits a size limit into another directory.
+
+    Releases go in three tiers, preferred, neutral and avoided, and within each
+    newest added first. Copied in that order until the limit, skipping any
+    release too big for the space left and carrying on, so the end of the
+    budget is filled with whatever still fits rather than left empty.
+
+    The destination is kept in step on a re-run: only files that are missing
+    or differ are copied, and a release this mode put there earlier that no
+    longer makes the cut is removed. Anything else in the destination is never
+    touched.
+    """
+    dest = os.path.abspath(os.path.expanduser(arg_value("-curate")))
+    limit_gb = arg_float("-gb", 0)
+    if limit_gb <= 0:
+        print("error: -curate needs a size limit, -gb <n>. a 32gb stick holds")
+        print("       about 31, so -gb 30 leaves it some room")
+        return
+    if os.path.normcase(dest).startswith(os.path.normcase(root + os.sep)) \
+            and os.path.normcase(dest) != os.path.normcase(root):
+        # inside the library it would be read back as stray folders by
+        # -filecheck, and one day copied into itself
+        print(f"error: -curate destination is inside the library {root}")
+        return
+    if os.path.normcase(dest) == os.path.normcase(root):
+        print("error: -curate destination is the library itself")
+        return
+
+    filled = backfill_genres(discogs, ledger) if discogs else 0
+    if filled:
+        print(f"recorded genres for {filled} releases")
+        save_ledger(root, ledger)
+
+    prefer = word_list("-prefer", DEFAULT_PREFER)
+    avoid = word_list("-avoid", DEFAULT_AVOID)
+    budget = int(limit_gb * 1000 ** 3)
+
+    entries = [e for e in ledger["releases"].values() if e.get("dir")]
+    entries.sort(key=added_sort_key, reverse=True)
+    entries.sort(key=lambda e: curate_tier(e, prefer, avoid))
+
+    chosen = []
+    used = 0
+    skipped_big = 0
+    tier_counts = [0, 0, 0]
+    tier_bytes = [0, 0, 0]
+    for entry in entries:
+        files = release_files(root, entry)
+        if not files:
+            continue
+        size = sum(on_disk_size(s) for _n, s in files)
+        if used + size > budget:
+            skipped_big += 1
+            continue
+        tier = curate_tier(entry, prefer, avoid)
+        chosen.append((entry, files))
+        used += size
+        tier_counts[tier] += 1
+        tier_bytes[tier] += size
+
+    totals = [0, 0, 0]
+    for entry in entries:
+        if release_files(root, entry):
+            totals[curate_tier(entry, prefer, avoid)] += 1
+
+    gb = lambda b: f"{b / 1000 ** 3:.1f} GB"
+    print(f"\ncurating {root}")
+    print(f"    into {dest}, up to {gb(budget)}")
+    print(f"    prefer: {', '.join(prefer) or 'nothing'}")
+    print(f"    avoid:  {', '.join(avoid) or 'nothing'}")
+    for tier, label in enumerate(("preferred", "neutral", "avoided")):
+        print(f"    {label:<10} {tier_counts[tier]:>4} of {totals[tier]:>4} "
+              f"releases, {gb(tier_bytes[tier])}")
+    print(f"    total      {len(chosen):>4} releases, {gb(used)}")
+
+    manifest_path = os.path.join(dest, CURATED_MANIFEST)
+    try:
+        previous = json.loads(open(manifest_path, "r", encoding="utf-8").read())
+    except (OSError, ValueError):
+        previous = {}
+    wanted_dirs = {entry["dir"] for entry, _files in chosen}
+    dropped = [d for d in previous.get("dirs") or [] if d not in wanted_dirs]
+
+    copied = 0
+    copied_bytes = 0
+    if not dry_run:
+        os.makedirs(dest, exist_ok=True)
+        for d in dropped:
+            target = os.path.join(dest, d)
+            if os.path.isdir(target):
+                shutil.rmtree(target, ignore_errors=True)
+                print(f"    [drop] {d}")
+
+        try:
+            for number, (entry, files) in enumerate(chosen, start=1):
+                src_dir = os.path.join(root, entry["dir"])
+                dst_dir = os.path.join(dest, entry["dir"])
+                todo = [(name, size) for name, size in files
+                        if not os.path.exists(os.path.join(dst_dir, name))
+                        or os.path.getsize(os.path.join(dst_dir, name)) != size]
+                if not todo:
+                    continue
+                os.makedirs(dst_dir, exist_ok=True)
+                print(f"    [{number}/{len(chosen)}] {entry['dir']}")
+                for name, size in todo:
+                    shutil.copy2(os.path.join(src_dir, name),
+                                 os.path.join(dst_dir, name))
+                    copied += 1
+                    copied_bytes += size
+        except KeyboardInterrupt:
+            print("\ninterrupted, re-run to finish")
+        finally:
+            # written even part way, so a re-run knows what is ours to remove
+            done = sorted(wanted_dirs | (set(previous.get("dirs") or []) -
+                                         set(dropped)))
+            open(manifest_path, "w", encoding="utf-8").write(json.dumps({
+                "when": datetime.datetime.now().isoformat(timespec="seconds"),
+                "source": root,
+                "gb": limit_gb,
+                "prefer": prefer,
+                "avoid": avoid,
+                "dirs": done,
+            }, indent=4))
+
+    print("\ncurate summary")
+    if dry_run:
+        print("    dry run, nothing copied")
+        if dropped:
+            print(f"    would remove {len(dropped)} releases curated earlier")
+    else:
+        print(f"    copied {copied} files, {gb(copied_bytes)}")
+        print(f"    removed {len(dropped)} releases that no longer make the cut")
+    if skipped_big:
+        print(f"    {skipped_big} releases did not fit the space left")
+
+
 def slsk_test():
     """
     Check the slskd connection and print what we are talking to.
@@ -4658,6 +4982,15 @@ def rip_collection(discogs, token):
 
     # files added or deleted by hand, brought into the ledger. like the audit it
     # works on a library that is already there and does nothing else after
+    # a sized copy of the best of the library, for a stick. reads the library,
+    # writes only to the destination and the genres in the ledger
+    if arg_value("-curate"):
+        if not os.path.isdir(root):
+            print(f"error: -curate needs a library to read, '{root}' is not there")
+            return
+        curate_library(discogs, root, load_ledger(root), dry_run)
+        return
+
     if "-filecheck" in sys.argv:
         if not os.path.isdir(root):
             print(f"error: -filecheck needs a library to read, '{root}' is not there")
@@ -4718,6 +5051,7 @@ def rip_collection(discogs, token):
 
     processed = 0
     skipped = 0
+    idle = 0
     stats = {}
 
     try:
@@ -4781,10 +5115,15 @@ def rip_collection(discogs, token):
                     "error": f"{type(e).__name__}: {e}",
                 }
 
+            # no source was asked for anything: what was missing turned out to be
+            # on disk already, finished in a soulseek queue, or is still queued.
+            # that is not one of the -count releases, and needs no pause after
+            worked = bool(entry.get("sources_tried")) or                 entry.get("status") == STATUS_FAILED
+
             # which sources this release has now been through, this session's on
             # top of every earlier one, so a later -source knows what is left
             entry["sources_tried"] = merge_tried(previous, entry)
-            entry["attempts"] = (previous or {}).get("attempts", 0) + 1
+            entry["attempts"] = (previous or {}).get("attempts", 0) + int(worked)
             if date_added:
                 entry["date_added"] = date_added
             entry["ripped_at"] = datetime.datetime.now().isoformat(timespec="seconds")
@@ -4794,10 +5133,16 @@ def rip_collection(discogs, token):
                 save_ledger(root, ledger)
 
             status = entry["status"]
-            stats[status] = stats.get(status, 0) + 1
-            processed += 1
+            if worked:
+                stats[status] = stats.get(status, 0) + 1
+                processed += 1
+            else:
+                idle += 1
 
-            if status == STATUS_COMPLETE:
+            if not worked:
+                print(f"    -> nothing for {', '.join(sources)} to do, "
+                      f"not counted ({status_label(status)})")
+            elif status == STATUS_COMPLETE:
                 print(f"    -> complete: {entry.get('ripped', entry.get('total', 0))} tracks")
             elif status in (STATUS_PARTIAL, STATUS_QUEUED):
                 print(f"    -> {status_label(status)}: "
@@ -4808,7 +5153,7 @@ def rip_collection(discogs, token):
 
             # breathe between releases as well, the discogs fetch plus a run of
             # track downloads is exactly the burst that trips a rate limit
-            if not session_blocked and not dry_run:
+            if worked and not session_blocked and not dry_run:
                 crawl_pause("before next release")
 
     except KeyboardInterrupt:
@@ -4834,6 +5179,8 @@ def rip_collection(discogs, token):
     print("\nsession summary")
     print(f"    processed: {processed}")
     print(f"    skipped (already done): {skipped}")
+    if idle:
+        print(f"    looked at, nothing to do: {idle}")
     for status in sorted(stats):
         print(f"    {status_label(status)}: {stats[status]}")
 

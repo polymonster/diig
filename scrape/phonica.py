@@ -1,9 +1,9 @@
 import dig
 import os
-import json
+import re
+import html
 import time
 import sys
-import requests
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -42,41 +42,83 @@ def execute_page(url, driver):
 
 
 # fetch html execuing script
-def get_json(driver, url, api_url, id, offset):
+PHONICA_URL = "https://www.phonicarecords.com/"
+COVER_CDN = "https://d1c4rk9le5opln.cloudfront.net/"
+
+
+class ListingError(Exception):
+    """The page loaded but holds no product grid: blocked, or the layout moved."""
+
+
+def tag_text(block, pattern):
+    match = re.search(pattern, block, re.S)
+    if not match:
+        return ""
+    return html.unescape(re.sub(r"<[^>]+>", "", match.group(1))).strip()
+
+
+def parse_listing(page):
+    """
+    The products in the main grid of a listing page, keyed by id.
+
+    phonica dropped api/product/json_category, it 404s now, and renders the
+    listing into the page instead. Each product here gives the same fields the
+    json did, in the same shape, so scrape_page reads them unchanged: the
+    hidden playlist span carries the preview filenames and track names, the
+    stock dot is red when sold out, and a pre-order says so in its message.
+
+    Only the main grid, #archive-grid-view. The same page also carries
+    essentials, sale and bought-together grids that are not this listing.
+    """
+    start = page.find('id="archive-grid-view"')
+    if start < 0:
+        raise ListingError("no product grid on the page")
+    end = page.find('<div id="archive-grid-view-', start)
+    grid = page[start:end if end > 0 else len(page)]
+
+    products = dict()
+    for block in grid.split('<div class="product-place-holder')[1:]:
+        id_web = tag_text(block, r'class="archive-id display-none">([^<]*)<')
+        if not id_web.isdigit():
+            # an empty template the site's own script fills in
+            continue
+        link = re.search(r'class="archive-product-link ajax-link" href="([^"]+)"', block)
+        cover = re.search(r'class="archive-cover img-fluid" src="([^"]+)"', block)
+        stock_dot = re.search(r'id="stock-indicator-\d+" class="(circle-shape-[a-z]+)', block)
+        message = tag_text(block, r'product-special-message[^"]*"\s*>(.*?)</div>\s*</div>')
+
+        playlist = []
+        spans = re.search(r'<span class="archive-playlist display-none">(.*?)</span>\s*</span>',
+                          block, re.S)
+        if spans:
+            for filename, name in re.findall(r'<span id="([^"]+)"[^>]*>([^<]*)', spans.group(1)):
+                playlist.append({"filename": filename,
+                                 "trackname": html.unescape(name).strip()})
+
+        products[id_web] = {
+            "id_web": id_web,
+            "slug": link.group(1).replace(PHONICA_URL, "") if link else "",
+            "artist": tag_text(block, r'class="archive-artist[^"]*"[^>]*>(.*?)</a>'),
+            "album": tag_text(block, r'class="archive-title[^"]*">(.*?)</span>'),
+            "label": tag_text(block, r'class="archive-label[^"]*"[^>]*>(.*?)</a>'),
+            "cover": cover.group(1).replace(COVER_CDN, "") if cover else "",
+            "product_playlist": playlist,
+            "has_stock": "0" if stock_dot and stock_dot.group(1) == "circle-shape-red" else "1",
+            "is_preorder": "1" if message.lower() == "pre-order" else "0",
+        }
+
+    return products
+
+
+def get_listing(driver, url):
+    """Load a listing page in the browser, which gets past sucuri, and parse it."""
     driver.set_page_load_timeout(60)
     driver.get(url)
 
     wait = WebDriverWait(driver, 60)
     wait.until(lambda driver: driver.execute_script("return document.readyState") == "complete")
-    driver.execute_script("return document.documentElement.outerHTML")
-
-    # Extract cookies from Selenium
-    cookies = driver.get_cookies()
-    session = requests.Session()
-    for cookie in cookies:
-        session.cookies.set(cookie['name'], cookie['value'])
-
-    # Prepare headers and payload
-    payload = {
-        "id": id,
-        "href": url,
-        "offset": str(offset)
-    }
-    headers = {
-        "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-        "X-Requested-With": "XMLHttpRequest",
-        "Referer": url,
-        "Origin": "https://www.phonicarecords.com",
-        "User-Agent": driver.execute_script("return navigator.userAgent;")
-    }
-
-    # Make the request using the same session
-    response = session.post(api_url, data=payload, headers=headers)
-    if not response.text:
-        raise json.JSONDecodeError("empty response", "", 0)
-    j = json.loads(response.text)
-
-    return j
+    page = driver.execute_script("return document.documentElement.outerHTML")
+    return parse_listing(page)
 
 
 # scrape an individual page for a view (essentials, new releases)
@@ -98,6 +140,7 @@ def scrape_page(url, store, store_dict, view, section, counter, session_scraped_
 
     # spin up a driver for the session
     attempts = 0
+    driver = None
     while True:
         try:
             options = webdriver.ChromeOptions()
@@ -106,14 +149,20 @@ def scrape_page(url, store, store_dict, view, section, counter, session_scraped_
             driver.minimize_window()
 
             pos = counter
-            api_url = store_dict["views"][view]["api_url"]
-            products = get_json(driver, url, api_url, category_id, pos)
+            products = get_listing(driver, url)
             break
-        except (InvalidSessionIdException, WebDriverException, ReadTimeoutError, json.JSONDecodeError):
+        except (InvalidSessionIdException, WebDriverException, ReadTimeoutError, ListingError) as e:
             attempts += 1
+            if driver:
+                # a fresh browser for the retry, rather than one left open each time
+                try:
+                    driver.quit()
+                except WebDriverException:
+                    pass
+                driver = None
             if attempts > 5:
                 raise
-            print(f"Failed to get_json, retrying (attempt {attempts}/5)")
+            print(f"Failed to get listing ({type(e).__name__}: {e}), retrying (attempt {attempts}/5)")
             dig.scrape_yield()
 
     store_url = "https://www.phonicarecords.com"

@@ -1,6 +1,7 @@
 {
   "name": "web",
   "type": "module",
+  "packageManager": "pnpm@10.33.2",
   "private": true,
   "scripts": {
     "build": "nuxt build",
@@ -25,16 +26,12 @@
     "firebase-admin": "^13.6.0",
     "firebase-functions": "^7.0.1",
     "marked": "^18.0.2",
-    "nodemailer": "^8.0.10",
     "nuxt": "^4.2.2",
     "nuxt-vuefire": "1.1.0",
     "pinia": "^3.0.4",
     "vue": "^3.5.25",
     "vue-router": "^4.6.3",
     "vuefire": "^3.2.2"
-  },
-  "devDependencies": {
-    "@types/nodemailer": "^8.0.0"
   },
   "pnpm": {
     "onlyBuiltDependencies": [

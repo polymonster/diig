@@ -1,9 +1,11 @@
-// invite-only signup. public sign-up is disabled in firebase auth (identity
-// platform > user actions), so this is the only way to create an account.
-// codes live in rtdb /invites and are minted by `python dig.py -invite`.
-//
+// signup: invite-only account creation. public sign-up is disabled in firebase
+// auth (identity platform > user actions), so this is the only way to create an
+// account. codes live in rtdb /invites and are minted by `python dig.py -invite`.
 // errors use the same {error: {message}} shape as identitytoolkit so the app's
 // unpack_error_response shows them unchanged.
+//
+// register: "register interest" form on diig.app (hosting rewrites
+// /api/register here). stores to rtdb /waitlist, read with `python dig.py -waitlist`.
 
 import { onRequest } from 'firebase-functions/v2/https'
 import { initializeApp } from 'firebase-admin/app'
@@ -35,12 +37,15 @@ function client_ip(req) {
   return req.ip || 'unknown'
 }
 
+function hash(value) {
+  return createHash('sha256').update(value).digest('hex').slice(0, 32)
+}
+
 // per ip attempt counter so codes can't be brute forced. counts every attempt,
 // not just failures. ips are hashed so no raw addresses are stored.
-async function within_rate_limit(db, ip) {
-  const key = createHash('sha256').update(ip).digest('hex').slice(0, 32)
+async function within_rate_limit(db, ip, bucket = 'signup') {
   const now = Date.now()
-  const result = await db.ref(`signup_limits/${key}`).transaction((v) => {
+  const result = await db.ref(`signup_limits/${bucket}_${hash(ip)}`).transaction((v) => {
     if (!v || now - v.start > k_hour_ms) {
       return { start: now, count: 1 }
     }
@@ -137,6 +142,39 @@ export const signup = onRequest(
     }
 
     await ref.child(`used_by/${user.uid}`).set({ email, at: Date.now() })
+    res.status(200).json({ ok: true })
+  },
+)
+
+// one entry per email, keyed by a hash since rtdb keys can't contain '.'.
+// repeat submissions return ok and keep the original entry.
+export const register = onRequest(
+  { region: 'europe-west1', invoker: 'public', maxInstances: 2 },
+  async (req, res) => {
+    if (req.method !== 'POST') {
+      return res.status(405).json({ message: 'Method not allowed.' })
+    }
+
+    const { email, message } = req.body || {}
+    if (typeof email !== 'string' || email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return res.status(400).json({ message: 'Invalid email address.' })
+    }
+    const note = typeof message === 'string' ? message.trim().slice(0, 1000) : ''
+
+    const db = getDatabase()
+
+    if (!(await within_rate_limit(db, client_ip(req), 'register'))) {
+      return res.status(429).json({ message: 'Too many attempts, please try again later.' })
+    }
+
+    const entry = { email: email.trim(), message: note, at: Date.now() }
+    await db.ref(`waitlist/${hash(entry.email.toLowerCase())}`).transaction((v) => {
+      if (v === null) {
+        return entry
+      }
+      return // abort, already registered
+    })
+
     res.status(200).json({ ok: true })
   },
 )

@@ -43,5 +43,9 @@
       "unrs-resolver",
       "vue-demi"
     ]
+  },
+  "devDependencies": {
+    "typescript": "~5.9.3",
+    "vue-tsc": "^3.3.13"
   }
 }

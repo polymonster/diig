@@ -26,6 +26,11 @@ def display_help():
     print("  -update-stores - synchronises local stores.json with the database")
     print("  -patch-only - skips scraping and applies patch to the database from store registry")
     print("  -local-only - skip Firebase auth and patching, only write to local registry files")
+    print("  -invite <count> - mint signup invite codes and print them")
+    print("    -uses <integer> - number of signups each code allows (default 1)")
+    print("    -note <text> - who / what the codes are for")
+    print("    -expires-days <integer> - codes stop working after this many days")
+    print("  -list-invites - list invite codes, their usage and who signed up with them")
     print("")
     print("  optional filters:")
     print("    -section <sectiom_name> - specify a single section to scrape ie. 'techno-electro'")
@@ -565,6 +570,64 @@ def test():
     assert(response.status_code == 200)
 
 
+k_db_url = "https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app"
+
+# no 0/O or 1/I so codes can be read out or typed without confusion
+k_invite_alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
+
+
+# invites and signup rate limits are only touched by the signup cloud function
+# (admin sdk) and this script, so clients must not be able to read or write them
+def lock_invite_rules(authed_session):
+    rules = json.loads(authed_session.get(f"{k_db_url}/.settings/rules.json").text)
+    root = rules["rules"]
+    for grant in [".read", ".write"]:
+        if grant in root and root[grant] is not False:
+            # rtdb rules cascade, a child false cannot revoke a parent grant
+            print(f"warning: root rules grant {grant} = {root[grant]!r}, which also exposes /invites")
+    locked = {".read": False, ".write": False}
+    changed = False
+    for node in ["invites", "signup_limits"]:
+        if root.get(node) != locked:
+            root[node] = locked
+            changed = True
+    if changed:
+        response = authed_session.put(f"{k_db_url}/.settings/rules.json", json.dumps(rules, indent=4))
+        assert(response.status_code == 200)
+        print("locked /invites and /signup_limits rules")
+
+
+# mint invite codes for the signup cloud function (web/functions/index.js)
+def create_invites(count, max_uses, note, expires_days):
+    import secrets
+    authed_session = auth_session()
+    lock_invite_rules(authed_session)
+    invites = dict()
+    for _ in range(count):
+        code = "".join(secrets.choice(k_invite_alphabet) for _ in range(8))
+        invite = {
+            "max_uses": max_uses,
+            "uses": 0,
+            "note": note,
+            "created": int(time.time() * 1000)
+        }
+        if expires_days:
+            invite["expires"] = int((time.time() + expires_days * 86400) * 1000)
+        invites[code] = invite
+    response = authed_session.patch(f"{k_db_url}/invites.json", json.dumps(invites))
+    assert(response.status_code == 200)
+    for code in invites:
+        print(f"{code[:4]}-{code[4:]}")
+
+
+def list_invites():
+    authed_session = auth_session()
+    invites = json.loads(authed_session.get(f"{k_db_url}/invites.json").text) or dict()
+    for code, invite in invites.items():
+        used_by = ", ".join(u.get("email", uid) for uid, u in invite.get("used_by", dict()).items())
+        print(f"{code[:4]}-{code[4:]}  {invite.get('uses', 0)}/{invite.get('max_uses', 1)}  {invite.get('note', '')}  {used_by}")
+
+
 def setup_firebase_auth():
     global auth_key
     # service key for firebase writes
@@ -660,6 +723,18 @@ if __name__ == '__main__':
     if "-fix-store" in sys.argv:
         store = sys.argv[sys.argv.index("-fix-store") + 1]
         fix_store(store)
+        exit(0)
+
+    if "-invite" in sys.argv:
+        count = int(sys.argv[sys.argv.index("-invite") + 1])
+        max_uses = int(sys.argv[sys.argv.index("-uses") + 1]) if "-uses" in sys.argv else 1
+        note = sys.argv[sys.argv.index("-note") + 1] if "-note" in sys.argv else ""
+        expires_days = int(sys.argv[sys.argv.index("-expires-days") + 1]) if "-expires-days" in sys.argv else 0
+        create_invites(count, max_uses, note, expires_days)
+        exit(0)
+
+    if "-list-invites" in sys.argv:
+        list_invites()
         exit(0)
 
     # backfill missing core fields (artist/title/label/cat) for a store

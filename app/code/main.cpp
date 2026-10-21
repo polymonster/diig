@@ -4125,6 +4125,7 @@ namespace
     }
 
     void signup_menu() {
+        static c8 invite_buf[k_login_buf_size] = {0};
         static c8 username_buf[k_login_buf_size] = {0};
         static c8 email_buf[k_login_buf_size] = {0};
         static c8 password_buf[k_login_buf_size] = {0};
@@ -4146,6 +4147,22 @@ namespace
         get_input_box_sizes(boxsize, padding);
 
         ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(padding, padding));
+
+        if(ImGui::InputTextEx("##Invite", "Invite Code", &invite_buf[0], k_login_buf_size, boxsize, 0, nullptr, nullptr)) {
+            error_message.clear();
+        }
+        paste_input(&invite_buf[0], k_login_buf_size);
+
+        if(ImGui::IsItemActive()) {
+            any_active = true;
+        }
+        else if(return_pressed) {
+            if(ImGui::IsItemFocused())
+            {
+                ImGui::SetKeyboardFocusHere();
+                return_pressed = false;
+            }
+        }
 
         if(ImGui::InputTextEx("##Username", "Username", &username_buf[0], k_login_buf_size, boxsize, 0, nullptr, nullptr)) {
             error_message.clear();
@@ -4199,6 +4216,7 @@ namespace
             pen::os_haptic_selection_feedback();
             ctx.view->page = Page::login_or_signup;
 
+            memset(&invite_buf[0], 0x0, k_login_buf_size);
             memset(&username_buf[0], 0x0, k_login_buf_size);
             memset(&email_buf[0], 0x0, k_login_buf_size);
             memset(&password_buf[0], 0x0, k_login_buf_size);
@@ -4208,7 +4226,8 @@ namespace
 
         // validate
         bool valid =
-            strlen(email_buf) &&
+            strlen(invite_buf) &&
+            strlen(username_buf) &&
             strlen(email_buf) &&
             strlen(password_buf) &&
             strlen(retype_buf);
@@ -4222,17 +4241,39 @@ namespace
                 if(strcmp(password_buf, retype_buf) == 0)
                 {
                     pen::os_haptic_selection_feedback();
-                    Str jstr;
-                    jstr.appendf("{email: \"%s\", password: \"%s\", returnSecureToken: true}", email_buf, password_buf);
+
+                    // signup is invite only, accounts are created by the signup cloud function
+                    // (web/functions) and then we sign in as normal to get the auth tokens
+                    nlohmann::json signup_body = {
+                        {"email", email_buf},
+                        {"password", password_buf},
+                        {"invite", invite_buf}
+                    };
 
                     CURLcode code;
                     response = curl::request(
-                        curl::url_with_key("https://identitytoolkit.googleapis.com/v1/accounts:signUp").c_str(),
-                        jstr.c_str(),
+                        "https://europe-west1-diig-19d4c.cloudfunctions.net/signup",
+                        signup_body.dump().c_str(),
                         code
                     );
 
                     error_message = unpack_error_response(code, response);
+
+                    if(error_message.empty()) {
+                        nlohmann::json signin_body = {
+                            {"email", email_buf},
+                            {"password", password_buf},
+                            {"returnSecureToken", true}
+                        };
+
+                        response = curl::request(
+                            curl::url_with_key("https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword").c_str(),
+                            signin_body.dump().c_str(),
+                            code
+                        );
+
+                        error_message = unpack_error_response(code, response);
+                    }
                 }
                 else
                 {

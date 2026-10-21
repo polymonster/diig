@@ -4,7 +4,11 @@ import { artworkUrl } from '~/utils/artwork'
 
 const auth = useFirebaseAuth()
 const user = useCurrentUser()
-const DB   = 'https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app'
+
+// likes are shared with the pages, loaded once here on sign in
+const { isLiked, toggleLike, loadLikes } = useLikes()
+
+watch(user, () => loadLikes(), { immediate: true })
 
 const menuOpen     = useState('menuOpen',     () => false)
 const settingsOpen = useState('settingsOpen', () => false)
@@ -192,6 +196,15 @@ function formatTime(s) {
             }}
             <span v-if="(mode === 'video' ? getVideos(activeRelease) : getTracks(activeRelease)).length > 1" class="player-chevron">{{ trackListOpen ? '&#9662;' : '&#9652;' }}</span>
           </span>
+        </div>
+
+        <div v-if="mode !== 'video'" class="player-links">
+          <button class="player-btn like-btn" @click.stop=toggleLike(activeRelease)>
+            <span class="fa">{{ isLiked(activeRelease.id) ? '&#xf004;' : '&#xf08a;' }}</span>
+          </button>
+          <button class="player-btn buy-btn" @click.stop=openLink(activeRelease.link)>
+            <span class="fa">{{ isPreorder(activeRelease) ? '&#xf271;' : '&#xf07a;' }}</span>
+          </button>
         </div>
 
         <div v-if="mode !== 'video'" class="scrub-inline">
@@ -533,7 +546,8 @@ html, body {
 }
 
 .player-info {
-  flex: 0 1 28%;
+  flex: 0 1 auto;    /* as wide as the text */
+  max-width: 28%;    /* long titles still truncate here */
   display: flex;
   flex-direction: column;
   gap: 1px;
@@ -558,6 +572,13 @@ html, body {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.player-links {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  flex-shrink: 0;    /* the icons never get squashed by a long title */
 }
 
 .player-track {

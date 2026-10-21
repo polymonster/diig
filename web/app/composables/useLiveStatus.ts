@@ -24,8 +24,6 @@ export interface LiveMeta {
   lastTitle?: string       // optional label, falls back to "last mix"
 }
 
-const DB = 'https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app'
-
 const isLive   = ref(false)
 const checking = ref(true)
 const meta     = ref<LiveMeta | null>(null)

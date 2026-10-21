@@ -3,7 +3,8 @@ import { useFirebaseAuth, useCurrentUser } from 'vuefire'
 
 const auth = useFirebaseAuth()
 const user = useCurrentUser()
-const DB   = 'https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app'
+
+const { likes, isLiked, loadLikes, toggleLike } = useLikes()
 
 const releases = ref([])  // { id, ts, ...releaseData }
 const loading  = ref(false)
@@ -11,12 +12,11 @@ const loading  = ref(false)
 async function loadLikedReleases() {
   if (!auth.currentUser) return
   loading.value = true
-  const uid   = auth.currentUser.uid
   const token = await auth.currentUser.getIdToken()
 
-  const likesData = await fetch(`${DB}/users/${uid}/likes.json?auth=${token}`).then(r => r.json())
-  if (!likesData || typeof likesData !== 'object') { loading.value = false; return }
-  likes.value = likesData
+  // the same request app.vue makes on sign in, shared rather than repeated
+  await loadLikes()
+  const likesData = likes.value
 
   // filter out 0 un-like tombstones
   const entries = Object.entries(likesData).filter(([, ts]) => ts > 0).sort((a, b) => b[1] - a[1])
@@ -35,46 +35,13 @@ async function loadLikedReleases() {
 
 watch(user, u => { if (u) loadLikedReleases() }, { immediate: true })
 
-// ── Likes (same logic as index) ───────────────────────────────────────────────
+// ── Likes ─────────────────────────────────────────────────────────────────────
 
-const likes           = ref({})
-const likeCountAdjust = ref({})
-
-function isLiked(id) { return (likes.value[id] ?? 0) > 0 }
-
-
-async function toggleLike(release, e) {
-  e.stopPropagation()
-  if (!auth.currentUser) return
-  const uid      = auth.currentUser.uid
-  const id       = release.id
-  const token    = await auth.currentUser.getIdToken()
-  const countUrl = `${DB}/releases/${id}/likes/count.json?auth=${token}`
-
-  const json = (body) => ({ method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
-
-  if (isLiked(id)) {
-    // write a 0 tombstone rather than deleting, so the un-like syncs to
-    // devices that merge a cached copy of the likes (deleted keys are
-    // indistinguishable from never-liked)
-    likes.value = { ...likes.value, [id]: 0 }
-    likeCountAdjust.value = { ...likeCountAdjust.value, [id]: (likeCountAdjust.value[id] ?? 0) - 1 }
-    releases.value = releases.value.filter(r => r.id !== id)
-    await fetch(`${DB}/users/${uid}/likes/${id}.json?auth=${token}`, json(0))
-    const cur = await fetch(countUrl).then(r => r.json()) || 0
-    await fetch(countUrl, json(Math.max(0, cur - 1)))
-  } else {
-    const ts = 1696155367 + Date.now()
-    likes.value = { ...likes.value, [id]: ts }
-    likeCountAdjust.value = { ...likeCountAdjust.value, [id]: (likeCountAdjust.value[id] ?? 0) + 1 }
-    await fetch(`${DB}/users/${uid}/likes/${id}.json?auth=${token}`, json(ts))
-    const cur = await fetch(countUrl).then(r => r.json()) || 0
-    await fetch(countUrl, json(cur + 1))
-  }
+// an un-like here also takes the release off the page
+function onToggleLike(release, e) {
+  if (isLiked(release.id)) releases.value = releases.value.filter(r => r.id !== release.id)
+  toggleLike(release, e)
 }
-
-
-function tags(release) { return release.store_tags || {} }
 
 const STORE_NAMES = {
   redeye: 'Redeye', juno: 'Juno', phonica: 'Phonica',
@@ -159,7 +126,7 @@ function onSwipeEnd(release, e) {
           <!-- like + buy left, hype right -->
           <div class="icons-row">
             <div class="icons-left">
-              <button class="icon-btn like-btn" :class="{ liked: isLiked(release.id) }" @click="toggleLike(release, $event)">
+              <button class="icon-btn like-btn" :class="{ liked: isLiked(release.id) }" @click="onToggleLike(release, $event)">
                 <span v-if="isLiked(release.id)" class="fa">&#xf004;</span><span v-else class="fa">&#xf08a;</span>
               </button>
               <a
@@ -167,17 +134,17 @@ function onSwipeEnd(release, e) {
                 :href="release.link"
                 target="_blank"
                 class="icon-btn buy-btn"
-                :class="{ preorder: tags(release).preorder, sold: tags(release).out_of_stock }"
+                :class="{ preorder: isPreorder(release), sold: isSoldOut(release) }"
                 @click.stop
               >
-                <span v-if="tags(release).preorder" class="fa">&#xf271;</span><span v-else class="fa">&#xf07a;</span>
+                <span v-if="isPreorder(release)" class="fa">&#xf271;</span><span v-else class="fa">&#xf07a;</span>
               </a>
-              <span v-if="tags(release).out_of_stock" class="fa sold-excl" title="Sold out">&#xf12a;</span>
+              <span v-if="isSoldOut(release)" class="fa sold-excl" title="Sold out">&#xf12a;</span>
             </div>
             <div class="hype-icons">
-              <span v-if="tags(release).has_charted"                                          class="fa hype fire"   title="Charted">&#xf06d;</span>
-              <span v-if="tags(release).low_stock"                                            class="fa hype thermo" title="Low stock">&#xf2ca;</span>
-              <span v-if="tags(release).has_been_out_of_stock && !tags(release).out_of_stock" class="fa hype excl"   title="Back in stock">&#xf12a;</span>
+              <span v-if="hasCharted(release)"                                          class="fa hype fire"   title="Charted">&#xf06d;</span>
+              <span v-if="isLowStock(release)"                                            class="fa hype thermo" title="Low stock">&#xf2ca;</span>
+              <span v-if="isBackInStock(release)" class="fa hype excl"   title="Back in stock">&#xf12a;</span>
             </div>
           </div>
 

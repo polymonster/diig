@@ -3,7 +3,6 @@ import { useFirebaseAuth, useCurrentUser } from 'vuefire'
 
 const auth = useFirebaseAuth()
 const user = useCurrentUser()
-const DB = 'https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app'
 
 const stores = ref([])
 
@@ -84,7 +83,7 @@ async function loadAll() {
   if (myToken === loadToken) loading.value = false
 }
 
-watch(user, async u => { if (u) { await fetchStores(); loadStoreOrder(); loadAll(); loadLikes() } }, { immediate: true })
+watch(user, async u => { if (u) { await fetchStores(); loadStoreOrder(); loadAll() } }, { immediate: true })
 
 function selectView(viewId) {
   stopAll()
@@ -208,50 +207,7 @@ onUnmounted(() => { if (import.meta.client) window.removeEventListener('scroll',
 
 // ── Likes ─────────────────────────────────────────────────────────────────────
 
-const likes           = ref({})  // id -> timestamp
-const likeCountAdjust = ref({})  // id -> delta on top of server count
-
-function isLiked(id) { return (likes.value[id] ?? 0) > 0 }
-
-
-async function loadLikes() {
-  if (!auth.currentUser) return
-  const uid   = auth.currentUser.uid
-  const token = await auth.currentUser.getIdToken()
-  const data  = await fetch(`${DB}/users/${uid}/likes.json?auth=${token}`).then(r => r.json())
-  if (data && typeof data === 'object') likes.value = data
-}
-
-async function toggleLike(release, e) {
-  e.stopPropagation()
-  if (!auth.currentUser) return
-  const uid      = auth.currentUser.uid
-  const id       = release.id
-  const token    = await auth.currentUser.getIdToken()
-  const countUrl = `${DB}/releases/${id}/likes/count.json?auth=${token}`
-
-  const json = (body) => ({ method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
-
-  if (isLiked(id)) {
-    // write a 0 tombstone rather than deleting, so the un-like syncs to
-    // devices that merge a cached copy of the likes (deleted keys are
-    // indistinguishable from never-liked)
-    likes.value = { ...likes.value, [id]: 0 }
-    likeCountAdjust.value = { ...likeCountAdjust.value, [id]: (likeCountAdjust.value[id] ?? 0) - 1 }
-    await fetch(`${DB}/users/${uid}/likes/${id}.json?auth=${token}`, json(0))
-    const cur = await fetch(countUrl).then(r => r.json()) || 0
-    await fetch(countUrl, json(Math.max(0, cur - 1)))
-  } else {
-    const ts = 1696155367 + Date.now()
-    likes.value = { ...likes.value, [id]: ts }
-    likeCountAdjust.value = { ...likeCountAdjust.value, [id]: (likeCountAdjust.value[id] ?? 0) + 1 }
-    await fetch(`${DB}/users/${uid}/likes/${id}.json?auth=${token}`, json(ts))
-    const cur = await fetch(countUrl).then(r => r.json()) || 0
-    await fetch(countUrl, json(cur + 1))
-  }
-}
-
-function tags(release) { return release.store_tags || {} }
+const { isLiked, toggleLike } = useLikes()
 
 // ── Player ────────────────────────────────────────────────────────────────────
 
@@ -361,17 +317,17 @@ function onSwipeEnd(release, e) {
                     :href="release.link"
                     target="_blank"
                     class="icon-btn buy-btn"
-                    :class="{ preorder: tags(release).preorder, sold: tags(release).out_of_stock }"
+                    :class="{ preorder: isPreorder(release), sold: isSoldOut(release) }"
                     @click.stop
                   >
-                    <span v-if="tags(release).preorder" class="fa">&#xf271;</span><span v-else class="fa">&#xf07a;</span>
+                    <span v-if="isPreorder(release)" class="fa">&#xf271;</span><span v-else class="fa">&#xf07a;</span>
                   </a>
-                  <span v-if="tags(release).out_of_stock" class="fa sold-excl" title="Sold out">&#xf12a;</span>
+                  <span v-if="isSoldOut(release)" class="fa sold-excl" title="Sold out">&#xf12a;</span>
                 </div>
                 <div class="hype-icons">
-                  <span v-if="tags(release).has_charted"                                          class="fa hype fire"   title="Charted">&#xf06d;</span>
-                  <span v-if="tags(release).low_stock"                                            class="fa hype thermo" title="Low stock">&#xf2ca;</span>
-                  <span v-if="tags(release).has_been_out_of_stock && !tags(release).out_of_stock" class="fa hype excl"   title="Back in stock">&#xf12a;</span>
+                  <span v-if="hasCharted(release)"                                          class="fa hype fire"   title="Charted">&#xf06d;</span>
+                  <span v-if="isLowStock(release)"                                            class="fa hype thermo" title="Low stock">&#xf2ca;</span>
+                  <span v-if="isBackInStock(release)" class="fa hype excl"   title="Back in stock">&#xf12a;</span>
                 </div>
               </div>
 

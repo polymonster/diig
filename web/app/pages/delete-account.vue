@@ -10,8 +10,6 @@ const auth = useFirebaseAuth()
 const user = useCurrentUser()
 const router = useRouter()
 
-const DB = 'https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app'
-
 // client-side keys to clear on deletion (not stored in the DB)
 const LS_KEYS = [
   'discogsToken', 'discogsUser', 'showDebug',

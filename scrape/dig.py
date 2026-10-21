@@ -31,6 +31,7 @@ def display_help():
     print("    -note <text> - who / what the codes are for")
     print("    -expires-days <integer> - codes stop working after this many days")
     print("  -list-invites - list invite codes, their usage and who signed up with them")
+    print("  -waitlist - list people who registered interest on diig.app")
     print("")
     print("  optional filters:")
     print("    -section <sectiom_name> - specify a single section to scrape ie. 'techno-electro'")
@@ -587,7 +588,7 @@ def lock_invite_rules(authed_session):
             print(f"warning: root rules grant {grant} = {root[grant]!r}, which also exposes /invites")
     locked = {".read": False, ".write": False}
     changed = False
-    for node in ["invites", "signup_limits"]:
+    for node in ["invites", "signup_limits", "waitlist"]:
         if root.get(node) != locked:
             root[node] = locked
             changed = True
@@ -626,6 +627,14 @@ def list_invites():
     for code, invite in invites.items():
         used_by = ", ".join(u.get("email", uid) for uid, u in invite.get("used_by", dict()).items())
         print(f"{code[:4]}-{code[4:]}  {invite.get('uses', 0)}/{invite.get('max_uses', 1)}  {invite.get('note', '')}  {used_by}")
+
+
+def list_waitlist():
+    authed_session = auth_session()
+    waitlist = json.loads(authed_session.get(f"{k_db_url}/waitlist.json").text) or dict()
+    for entry in sorted(waitlist.values(), key=lambda e: e.get("at", 0)):
+        at = datetime.datetime.fromtimestamp(entry.get("at", 0) / 1000).strftime("%Y-%m-%d")
+        print(f"{at}  {entry.get('email', '')}  {entry.get('message', '')}")
 
 
 def setup_firebase_auth():
@@ -735,6 +744,10 @@ if __name__ == '__main__':
 
     if "-list-invites" in sys.argv:
         list_invites()
+        exit(0)
+
+    if "-waitlist" in sys.argv:
+        list_waitlist()
         exit(0)
 
     # backfill missing core fields (artist/title/label/cat) for a store

@@ -22,7 +22,12 @@ MODEL = "claude-sonnet-5-5"
 USER = "polymonster"
 HYPE_COUNT = 32
 PICK_SHORTLIST = 60
-GIG_SHORTLIST = 30
+GIG_SHORTLIST = 40
+# page counts, chosen to fill whole rows at 2, 3 and 4 columns
+PICK_COUNT = 12
+# picks are split evenly between artists already collected and artists new to the collection
+PICK_GROUPS = ("known", "discovery")
+GIG_COUNT = 8
 
 # chart style views and how much a position in each counts towards hype
 CHART_VIEWS = {
@@ -92,7 +97,10 @@ def group_keys(release):
     if d.get("id"):
         keys.append(f"discogs-{d['id']}")
     title = re.sub(r"\s*[\(\[].*?[\)\]]", "", release.get("title", ""))
-    keys.append(f"at-{tastes.norm_name(release.get('artist', ''))}|{tastes.norm_name(title)}")
+    # compare without spaces or punctuation so "TOS014" and "TOS 014" match
+    def squash(s):
+        return re.sub(r"[\W_]+", "", tastes.norm_name(s))
+    keys.append(f"at-{squash(release.get('artist', ''))}|{squash(title)}")
     return keys
 
 
@@ -213,7 +221,7 @@ def signal_text(e):
 
 def score_pick(release, store, taste, adj_artists, adj_labels, top_styles, likes_n):
     artists, labels = taste["artists"], taste["labels"]
-    score, why = 0.0, []
+    score, why, facts = 0.0, [], []
     keys = tastes.artist_keys(release.get("artist", ""), artists)
     # the two strongest artist matches count, so a long VA tracklist can't
     # outscore a single artist the user collects
@@ -241,13 +249,17 @@ def score_pick(release, store, taste, adj_artists, adj_labels, top_styles, likes
     if charts:
         score += 2 * len(charts)
         why.append("charting " + ", ".join(f"{v} #{p}" for _, v, p in charts))
+        facts += [f"#{p} on the {s} {v.replace('_', ' ')}" for s, v, p in charts]
     if (release.get("store_tags") or {}).get("has_sold_out"):
         score += 2
         why.append("has sold out before")
+        facts.append(f"has sold out before at {store}")
     if likes_n:
         score += 1.5 * likes_n
         why.append(f"{likes_n} diig likes")
-    return score, why, styles
+        facts.append(f"liked by {likes_n} diig users")
+    # why is private scoring detail for -dry-run only, facts are safe to publish
+    return score, why, styles, facts, bool(matched)
 
 
 def build_pick_shortlist(regs, new_keys, taste, likes, liked_by_user):
@@ -255,24 +267,29 @@ def build_pick_shortlist(regs, new_keys, taste, likes, liked_by_user):
     top_styles = {s for s, _ in sorted(taste["styles"].items(), key=lambda x: -x[1])[:20]}
     entries = [(k, r, s) for s, reg in regs.items() for k, r in reg.items()
                if k in new_keys and not dig.validate_release(k, r)]
-    shortlist = []
+    pools = {g: [] for g in PICK_GROUPS}
     for group in group_releases(entries).values():
         if any(k in liked_by_user for k, _, _ in group):
             continue
         best = None
         for key, release, store in group:
-            score, why, styles = score_pick(release, store, taste, adj_artists, adj_labels, top_styles, likes.get(key, 0))
-            if not best or score > best[0]:
-                best = (score, why, styles)
+            scored = score_pick(release, store, taste, adj_artists, adj_labels, top_styles, likes.get(key, 0))
+            if not best or scored[0] > best[0]:
+                best = scored
         if best[0] > 0:
-            shortlist.append((best, group))
-    shortlist.sort(key=lambda s: -s[0][0])
-    shortlist = shortlist[:PICK_SHORTLIST]
-    cards = rotate_cards([g for _, g in shortlist])
-    for c, ((score, why, styles), _) in zip(cards, shortlist):
+            pools["known" if best[4] else "discovery"].append((best, group))
+    # an even split between known artists and discoveries, each pool in score order
+    shortlist = []
+    for name, pool in pools.items():
+        pool.sort(key=lambda s: -s[0][0])
+        shortlist += [(name, scored, group) for scored, group in pool[:PICK_SHORTLIST // len(PICK_GROUPS)]]
+    cards = rotate_cards([g for _, _, g in shortlist])
+    for c, (name, (score, why, styles, facts, _), _) in zip(cards, shortlist):
+        c["_group"] = name
         c["_score"] = round(score, 1)
         c["_why"] = why
         c["_styles"] = styles
+        c["_facts"] = facts
     return cards
 
 
@@ -315,37 +332,40 @@ class Homepage(BaseModel):
 
 SYSTEM = """You curate the weekly homepage for diig, a record digging app that \
 aggregates new vinyl from independent shops (Juno, Redeye, Phonica, Yoyaku, Hard Wax, \
-Decks, Vinyl Underground). The page is built around one collector's taste: deep house, \
-techno, dub techno, minimal, electro, acid and breaks.
+Decks, Vinyl Underground). The page is shared by everyone who uses diig.
 
-You are given a shortlist of records that arrived in the shops this week, each with \
-the reasons it scored well against the collection, and a shortlist of upcoming London gigs.
+You are given a shortlist of records that arrived in the shops this week and a shortlist \
+of upcoming London gigs. Each record is in one of two groups: "known" (an artist the \
+curator already follows) or "discovery" (an artist new to them, found through related \
+labels, styles or charts).
 
-Choose about 10 picks and about 6 gigs. Favour strong taste matches, but keep variety \
-across labels, shops and styles, and include one or two less obvious records from the \
-adjacent artists or labels. For gigs, favour lineups with artists from the collection.
+Choose exactly {picks} picks: {half} from "known" and {half} from "discovery". Keep variety \
+across labels, shops and styles. Choose exactly {gigs} gigs, spread across the dates, \
+favouring lineups with the featured artists.
 
-Write in a dry, knowledgeable record-shop voice: short, specific, no hype words. A pick \
-blurb is one or two sentences. Use only the facts given (artist, label, tracks, styles, \
-reasons, chart positions). You have not heard the records, so never describe how they \
-sound beyond what the styles and track names support, and never invent history or \
-credits. Gig blurbs mention the date, venue and the relevant artists.
+Write for a reader who may never have heard of the artist. A pick blurb is three or four \
+sentences, about 70 to 90 words, in a dry, knowledgeable record-shop voice with no hype \
+words. Introduce the artist or label briefly (where they are from, what they are known \
+for, notable earlier releases or aliases) and then say what this record is: format, \
+remixers, collaborators, reissue or new material, and anything notable in the track \
+titles or credits. Only state background you are confident is accurate; if an artist is \
+too obscure to know, describe the record and the label instead of guessing. You have not \
+heard the records, so do not describe the sound beyond what the styles and titles support.
 
-The headline is a few words and the intro is two sentences at most. Use the exact \
-release_id and event_id values from the input."""
+Never mention the curator, a collection, likes by the curator, purchases or why a record \
+was chosen. Chart positions and sold-out history may be mentioned when they add something.
+
+Gig blurbs are two or three sentences: the date, venue and who is playing, with a line \
+of context on the headliners. The headline is a few words and the intro is two sentences \
+at most, about the week as a whole. Use the exact release_id and event_id values from \
+the input.""".format(picks=PICK_COUNT, half=PICK_COUNT // len(PICK_GROUPS), gigs=GIG_COUNT)
 
 
 def llm_input(taste, picks, gigs, week):
-    top_artists = sorted(taste["artists"].values(), key=lambda e: -taste_weight(e))[:30]
-    top_labels = sorted(taste["labels"].values(), key=lambda e: -taste_weight(e))[:20]
     top_styles = sorted(taste["styles"].items(), key=lambda x: -x[1])[:12]
     return json.dumps({
         "week": week,
-        "taste": {
-            "artists": [e["name"] for e in top_artists],
-            "labels": [e["name"] for e in top_labels],
-            "styles": [s for s, _ in top_styles],
-        },
+        "styles": [s for s, _ in top_styles],
         "releases": [{
             "release_id": c["id"],
             "artist": c.get("artist", ""),
@@ -355,7 +375,8 @@ def llm_input(taste, picks, gigs, week):
             "shops": [s["store"] for s in c["stores"]],
             "tracks": (c.get("track_names") or [])[:6],
             "styles": c["_styles"],
-            "reasons": c["_why"],
+            "group": c["_group"],
+            "facts": c["_facts"],
         } for c in picks],
         "gigs": [{
             "event_id": g["id"],
@@ -363,8 +384,7 @@ def llm_input(taste, picks, gigs, week):
             "date": g["date"],
             "venue": g["venue"],
             "lineup": g["lineup"][:12],
-            "in_collection": g["_in_collection"],
-            "adjacent": g["_adjacent"],
+            "featured_artists": g["_in_collection"] + g["_adjacent"],
             "attending": g["attending"],
         } for g in gigs],
     }, ensure_ascii=False)
@@ -397,19 +417,43 @@ def strip_private(d):
 def assemble(curated, picks, gigs, hype, week):
     picks_by_id = {c["id"]: c for c in picks}
     gigs_by_id = {g["id"]: g for g in gigs}
-    out_picks, out_gigs = [], []
+    out_gigs = []
+    chosen = []
     for p in curated.picks:
         c = picks_by_id.pop(p.release_id, None)
         if c:
-            out_picks.append(dict(strip_private(c), blurb=p.blurb))
+            chosen.append((c, p.blurb))
         else:
             print(f"warning: dropping unknown release id from llm: {p.release_id}")
+    # hold each group to its half of the page in the llm's order, top up a short
+    # group from its shortlist, then let over quota picks fill any space left
+    quota = PICK_COUNT // len(PICK_GROUPS)
+    within, over = [], []
+    for c, blurb in chosen:
+        n = sum(1 for x, _ in within if x["_group"] == c["_group"])
+        (within if n < quota else over).append((c, blurb))
+    for name in PICK_GROUPS:
+        short = quota - sum(1 for x, _ in within if x["_group"] == name)
+        for c in [c for c in picks_by_id.values() if c["_group"] == name][:max(short, 0)]:
+            print(f"warning: topping up {name} picks with {c['id']}")
+            within.append((c, ""))
+            picks_by_id.pop(c["id"])
+    out_picks = [dict(strip_private(c), blurb=b) for c, b in within + over]
     for g in curated.gigs:
         ev = gigs_by_id.pop(g.event_id, None)
         if ev:
             out_gigs.append(dict(strip_private(ev), blurb=g.blurb))
         else:
             print(f"warning: dropping unknown event id from llm: {g.event_id}")
+    out_picks, out_gigs = out_picks[:PICK_COUNT], out_gigs[:GIG_COUNT]
+    # top up from the shortlists (already in score order) if the llm came back
+    # short, so the page always fills whole rows. these go without a blurb
+    for c in list(picks_by_id.values())[:PICK_COUNT - len(out_picks)]:
+        print(f"warning: topping up picks with {c['id']}")
+        out_picks.append(dict(strip_private(c), blurb=""))
+    for ev in list(gigs_by_id.values())[:GIG_COUNT - len(out_gigs)]:
+        print(f"warning: topping up gigs with {ev['id']}")
+        out_gigs.append(dict(strip_private(ev), blurb=""))
     return {
         "week": week,
         "generated": datetime.datetime.now(datetime.timezone.utc).isoformat(),
@@ -475,9 +519,11 @@ if __name__ == "__main__":
     if dry_run:
         print("\n── pick shortlist ──")
         for c in picks:
-            print(f"{c['_score']:5.1f}  {c['artist']} - {c['title']} [{c.get('label', '')}] ({', '.join(s['store'] for s in c['stores'])})")
+            print(f"{c['_score']:5.1f}  {c['_group']:9}  {c['artist']} - {c['title']} [{c.get('label', '')}] ({', '.join(s['store'] for s in c['stores'])})")
             for w in c["_why"]:
                 print(f"         {w}")
+            for f in c["_facts"]:
+                print(f"         llm fact: {f}")
         print("\n── hype ──")
         for c in hype:
             print(f"  {c['artist']} - {c['title']}  art:{c['store']}  shops:{', '.join(s['store'] for s in c['stores'])}")

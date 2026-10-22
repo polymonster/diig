@@ -70,7 +70,7 @@ function gigDate(gig) {
           <div v-for="release in picks" :key="release.id" class="pick">
             <ReleaseTile :release="release" />
             <div class="pick-text">
-              <p class="blurb">{{ release.blurb }}</p>
+              <p v-if="release.blurb" class="blurb">{{ release.blurb }}</p>
               <p class="shops">{{ storeNames(release).join(' · ') }}</p>
             </div>
           </div>
@@ -78,8 +78,9 @@ function gigDate(gig) {
       </section>
 
       <section v-if="hype.length" class="section">
-        <h2 class="section-name">Hype</h2>
         <div class="shelf">
+          <!-- heading inside the grid, as on the store shelves, so it lines up with the first tile -->
+          <h2 class="section-name shelf-name">Hype</h2>
           <div v-for="release in hype" :key="release.id">
             <ReleaseTile :release="release">
               <p class="shops tile-shops">
@@ -106,7 +107,7 @@ function gigDate(gig) {
             <div class="gig-text">
               <p class="gig-date">{{ gigDate(gig) }} · {{ gig.venue }}</p>
               <p class="gig-title">{{ gig.title }}</p>
-              <p class="blurb">{{ gig.blurb }}</p>
+              <p v-if="gig.blurb" class="blurb">{{ gig.blurb }}</p>
             </div>
           </a>
         </div>
@@ -303,6 +304,11 @@ function gigDate(gig) {
   grid-template-columns: repeat(auto-fill, 150px);
   gap: 8px;
   justify-content: center;
+}
+
+.shelf-name {
+  grid-column: 1 / -1;
+  margin-bottom: 0.25rem;
 }
 
 .tile-shops {

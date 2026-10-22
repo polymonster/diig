@@ -8,7 +8,7 @@ import requests
 # fetches upcoming resident advisor event listings for an area into the
 # registry. uses ra's own (unofficial) graphql endpoint, so a failure here must
 # not break the weekly job: the previous file is kept and the exit code is 0
-#   python3 ra.py [-area 13] [-days 28]
+#   python3 ra.py [-area 13] [-days 42]
 
 RA_GRAPHQL = "https://ra.co/graphql"
 AREA_NAMES = {13: "london"}
@@ -85,7 +85,7 @@ def fetch_events(area, days):
 
 if __name__ == "__main__":
     area = int(sys.argv[sys.argv.index("-area") + 1]) if "-area" in sys.argv else 13
-    days = int(sys.argv[sys.argv.index("-days") + 1]) if "-days" in sys.argv else 28
+    days = int(sys.argv[sys.argv.index("-days") + 1]) if "-days" in sys.argv else 42
     out = f"diig-registry/ra/{AREA_NAMES.get(area, str(area))}.json"
     try:
         events = fetch_events(area, days)

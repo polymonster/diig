@@ -1,0 +1,64 @@
+name: homepage
+on:
+  schedule:
+    # sunday night, so the new page is up for monday
+    - cron: "0 21 * * 0"
+  workflow_dispatch:
+jobs:
+  homepage:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: recursive
+        token: ${{ secrets.DIIG_REG_TOKEN }}
+    - name: install_deps
+      run: |
+        python3 -m pip install --upgrade pip
+        python3 -m pip install --upgrade google-auth requests anthropic pydantic python3-discogs-client
+    - name: pull_reg
+      run: |
+        cd scrape/diig-registry
+        git checkout main
+        # homepage.py diffs against the registry as it was a week ago, so it needs that history
+        git fetch --shallow-since="10 days ago" origin main || git fetch origin main
+        git pull origin main
+    - name: ra
+      run: |
+        cd scrape
+        python3 ra.py
+    - name: homepage
+      env:
+        ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      run: |
+        cd scrape
+        python3 homepage.py -key '${{secrets.SERVICE_ACCOUNT}}'
+    - name: commit_reg
+      if: always()
+      run: |
+        cd scrape/diig-registry
+        git config user.name github-actions
+        git config user.email github-actions@github.com
+        for i in {1..5}; do
+          git add ra homepage
+          git commit -m "- update homepage" || true
+          if git pull --rebase origin main && git push origin HEAD:main; then
+            break
+          fi
+          echo "Push failed, retrying ($i/5)..."
+          sleep 2
+        done
+    - name: commit_submodule
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        git config user.name github-actions
+        git config user.email github-actions@github.com
+        git add scrape/diig-registry
+        git diff --staged --quiet || git commit -m "- bump diig-registry submodule to latest"
+        git config --unset-all http.https://github.com/.extraheader || true
+        git remote set-url origin https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git
+        git pull --rebase origin main
+        git push origin HEAD:main

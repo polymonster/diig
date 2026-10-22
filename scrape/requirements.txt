@@ -1,5 +1,7 @@
+anthropic
 google-auth
 mutagen
+pydantic
 python3-discogs-client
 rapidfuzz
 requests

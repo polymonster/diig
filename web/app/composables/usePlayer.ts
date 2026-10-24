@@ -1,46 +1,64 @@
-// Module-level singletons — one player per browser tab (safe with ssr: false)
+import type { Release } from '~/utils/release'
 
-const activeId      = ref<string | null>(null)
-const activeTrack   = ref<number>(0)
-const isPlaying     = ref<boolean>(false)
-const mode          = ref<'audio' | 'video' | null>(null)
-const releaseList   = ref<any[]>([])
-const activeRelease = ref<any | null>(null)
+// The bottom-bar player. Module-level singletons, one player per browser tab
+// (safe with ssr: false).
+//
+// Two backends behind one interface:
+//   audio — store snippet mp3s (release.track_urls) through an <audio> element
+//   video — YouTube clips (release.videos, discogs results) through the
+//           iframe API, rendered offscreen by PlayerBar
+//
+// The page showing releases sets `releaseList` so playback can run on from one
+// release into the next.
 
-// Audio progress / volume
+type Mode = 'audio' | 'video'
+
+const activeRelease = ref<Release | null>(null)
+const activeTrack   = ref(0)
+const isPlaying     = ref(false)
+const mode          = ref<Mode | null>(null)
+const releaseList   = ref<Release[]>([])
+
+// audio progress / volume
 const currentTime = ref(0)
 const duration    = ref(0)
 const volume      = ref(1)
 
-// YouTube-specific
-const ytOpen = ref(false)
-let ytPlayer: any       = null
+let audioEl: HTMLAudioElement | null = null
+
+let ytPlayer: any = null
 let ytPending: string | null = null
 
-// Audio-specific
-let audioEl: HTMLAudioElement | null = null
+const activeId = computed(() => activeRelease.value ? String(activeRelease.value.id) : null)
 
 export function usePlayer() {
 
-  // ── Item accessors ──────────────────────────────────────────────────────────
+  // ── Items ───────────────────────────────────────────────────────────────────
 
-  function toArray(val: any): any[] {
-    if (!val) return []
-    return Array.isArray(val) ? val : Object.values(val)
-  }
+  function getTracks(release: Release): string[]     { return toArray(release?.track_urls) }
+  function getTrackNames(release: Release): string[] { return toArray(release?.track_names) }
+  function getVideos(release: Release)               { return release?.videos ?? [] }
 
-  function getTracks(release: any): any[]     { return toArray(release?.track_urls) }
-  function getTrackNames(release: any): any[] { return toArray(release?.track_names) }
-  function getVideos(release: any): any[]     { return release?.videos ?? [] }
-
-  function getItems(release: any): any[] {
+  // what the current mode plays from a release
+  function getItems(release: Release): unknown[] {
     if (mode.value === 'audio') return getTracks(release)
     if (mode.value === 'video') return getVideos(release)
     return []
   }
 
+  // name of the item playing, or of track idx on a release
+  function itemName(release: Release, idx: number): string {
+    if (mode.value === 'video') return getVideos(release)[idx]?.title || ''
+    return getTrackNames(release)[idx] || `Track ${idx + 1}`
+  }
+
+  function isActive(release: Release) {
+    return activeId.value === String(release.id)
+  }
+
   // ── Audio backend ───────────────────────────────────────────────────────────
 
+  // hardwax doesn't send CORS headers, so its audio goes through our proxy
   function audioUrl(url: string): string {
     try {
       if (new URL(url).hostname === 'media.hardwax.com')
@@ -49,37 +67,36 @@ export function usePlayer() {
     return url
   }
 
-  function _playAudio(release: any, idx: number): void {
-    const urls = getTracks(release)
-    if (!urls.length) return
-    activeId.value      = release.id
-    activeTrack.value   = idx
-    activeRelease.value = release
-    const url = audioUrl(urls[idx])
+  function startAudio(release: Release, idx: number) {
+    const url = getTracks(release)[idx]
     if (!url) return
-    if (!audioEl) audioEl = new Audio()
-    audioEl.volume           = volume.value
-    audioEl.onended          = autoNext
-    audioEl.ontimeupdate     = () => { currentTime.value = audioEl!.currentTime }
-    audioEl.onloadedmetadata = () => { duration.value = audioEl!.duration || 0 }
-    audioEl.src = url
+    activeRelease.value = release
+    activeTrack.value   = idx
+    if (!audioEl) {
+      audioEl = new Audio()
+      audioEl.onended          = () => { if (!nextTrack()) isPlaying.value = false }
+      audioEl.ontimeupdate     = () => { currentTime.value = audioEl!.currentTime }
+      audioEl.onloadedmetadata = () => { duration.value = audioEl!.duration || 0 }
+    }
+    audioEl.volume = volume.value
+    audioEl.src    = audioUrl(url)
     audioEl.play().then(() => { isPlaying.value = true }).catch(() => {})
   }
 
-  function _stopAudio(): void {
+  function stopAudio() {
     audioEl?.pause()
     if (audioEl) audioEl.src = ''
     currentTime.value = 0
     duration.value    = 0
   }
 
-  function seek(time: number): void {
+  function seek(time: number) {
     if (!audioEl) return
     audioEl.currentTime = time
     currentTime.value   = time
   }
 
-  function setVolume(val: number): void {
+  function setVolume(val: number) {
     volume.value = val
     if (audioEl) audioEl.volume = val
   }
@@ -92,209 +109,135 @@ export function usePlayer() {
     return m?.[1] ?? null
   }
 
-  async function ensurePlayer(): Promise<void> {
+  // load the iframe api once and create the player in PlayerBar's #yt-iframe
+  async function ensureYtPlayer() {
     if (ytPlayer) return
+    const w = window as any
     await new Promise<void>(resolve => {
-      if ((window as any).YT?.Player) { resolve(); return }
-      ;(window as any).onYouTubeIframeAPIReady = resolve
+      if (w.YT?.Player) { resolve(); return }
+      w.onYouTubeIframeAPIReady = resolve
       if (!document.querySelector('script[src*="youtube.com/iframe_api"]')) {
         const s = document.createElement('script')
         s.src = 'https://www.youtube.com/iframe_api'
         document.head.appendChild(s)
       }
     })
-    ytPlayer = new (window as any).YT.Player('yt-iframe', {
+    ytPlayer = new w.YT.Player('yt-iframe', {
       height: '68', width: '120', videoId: '',
       playerVars: { autoplay: 1, controls: 0, rel: 0, modestbranding: 1, iv_load_policy: 3, playsinline: 1 },
       events: {
-        onReady(e: any)       { if (ytPending) e.target.loadVideoById(ytPending) },
+        onReady(e: any) { if (ytPending) e.target.loadVideoById(ytPending) },
         onStateChange(e: any) {
+          // 1 playing, 0 ended
           isPlaying.value = e.data === 1
-          if (e.data === 0) autoNext()
+          if (e.data === 0 && !nextTrack()) isPlaying.value = false
         },
       },
     })
   }
 
-  async function _playVideo(release: any, idx: number): Promise<void> {
+  async function startVideo(release: Release, idx: number) {
     const vid = extractVideoId(getVideos(release)[idx]?.uri)
     if (!vid) return
-    activeId.value      = String(release.id)
-    activeTrack.value   = idx
     activeRelease.value = release
-    ytOpen.value        = true
+    activeTrack.value   = idx
     ytPending           = vid
-    if (!ytPlayer) {
-      await nextTick()
-      await ensurePlayer()
-    } else {
-      ytPlayer.loadVideoById(vid)
-    }
+    if (ytPlayer) ytPlayer.loadVideoById(vid)
+    else await ensureYtPlayer()
   }
 
-  function _stopVideo(): void {
-    ytPlayer?.stopVideo()
-    ytOpen.value = false
+  // ── Play / pause ────────────────────────────────────────────────────────────
+
+  function play(release: Release, idx: number, newMode: Mode) {
+    if (mode.value !== newMode) {
+      if (mode.value === 'audio') stopAudio()
+      if (mode.value === 'video') ytPlayer?.pauseVideo()
+      mode.value = newMode
+    }
+    if (newMode === 'audio') startAudio(release, idx)
+    else startVideo(release, idx)
   }
 
-  // ── Cross-release autoplay (shared) ─────────────────────────────────────────
+  const playAudio = (release: Release, idx = 0) => play(release, idx, 'audio')
+  const playVideo = (release: Release, idx = 0) => play(release, idx, 'video')
 
-  function autoNext(): void {
-    if (!activeRelease.value) return
-    const items = getItems(activeRelease.value)
-    if (activeTrack.value + 1 < items.length) {
-      _setTrack(activeRelease.value, activeTrack.value + 1)
-      return
-    }
-    const ci = releaseList.value.findIndex((r: any) => r.id === activeRelease.value!.id)
-    for (let i = ci + 1; i < releaseList.value.length; i++) {
-      if (getItems(releaseList.value[i]).length) { _setTrack(releaseList.value[i], 0); return }
-    }
+  function pause() {
+    if (mode.value === 'audio') audioEl?.pause()
+    if (mode.value === 'video') ytPlayer?.pauseVideo()
     isPlaying.value = false
   }
 
-  function _setTrack(release: any, idx: number): void {
-    if (mode.value === 'audio') _playAudio(release, idx)
-    else if (mode.value === 'video') _playVideo(release, idx)
+  function resume() {
+    if (mode.value === 'audio') audioEl?.play().catch(() => {})
+    if (mode.value === 'video') ytPlayer?.playVideo()
+    isPlaying.value = true
   }
 
-  // ── Public play API ─────────────────────────────────────────────────────────
-
-  function playAudio(release: any, idx: number): void {
-    if (mode.value === 'video') _stopVideo()
-    mode.value = 'audio'
-    _playAudio(release, idx)
-  }
-
-  async function playVideo(release: any, idx: number): Promise<void> {
-    if (mode.value === 'audio') _stopAudio()
-    mode.value = 'video'
-    await _playVideo(release, idx)
-  }
-
-  // ── Tile clicks ─────────────────────────────────────────────────────────────
-
-  function tileClickAudio(release: any): void {
-    if (activeId.value === release.id && mode.value === 'audio') {
-      if (audioEl?.paused) { audioEl.play().catch(() => {}); isPlaying.value = true }
-      else                 { audioEl?.pause();                isPlaying.value = false }
-      return
-    }
-    playAudio(release, 0)
-  }
-
-  function tileClickVideo(release: any): void {
-    if (activeId.value === String(release.id) && mode.value === 'video' && ytOpen.value) {
-      toggle()
-      return
-    }
-    if (getVideos(release).length) playVideo(release, 0)
-  }
-
-  // ── Shared navigation ───────────────────────────────────────────────────────
-
-  function prevTrack(e?: Event): void {
-    e?.stopPropagation()
+  function togglePlay() {
     if (!activeRelease.value) return
-    if (activeTrack.value > 0) { _setTrack(activeRelease.value, activeTrack.value - 1); return }
-    const ci = releaseList.value.findIndex((r: any) => r.id === activeRelease.value!.id)
-    for (let i = ci - 1; i >= 0; i--) {
-      const items = getItems(releaseList.value[i])
-      if (items.length) { _setTrack(releaseList.value[i], items.length - 1); return }
+    isPlaying.value ? pause() : resume()
+  }
+
+  // a tile click: pause / resume when it's the release playing, otherwise
+  // start it from its first item
+  function toggleRelease(release: Release, newMode: Mode) {
+    if (isActive(release) && mode.value === newMode) togglePlay()
+    else play(release, 0, newMode)
+  }
+
+  // ── Track navigation ────────────────────────────────────────────────────────
+
+  // the item `dir` steps (+1 / -1) from the one playing, running on into the
+  // neighbouring releases in releaseList and skipping any with nothing to play
+  function step(dir: 1 | -1): { release: Release, idx: number } | null {
+    const cur = activeRelease.value
+    if (!cur) return null
+    const idx = activeTrack.value + dir
+    if (idx >= 0 && idx < getItems(cur).length) return { release: cur, idx }
+
+    const list = releaseList.value
+    const ci   = list.findIndex(r => String(r.id) === String(cur.id))
+    for (let i = ci + dir; i >= 0 && i < list.length; i += dir) {
+      const n = getItems(list[i]!).length
+      if (n) return { release: list[i]!, idx: dir > 0 ? 0 : n - 1 }
     }
+    return null
   }
 
-  function nextTrack(e?: Event): void {
-    e?.stopPropagation()
-    if (!activeRelease.value) return
-    const items = getItems(activeRelease.value)
-    if (activeTrack.value < items.length - 1) { _setTrack(activeRelease.value, activeTrack.value + 1); return }
-    const ci = releaseList.value.findIndex((r: any) => r.id === activeRelease.value!.id)
-    for (let i = ci + 1; i < releaseList.value.length; i++) {
-      if (getItems(releaseList.value[i]).length) { _setTrack(releaseList.value[i], 0); return }
-    }
+  // returns false when there was nowhere to go
+  function goTo(dir: 1 | -1): boolean {
+    const s = step(dir)
+    if (s) play(s.release, s.idx, mode.value!)
+    return !!s
   }
 
-  function dotClick(release: any, idx: number, e: Event): void {
-    e.stopPropagation()
-    if (idx >= 0) _setTrack(release, idx)
-  }
+  const prevTrack = () => goTo(-1)
+  const nextTrack = () => goTo(1)
 
-  const canPrev = computed(() => {
-    if (!activeRelease.value) return false
-    if (activeTrack.value > 0) return true
-    const ci = releaseList.value.findIndex((r: any) => r.id === activeRelease.value!.id)
-    return releaseList.value.slice(0, ci).some((r: any) => getItems(r).length > 0)
-  })
+  const canPrev = computed(() => !!step(-1))
+  const canNext = computed(() => !!step(1))
 
-  const canNext = computed(() => {
-    if (!activeRelease.value) return false
-    if (activeTrack.value < getItems(activeRelease.value).length - 1) return true
-    const ci = releaseList.value.findIndex((r: any) => r.id === activeRelease.value!.id)
-    return releaseList.value.slice(ci + 1).some((r: any) => getItems(r).length > 0)
-  })
+  // ── Stop ────────────────────────────────────────────────────────────────────
 
-  // ── YouTube controls ────────────────────────────────────────────────────────
-
-  function toggle(): void {
-    if (!ytPlayer) return
-    isPlaying.value ? ytPlayer.pauseVideo() : ytPlayer.playVideo()
-  }
-
-  function close(): void {
-    ytPlayer?.pauseVideo()
-    ytOpen.value = false
-  }
-
-  // ── Dots ────────────────────────────────────────────────────────────────────
-
-  function computeDots(n: number, s: number, max = 5) {
-    if (n <= max) {
-      return Array.from({ length: n }, (_: any, i: number) => ({ index: i, small: false, selected: i === s }))
-    }
-    const half = Math.floor(max / 2)
-    let start  = s - half
-    let end    = start + max - 1
-    if (start < 0) { start = 0;   end = max - 1 }
-    if (end >= n)  { end = n - 1; start = n - max }
-    return Array.from({ length: max }, (_: any, i: number) => {
-      const idx  = start + i
-      const over = (start > 0 && i === 0) || (end < n - 1 && i === max - 1)
-      if (over) return { index: -1, small: true, selected: false }
-      return { index: idx, small: false, selected: idx === s }
-    })
-  }
-
-  // ── Stop all ────────────────────────────────────────────────────────────────
-
-  function stopAll(): void {
-    _stopAudio()
+  function stopAll() {
+    stopAudio()
     ytPlayer?.pauseVideo()
     ytPending           = null
-    ytOpen.value        = false
     isPlaying.value     = false
-    activeId.value      = null
     activeRelease.value = null
     activeTrack.value   = 0
     mode.value          = null
   }
 
   return {
-    // Shared state
-    activeId, activeTrack, isPlaying, mode, releaseList, activeRelease,
-    // Audio progress / volume
-    currentTime, duration, volume, seek, setVolume,
-    // Audio
-    getTracks, getTrackNames,
-    playAudio, tileClickAudio,
-    // YouTube
-    ytOpen,
-    getVideos, playVideo, tileClickVideo,
-    toggle, close,
-    // Shared navigation
-    prevTrack, nextTrack, dotClick,
-    canPrev, canNext,
-    computeDots,
+    // state
+    activeId, activeRelease, activeTrack, isPlaying, mode, releaseList,
+    currentTime, duration, volume,
+    // items
+    getTracks, getTrackNames, getVideos, getItems, itemName, isActive,
+    // control
+    playAudio, playVideo, toggleRelease, togglePlay, seek, setVolume,
+    prevTrack, nextTrack, canPrev, canNext,
     stopAll,
   }
 }

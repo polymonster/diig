@@ -1,226 +1,151 @@
-<script setup>
-import { useFirebaseAuth, useCurrentUser } from 'vuefire'
+<script setup lang="ts">
+import { useCurrentUser } from 'vuefire'
+import type { Release } from '~/utils/release'
+import type { Store } from '~/composables/useStores'
 
-const auth = useFirebaseAuth()
+// Home: a shelf of the latest (New) or charting (Hot) releases from every
+// store, in the user's preferred store order
+
 const user = useCurrentUser()
+const db   = useDb()
+const { stores, loadStores, loadReleases } = useStores()
+const { activeId, isPlaying, releaseList, getTracks, toggleRelease, stopAll } = usePlayer()
 
-const stores = ref([])
-
-async function fetchStores() {
-  if (!auth.currentUser) return
-  const token = await auth.currentUser.getIdToken()
-  const data  = await fetch(`${DB}/stores.json?auth=${token}`).then(r => r.json())
-  if (!data || typeof data !== 'object') return
-  stores.value = Object.entries(data).map(([id, d]) => {
-    const chartView = (d.view_order || [])[1] || 'weekly_chart'
-    return {
-      id,
-      name:             d.display_name || id,
-      artIndex:         d.art_index || 0,
-      chartView,
-      sectionlessChart: !!(d.views?.[chartView]?.sectionless),
-      sections:         (d.sections || []).map((secId, i) => ({
-        id:   secId,
-        name: (d.section_display_names || [])[i] || secId,
-      })),
-    }
-  })
-}
+const SHELF_SIZE = 32
 
 const VIEWS = [
   { id: 'new_releases', label: 'New' },
   { id: 'chart',        label: 'Hot' },
 ]
 
-const selectedView   = ref(localStorage.getItem('diig_view') || 'new_releases')
-const sectionReleases = ref({})
-const loading        = ref(false)
-
-// bumped on each loadAll so superseded (e.g. view-switch) fetches don't write
-let loadToken = 0
-
-function sectionKey(storeId, sectionId) {
-  return `${storeId}__${sectionId}`
-}
-
-function triplet(store, section, viewId) {
-  if (viewId === 'chart' && store.sectionlessChart) return `${store.id}-sectionless-${store.chartView}`
-  const v = viewId === 'chart' ? store.chartView : viewId
-  return `${store.id}-${section.id}-${v}`
-}
-
-async function loadSection(store, section, viewId, runToken) {
-  const key = sectionKey(store.id, section.id)
-  const t   = triplet(store, section, viewId)
-  try {
-    const token = await auth.currentUser.getIdToken()
-    const url   = `${DB}/releases.json?orderBy="${t}"&startAt=0&auth=${token}`
-    const data  = await fetch(url).then(r => r.json())
-    if (runToken !== loadToken) return // a newer load superseded this one; don't write stale data
-    if (!data || typeof data !== 'object') { sectionReleases.value[key] = []; return }
-    const items = Object.entries(data).map(([id, v]) => ({ ...v, id }))
-    items.sort((a, b) => (a[t] ?? 999) - (b[t] ?? 999))
-    sectionReleases.value[key] = items.slice(0, 32)
-  } catch (e) {
-    console.error(t, e)
-    if (runToken === loadToken) sectionReleases.value[key] = []
-  }
-}
-
-async function loadAll() {
-  const myToken = ++loadToken // supersede any in-flight sequential load
-  loading.value = true
-  const blank = {}
-  for (const s of stores.value) for (const sec of s.sections) blank[sectionKey(s.id, sec.id)] = []
-  sectionReleases.value = blank
-  // load store by store in display order: each store's sections are fetched
-  // together, but stores fill in top-down so the first appears without waiting
-  // on the rest. releasesByStore updates reactively as each store lands
-  for (const s of sortedStores.value) {
-    if (myToken !== loadToken) return // a newer load (e.g. view switch) took over
-    await Promise.all(s.sections.map(sec => loadSection(s, sec, selectedView.value, myToken)))
-  }
-  if (myToken === loadToken) loading.value = false
-}
-
-watch(user, async u => { if (u) { await fetchStores(); loadStoreOrder(); loadAll() } }, { immediate: true })
-
-function selectView(viewId) {
-  stopAll()
-  selectedView.value = viewId
-  localStorage.setItem('diig_view', viewId)
-  loadAll()
-}
-
+const selectedView  = ref(storageGet('diig_view', 'new_releases'))
+const storeReleases = ref<Record<string, Release[]>>({})   // store id -> its shelf
+const loading       = ref(false)
 
 // ── Store ordering ───────────────────────────────────────────────────────────
 
-// seed from the cached order synchronously so the feed loads top-down in the
-// right order without waiting on the account copy (loadStoreOrder refines it)
-function readStoredOrder() {
-  try { const v = JSON.parse(localStorage.getItem('diig_store_order') || '[]'); return Array.isArray(v) ? v : [] }
-  catch { return [] }
-}
-const storeOrder = ref(readStoredOrder())  // array of store ids, user preferred order
+// seeded from the cached order so the shelves load top-down in the right
+// order straight away; loadStoreOrder refines it from the account copy
+const storeOrder = ref<string[]>(storageGetJson('diig_store_order', []))
 
-// stores sorted by the user's preferred order; unknown (new) stores keep their
-// default position at the end
+// the user's order, with stores they haven't placed (new ones) at the end
 const sortedStores = computed(() => {
   const order = storeOrder.value
-  return [...stores.value].sort((a, b) => {
-    const ia = order.indexOf(a.id)
-    const ib = order.indexOf(b.id)
-    return (ia === -1 ? order.length : ia) - (ib === -1 ? order.length : ib)
-  })
+  const rank  = (id: string) => { const i = order.indexOf(id); return i === -1 ? order.length : i }
+  return [...stores.value].sort((a, b) => rank(a.id) - rank(b.id))
 })
 
+// the account copy wins so the order follows the user across devices
 async function loadStoreOrder() {
-  // account copy wins so the order follows the user across devices,
-  // localStorage is the fallback
-  try {
-    if (auth.currentUser) {
-      const token = await auth.currentUser.getIdToken()
-      const data  = await fetch(`${DB}/users/${auth.currentUser.uid}/web_prefs/store_order.json?auth=${token}`).then(r => r.json())
-      if (Array.isArray(data) && data.length) {
-        storeOrder.value = data
-        localStorage.setItem('diig_store_order', JSON.stringify(data))
-        return
-      }
-    }
-  } catch { /* fall back to local */ }
-  try {
-    const local = JSON.parse(localStorage.getItem('diig_store_order') || '[]')
-    if (Array.isArray(local)) storeOrder.value = local
-  } catch { /* default order */ }
+  const order = await db.get<string[]>(`users/${user.value?.uid}/web_prefs/store_order`)
+  if (Array.isArray(order) && order.length) {
+    storeOrder.value = order
+    storageSet('diig_store_order', order)
+  }
 }
 
-async function saveStoreOrder() {
-  localStorage.setItem('diig_store_order', JSON.stringify(storeOrder.value))
-  if (!auth.currentUser) return
-  try {
-    const token = await auth.currentUser.getIdToken()
-    await fetch(`${DB}/users/${auth.currentUser.uid}/web_prefs/store_order.json?auth=${token}`, {
-      method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(storeOrder.value),
-    })
-  } catch (e) { console.error('store order save', e) }
+function saveStoreOrder() {
+  storageSet('diig_store_order', storeOrder.value)
+  if (user.value) db.put(`users/${user.value.uid}/web_prefs/store_order`, storeOrder.value)
 }
 
-const releasesByStore = computed(() =>
-  sortedStores.value.map(store => {
-    const seen     = new Set()
-    const releases = []
-    for (const sec of store.sections) {
-      for (const r of sectionReleases.value[sectionKey(store.id, sec.id)] || []) {
-        if (!seen.has(r.id)) { seen.add(r.id); releases.push(r) }
-      }
-    }
-    return { store, releases: releases.slice(0, 32) }
-  }).filter(s => s.releases.length)
-)
-
-// swap a store block with its visible neighbour and persist the full order
-function moveStore(storeId, dir) {
-  const visible = releasesByStore.value.map(x => x.store.id)
+// swap a store with its visible neighbour and persist the full order
+function moveStore(storeId: string, dir: 1 | -1) {
+  const visible = shelves.value.map(s => s.store.id)
   const i = visible.indexOf(storeId)
   const j = i + dir
   if (i === -1 || j < 0 || j >= visible.length) return
-  ;[visible[i], visible[j]] = [visible[j], visible[i]]
+  ;[visible[i], visible[j]] = [visible[j]!, visible[i]!]
   const rest = sortedStores.value.map(s => s.id).filter(id => !visible.includes(id))
   storeOrder.value = [...visible, ...rest]
   saveStoreOrder()
 }
 
+// ── Loading ──────────────────────────────────────────────────────────────────
+
+// bumped on each loadAll, so a superseded load (e.g. after a view switch)
+// stops and doesn't write stale data
+let loadGeneration = 0
+
+// one store's shelf: every section of the view merged, best ranked first
+async function loadShelf(store: Store, viewId: string): Promise<Release[]> {
+  const view       = viewId === 'chart' ? store.chartView : viewId
+  const sectionless = store.views.find(v => v.id === view)?.sectionless
+  const sections   = sectionless ? ['sectionless'] : store.sections.map(s => s.id)
+  const lists      = await Promise.all(sections.map(sec => loadReleases(store.id, sec, view, SHELF_SIZE)))
+  return uniqueById(lists).slice(0, SHELF_SIZE)
+}
+
+// store by store in display order, so the first shelf shows without waiting
+// on the rest
+async function loadAll() {
+  const gen = ++loadGeneration
+  loading.value       = true
+  storeReleases.value = {}
+  for (const store of sortedStores.value) {
+    const shelf = await loadShelf(store, selectedView.value)
+    if (gen !== loadGeneration) return
+    storeReleases.value = { ...storeReleases.value, [store.id]: shelf }
+  }
+  loading.value = false
+}
+
+watch(user, async u => {
+  if (!u) return
+  await Promise.all([loadStores(), loadStoreOrder()])
+  loadAll()
+}, { immediate: true })
+
+function selectView(viewId: string) {
+  stopAll()
+  selectedView.value = viewId
+  storageSet('diig_view', viewId)
+  loadAll()
+}
+
+const shelves = computed(() =>
+  sortedStores.value
+    .map(store => ({ store, releases: storeReleases.value[store.id] ?? [] }))
+    .filter(s => s.releases.length))
+
+watch(shelves, val => { releaseList.value = val.flatMap(s => s.releases) })
+
 // ── Auto-play on scroll (mobile) ─────────────────────────────────────────────
 
-const flatReleases = computed(() => releasesByStore.value.flatMap(({ releases }) => releases))
+// while something is playing, scrolling a tile to the middle of the screen
+// plays it
+let scrollRaf = 0
 
-let scrollRaf = null
-
-function centeredReleaseId() {
+function centredReleaseId(): string | null {
   const cy = window.innerHeight / 2
-  let bestId = null
+  let bestId: string | null = null
   let bestDist = Infinity
-  document.querySelectorAll('[data-release-id]').forEach(el => {
-    const r = el.getBoundingClientRect()
-    const dist = Math.abs((r.top + r.height / 2) - cy)
-    if (dist < bestDist) { bestDist = dist; bestId = el.dataset.releaseId }
+  document.querySelectorAll<HTMLElement>('[data-release-id]').forEach(el => {
+    const r    = el.getBoundingClientRect()
+    const dist = Math.abs(r.top + r.height / 2 - cy)
+    if (dist < bestDist) { bestDist = dist; bestId = el.dataset.releaseId ?? null }
   })
   return bestId
 }
 
-function onScrollPlay() {
-  if (window.innerWidth > 600) return
-  // only auto-advance while something is already playing (audio unlocked by user)
-  if (!isPlaying.value) return
-  if (scrollRaf) return
+function onScroll() {
+  if (window.innerWidth > 600 || !isPlaying.value || scrollRaf) return
   scrollRaf = requestAnimationFrame(() => {
-    scrollRaf = null
-    const id = centeredReleaseId()
+    scrollRaf = 0
+    const id = centredReleaseId()
     if (!id || activeId.value === id) return
-    const release = flatReleases.value.find(r => r.id === id)
-    if (release && getTracks(release).length) tileClick(release)
+    const release = releaseList.value.find(r => r.id === id)
+    if (release && getTracks(release).length) toggleRelease(release, 'audio')
   })
 }
 
-onMounted(() => { if (import.meta.client) window.addEventListener('scroll', onScrollPlay, { passive: true }) })
-onUnmounted(() => { if (import.meta.client) window.removeEventListener('scroll', onScrollPlay) })
-
-// ── Player ────────────────────────────────────────────────────────────────────
-
-const menuOpen = useState('menuOpen', () => false)
-const { isLive } = useLiveStatus()
-
-const { activeId, isPlaying, releaseList, tileClickAudio: tileClick, getTracks, stopAll } = usePlayer()
-
-watch(releasesByStore, val => {
-  releaseList.value = val.flatMap(({ releases }) => releases)
-})
+onMounted(() => window.addEventListener('scroll', onScroll, { passive: true }))
+onUnmounted(() => window.removeEventListener('scroll', onScroll))
 </script>
 
 <template>
   <div class="page">
-    <header class="header">
-      <span class="logo">diig</span>
+    <AppHeader>
       <nav class="viewnav">
         <button
           v-for="v in VIEWS"
@@ -229,187 +154,40 @@ watch(releasesByStore, val => {
           :class="{ active: selectedView === v.id }"
           @click="selectView(v.id)"
         >{{ v.label }}</button>
-        <NuxtLink to="/weekly"  class="viewbtn stores-link">Weekly &rsaquo;</NuxtLink>
-        <NuxtLink to="/stores"  class="viewbtn stores-link">Stores &rsaquo;</NuxtLink>
-        <NuxtLink to="/discogs" class="viewbtn stores-link">Discogs &rsaquo;</NuxtLink>
+        <NuxtLink to="/weekly"  class="viewbtn">Weekly &rsaquo;</NuxtLink>
+        <NuxtLink to="/stores"  class="viewbtn">Stores &rsaquo;</NuxtLink>
+        <NuxtLink to="/discogs" class="viewbtn">Discogs &rsaquo;</NuxtLink>
       </nav>
-      <div class="header-right">
-        <NuxtLink v-if="isLive" to="/live" class="live-nav">
-          <span class="live-nav-dot" />live
-        </NuxtLink>
-        <NuxtLink to="/likes" class="likes-nav">
-          <span class="fa">&#xf004;</span>
-        </NuxtLink>
-        <button class="burger-btn fa" @click="menuOpen = !menuOpen">&#xf0c9;</button>
-      </div>
-    </header>
+    </AppHeader>
 
-    <div v-if="loading && !releasesByStore.length" class="loading">
-      <img src="/spinner.png" class="spinner" alt="loading" />
-    </div>
+    <LoadingSpinner v-if="loading && !shelves.length" full />
 
     <main v-else class="content">
-      <div v-for="({ store, releases }, si) in releasesByStore" :key="store.id" class="store-block">
-        <h2 class="store-name">
+      <div v-for="({ store, releases }, si) in shelves" :key="store.id" class="shelf store">
+        <h2 class="shelf-name">
           <NuxtLink :to="`/stores?store=${store.id}`" class="store-link">{{ store.name }}</NuxtLink>
           <span class="order-btns">
-            <button class="order-btn fa" :disabled="si === 0" title="Move up" @click="moveStore(store.id, -1)">&#xf077;</button>
-            <button class="order-btn fa" :disabled="si === releasesByStore.length - 1" title="Move down" @click="moveStore(store.id, 1)">&#xf078;</button>
+            <button class="order-btn fa" :disabled="si === 0" title="Move up" @click="moveStore(store.id, -1)">{{ ICON.chevronUp }}</button>
+            <button class="order-btn fa" :disabled="si === shelves.length - 1" title="Move down" @click="moveStore(store.id, 1)">{{ ICON.chevronDown }}</button>
           </span>
         </h2>
-        <div class="tile-row">
-          <ReleaseTile v-for="release in releases" :key="release.id" :release="release" />
-        </div>
+        <ReleaseTile v-for="release in releases" :key="release.id" :release="release" />
       </div>
 
-      <div v-if="loading && releasesByStore.length" class="loading-more">
-        <img src="/spinner.png" class="spinner-sm" alt="loading more" />
-      </div>
+      <LoadingSpinner v-if="loading" />
     </main>
   </div>
 </template>
 
 <style scoped>
-@font-face {
-  font-family: 'Cousine';
-  src: url('/cousine-regular.ttf') format('truetype');
-}
-
-@font-face {
-  font-family: 'FontAwesome';
-  src: url('/fontawesome-webfont.ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
-}
-
-* { font-family: 'Cousine', monospace; box-sizing: border-box; }
-
-.fa {
-  font-family: 'FontAwesome';
-  font-style: normal;
-  font-weight: normal;
-  line-height: 1;
-  -webkit-font-smoothing: antialiased;
-}
-
-.page {
-  min-height: 100vh;
-  background: #f5f5f5;
-  color: #0a0a0a;
-  padding-bottom: 64px;
-}
-
-.header {
-  display: flex;
-  align-items: center;
-  gap: 2rem;
-  padding: 1rem 1.5rem;
-  background: #fff;
-  border-bottom: 1px solid #e0e0e0;
-  position: sticky;
-  top: 0;
-  z-index: 10;
-}
-
-.logo {
-  font-size: 1.1rem;
-  letter-spacing: 0.1em;
-}
-
-.viewnav {
-  display: flex;
-  gap: 0.25rem;
-}
-
-.viewbtn {
-  padding: 0.35rem 0.9rem;
-  font-family: 'Cousine', monospace;
-  font-size: 0.8rem;
-  background: none;
-  border: 1px solid transparent;
-  color: #999;
-  cursor: pointer;
-  transition: all 0.15s;
-}
-
-.viewbtn:hover  { color: #333; }
-.viewbtn.active { border-color: #0a0a0a; color: #0a0a0a; }
-
-.stores-link { text-decoration: none; white-space: nowrap; }
-
-.header-right {
-  margin-left: auto;
-  display: flex;
-  align-items: center;
-  gap: 0.9rem;
-}
-
-.likes-nav {
-  font-size: 1rem;
-  color: #ccc;
-  text-decoration: none;
-  transition: color 0.15s;
-}
-.likes-nav:hover { color: #e03070; }
-
-.loading {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 60vh;
-}
-
-.spinner {
-  width: 80px;
-  height: 80px;
-  animation: spin 1.2s linear infinite;
-}
-
-.loading-more {
-  display: flex;
-  justify-content: center;
-  padding: 1rem 0 2rem;
-}
-
-.spinner-sm {
-  width: 36px;
-  height: 36px;
-  animation: spin 1.2s linear infinite;
-}
-
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
-}
-
-.content {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 1.5rem;
-}
-
-.store-block {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, 150px);
-  gap: 8px;
-  justify-content: center;
-  margin-bottom: 2rem;
-}
-
-.store-name {
-  grid-column: 1 / -1;
-  font-size: 0.7rem;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  margin: 0 0 0.25rem;
-}
+.store { margin-bottom: 2rem; }
 
 .store-link {
-  color: #999;
+  color: inherit;
   text-decoration: none;
   transition: color 0.15s;
 }
-.store-link:hover { color: #0a0a0a; }
+.store-link:hover { color: var(--ink); }
 
 .order-btns {
   margin-left: 0.6rem;
@@ -426,39 +204,6 @@ watch(releasesByStore, val => {
   cursor: pointer;
   transition: color 0.15s;
 }
-.order-btn:hover:not(:disabled) { color: #0a0a0a; }
+.order-btn:hover:not(:disabled) { color: var(--ink); }
 .order-btn:disabled { opacity: 0.25; cursor: default; }
-
-.tile-row {
-  display: contents;
-}
-
-@media (max-width: 600px) {
-  /* header: row 1 = logo + icons, row 2 = nav */
-  .header {
-    flex-wrap: wrap;
-    gap: 0;
-    padding: 0.75rem 1rem 0;
-  }
-  .header-right { margin-left: auto; }
-  .viewnav {
-    order: 3;
-    width: 100%;
-    padding: 0.35rem 0 0.35rem;
-    border-top: 1px solid #f0f0f0;
-    margin-top: 0.5rem;
-    gap: 0;
-  }
-  .viewnav .viewbtn { flex: 1; text-align: center; padding: 0.3rem 0.4rem; }
-
-  /* tiles */
-  .store-block { grid-template-columns: 1fr; }
-}
-
-.empty {
-  font-size: 0.75rem;
-  color: #bbb;
-  padding: 0.5rem 0;
-  margin: 0;
-}
 </style>

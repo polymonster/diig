@@ -1,407 +1,59 @@
-<script setup>
-import { useFirebaseAuth, useCurrentUser } from 'vuefire'
+<script setup lang="ts">
+import { useCurrentUser } from 'vuefire'
+import type { Release } from '~/utils/release'
 
-const auth = useFirebaseAuth()
+// Everything the user has liked, most recent first
+
 const user = useCurrentUser()
+const db   = useDb()
+const { likes, isLiked, loadLikes } = useLikes()
+const { stores, loadStores } = useStores()
+const { releaseList } = usePlayer()
 
-const { likes, isLiked, loadLikes, toggleLike } = useLikes()
-
-const releases = ref([])  // { id, ts, ...releaseData }
+const releases = ref<Release[]>([])
 const loading  = ref(false)
 
 async function loadLikedReleases() {
-  if (!auth.currentUser) return
   loading.value = true
-  const token = await auth.currentUser.getIdToken()
+  // likes are already loading from app.vue on sign in, this shares that request
+  await Promise.all([loadLikes(), stores.value.length ? null : loadStores()])
 
-  // the same request app.vue makes on sign in, shared rather than repeated
-  await loadLikes()
-  const likesData = likes.value
+  // timestamp order, skipping 0 un-like tombstones
+  const ids = Object.entries(likes.value)
+    .filter(([, ts]) => ts > 0)
+    .sort((a, b) => b[1] - a[1])
+    .map(([id]) => id)
 
-  // filter out 0 un-like tombstones
-  const entries = Object.entries(likesData).filter(([, ts]) => ts > 0).sort((a, b) => b[1] - a[1])
-
-  const results = await Promise.all(
-    entries.map(async ([id, ts]) => {
-      try {
-        const data = await fetch(`${DB}/releases/${id}.json?auth=${token}`).then(r => r.json())
-        return data ? { ...data, id, ts } : null
-      } catch { return null }
-    })
-  )
-  releases.value = results.filter(Boolean)
-  loading.value = false
+  const found = await Promise.all(ids.map(id => db.get<Release>(`releases/${id}`)))
+  releases.value = found.flatMap((r, i) => r ? [{ ...r, id: ids[i]! }] : [])
+  loading.value  = false
 }
 
 watch(user, u => { if (u) loadLikedReleases() }, { immediate: true })
 
-// ── Likes ─────────────────────────────────────────────────────────────────────
+// an un-like on this page takes the release off it
+const shown = computed(() => releases.value.filter(r => isLiked(r.id)))
 
-// an un-like here also takes the release off the page
-function onToggleLike(release, e) {
-  if (isLiked(release.id)) releases.value = releases.value.filter(r => r.id !== release.id)
-  toggleLike(release, e)
-}
+watch(shown, val => { releaseList.value = val })
 
-const STORE_NAMES = {
-  redeye: 'Redeye', juno: 'Juno', phonica: 'Phonica',
-  yoyaku: 'Yoyaku', hardwax: 'Hardwax', decks: 'Decks',
-}
-function storeName(release) {
-  return STORE_NAMES[release.store] || release.store || ''
-}
-
-// ── Player ────────────────────────────────────────────────────────────────────
-
-const menuOpen = useState('menuOpen', () => false)
-const { isLive } = useLiveStatus()
-
-const { activeId, activeTrack, isPlaying, releaseList, tileClickAudio: tileClick, prevTrack, nextTrack, dotClick, computeDots, getTracks, getTrackNames } = usePlayer()
-
-watch(releases, val => { releaseList.value = val })
-
-// ── Swipe (mobile track change) ───────────────────────────────────────────────
-
-let swipeStartX = 0
-let swipeStartY = 0
-
-function onSwipeStart(e) {
-  swipeStartX = e.touches[0].clientX
-  swipeStartY = e.touches[0].clientY
-}
-
-function onSwipeEnd(release, e) {
-  const dx = e.changedTouches[0].clientX - swipeStartX
-  const dy = e.changedTouches[0].clientY - swipeStartY
-  if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) {
-    dx < 0 ? nextTrack(e) : prevTrack(e)
-  }
+function storeName(release: Release) {
+  return stores.value.find(s => s.id === release.store)?.name ?? release.store ?? ''
 }
 </script>
 
 <template>
   <div class="page">
-    <header class="header">
-      <NuxtLink to="/" class="logo">diig</NuxtLink>
+    <AppHeader>
       <span class="page-title">likes</span>
-      <div class="header-right">
-        <NuxtLink v-if="isLive" to="/live" class="live-nav">
-          <span class="live-nav-dot" />live
-        </NuxtLink>
-        <NuxtLink to="/likes" class="likes-nav active">
-          <span class="fa">&#xf004;</span>
-        </NuxtLink>
-        <button class="burger-btn fa" @click="menuOpen = !menuOpen">&#xf0c9;</button>
-      </div>
-    </header>
+    </AppHeader>
 
-    <div v-if="loading" class="loading">
-      <img src="/spinner.png" class="spinner" alt="loading" />
-    </div>
+    <LoadingSpinner v-if="loading" full />
 
     <main v-else class="content">
-      <p v-if="!releases.length" class="empty">no liked releases yet</p>
-
-      <div v-else class="tile-row">
-        <div
-          v-for="release in releases"
-          :key="release.id"
-          class="tile"
-          :class="{ active: activeId === release.id, 'no-audio': !getTracks(release).length }"
-          @click="getTracks(release).length && tileClick(release)"
-          @touchstart.passive="onSwipeStart"
-          @touchend.passive="onSwipeEnd(release, $event)"
-        >
-          <p v-if="labelCat(release)" class="r-cat">{{ labelCat(release) }}</p>
-          <img
-            :src="artworkUrl(release) || '/white_label.jpg'"
-            :alt="release.title"
-            class="tile-art"
-            @error="e => e.target.src = '/white_label.jpg'"
-          />
-          <p class="r-artist">{{ release.artist }}</p>
-          <p class="r-title">{{ release.title || ' ' }}</p>
-          <p class="r-store">{{ storeName(release) }}</p>
-
-          <!-- like + buy left, hype right -->
-          <div class="icons-row">
-            <div class="icons-left">
-              <button class="icon-btn like-btn" :class="{ liked: isLiked(release.id) }" @click="onToggleLike(release, $event)">
-                <span v-if="isLiked(release.id)" class="fa">&#xf004;</span><span v-else class="fa">&#xf08a;</span>
-              </button>
-              <a
-                v-if="release.link"
-                :href="release.link"
-                target="_blank"
-                class="icon-btn buy-btn"
-                :class="{ preorder: isPreorder(release), sold: isSoldOut(release) }"
-                @click.stop
-              >
-                <span v-if="isPreorder(release)" class="fa">&#xf271;</span><span v-else class="fa">&#xf07a;</span>
-              </a>
-              <span v-if="isSoldOut(release)" class="fa sold-excl" title="Sold out">&#xf12a;</span>
-            </div>
-            <div class="hype-icons">
-              <span v-if="hasCharted(release)"                                          class="fa hype fire"   title="Charted">&#xf06d;</span>
-              <span v-if="isLowStock(release)"                                            class="fa hype thermo" title="Low stock">&#xf2ca;</span>
-              <span v-if="isBackInStock(release)" class="fa hype excl"   title="Back in stock">&#xf12a;</span>
-            </div>
-          </div>
-
-          <div v-if="getTracks(release).length" class="dots-row">
-            <button
-              v-if="activeId === release.id && getTracks(release).length > 1"
-              class="nav-btn"
-              :disabled="activeTrack === 0"
-              @click="prevTrack($event)"
-            >&#8249;</button>
-
-            <template v-for="(dots, i) in [computeDots(getTracks(release).length, activeId === release.id ? activeTrack : -1)]" :key="i">
-            <svg :width="dots.length * 12" height="12">
-              <g
-                v-for="(dot, i) in dots"
-                :key="i"
-                style="cursor:pointer"
-                @click="dotClick(release, dot.index, $event)"
-              >
-                <circle v-if="dot.small" :cx="i*12+6" cy="6" r="1.5" fill="#bbb" opacity="0.4" />
-                <template v-else-if="dot.selected && isPlaying">
-                  <polygon :points="`${i*12+4},3 ${i*12+4},9 ${i*12+9},6`" fill="#cc4d00" />
-                </template>
-                <circle v-else-if="dot.selected" :cx="i*12+6" cy="6" r="3.5" fill="#cc4d00" />
-                <circle v-else
-                  :cx="i*12+6" cy="6" r="2.5"
-                  :fill="activeId === release.id ? '#999' : '#ccc'"
-                  :opacity="activeId === release.id ? 1 : 0.35"
-                />
-              </g>
-            </svg>
-            </template>
-
-            <button
-              v-if="activeId === release.id && getTracks(release).length > 1"
-              class="nav-btn"
-              :disabled="activeTrack === getTracks(release).length - 1"
-              @click="nextTrack($event)"
-            >&#8250;</button>
-          </div>
-          <div v-else class="dots-row no-audio-row">
-            <span class="no-audio-label">no audio</span>
-          </div>
-
-          <div v-if="activeId === release.id" class="r-trackname-wrap">
-            <span class="r-trackname" :key="`${release.id}-${activeTrack}`">{{ getTrackNames(release)[activeTrack] || '' }}</span>
-          </div>
-        </div>
+      <p v-if="!shown.length" class="empty">no liked releases yet</p>
+      <div v-else class="shelf">
+        <ReleaseTile v-for="release in shown" :key="release.id" :release="release" :sub="storeName(release)" />
       </div>
     </main>
   </div>
 </template>
-
-<style scoped>
-@font-face {
-  font-family: 'Cousine';
-  src: url('/cousine-regular.ttf') format('truetype');
-}
-
-@font-face {
-  font-family: 'FontAwesome';
-  src: url('/fontawesome-webfont.ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
-}
-
-* { font-family: 'Cousine', monospace; box-sizing: border-box; }
-
-.fa {
-  font-family: 'FontAwesome';
-  font-style: normal;
-  font-weight: normal;
-  line-height: 1;
-  -webkit-font-smoothing: antialiased;
-}
-
-.page { min-height: 100vh; background: #f5f5f5; color: #0a0a0a; }
-
-.header {
-  display: flex;
-  align-items: center;
-  gap: 2rem;
-  padding: 1rem 1.5rem;
-  background: #fff;
-  border-bottom: 1px solid #e0e0e0;
-  position: sticky;
-  top: 0;
-  z-index: 10;
-}
-
-.logo {
-  font-size: 1.1rem;
-  letter-spacing: 0.1em;
-  text-decoration: none;
-  color: #0a0a0a;
-}
-
-.page-title {
-  font-size: 0.8rem;
-  color: #999;
-}
-
-.header-right {
-  margin-left: auto;
-  display: flex;
-  align-items: center;
-  gap: 0.9rem;
-}
-
-.likes-nav {
-  font-size: 1rem;
-  color: #ccc;
-  text-decoration: none;
-  transition: color 0.15s;
-}
-.likes-nav.active { color: #e03070; }
-.likes-nav:hover  { color: #e03070; }
-
-.loading {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 60vh;
-}
-
-.spinner {
-  width: 80px;
-  height: 80px;
-  animation: spin 1.2s linear infinite;
-}
-
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
-}
-
-.content {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 1.5rem;
-}
-
-.tile-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.tile      { width: 150px; flex: 0 0 150px; cursor: pointer; }
-.no-audio  { cursor: default; }
-
-.tile-art  { width: 150px; height: 150px; object-fit: cover; display: block; }
-
-.r-cat {
-  font-size: 0.55rem; color: #bbb;
-  margin: 0 0 2px;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  min-height: 1em;
-}
-
-.r-store {
-  font-size: 0.55rem; color: #bbb;
-  margin: 1px 0 0;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
-
-.r-artist {
-  font-size: 0.65rem; color: #0a0a0a;
-  margin: 3px 0 1px;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
-
-.r-title {
-  font-size: 0.6rem; color: #888;
-  margin: 0;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  min-height: 1em;
-}
-
-.r-trackname-wrap {
-  overflow: hidden;
-  text-align: center;
-  margin-top: 3px;
-}
-
-.r-trackname {
-  display: inline-block;
-  font-size: 0.58rem;
-  color: #cc4d00;
-  white-space: nowrap;
-  animation: trackscroll 7s ease-in-out infinite;
-}
-
-@keyframes trackscroll {
-  0%,  20% { transform: translateX(0); }
-  80%, 100% { transform: translateX(min(0px, calc(150px - 100%))); }
-}
-
-@media (max-width: 600px) {
-  .tile     { width: 100%; flex: 0 0 100%; }
-  .tile-art { width: 100%; height: auto; aspect-ratio: 1; }
-  @keyframes trackscroll {
-    0%,  20% { transform: translateX(0); }
-    80%, 100% { transform: translateX(min(0px, calc(100vw - 3rem - 100%))); }
-  }
-}
-
-.dots-row {
-  display: flex; align-items: center; justify-content: center;
-  gap: 3px; margin-top: 2px;
-}
-
-.no-audio-label {
-  font-size: 0.5rem;
-  color: #ddd;
-  letter-spacing: 0.05em;
-}
-
-.nav-btn {
-  background: none; border: none;
-  font-family: 'Cousine', monospace;
-  font-size: 1rem; color: #aaa;
-  cursor: pointer; padding: 0; line-height: 1;
-  transition: color 0.1s;
-}
-.nav-btn:not(:disabled):hover { color: #333; }
-.nav-btn:disabled { opacity: 0.25; cursor: default; }
-
-.icons-row {
-  display: flex; align-items: center; justify-content: space-between;
-  margin-top: 4px; height: 16px;
-}
-
-.icons-left {
-  display: flex; align-items: center; gap: 5px;
-}
-
-.icon-btn {
-  background: none; border: none; padding: 0; cursor: pointer;
-  display: flex; align-items: center; gap: 2px;
-  color: #bbb; font-size: 0.75rem; line-height: 1;
-  transition: color 0.15s; text-decoration: none;
-}
-
-.like-btn:hover { color: #e03070; }
-.like-btn.liked { color: #e03070; }
-.like-count { font-family: 'Cousine', monospace; font-size: 0.55rem; color: inherit; }
-
-.buy-btn:hover    { color: #333; }
-.buy-btn.preorder { color: #7a8a99; }
-.buy-btn.sold     { color: #bbb; }
-.sold-excl        { color: #bbb; font-size: 0.75rem; line-height: 1; }
-
-.hype-icons { display: flex; align-items: center; gap: 3px; font-size: 0.7rem; }
-.hype.fire   { color: #cc4d00; }
-.hype.thermo { color: #e09000; }
-.hype.excl   { color: #aaa; }
-
-.empty { font-size: 0.75rem; color: #bbb; padding: 0.5rem 0; margin: 0; }
-</style>

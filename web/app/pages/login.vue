@@ -28,7 +28,9 @@ const success = ref('')
 const showForgotPassword = ref(false)
 const resetLoading = ref(false)
 
-const isValidEmail = computed(() => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value))
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+const isValidEmail = computed(() => EMAIL_RE.test(email.value))
 const isFormValid = computed(() => isValidEmail.value && password.value.length >= 6)
 
 watch(user, (newUser) => {
@@ -100,7 +102,7 @@ const regMessage = ref('')
 const regLoading = ref(false)
 const regDone = ref(false)
 
-const isRegEmailValid = computed(() => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(regEmail.value))
+const isRegEmailValid = computed(() => EMAIL_RE.test(regEmail.value))
 
 const handleRegister = async () => {
   if (!isRegEmailValid.value) return
@@ -126,7 +128,7 @@ const handleRegister = async () => {
 </script>
 
 <template>
-  <div class="page">
+  <div class="card-page">
     <div class="card">
       <h1 class="title">diig</h1>
 
@@ -142,8 +144,8 @@ const handleRegister = async () => {
       <!-- ── Sign in ── -->
       <template v-if="tab === 'login'">
         <form v-if="!showForgotPassword" @submit.prevent="handleEmailLogin">
-          <input v-model="email" type="email" placeholder="email" autocomplete="email" required class="field" />
-          <input v-model="password" type="password" placeholder="password" autocomplete="current-password" required class="field" />
+          <input v-model="email" type="email" placeholder="email" autocomplete="email" required class="field">
+          <input v-model="password" type="password" placeholder="password" autocomplete="current-password" required class="field">
           <div class="actions">
             <button type="submit" :disabled="loading || !isFormValid" class="btn">
               {{ loading ? 'signing in...' : 'sign in' }}
@@ -153,7 +155,7 @@ const handleRegister = async () => {
         </form>
 
         <form v-else @submit.prevent="handlePasswordReset">
-          <input v-model="email" type="email" placeholder="email" autocomplete="email" required class="field" />
+          <input v-model="email" type="email" placeholder="email" autocomplete="email" required class="field">
           <div class="actions">
             <button type="submit" :disabled="resetLoading || !isValidEmail" class="btn">
               {{ resetLoading ? 'sending...' : 'send reset link' }}
@@ -169,7 +171,7 @@ const handleRegister = async () => {
           Thanks — we'll be in touch.
         </div>
         <form v-else @submit.prevent="handleRegister">
-          <input v-model="regEmail" type="email" placeholder="email" autocomplete="email" required class="field" />
+          <input v-model="regEmail" type="email" placeholder="email" autocomplete="email" required class="field">
           <textarea
             v-model="regMessage"
             placeholder="tell us about yourself, or paste an invite code"
@@ -185,52 +187,30 @@ const handleRegister = async () => {
       </template>
 
       <div class="footer">
-        <NuxtLink to="/faq" class="faq-link">FAQ</NuxtLink>
+        <NuxtLink to="/faq" class="footer-link">FAQ</NuxtLink>
         <span class="footer-sep">&middot;</span>
-        <NuxtLink to="/privacy" class="faq-link">Privacy</NuxtLink>
+        <NuxtLink to="/privacy" class="footer-link">Privacy</NuxtLink>
         <span class="footer-sep">&middot;</span>
-        <NuxtLink to="/terms" class="faq-link">Terms</NuxtLink>
+        <NuxtLink to="/terms" class="footer-link">Terms</NuxtLink>
       </div>
     </div>
   </div>
 </template>
 
 <style scoped>
-@font-face {
-  font-family: 'Cousine';
-  src: url('/cousine-regular.ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
-}
-
-* { font-family: 'Cousine', monospace; }
-
-.page {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #f5f5f5;
-}
-
-.card {
-  width: 100%;
-  max-width: 400px;
-  padding: 2.5rem;
-}
+.card { max-width: 400px; }
 
 .title {
   font-size: 2rem;
-  color: #0a0a0a;
+  color: var(--ink);
   margin: 0 0 1.5rem;
   letter-spacing: 0.05em;
 }
 
 .tabs {
   display: flex;
-  gap: 0;
   margin-bottom: 1.75rem;
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: 1px solid var(--line);
 }
 
 .tab {
@@ -240,93 +220,26 @@ const handleRegister = async () => {
   margin-bottom: -1px;
   padding: 0.4rem 0;
   margin-right: 1.5rem;
-  font-family: 'Cousine', monospace;
   font-size: 0.8rem;
   color: #aaa;
   cursor: pointer;
   transition: color 0.15s, border-color 0.15s;
 }
-
-.tab.active {
-  color: #0a0a0a;
-  border-bottom-color: #0a0a0a;
-}
-
+.tab.active { color: var(--ink); border-bottom-color: var(--ink); }
 .tab:not(.active):hover { color: #666; }
 
-.field {
-  display: block;
-  width: 100%;
-  padding: 0.9rem 1rem;
-  margin-bottom: 0.75rem;
-  background: #fff;
-  border: 1px solid #ccc;
-  color: #0a0a0a;
-  font-family: 'Cousine', monospace;
-  font-size: 1rem;
-  box-sizing: border-box;
-  outline: none;
-  transition: border-color 0.15s;
-  resize: none;
-}
-
-.field::placeholder { color: #aaa; }
-.field:focus { border-color: #999; }
-
 .textarea { line-height: 1.5; }
-
-.actions {
-  display: flex;
-  align-items: center;
-  gap: 1.25rem;
-  margin-top: 1.25rem;
-}
-
-.btn {
-  padding: 0.75rem 1.5rem;
-  background: #0a0a0a;
-  color: #fff;
-  border: none;
-  font-family: 'Cousine', monospace;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: opacity 0.15s;
-}
-
-.btn:disabled { opacity: 0.4; cursor: default; }
-.btn:not(:disabled):hover { opacity: 0.75; }
-
-.ghost {
-  background: none;
-  border: none;
-  color: #aaa;
-  font-family: 'Cousine', monospace;
-  font-size: 0.85rem;
-  cursor: pointer;
-  padding: 0;
-  transition: color 0.15s;
-}
-.ghost:hover { color: #666; }
-
-.msg {
-  padding: 0.75rem 1rem;
-  margin-bottom: 1rem;
-  font-size: 0.85rem;
-}
-
-.error  { background: #fff0f0; border: 1px solid #f0b0b0; color: #a03030; }
-.success { background: #f0fff0; border: 1px solid #b0e0b0; color: #307030; }
 
 .footer {
   margin-top: 2rem;
   font-size: 0.75rem;
 }
 
-.faq-link {
+.footer-link {
   color: #aaa;
   text-decoration: none;
 }
-.faq-link:hover { color: #555; }
+.footer-link:hover { color: #555; }
 
 .footer-sep {
   color: #ddd;

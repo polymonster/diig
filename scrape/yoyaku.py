@@ -270,6 +270,7 @@ def scrape_page(url, store, store_dict, view, section, counter, session_scraped_
             release_dict["store_tags"]["preorder"] = False
             if product_info.find("product_cat-forthcoming") != -1:
                 release_dict["store_tags"]["preorder"] = True
+            dig.mark_released(release_dict["store_tags"])
 
         # check existing tracks
         track_url_count = 0

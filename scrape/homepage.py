@@ -391,8 +391,7 @@ def llm_input(taste, picks, gigs, week):
 
 
 def curate(taste, picks, gigs, week):
-    import anthropic
-    client = anthropic.Anthropic()
+    client = dig.anthropic_client()
     response = client.messages.parse(
         model=MODEL,
         max_tokens=16000,

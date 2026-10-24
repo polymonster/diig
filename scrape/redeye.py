@@ -239,6 +239,7 @@ def scrape_page(url, store, store_dict, view, section, counter, session_scraped_
             release_dict["store_tags"]["preorder"] = True
         else:
             release_dict["store_tags"]["preorder"] = False
+        dig.mark_released(release_dict["store_tags"])
 
         if grid_elem.find("Out Of Stock") != -1:
             release_dict["store_tags"]["out_of_stock"] = True

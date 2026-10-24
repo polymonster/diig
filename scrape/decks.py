@@ -394,8 +394,10 @@ def scrape_page(url, store, store_dict, view, section, counter, session_scraped_
         # stock status
         (out_of_stock, preorder) = parse_stock_status(release_html)
         store_tags["out_of_stock"] = out_of_stock
-        store_tags["has_sold_out"] = out_of_stock
+        if out_of_stock:
+            store_tags["has_sold_out"] = True
         store_tags["preorder"] = preorder
+        dig.mark_released(store_tags)
 
         # chart position
         if is_chart:

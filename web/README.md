@@ -45,3 +45,36 @@ pnpm dev
 
 pnpm dev -o (opens tab for you)
 ```
+
+## Code layout
+
+Nuxt 4 single page app (`ssr: false`), Vue single file components, all TypeScript.
+Nuxt auto-imports everything exported from `components/`, `composables/` and `utils/`,
+which is why most files have no imports for these.
+
+```
+app/
+  app.vue            shell around every page: menu, settings, player bar, debug overlay
+  pages/             one file per route (index.vue is /, stores.vue is /stores ...)
+  components/        reusable pieces
+    AppHeader          top bar; pages put their own nav / search in its slot
+    TileBase           release tile layout (art, text, icons row, track dots)
+    ReleaseTile        TileBase for store releases (audio snippets, like / buy)
+    DiscogsTile        TileBase for discogs results (youtube videos)
+    PlayerBar          bottom player, audio and youtube
+    LoadingSpinner, MarkdownPage, AppMenu, SettingsPanel, DebugOverlay
+  composables/       shared state and data access (module-level refs = app-wide singletons)
+    useDb              realtime database REST: get / put / patch, signed with the user's token
+    useStores          store catalogue + ranked release lists
+    usePlayer          playback state and controls
+    useLikes, useProfile, useHomepage, useDiscogs, useLiveStatus
+  utils/             plain functions and types, no state
+    release.ts         the Release type and helpers (artwork, label/cat, stock tags)
+    storage.ts         localStorage that never throws
+    icons.ts           FontAwesome glyph names
+  assets/css/main.css  global styles: fonts, colour variables, shared layout classes
+  content/           markdown for faq / privacy / terms
+```
+
+Styles: shared classes live in `main.css`; everything else is in the component's own
+`<style scoped>` block. Colours come from the CSS variables at the top of `main.css`.

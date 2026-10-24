@@ -1,0 +1,300 @@
+/*
+  Global styles, loaded on every page (see `css` in nuxt.config.ts).
+
+  Only things shared by several pages or components live here. Anything used
+  in one place goes in that file's <style scoped> block, which vue limits to
+  that component's own elements.
+
+  Tailwind's preflight reset runs before this file (margins zeroed, buttons
+  unstyled, images block), the tailwind utility classes aren't used.
+*/
+
+/* ── Fonts ───────────────────────────────────────────────────────────────── */
+
+@font-face {
+  font-family: 'Cousine';
+  src: url('/cousine-regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* icon font, see utils/icons.ts */
+@font-face {
+  font-family: 'FontAwesome';
+  src: url('/fontawesome-webfont.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* ── Colours ─────────────────────────────────────────────────────────────── */
+
+:root {
+  --ink:    #0a0a0a;   /* main text, active borders, primary buttons */
+  --bg:     #f5f5f5;   /* page background */
+  --panel:  #fff;      /* header, menus, dialogs */
+  --line:   #e0e0e0;   /* borders and dividers */
+  --accent: #cc4d00;   /* diig orange: what's playing, live */
+  --like:   #e03070;
+  --danger: #a03030;
+}
+
+/* ── Base ────────────────────────────────────────────────────────────────── */
+
+* {
+  font-family: 'Cousine', monospace;
+  box-sizing: border-box;
+}
+
+html, body {
+  touch-action: manipulation;
+  overscroll-behavior: none;
+  background: var(--bg);
+  color: var(--ink);
+}
+
+.fa {
+  font-family: 'FontAwesome';
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Page layout ─────────────────────────────────────────────────────────── */
+
+/* a signed in page: AppHeader, then <main class="content"> */
+.page {
+  min-height: 100vh;
+  padding-bottom: 64px;   /* room for the player bar */
+}
+
+.content {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+/* rows of fixed width release tiles, centred, one per row on mobile */
+.shelf {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 150px);
+  gap: 8px;
+  justify-content: center;
+}
+
+/* a heading inside a .shelf, spanning the row so it lines up with the tiles */
+.shelf-name {
+  grid-column: 1 / -1;
+  margin: 0 0 0.25rem;
+  font-size: 0.7rem;
+  font-weight: normal;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #999;
+}
+
+.empty {
+  font-size: 0.75rem;
+  color: #bbb;
+  text-align: center;
+  padding: 3rem 0;
+}
+
+/* pulsing dot for the live badge and /live */
+.live-dot {
+  width: 6px;
+  height: 6px;
+  flex: 0 0 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: live-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes live-pulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.25; }
+}
+
+@media (max-width: 600px) {
+  .content { padding: 1rem; }
+  .shelf   { grid-template-columns: 1fr; }
+}
+
+/* ── Header contents (the AppHeader slot) ────────────────────────────────── */
+
+/* tabs, which take their own full width row on mobile */
+.viewnav {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.viewbtn {
+  padding: 0.35rem 0.9rem;
+  font-size: 0.8rem;
+  background: none;
+  border: 1px solid transparent;
+  color: #999;
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color 0.15s, border-color 0.15s;
+}
+.viewbtn:hover  { color: #333; }
+.viewbtn.active { border-color: var(--ink); color: var(--ink); }
+
+.page-title {
+  font-size: 0.8rem;
+  color: #999;
+}
+
+@media (max-width: 600px) {
+  .viewnav {
+    order: 3;
+    width: 100%;
+    gap: 0;
+    padding-top: 0.35rem;
+    border-top: 1px solid #f0f0f0;
+  }
+  .viewnav .viewbtn {
+    flex: 1;
+    text-align: center;
+    padding: 0.3rem 0.4rem;
+  }
+}
+
+/* ── Controls ────────────────────────────────────────────────────────────── */
+
+/* a bare icon button, as on the tiles */
+.icon-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  color: #bbb;
+  font-size: 0.75rem;
+  line-height: 1;
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+/* small dark button next to an input */
+.btn-sm {
+  padding: 0.35rem 0.65rem;
+  font-size: 0.6rem;
+  background: var(--ink);
+  color: #fff;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.btn-sm:hover:not(:disabled) { background: #333; }
+.btn-sm:disabled { opacity: 0.4; cursor: default; }
+
+/* compact input / select for filter bars */
+.filter-input {
+  padding: 0.28rem 0.5rem;
+  font-size: 0.65rem;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  outline: none;
+  color: #444;
+  background: #fafafa;
+}
+.filter-input:focus { border-color: #aaa; background: #fff; }
+
+/* a bar of filters under the header */
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.6rem 1.5rem;
+  background: var(--panel);
+  border-bottom: 1px solid var(--line);
+}
+
+/* ── Card pages (login, delete account, faq, terms, privacy) ─────────────── */
+
+.card-page {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 3rem 1rem;
+}
+.card-page.top { align-items: flex-start; }
+
+.card {
+  width: 100%;
+  max-width: 420px;
+}
+.card.wide { max-width: 620px; }
+
+.back {
+  display: inline-block;
+  font-size: 0.75rem;
+  color: #aaa;
+  text-decoration: none;
+  margin-bottom: 2rem;
+}
+.back:hover { color: #555; }
+
+.field {
+  display: block;
+  width: 100%;
+  padding: 0.9rem 1rem;
+  margin-bottom: 0.75rem;
+  background: #fff;
+  border: 1px solid #ccc;
+  color: var(--ink);
+  font-size: 1rem;
+  outline: none;
+  resize: none;
+  transition: border-color 0.15s;
+}
+.field::placeholder { color: #aaa; }
+.field:focus { border-color: #999; }
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  margin-top: 1.25rem;
+}
+
+.btn {
+  padding: 0.75rem 1.5rem;
+  background: var(--ink);
+  color: #fff;
+  border: none;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+.btn.danger { background: var(--danger); }
+.btn:disabled { opacity: 0.4; cursor: default; }
+.btn:not(:disabled):hover { opacity: 0.75; }
+
+/* text-only secondary action */
+.ghost {
+  background: none;
+  border: none;
+  padding: 0;
+  color: #aaa;
+  font-size: 0.85rem;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.15s;
+}
+.ghost:hover { color: #666; }
+
+.msg {
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  font-size: 0.85rem;
+}
+.msg.error   { background: #fff0f0; border: 1px solid #f0b0b0; color: var(--danger); }
+.msg.success { background: #f0fff0; border: 1px solid #b0e0b0; color: #307030; }

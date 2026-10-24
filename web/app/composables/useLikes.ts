@@ -1,4 +1,5 @@
 import { useFirebaseAuth } from 'vuefire'
+import type { Release } from '~/utils/release'
 
 // Module-level singletons, like usePlayer: one set of likes for the whole app,
 // so a like from the player shows on the tiles and the other way round
@@ -12,6 +13,7 @@ let loadedUid: string | null = null
 
 export function useLikes() {
   const auth = useFirebaseAuth()
+  const db   = useDb()
 
   function isLiked(id: string) { return (likes.value[id] ?? 0) > 0 }
 
@@ -28,38 +30,29 @@ export function useLikes() {
 
     loadedUid = uid
     loading = (async () => {
-      const token = await auth!.currentUser!.getIdToken()
-      const data  = await fetch(`${DB}/users/${uid}/likes.json?auth=${token}`).then(r => r.json())
+      const data  = await db.get(`users/${uid}/likes`)
       likes.value = data && typeof data === 'object' ? data : {}
     })()
     return loading
   }
 
-  async function toggleLike(release: any, e?: Event) {
-    e?.stopPropagation()
-    if (!auth?.currentUser || !release?.id) return
-    const uid      = auth.currentUser.uid
-    const id       = release.id
-    const token    = await auth.currentUser.getIdToken()
-    const countUrl = `${DB}/releases/${id}/likes/count.json?auth=${token}`
+  async function toggleLike(release: Release) {
+    const uid = auth?.currentUser?.uid
+    const id  = release?.id
+    if (!uid || !id) return
 
-    const json = (body: any) => ({ method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
+    const liked = !isLiked(id)
+    // write a 0 tombstone rather than deleting on un-like, so the un-like
+    // syncs to devices that merge a cached copy of the likes (deleted keys are
+    // indistinguishable from never-liked). the offset matches the native app
+    const ts = liked ? 1696155367 + Date.now() : 0
 
-    if (isLiked(id)) {
-      // write a 0 tombstone rather than deleting, so the un-like syncs to
-      // devices that merge a cached copy of the likes (deleted keys are
-      // indistinguishable from never-liked)
-      likes.value = { ...likes.value, [id]: 0 }
-      await fetch(`${DB}/users/${uid}/likes/${id}.json?auth=${token}`, json(0))
-      const cur = await fetch(countUrl).then(r => r.json()) || 0
-      await fetch(countUrl, json(Math.max(0, cur - 1)))
-    } else {
-      const ts = 1696155367 + Date.now()
-      likes.value = { ...likes.value, [id]: ts }
-      await fetch(`${DB}/users/${uid}/likes/${id}.json?auth=${token}`, json(ts))
-      const cur = await fetch(countUrl).then(r => r.json()) || 0
-      await fetch(countUrl, json(cur + 1))
-    }
+    likes.value = { ...likes.value, [id]: ts }
+    await db.put(`users/${uid}/likes/${id}`, ts)
+
+    const countPath = `releases/${id}/likes/count`
+    const count     = (await db.get<number>(countPath)) || 0
+    await db.put(countPath, Math.max(0, count + (liked ? 1 : -1)))
   }
 
   return { likes, isLiked, loadLikes, toggleLike }

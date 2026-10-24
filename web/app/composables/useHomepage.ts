@@ -1,25 +1,41 @@
-import { useFirebaseAuth } from 'vuefire'
+import type { Release } from '~/utils/release'
 
-// the weekly curated homepage, written to /homepage/current by scrape/homepage.py
-const page    = ref<any | null>(null)
+// The weekly curated homepage, written to /homepage/current by scrape/homepage.py
+
+export interface HomepageRelease extends Release {
+  blurb?: string
+  stores?: { store: string, link: string, out_of_stock?: boolean }[]
+}
+
+export interface Gig {
+  id: string
+  date: string    // yyyy-mm-dd
+  venue: string
+  title: string
+  url: string
+  flyer?: string
+  blurb?: string
+}
+
+export interface Homepage {
+  week: string
+  headline: string
+  intro: string
+  picks?: HomepageRelease[]
+  hype?: HomepageRelease[]
+  gigs?: Gig[]
+}
+
+const page    = ref<Homepage | null>(null)
 const loading = ref(false)
 
 export function useHomepage() {
-  const auth = useFirebaseAuth()
+  const db = useDb()
 
   async function loadHomepage() {
-    if (!auth?.currentUser) return
     loading.value = true
-    try {
-      const token = await auth.currentUser.getIdToken()
-      const data  = await fetch(`${DB}/homepage/current.json?auth=${token}`).then(r => r.json())
-      page.value  = data && typeof data === 'object' && !data.error ? data : null
-    } catch (e) {
-      console.error('homepage', e)
-      page.value = null
-    } finally {
-      loading.value = false
-    }
+    page.value    = await db.get<Homepage>('homepage/current')
+    loading.value = false
   }
 
   return { page, loading, loadHomepage }

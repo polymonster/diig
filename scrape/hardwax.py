@@ -287,6 +287,7 @@ def scrape_page(url, store, store_dict, view, section, counter, session_scraped_
 
         store_tags["has_charted"] = False
         store_tags["preorder"] = False
+        dig.mark_released(store_tags)
 
         release_dict["store_tags"] = store_tags
 

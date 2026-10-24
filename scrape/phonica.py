@@ -226,6 +226,7 @@ def scrape_page(url, store, store_dict, view, section, counter, session_scraped_
             "out_of_stock": product.get("has_stock", "0") == "0",
             "preorder": product.get("is_preorder", "0") == "1"
         }
+        dig.mark_released(release["store_tags"])
 
         # merge
         if id in releases_dict:

@@ -288,6 +288,9 @@ def scrape_page(url, store, store_dict, view, section, counter, session_scraped_
         release_dict["label"] = parse_label(label_elem)
         release_dict["cat"] = parse_cat(cat_elem)
         release_dict["artworks"] = parse_artworks(artwork_elem)
+        if view in ("preorders", "new_releases"):
+            store_tags["preorder"] = view == "preorders"
+            dig.mark_released(store_tags)
         release_dict["store_tags"] = store_tags
         (release_dict["track_names"], release_dict["track_urls"]) = parse_tracks(tracks)
 

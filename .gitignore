@@ -10,5 +10,9 @@ altool.sh
 service-account.json
 discogs-auth.json
 slskd-auth.json
+anthropic-auth.json
 web/.firebase/scrape/registry/
 .venv/
+
+# discogs_validate.py reports
+scrape/reports/

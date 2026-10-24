@@ -89,8 +89,12 @@ def scrape_page(url, store, store_dict, view, section, counter, session_scraped_
             variants = product.get("variants", [])
             out_of_stock = not variants[0].get("available", False) if variants else True
             product_type = product.get("product_type", "")
-            releases_dict[key]["store_tags"]["out_of_stock"] = out_of_stock
-            releases_dict[key]["store_tags"]["preorder"] = product_type.lower() in ["inbound", "presale"]
+            tags = releases_dict[key]["store_tags"]
+            tags["out_of_stock"] = out_of_stock
+            if out_of_stock:
+                tags["has_sold_out"] = True
+            tags["preorder"] = product_type.lower() in ["inbound", "presale"]
+            dig.mark_released(tags)
             session_scraped_ids.append(key)
             counter += 1
             continue
@@ -132,11 +136,12 @@ def scrape_page(url, store, store_dict, view, section, counter, session_scraped_
             "store_tags": {
                 "out_of_stock": out_of_stock,
                 "preorder": preorder,
-                "has_sold_out": False,
+                "has_sold_out": out_of_stock,
                 "has_charted": False,
             },
             f"{store}-{section}-{view}": counter,
         }
+        dig.mark_released(release["store_tags"])
 
         if "-urls" in sys.argv:
             handle = product.get("handle", "")

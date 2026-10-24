@@ -116,6 +116,15 @@ def is_view_chart(view):
     return False
 
 
+# call once a scraper has set store_tags["preorder"]. has_been_released works
+# like has_sold_out: only ever set true, and merge_dicts keeps it when a later
+# scrape leaves it out, so a release that goes back on preorder (a repress)
+# still reads as released
+def mark_released(store_tags):
+    if store_tags.get("preorder") is False:
+        store_tags["has_been_released"] = True
+
+
 # member wise merge 2 dicts, second will overwrite dest
 def merge_dicts(dest, second):
     for k, v in second.items():
@@ -644,6 +653,20 @@ def setup_firebase_auth():
         auth_key = json.loads(sys.argv[sys.argv.index("-key") + 1])
     else:
         auth_key = json.loads(open("diig-auth.json").read())
+
+
+# anthropic client for the llm scripts. key from -anthropic-key, else the
+# ANTHROPIC_API_KEY env var (actions), else anthropic-auth.json {"key": ...}
+def anthropic_client():
+    import anthropic
+    if "-anthropic-key" in sys.argv:
+        return anthropic.Anthropic(api_key=sys.argv[sys.argv.index("-anthropic-key") + 1])
+    if os.environ.get("ANTHROPIC_API_KEY"):
+        return anthropic.Anthropic()
+    if os.path.exists("anthropic-auth.json"):
+        return anthropic.Anthropic(api_key=json.loads(open("anthropic-auth.json").read())["key"])
+    # leave the sdk to find any other credentials (e.g. an `ant auth login` profile)
+    return anthropic.Anthropic()
 
 
 def load_combined_registries(reg_dir):

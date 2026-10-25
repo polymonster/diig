@@ -4,6 +4,8 @@ import type { Release } from '~/utils/release'
 
 export interface HomepageRelease extends Release {
   blurb?: string
+  // the review a pick's blurb is drawn from
+  source?: { url: string, title: string, site: string }
   stores?: { store: string, link: string, out_of_stock?: boolean }[]
 }
 

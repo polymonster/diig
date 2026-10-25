@@ -42,6 +42,9 @@ onUnmounted(stopAll)
             <ReleaseTile :release="release" />
             <div class="pick-text">
               <p v-if="release.blurb" class="blurb">{{ release.blurb }}</p>
+              <p v-if="release.blurb && release.source" class="source">
+                via <a :href="release.source.url" :title="release.source.title" target="_blank">{{ release.source.site }}</a>
+              </p>
               <p class="shops">{{ toArray(release.stores).map(s => s.store).join(' · ') }}</p>
             </div>
           </div>
@@ -138,6 +141,16 @@ onUnmounted(stopAll)
   line-height: 1.5;
   color: #333;
   margin: 0 0 0.4rem;
+}
+
+.source {
+  font-size: 0.6rem;
+  color: #999;
+  margin: 0 0 0.4rem;
+}
+
+.source a {
+  color: inherit;
 }
 
 .shops {

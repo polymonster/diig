@@ -1,3 +1,4 @@
+import datetime
 import re
 import time
 import unicodedata
@@ -162,6 +163,21 @@ def strip_mix(name):
     return fold(re.sub(r"\((original|extended|club|radio)?\s*mix\)", "", name or "", flags=re.I))
 
 
+# side positions shops put in track names: "A1 Kinzua - In The Grips", "2. Dub"
+POSITION = re.compile(r"^\s*(?:[a-h]\d{1,2}[\s.:)\-]+|\d{1,2}[.:)\-]\s*)", re.I)
+
+
+# placeholder names: juno's "Track 1 (6:07)", untitled sides
+PLACEHOLDER = re.compile(r"(track|side|cut|untitled|tba|tbc)?\s*[a-h]?\d{0,2}(\s+\d{1,2}\s+\d{2})?")
+
+
+# a track name to compare, "" for one that is only a position ("A1", "B")
+# or a placeholder
+def track_name(name):
+    t = strip_mix(POSITION.sub("", name or ""))
+    return "" if len(t) <= 2 or PLACEHOLDER.fullmatch(t) else t
+
+
 # ── evidence ─────────────────────────────────────────────────────────────────
 
 # a discogs search hit or full record reduced to the fields we compare
@@ -235,8 +251,8 @@ def title_match(store_title, disc_title):
 # fraction of the store's track names found in the discogs tracklist, None
 # when there is nothing to compare
 def track_overlap(store_tracks, disc_tracks):
-    st = [strip_mix(t) for t in (store_tracks or []) if t and len(strip_mix(t)) > 2]
-    dt = [strip_mix(t) for t in (disc_tracks or []) if t]
+    st = [t for t in map(track_name, store_tracks or []) if t]
+    dt = [t for t in map(track_name, disc_tracks or []) if t]
     if len(st) < 2 or not dt:
         return None
     hits = sum(1 for t in st if max(fuzz.token_set_ratio(t, d) for d in dt) >= 85)
@@ -253,9 +269,13 @@ def score(release, cand):
     store_cat = norm_cat(release.get("cat", ""))
     disc_cats = [norm_cat(c) for c in cand["catnos"] if norm_cat(c)]
 
-    cat = bool(store_cat) and any(cat_equal(store_cat, d) for d in disc_cats)
-    cat_conflict = bool(store_cat) and bool(disc_cats) and not cat
     label = label_match(release.get("label", ""), cand["labels"])
+    # a number without its label prefix (hardwax lists "002") only counts
+    # with the label agreeing, "002" alone is half the catalogues going
+    loose = bool(store_cat) and any(cat_equal(store_cat, d) for d in disc_cats)
+    exact = store_cat in disc_cats and not store_cat.isdigit()
+    cat = bool(store_cat) and (exact or (loose and label))
+    cat_conflict = bool(store_cat) and bool(disc_cats) and not loose
     artist = artist_match(release.get("artist", ""), cand["artist"])
     title = title_match(release.get("title", ""), cand["title"])
     numbers_conflict = (title_numbers(release.get("title", "")) != title_numbers(cand["title"])
@@ -349,6 +369,59 @@ def match_release(api, release, max_fetch=3, verbose=False, exclude=()):
     if verdict == "ok" and is_preorder(release):
         return "weak", signals + ["preorder"], cand
     return verdict, signals, cand
+
+
+# ── registry entries ─────────────────────────────────────────────────────────
+
+# the discogs registry entry for a match_release result. a weak match is not a
+# link: it is kept under "candidate" (never url / id, which the apps read) for
+# discogs_validate.py to confirm or throw out. prev is the entry it replaces,
+# for the retry count and rejected links
+def discogs_entry(release, verdict, signals, cand, prev=None):
+    prev = prev if isinstance(prev, dict) else {}
+    rejected = prev.get("rejected", [])
+    if verdict in ("strong", "ok"):
+        entry = {
+            "url": cand["url"],
+            "id": cand["id"],
+            "match": verdict,
+            "signals": signals,
+            "matcher": MATCHER_VERSION,
+        }
+    else:
+        # tries only count under the current rules
+        tries = prev.get("tries", 0) if prev.get("matcher") == MATCHER_VERSION else 0
+        entry = {"attempted": True, "matcher": MATCHER_VERSION,
+                 "checked": datetime.date.today().isoformat(), "tries": tries + 1}
+        if is_preorder(release):
+            entry["preorder"] = True
+        if verdict == "weak" and cand["url"] not in rejected:
+            entry["candidate"] = {"url": cand["url"], "id": cand["id"], "signals": signals}
+    if rejected:
+        entry["rejected"] = rejected
+    return entry
+
+
+def is_linked(disc):
+    return isinstance(disc, dict) and "id" in disc and "attempted" not in disc
+
+
+def squash(s):
+    return re.sub(r"\s+", "", s)
+
+
+def at_key(artist, title):
+    a = "various" if is_various(artist) else fold(artist)
+    t = norm_title(title)
+    if not a or not t:
+        return None
+    return f"{squash(a)}|{squash(t)}"
+
+
+# a link we can build on: the rules (or claude) stood behind it. links from
+# the old algorithms carry no "match" and are not trusted until rescored
+def trusted(disc):
+    return is_linked(disc) and (disc.get("match") in ("strong", "ok") or disc.get("llm_validated"))
 
 
 # not out yet, so unlikely to be on discogs. a release the scrapers have seen

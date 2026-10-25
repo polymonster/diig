@@ -104,10 +104,6 @@ def get_time_limit():
     return 5.5 * 60 * 60
 
 
-def today():
-    return datetime.date.today().isoformat()
-
-
 # when a release discogs had nothing for gets searched again. the wait doubles
 # after each try: a preorder starts at a week, its page tends to appear around
 # release, but plenty never get one (and some stores leave stale preorder tags
@@ -138,39 +134,6 @@ def retry_due(disc, release):
     return age >= retry_wait(disc, release)
 
 
-# the discogs registry entry for a match_release result. a weak match is not a
-# link: it is kept under "candidate" (never url / id, which the apps read) for
-# discogs_validate.py to confirm or throw out. prev is the entry it replaces,
-# for the retry count and rejected links
-def discogs_entry(release, verdict, signals, cand, prev=None):
-    prev = prev if isinstance(prev, dict) else {}
-    rejected = prev.get("rejected", [])
-    if verdict in ("strong", "ok"):
-        entry = {
-            "url": cand["url"],
-            "id": cand["id"],
-            "match": verdict,
-            "signals": signals,
-            "matcher": discogs_match.MATCHER_VERSION,
-        }
-    else:
-        # tries only count under the current rules
-        tries = prev.get("tries", 0) if prev.get("matcher") == discogs_match.MATCHER_VERSION else 0
-        entry = {"attempted": True, "matcher": discogs_match.MATCHER_VERSION,
-                 "checked": today(), "tries": tries + 1}
-        if discogs_match.is_preorder(release):
-            entry["preorder"] = True
-        if verdict == "weak" and cand["url"] not in rejected:
-            entry["candidate"] = {"url": cand["url"], "id": cand["id"], "signals": signals}
-    if rejected:
-        entry["rejected"] = rejected
-    return entry
-
-
-def is_linked(disc):
-    return isinstance(disc, dict) and "id" in disc and "attempted" not in disc
-
-
 def describe(release):
     return f"{release.get('artist', '')} - {release.get('title', '')} [{release.get('cat', '')}]"
 
@@ -192,7 +155,7 @@ def populate_discogs_links(api, store):
         if skip_invalid_entry(key, release):
             continue
         disc = release.get("discogs")
-        if is_linked(disc):
+        if discogs_match.is_linked(disc):
             # -recheck re-matches links, except ones the llm has confirmed
             if "-recheck" not in sys.argv or disc.get("llm_validated"):
                 counts["have"] += 1
@@ -209,7 +172,7 @@ def populate_discogs_links(api, store):
             counts["failures"] += 1
             print(f"    failed: {e}")
             continue
-        release["discogs"] = discogs_entry(release, verdict, signals, cand, disc)
+        release["discogs"] = discogs_match.discogs_entry(release, verdict, signals, cand, disc)
         if verdict in ("strong", "ok"):
             counts["linked"] += 1
             print(f"    {verdict} {'+'.join(signals)} -> {cand['url']}")
@@ -232,7 +195,11 @@ def populate_discogs_links(api, store):
                 print("terminating early to beat deadline")
                 break
             disc = reg[key].get("discogs")
-            if not is_linked(disc) or disc.get("format_checked") or "/master/" in disc.get("url", ""):
+            if not discogs_match.is_linked(disc) or disc.get("format_checked") or "/master/" in disc.get("url", ""):
+                continue
+            # the crawl only searches vinyl. links it made before it set
+            # format_checked itself
+            if disc.get("via") == "crawl":
                 continue
             try:
                 rec = api.get(f"/releases/{disc['id']}")
@@ -277,7 +244,7 @@ def rescore_links(api, reg, deadline, counts):
             break
         release = reg[key]
         disc = release.get("discogs")
-        if not is_linked(disc) or "matcher" in disc or disc.get("llm_validated"):
+        if not discogs_match.is_linked(disc) or "matcher" in disc or disc.get("llm_validated"):
             continue
         if skip_invalid_entry(key, release):
             continue
@@ -297,7 +264,7 @@ def rescore_links(api, reg, deadline, counts):
 
             old = disc["url"]
             if verdict == "weak":
-                release["discogs"] = discogs_entry(release, "weak", signals,
+                release["discogs"] = discogs_match.discogs_entry(release, "weak", signals,
                                                    {"url": old, "id": disc["id"]}, disc)
                 tally["demoted"] += 1
                 print(f"{key} - {describe(release)}\n    demoted {'+'.join(signals)} {old}")
@@ -305,7 +272,7 @@ def rescore_links(api, reg, deadline, counts):
 
             rejected = disc.get("rejected", []) + [old]
             v, s, cand = discogs_match.match_release(api, release, exclude=rejected)
-            release["discogs"] = discogs_entry(release, v, s, cand, {"rejected": rejected})
+            release["discogs"] = discogs_match.discogs_entry(release, v, s, cand, {"rejected": rejected})
             tally["replaced" if v in ("strong", "ok") else "cleared"] += 1
             print(f"{key} - {describe(release)}\n    rejected {'+'.join(signals)} {old}")
             if v in ("strong", "ok"):
@@ -326,16 +293,13 @@ def is_vinyl_release(formats):
 
 def populate_discogs_likes(api, likes_file):
     likes = json.loads(open(likes_file, "r").read())
-    for file in os.listdir("diig-registry"):
-        if not file.endswith(".json"):
-            continue
-        reg_file = f"diig-registry/{file}"
-        reg = json.loads(open(reg_file, "r").read())
+    for store in dig.stores_list("diig-registry"):
+        reg = dig.load_registry(store)
         for key in likes:
             if key not in reg or skip_invalid_entry(key, reg[key]):
                 continue
             release = reg[key]
-            if is_linked(release.get("discogs")) and "-recheck" not in sys.argv:
+            if discogs_match.is_linked(release.get("discogs")) and "-recheck" not in sys.argv:
                 continue
             print(f"{key} - {describe(release)}")
             try:
@@ -343,8 +307,8 @@ def populate_discogs_likes(api, likes_file):
             except Exception as e:
                 print(f"    failed: {e}")
                 continue
-            release["discogs"] = discogs_entry(release, verdict, signals, cand, release.get("discogs"))
-        open(reg_file, "w").write(json.dumps(reg, indent=4))
+            release["discogs"] = discogs_match.discogs_entry(release, verdict, signals, cand, release.get("discogs"))
+        dig.write_registry(store, reg)
         dig.patch_releases(reg)
 
 

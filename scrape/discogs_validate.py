@@ -514,7 +514,7 @@ def apply(store, path):
     dig.write_registry(store, reg)
     dig.setup_firebase_auth()
     dig.patch_releases(changed)
-    print(f"wrote diig-registry/{store}.json and patched {len(changed)} releases")
+    print(f"wrote diig-registry/{store}/ and patched {len(changed)} releases")
 
 
 # a candidate the llm confirmed becomes the link, one it rejected is dropped

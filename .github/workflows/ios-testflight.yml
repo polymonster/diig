@@ -16,11 +16,14 @@ jobs:
     steps:
     - uses: actions/checkout@v4
       with:
-        submodules: recursive
+        submodules: false
         token: ${{ secrets.DIIG_REG_TOKEN }}
         clean: true
         # full history, for the last tag on beta builds
         fetch-depth: 0
+    # only pmtech, the app never reads the registry
+    - name: checkout_submodules
+      run: git submodule update --init --recursive app/pmtech
 
     # app store uploads must be built with a current sdk
     - uses: maxim-lobanov/setup-xcode@v1

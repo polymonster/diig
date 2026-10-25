@@ -12,9 +12,12 @@ jobs:
     steps:
     - uses: actions/checkout@v4
       with:
-        submodules: recursive
+        submodules: false
         token: ${{ secrets.DIIG_REG_TOKEN }}
         clean: true
+    # only pmtech, the app never reads the registry
+    - name: checkout_submodules
+      run: git submodule update --init --recursive app/pmtech
     # pmbuild imports http.server.CGIHTTPRequestHandler, which was removed in python 3.15
     - name: setup_python
       uses: actions/setup-python@v5
@@ -40,8 +43,11 @@ jobs:
     steps:
     - uses: actions/checkout@v4
       with:
-        submodules: recursive
+        submodules: false
         token: ${{ secrets.DIIG_REG_TOKEN }}
+    # only pmtech, the app never reads the registry
+    - name: checkout_submodules
+      run: git submodule update --init --recursive app/pmtech
     - name: setup_jdk
       uses: actions/setup-java@v1
       with:

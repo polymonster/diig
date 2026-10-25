@@ -4,7 +4,52 @@ on:
     - cron: "0 6 */2 * *"
   workflow_dispatch:
 jobs:
+  # sweeps discogs for this year and the last two, by style, and links hits
+  # across every store at once. the per-store jobs after it only search what
+  # is still unlinked
+  crawl-discogs:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: false
+        token: ${{ secrets.DIIG_REG_TOKEN }}
+    # only the registry, the scrapers don't need pmtech
+    - name: checkout_submodules
+      run: git submodule update --init --recursive scrape/diig-registry
+    - name: install_deps
+      run: |
+        python3 -m pip install --upgrade pip
+        python3 -m pip install --upgrade google-auth requests rapidfuzz
+    - name: pull_reg
+      run: |
+        cd scrape/diig-registry
+        git fetch origin main
+        git checkout main
+        git pull origin main
+    - name: crawl
+      run: |
+        cd scrape
+        YEAR=$(date +%Y)
+        python3 discogs_crawl.py -year "$YEAR-$((YEAR - 2))" -restart -replace -xref -time 3 -key '${{secrets.SERVICE_ACCOUNT}}' -discogs-key '${{secrets.DISCOGS_KEY}}'
+    - name: commit
+      run: |
+        cd scrape/diig-registry
+        git config user.name github-actions
+        git config user.email github-actions@github.com
+        for i in {1..5}; do
+          git add .
+          git commit -m "- discogs crawl" || true
+          if git pull --rebase && git push origin HEAD:main; then
+            break
+          fi
+          echo "Push failed, retrying ($i/5)..."
+          sleep 2
+        done
   scrape-discogs:
+    needs: crawl-discogs
+    # still runs if the crawl failed
+    if: ${{ !cancelled() }}
     strategy:
       fail-fast: false
       matrix:
@@ -13,8 +58,11 @@ jobs:
     steps:
     - uses: actions/checkout@v4
       with:
-        submodules: recursive
+        submodules: false
         token: ${{ secrets.DIIG_REG_TOKEN }}
+    # only the registry, the scrapers don't need pmtech
+    - name: checkout_submodules
+      run: git submodule update --init --recursive scrape/diig-registry
     - name: install_deps
       run: |
         python3 -m pip install --upgrade pip

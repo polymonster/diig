@@ -32,8 +32,11 @@ jobs:
     steps:
     - uses: actions/checkout@v4
       with:
-        submodules: recursive
+        submodules: false
         token: ${{ secrets.DIIG_REG_TOKEN }} 
+    # only pmtech, the app never reads the registry
+    - name: checkout_submodules
+      run: git submodule update --init --recursive app/pmtech
     - name: setup_jdk
       uses: actions/setup-java@v1
       with:

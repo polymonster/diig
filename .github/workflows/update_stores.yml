@@ -7,8 +7,11 @@ jobs:
     steps:
     - uses: actions/checkout@v4
       with:
-        submodules: recursive
+        submodules: false
         token: ${{ secrets.DIIG_REG_TOKEN }} 
+    # only the registry, the scrapers don't need pmtech
+    - name: checkout_submodules
+      run: git submodule update --init --recursive scrape/diig-registry
     - name: install_deps
       run: |
         python3 -m pip install --upgrade pip

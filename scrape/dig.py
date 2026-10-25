@@ -1,7 +1,6 @@
 import cgu
 import sys
 import datetime
-import redeye
 import json
 import os
 import time
@@ -14,6 +13,7 @@ from google.auth.transport.requests import AuthorizedSession
 # global key for this session, not functional but saves passing through
 global auth_key
 
+REG_CHUNK_SIZE = 5000
 
 def display_help():
     print("diig")
@@ -669,37 +669,86 @@ def anthropic_client():
     return anthropic.Anthropic()
 
 
-def load_combined_registries(reg_dir):
-    reg = dict()
+
+# returns list of store names based on presence of store chunk json
+def stores_list(reg_dir):
+    stores = list()
+    for item in sorted(os.listdir(reg_dir)):
+        if os.path.isdir(os.path.join(reg_dir, item)):
+            reg_store_dir = os.path.join(reg_dir, item)
+            chunks = os.listdir(reg_store_dir)
+            if "0000.json" in chunks:
+                stores.append(item)
+    return stores
+
+
+# return list of stores in registry based on presence of store chunk json
+def store_reg_dirs(reg_dir):
+    stores = stores_list(reg_dir)
+    store_dirs = list()
+    for store in stores:
+        store_dirs.append(os.path.join(reg_dir, store))
+    return store_dirs
+
+
+# one time batch job, splits registries into REG_CHUNK_SIZE to make GH friendly
+def split_registries(reg_dir):
     for file in os.listdir(reg_dir):
         if file.endswith(".json"):
-            store_reg = json.loads(open(f"{reg_dir}/{file}", "r").read())
-            merge_dicts(reg, store_reg)
+            filepath = f"{reg_dir}/{file}"
+            store_dir = os.path.join(reg_dir, os.path.splitext(file)[0])
+            # take list of items
+            print(f"load file: {filepath}")
+            reg = json.loads(open(f"{filepath}", "r").read())
+            write_chunked_registry(store_dir, reg)
+
+
+# load registry from split chunks
+def load_split_registry(reg_store_dir):
+    reg = dict()
+    # load if exists, otherwise we get emoty dict for new stores
+    if os.path.exists(reg_store_dir):
+        for file in sorted(os.listdir(reg_store_dir)):
+            if file.endswith(".json"):
+                filepath = os.path.join(reg_store_dir, file)
+                chunk = json.loads(open(f"{filepath}", "r").read())
+                reg.update(chunk)
     return reg
+
+
+# load all stores into single combined registry
+def load_combined_registries(reg_dir):
+    combined_reg = dict()
+    for reg_store_dir in store_reg_dirs(reg_dir):
+        store_reg = load_split_registry(reg_store_dir)
+        combined_reg.update(store_reg)
+    return combined_reg
 
 
 # load registry from submodule or empty dict if it doesnt exist
 def load_registry(store):
     reg_dir = "diig-registry"
-    filepath = f"{reg_dir}/{store}.json"
-    if os.path.exists(filepath):
-        return json.loads(open(f"{reg_dir}/{store}.json", "r").read())
-    return dict()
+    reg_store_dir = f"{reg_dir}/{store}"
+    return load_split_registry(reg_store_dir)
 
 
-# write the registry back. invalid entries are kept in the local file so
-# -backfill can find and repair them, but they are warned about here and
-# excluded from cloud patches (see patch_releases)
+# write out registry in REG_CHUNK_SIZE chunks to make GH friendly
+def write_chunked_registry(store_dir, reg):
+    # ensure dir
+    os.makedirs(store_dir, exist_ok=True)
+    # to list so we can slice
+    items = list(reg.items())
+    for n, i in enumerate(range(0, len(items), REG_CHUNK_SIZE)):
+        # take slice from list (clamps to end), store in dict
+        chunk = dict(items[i:i+REG_CHUNK_SIZE])
+        open(f"{store_dir}/{n:04}.json", "w").write(json.dumps(chunk,indent=1))
+
+
+# write the registry back
 def write_registry(store, reg):
-    invalid = [key for key, release in reg.items() if validate_release(key, release)]
-    if invalid:
-        examples = ", ".join(invalid[:5])
-        print(f"warning: {store} registry contains {len(invalid)} invalid entries "
-              f"(kept locally for -backfill, excluded from cloud patch): {examples}", flush=True)
     reg_dir = "diig-registry"
-    filepath = f"{reg_dir}/{store}.json"
-    str_reg = (json.dumps(reg, indent=4))
-    open(filepath, "w+").write(str_reg)
+    store_dir = f"{reg_dir}/{store}"
+    write_chunked_registry(store_dir, reg)
 
 
 # plain-text display fields that should never contain html markup
@@ -750,6 +799,10 @@ if __name__ == '__main__':
     # auth (skip if local-only)
     if not local_only:
         setup_firebase_auth()
+
+    if "-split-registries" in sys.argv:
+        reg_dir = sys.argv[sys.argv.index("-split-registries") + 1]
+        split_registries(reg_dir)
 
     # run the fix-store function with custom code
     if "-fix-store" in sys.argv:

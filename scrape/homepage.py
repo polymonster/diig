@@ -53,15 +53,23 @@ def load_store_regs(stores):
 
 # registry keys for a store as they were at the last commit before `cutoff`,
 # used to find releases first seen this week (the registry has no added date)
+def git(*args):
+    return subprocess.run(["git", "-C", REG_DIR, *args], capture_output=True, text=True, encoding="utf-8")
+
+
+# reads <store>/ chunks, or <store>.json at commits from before the split
 def keys_before(store, cutoff):
-    rev = subprocess.run(["git", "-C", REG_DIR, "rev-list", "-1", f"--before={cutoff.isoformat()}", "HEAD", "--", f"{store}.json"],
-                         capture_output=True, text=True).stdout.strip()
+    rev = git("rev-list", "-1", f"--before={cutoff.isoformat()}", "HEAD", "--", f"{store}/", f"{store}.json").stdout.strip()
     if not rev:
         return None
-    blob = subprocess.run(["git", "-C", REG_DIR, "show", f"{rev}:{store}.json"], capture_output=True, text=True, encoding="utf-8")
-    if blob.returncode != 0:
-        return None
-    return set(json.loads(blob.stdout).keys())
+    paths = [p for p in git("ls-tree", "--name-only", rev, f"{store}/").stdout.split() if p.endswith(".json")]
+    keys = set()
+    for path in sorted(paths) or [f"{store}.json"]:
+        blob = git("show", f"{rev}:{path}")
+        if blob.returncode != 0:
+            return None
+        keys.update(json.loads(blob.stdout).keys())
+    return keys
 
 
 def new_release_keys(regs, cutoff):

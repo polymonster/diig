@@ -128,6 +128,27 @@ namespace curl
         curl_global_init(CURL_GLOBAL_ALL);
     }
 
+    // timeouts so a hung request can never permanently block a loader thread. ios suspends the app
+    // when it is backgrounded and the peer can drop the connection without us ever seeing the rst,
+    // leaving curl blocked in recv forever. large transfers abort on a stall rather than a hard
+    // total timeout so slow cellular track downloads still complete
+    void set_timeouts(CURL* curl, bool large_transfer)
+    {
+        curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, 10L);
+        curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1L);
+        curl_easy_setopt(curl, CURLOPT_TCP_KEEPALIVE, 1L);
+        curl_easy_setopt(curl, CURLOPT_TCP_KEEPIDLE, 10L);
+        curl_easy_setopt(curl, CURLOPT_TCP_KEEPINTVL, 10L);
+
+        if(large_transfer) {
+            curl_easy_setopt(curl, CURLOPT_LOW_SPEED_LIMIT, 1L);
+            curl_easy_setopt(curl, CURLOPT_LOW_SPEED_TIME, 20L);
+        }
+        else {
+            curl_easy_setopt(curl, CURLOPT_TIMEOUT, 15L);
+        }
+    }
+
     size_t write_function(void *ptr, size_t size, size_t nmemb, DataBuffer* db)
     {
         size_t required_size = db->size + size * nmemb;
@@ -167,6 +188,7 @@ namespace curl
             curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, false);
             curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_function);
             curl_easy_setopt(curl, CURLOPT_WRITEDATA, &db);
+            set_timeouts(curl, true);
 
             res = curl_easy_perform(curl);
             db.code = res;
@@ -174,6 +196,7 @@ namespace curl
             if(res != CURLE_OK)
             {
                 PEN_LOG("curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+                free(db.data);
                 db.data = nullptr;
             }
 
@@ -202,6 +225,8 @@ namespace curl
                 }
                 curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data);
             }
+
+            set_timeouts(curl, false);
 
             struct curl_slist* headers = nullptr;
             headers = curl_slist_append(headers, "Content-Type: application/json");
@@ -245,6 +270,8 @@ namespace curl
             curl_easy_setopt(curl, CURLOPT_WRITEDATA, &db);
             curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "PATCH");
             curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data);
+
+            set_timeouts(curl, false);
 
             struct curl_slist* headers = nullptr;
             headers = curl_slist_append(headers, "Content-Type: application/json");
@@ -310,10 +337,7 @@ namespace curl
         curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
         curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, false);
 
-        // timeouts so a hung request can never permanently block a loader thread
-        curl_easy_setopt(curl, CURLOPT_TIMEOUT, 15L);
-        curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, 10L);
-        curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1L);
+        set_timeouts(curl, false);
 
         // data
         DataBuffer db = {};
@@ -491,7 +515,9 @@ bool check_audio_file(const Str& path)
     return true;
 }
 
-Str download_and_cache(const Str& url, Str releaseid, bool validate = false)
+// transport_failed is set when the request itself failed (timeout, dropped connection) so the
+// caller can retry, as opposed to the server returning an error body
+Str download_and_cache(const Str& url, Str releaseid, bool validate = false, bool* transport_failed = nullptr)
 {
     Str url2 = pen::str_replace_string(url, "MED-MED", "MED");
     url2 = pen::str_replace_string(url2, "MED-BIG", "BIG");
@@ -521,6 +547,10 @@ Str download_and_cache(const Str& url, Str releaseid, bool validate = false)
         // download
         auto db = new curl::DataBuffer;
         *db = curl::download(url2.c_str());
+
+        if(transport_failed) {
+            *transport_failed = db->code != CURLE_OK;
+        }
 
         // try parse json to validate
         bool error_response = false;
@@ -552,6 +582,8 @@ Str download_and_cache(const Str& url, Str releaseid, bool validate = false)
             // free
             free(db->data);
         }
+
+        delete db;
     }
 
     return filepath;
@@ -1749,6 +1781,9 @@ void* data_cache_fetch(void* userdata) {
             break;
         }
 
+        // set when a request fails at the transport level so we back off before retrying
+        bool transport_failed = false;
+
         // waits on info loader thread
         for(size_t i = 0; i < view->releases.available_entries; ++i) {
             if(!(view->releases.flags[i] & EntityFlags::cache_url_requested)) {
@@ -1758,8 +1793,16 @@ void* data_cache_fetch(void* userdata) {
             // cache art
             if(!view->releases.artwork_url[i].empty()) {
                 if(view->releases.artwork_filepath[i].empty()) {
-                    view->releases.artwork_filepath[i] = download_and_cache(view->releases.artwork_url[i], view->releases.key[i], true);
-                    view->releases.flags[i] |= EntityFlags::artwork_cached;
+                    bool failed = false;
+                    Str fp = download_and_cache(view->releases.artwork_url[i], view->releases.key[i], true, &failed);
+                    if(failed) {
+                        // leave the filepath empty so the next pass retries
+                        transport_failed = true;
+                    }
+                    else {
+                        view->releases.artwork_filepath[i] = fp;
+                        view->releases.flags[i] |= EntityFlags::artwork_cached;
+                    }
                 }
             }
 
@@ -1771,11 +1814,15 @@ void* data_cache_fetch(void* userdata) {
             else if(!(view->releases.flags[i] & EntityFlags::tracks_cached)) {
                 if(view->releases.track_url_count[i] > 0 && view->releases.track_filepaths[i] == nullptr) {
                     view->releases.track_filepaths[i] = new Str[view->releases.track_url_count[i]];
+                    bool failed = false;
                     for(u32 t = 0; t < view->releases.track_url_count[i]; ++t) {
                         view->releases.track_filepaths[i][t] = "";
                         if(!k_force_streamed_audio)
                         {
-                            Str fp = download_and_cache(view->releases.track_urls[i][t], view->releases.key[i], true);
+                            Str fp = download_and_cache(view->releases.track_urls[i][t], view->releases.key[i], true, &failed);
+                            if(failed) {
+                                break;
+                            }
 
                             if(check_audio_file(fp))
                             {
@@ -1792,9 +1839,19 @@ void* data_cache_fetch(void* userdata) {
                             view->releases.track_filepaths[i][t] = view->releases.track_urls[i][t];
                         }
                     }
-                    std::atomic_thread_fence(std::memory_order_release);
-                    view->releases.flags[i] |= EntityFlags::tracks_cached;
-                    view->releases.track_filepath_count[i] = view->releases.track_url_count[i];
+
+                    if(failed) {
+                        // a dropped or timed out connection: discard and retry the release on the next pass,
+                        // tracks already downloaded are on disk so they are not fetched again
+                        delete[] view->releases.track_filepaths[i];
+                        view->releases.track_filepaths[i] = nullptr;
+                        transport_failed = true;
+                    }
+                    else {
+                        std::atomic_thread_fence(std::memory_order_release);
+                        view->releases.flags[i] |= EntityFlags::tracks_cached;
+                        view->releases.track_filepath_count[i] = view->releases.track_url_count[i];
+                    }
                 }
                 else
                 {
@@ -1811,7 +1868,8 @@ void* data_cache_fetch(void* userdata) {
             }
         }
 
-        pen::thread_sleep_ms(16);
+        // back off while offline so failed requests are not hammered every frame
+        pen::thread_sleep_ms(transport_failed ? 1000 : 16);
     }
 
     // flag terminated
@@ -4576,7 +4634,14 @@ namespace
 
     loop_t user_update() {
 
+        update_audio_session();
+
         if(ctx.backgrounded) {
+            // frames are skipped while backgrounded so any scroll inertia is frozen and would resume on
+            // return. the swipe used to leave the app is delivered to us first (system gestures are
+            // deferred) and leaves momentum behind, so drop it here
+            ctx.scroll_delta = vec2f::zero();
+            pen::thread_sleep_ms(1000);
             pen::thread_sleep_ms(1000);
             pen_main_loop_continue();
         }
@@ -5189,6 +5254,11 @@ void audio_player()
                 put::audio_add_channel_to_group(audio_ctx.ci, audio_ctx.gi);
                 put::audio_group_set_volume(audio_ctx.gi, 1.0f);
 
+                if(audio_ctx.pause_on_start) {
+                    put::audio_group_set_pause(audio_ctx.gi, true);
+                    audio_ctx.pause_on_start = false;
+                }
+
                 // create waveform for visualization
                 if(!k_disable_waveform) {
                     audio_ctx.waveform_handle = put::audio_create_waveform(audio_ctx.play_track_filepath.c_str(), k_waveform_resolution);
@@ -5234,6 +5304,11 @@ void audio_player()
 
                         put::audio_add_channel_to_group(audio_ctx.ci, audio_ctx.gi);
                         put::audio_group_set_volume(audio_ctx.gi, 1.0f);
+
+                        if(audio_ctx.pause_on_start) {
+                            put::audio_group_set_pause(audio_ctx.gi, true);
+                            audio_ctx.pause_on_start = false;
+                        }
 
                         // Note: waveform not available for URL streaming (no local file)
 
@@ -6203,25 +6278,45 @@ void* data_cache_enumerate(void* userdata) {
 }
 
 void enter_background(bool backgrounded) {
+    // called on the os main thread, so only record state here. the audio command buffer is single
+    // producer, the commands are issued from update_audio_session on the user thread
     ctx.audio_ctx.play_bg = get_user_setting("setting_play_backgrounded", true);
-    if(!ctx.audio_ctx.play_bg)
+    ctx.backgrounded = backgrounded;
+}
+
+void update_audio_session() {
+    auto& audio_ctx = ctx.audio_ctx;
+
+    // suspend the mixer while backgrounded when background play is disabled
+    bool suspend = ctx.backgrounded && !audio_ctx.play_bg;
+    if(suspend != audio_ctx.suspended)
     {
-        if(backgrounded) {
-            audio_suspend();
+        if(suspend) {
+            put::audio_suspend();
         }
         else {
-            audio_resume();
+            put::audio_resume();
         }
-    }
-    else
-    {
-        // this is required to reinit the audio system after we have been interrupted
-        if(os_require_audio_reinit(true)) {
-            audio_reinit();
-        }
+        audio_ctx.suspended = suspend;
     }
 
-    ctx.backgrounded = backgrounded;
+    // an audio session interruption (another app, siri, a call) stops fmod's output unit, a full
+    // reinit is required to get it back. deferred while suspended, it is picked up on resume
+    if(!audio_ctx.suspended && os_require_audio_reinit(true))
+    {
+        PEN_LOG("audio reinit after interruption");
+
+        // keep a user pause across the restart
+        put::audio_group_state gstate = {};
+        if(is_valid(audio_ctx.gi) && put::audio_group_get_state(audio_ctx.gi, &gstate) == PEN_ERR_OK) {
+            audio_ctx.pause_on_start = gstate.play_state == put::e_audio_play_state::paused;
+        }
+
+        // the reinit invalidates existing sounds and channels, recreate the current track. the
+        // create commands are queued behind the reinit so they run against the new system
+        put::audio_reinit();
+        audio_ctx.invalidate_track = true;
+    }
 }
 
 Str append_auth(Str url) {

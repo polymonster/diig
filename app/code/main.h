@@ -363,6 +363,8 @@ struct AudioPlayerContext
     bool    play_bg = false;
     bool    mute = false;
     bool    yt_active = false; // playback owned by the hidden youtube player, not fmod
+    bool    suspended = false; // fmod mixer suspended while backgrounded with background play off
+    bool    pause_on_start = false; // re-apply a user pause when a track is recreated after an audio reinit
 };
 
 struct AppContext
@@ -414,6 +416,7 @@ struct AppContext
 
 // os callbacks
 void            enter_background(bool backgrounded);
+void            update_audio_session();
 
 // auth
 Str             append_auth(Str url);

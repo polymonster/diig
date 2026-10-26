@@ -9,7 +9,7 @@ import discogs_client
 
 # builds a taste profile (artists, labels, styles) from a discogs collection
 # plus a diig user's likes. run manually when the collection has changed;
-# homepage.py reads the output to score releases
+# weekly.py reads the output to score releases
 #   python3 taste.py -discogs-key <token> -user polymonster [-full] [-local-only]
 
 DB = "https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app"

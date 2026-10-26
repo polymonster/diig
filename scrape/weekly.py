@@ -11,11 +11,11 @@ import concurrent.futures
 import anthropic
 from pydantic import BaseModel
 
-# weekly curated homepage. scores this week's new releases against the taste
+# weekly curated page. scores this week's new releases against the taste
 # profile (taste.py), ranks what is charting across stores for the hype shelf,
 # shortlists london gigs (ra.py), then has claude pick and write up the page.
-# output goes to diig-registry/homepage/{week}.json and rtdb /homepage
-#   python3 homepage.py [-key '<service account json>'] [-days 7] [-dry-run] [-local-only]
+# output goes to diig-registry/weekly/{week}.json and rtdb /weekly
+#   python3 weekly.py [-key '<service account json>'] [-days 7] [-dry-run] [-local-only]
 #   -dry-run:    no llm call and no writes, prints the shortlists
 #   -local-only: no firebase reads or writes (no likes, no rtdb patch)
 
@@ -44,7 +44,7 @@ CHART_VIEWS = {
     "essentials": 0.4,
 }
 
-# fields kept on a homepage card, enough for the web tile, player and links
+# fields kept on a weekly card, enough for the web tile, player and links
 CARD_FIELDS = ("store", "artist", "title", "label", "cat", "link", "artworks", "track_names", "track_urls", "store_tags", "discogs")
 
 
@@ -335,14 +335,14 @@ class Gig(BaseModel):
     blurb: str
 
 
-class Homepage(BaseModel):
+class Weekly(BaseModel):
     headline: str
     intro: str
     picks: list[Pick]
     gigs: list[Gig]
 
 
-SYSTEM = """You curate the weekly homepage for diig, a record digging app that \
+SYSTEM = """You curate the weekly page for diig, a record digging app that \
 aggregates new vinyl from independent shops (Juno, Redeye, Phonica, Yoyaku, Hard Wax, \
 Decks, Vinyl Underground). The page is shared by everyone who uses diig.
 
@@ -403,7 +403,7 @@ def curate(taste, picks, gigs, week):
         max_tokens=16000,
         system=SYSTEM,
         messages=[{"role": "user", "content": llm_input(taste, picks, gigs, week)}],
-        output_format=Homepage,
+        output_format=Weekly,
     )
     if response.stop_reason == "refusal":
         raise RuntimeError(f"curation refused: {response.stop_details}")
@@ -594,20 +594,20 @@ def select_picks(candidates):
 
 def ensure_read_rule(session):
     rules = session.get(f"{DB}/.settings/rules.json").json()
-    if "homepage" in rules["rules"]:
+    if "weekly" in rules["rules"]:
         return
-    rules["rules"]["homepage"] = {".read": "auth.uid !== null"}
+    rules["rules"]["weekly"] = {".read": "auth.uid !== null"}
     response = session.put(f"{DB}/.settings/rules.json", json.dumps(rules, indent=4))
     assert response.status_code == 200, response.text
-    print("added /homepage read rule")
+    print("added /weekly read rule")
 
 
 def publish(session, page):
     ensure_read_rule(session)
-    for path in ("homepage/current", f"homepage/archive/{page['week']}"):
+    for path in ("weekly/current", f"weekly/archive/{page['week']}"):
         response = session.put(f"{DB}/{path}.json", json.dumps(page))
         assert response.status_code == 200, response.text
-    print(f"published homepage {page['week']}")
+    print(f"published weekly {page['week']}")
 
 
 if __name__ == "__main__":
@@ -661,8 +661,8 @@ if __name__ == "__main__":
     page = assemble(curate(taste, picks, gigs, week), picks, gigs, hype, week)
     add_reviews(page["picks"], regs)
     page["picks"] = select_picks(page["picks"])
-    os.makedirs(f"{REG_DIR}/homepage", exist_ok=True)
-    open(f"{REG_DIR}/homepage/{week}.json", "w+").write(json.dumps(page, indent=4, ensure_ascii=False))
-    print(f"wrote {REG_DIR}/homepage/{week}.json: {len(page['picks'])} picks, {len(page['hype'])} hype, {len(page['gigs'])} gigs")
+    os.makedirs(f"{REG_DIR}/weekly", exist_ok=True)
+    open(f"{REG_DIR}/weekly/{week}.json", "w+").write(json.dumps(page, indent=4, ensure_ascii=False))
+    print(f"wrote {REG_DIR}/weekly/{week}.json: {len(page['picks'])} picks, {len(page['hype'])} hype, {len(page['gigs'])} gigs")
     if not local_only:
         publish(session, page)

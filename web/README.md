@@ -67,7 +67,7 @@ app/
     useDb              realtime database REST: get / put / patch, signed with the user's token
     useStores          store catalogue + ranked release lists
     usePlayer          playback state and controls
-    useLikes, useProfile, useHomepage, useDiscogs, useLiveStatus
+    useLikes, useProfile, useWeekly, useDiscogs, useLiveStatus
   utils/             plain functions and types, no state
     release.ts         the Release type and helpers (artwork, label/cat, stock tags)
     storage.ts         localStorage that never throws

@@ -23,7 +23,13 @@ jobs:
         token: ${{ secrets.DIIG_REG_TOKEN }} 
     # only the registry, the scrapers don't need pmtech
     - name: checkout_submodules
-      run: git submodule update --init --recursive scrape/diig-registry
+      env:
+        REG_TOKEN: ${{ secrets.DIIG_REG_TOKEN }}
+      # checkout only authenticates submodules it clones itself, so give git the token for
+      # the private registry here. this also covers the pushes back to it later in the job
+      run: |
+        git config --global url."https://x-access-token:${REG_TOKEN}@github.com/polymonster/diig-registry".insteadOf "https://github.com/polymonster/diig-registry"
+        git submodule update --init --recursive scrape/diig-registry
     - name: install_deps
       run: |
         python3 -m pip install --upgrade pip
@@ -42,7 +48,13 @@ jobs:
         token: ${{ secrets.DIIG_REG_TOKEN }} 
     # only the registry, the scrapers don't need pmtech
     - name: checkout_submodules
-      run: git submodule update --init --recursive scrape/diig-registry
+      env:
+        REG_TOKEN: ${{ secrets.DIIG_REG_TOKEN }}
+      # checkout only authenticates submodules it clones itself, so give git the token for
+      # the private registry here. this also covers the pushes back to it later in the job
+      run: |
+        git config --global url."https://x-access-token:${REG_TOKEN}@github.com/polymonster/diig-registry".insteadOf "https://github.com/polymonster/diig-registry"
+        git submodule update --init --recursive scrape/diig-registry
     - name: install_deps
       run: |
         python3 -m pip install --upgrade pip

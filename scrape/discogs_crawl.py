@@ -55,7 +55,7 @@ def arg(name, default=None):
     return default
 
 
-# every store registry, the top level json files (ra/, homepage/ are not stores)
+# every store registry, the top level json files (ra/, weekly/ are not stores)
 def registry_stores():
     return dig.stores_list("diig-registry")
 

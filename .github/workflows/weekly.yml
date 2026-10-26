@@ -1,11 +1,11 @@
-name: homepage
+name: weekly
 on:
   schedule:
     # sunday night, so the new page is up for monday
     - cron: "0 21 * * 0"
   workflow_dispatch:
 jobs:
-  homepage:
+  weekly:
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -16,7 +16,13 @@ jobs:
         token: ${{ secrets.DIIG_REG_TOKEN }}
     # only the registry, the scrapers don't need pmtech
     - name: checkout_submodules
-      run: git submodule update --init --recursive scrape/diig-registry
+      env:
+        REG_TOKEN: ${{ secrets.DIIG_REG_TOKEN }}
+      # checkout only authenticates submodules it clones itself, so give git the token for
+      # the private registry here. this also covers the pushes back to it later in the job
+      run: |
+        git config --global url."https://x-access-token:${REG_TOKEN}@github.com/polymonster/diig-registry".insteadOf "https://github.com/polymonster/diig-registry"
+        git submodule update --init --recursive scrape/diig-registry
     - name: install_deps
       run: |
         python3 -m pip install --upgrade pip
@@ -25,19 +31,19 @@ jobs:
       run: |
         cd scrape/diig-registry
         git checkout main
-        # homepage.py diffs against the registry as it was a week ago, so it needs that history
+        # weekly.py diffs against the registry as it was a week ago, so it needs that history
         git fetch --shallow-since="10 days ago" origin main || git fetch origin main
         git pull origin main
     - name: ra
       run: |
         cd scrape
         python3 ra.py
-    - name: homepage
+    - name: weekly
       env:
         ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
       run: |
         cd scrape
-        python3 homepage.py -key '${{secrets.SERVICE_ACCOUNT}}'
+        python3 weekly.py -key '${{secrets.SERVICE_ACCOUNT}}'
     - name: commit_reg
       if: always()
       run: |
@@ -45,8 +51,8 @@ jobs:
         git config user.name github-actions
         git config user.email github-actions@github.com
         for i in {1..5}; do
-          git add ra homepage
-          git commit -m "- update homepage" || true
+          git add ra weekly
+          git commit -m "- update weekly" || true
           if git pull --rebase origin main && git push origin HEAD:main; then
             break
           fi

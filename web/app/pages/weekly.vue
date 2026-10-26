@@ -4,10 +4,10 @@ import { useCurrentUser } from 'vuefire'
 // The weekly curated page: picks with a blurb, hype releases and gigs
 
 const user = useCurrentUser()
-const { page, loading, loadHomepage } = useHomepage()
+const { page, loading, loadWeekly } = useWeekly()
 const { releaseList, stopAll } = usePlayer()
 
-watch(user, u => { if (u) loadHomepage() }, { immediate: true })
+watch(user, u => { if (u) loadWeekly() }, { immediate: true })
 
 const picks = computed(() => toArray(page.value?.picks))
 const hype  = computed(() => toArray(page.value?.hype))

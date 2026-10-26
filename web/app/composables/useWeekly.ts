@@ -1,8 +1,8 @@
 import type { Release } from '~/utils/release'
 
-// The weekly curated homepage, written to /homepage/current by scrape/homepage.py
+// The weekly curated page, written to /weekly/current by scrape/weekly.py
 
-export interface HomepageRelease extends Release {
+export interface WeeklyRelease extends Release {
   blurb?: string
   // the review a pick's blurb is drawn from
   source?: { url: string, title: string, site: string }
@@ -19,26 +19,26 @@ export interface Gig {
   blurb?: string
 }
 
-export interface Homepage {
+export interface Weekly {
   week: string
   headline: string
   intro: string
-  picks?: HomepageRelease[]
-  hype?: HomepageRelease[]
+  picks?: WeeklyRelease[]
+  hype?: WeeklyRelease[]
   gigs?: Gig[]
 }
 
-const page    = ref<Homepage | null>(null)
+const page    = ref<Weekly | null>(null)
 const loading = ref(false)
 
-export function useHomepage() {
+export function useWeekly() {
   const db = useDb()
 
-  async function loadHomepage() {
+  async function loadWeekly() {
     loading.value = true
-    page.value    = await db.get<Homepage>('homepage/current')
+    page.value    = await db.get<Weekly>('weekly/current')
     loading.value = false
   }
 
-  return { page, loading, loadHomepage }
+  return { page, loading, loadWeekly }
 }

@@ -39,7 +39,7 @@ export interface Release {
   thumb?: string         // discogs results only
   store_tags?: StoreTags
   // per view rank keys ("<store>-<section>-<view>": position) and anything
-  // else a scraper or the homepage adds
+  // else a scraper or the weekly page adds
   [key: string]: any
 }
 

@@ -421,11 +421,17 @@ XLR8R, Inverted Audio, Ransom Note). Label press releases, tracklists, store lis
 and pages about the artist in general do not count, nor do reviews of a different \
 release by the same artist.
 
-If you find one, reply with two or three sentences, about 50 to 70 words, summarising \
-what the review says about the record and naming the publication, e.g. "Boomkat hear \
-...". Condense a long review to its main points in your own words, quoting at most a \
-short phrase or two. Only report what the review says, do not add your own description \
-or background. Then a last line "SOURCE: <url>" with the exact url of the review page as \
+If you find one, reply with two or three sentences, about 40 to 60 words, describing the \
+record using what the review says. Write about the music directly, as a record shop \
+write-up would: "Four whirring, syncopated grooves from the Bristol producer, with \
+'Wreck II' a 140BPM electro workout." The source is credited separately, so never name \
+the publication or reviewer, and don't frame it as reporting: no "they say", "the review \
+calls", "they hear", "they single out", "they add". Lead with the most vivid detail, not \
+a summary. Keep it plain and specific: sounds, tempos, tracks, references. No hype or \
+filler words (journey, masterclass, sonic, tapestry, delivers, showcases, perfect for), \
+no rounding off with a verdict, no "overall". A short quoted phrase is fine if it's the \
+best way to say it. Only use what the review says, do not add your own description or \
+background. Then a last line "SOURCE: <url>" with the exact url of the review page as \
 it appeared in the search results. Reply with nothing but those sentences and the source line.
 
 If no review of this release turns up, reply with exactly NONE."""

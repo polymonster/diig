@@ -178,3 +178,44 @@ export const register = onRequest(
     res.status(200).json({ ok: true })
   },
 )
+
+// audio_proxy: hardwax hotlink-protects its previews (any Referer gets a 302 to
+// the release page), so browsers can't play them directly. hosting rewrites
+// /api/audio-proxy here and we fetch without a referer. only hardwax mp3s are
+// allowed so this can't be used as an open proxy.
+export const audio_proxy = onRequest(
+  { region: 'europe-west1', invoker: 'public', maxInstances: 5 },
+  async (req, res) => {
+    let parsed
+    try {
+      parsed = new URL(String(req.query.url || ''))
+    }
+    catch {
+      return res.status(400).send('Missing url param')
+    }
+    if (parsed.hostname !== 'media.hardwax.com' || !parsed.pathname.endsWith('.mp3')) {
+      return res.status(403).send('Only hardwax audio supported')
+    }
+
+    const headers = {}
+    if (req.headers.range) {
+      headers.range = req.headers.range
+    }
+
+    const upstream = await fetch(parsed, { headers, redirect: 'manual' })
+    if (!upstream.ok) {
+      return res.status(502).send(`Upstream ${upstream.status}`)
+    }
+
+    res.status(upstream.status)
+    res.set('Content-Type', upstream.headers.get('content-type') || 'audio/mpeg')
+    res.set('Cache-Control', 'public, max-age=86400')
+    for (const h of ['content-length', 'content-range', 'accept-ranges']) {
+      const v = upstream.headers.get(h)
+      if (v) {
+        res.set(h, v)
+      }
+    }
+    res.send(Buffer.from(await upstream.arrayBuffer()))
+  },
+)

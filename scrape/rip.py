@@ -2201,6 +2201,103 @@ def soulseek_track_search(ctx, client, index, min_bitrate, taken=()):
     return best[1] if best else None
 
 
+def full_length(candidates, tolerance=5):
+    """
+    The length of the full version of a track, guessed from what peers share.
+
+    With no discogs duration to check against, the longest length that at least
+    two peers agree on is the best guess: a cd edit or a radio edit is shorter,
+    and one odd long file is more likely a mislabel than the real thing. Anything
+    over 15 minutes is a mix, not the track.
+    """
+    lengths = sorted((c["duration"] for c in candidates
+                      if c["duration"] and c["duration"] <= 15 * 60),
+                     reverse=True)
+    for i, length in enumerate(lengths):
+        if i + 1 < len(lengths) and length - lengths[i + 1] <= tolerance:
+            return length
+    return lengths[0] if lengths else None
+
+
+def rip_tracks_list(file, dst, min_bitrate):
+    """
+    Rip loose tracks into dst from a text file of soulseek searches, one per
+    line.
+
+    No release to match against here, so the best file for a search is simply
+    the best quality from the most willing peer. Everything is enqueued first
+    and waited on together, the same as a release, so slow queues overlap.
+    """
+    client = slsk_connect()
+    if client is None:
+        return False
+
+    with open(file, "r", encoding="utf-8") as f:
+        todo = [line.strip() for line in f if line.strip()]
+
+    quality = arg_value("-quality", "320")
+    want = int(quality) if quality.isdigit() else 320
+
+    wanted = []
+    for item in todo:
+        print(f"[search] {item}")
+        responses = slsk.search(client, item,
+                                timeout_ms=arg_int("-slsk-search-timeout", 15000),
+                                verbose=verbose())
+        found = slsk.candidates(responses, min_bitrate)
+        full = full_length(found)
+        best = None
+        for candidate in found:
+            # the full version beats an edit before quality or peer come into it
+            length = candidate["duration"]
+            is_full = bool(full and length and abs(length - full) <= 10)
+            rank = (is_full, slsk.quality_rank(candidate, want),
+                    slsk.peer_rank(candidate))
+            if best is None or rank > best[0]:
+                best = (rank, candidate)
+        if best is None:
+            print("    [miss] nothing found")
+            continue
+
+        candidate = best[1]
+        print(f"    [slsk] asking {candidate['username']} for {candidate['filename']}")
+        ok, error = slsk.enqueue(client, candidate["username"],
+                                 [{"filename": candidate["filename"],
+                                   "size": candidate["size"]}])
+        if not ok:
+            print(f"    [fail] {error}")
+            continue
+        wanted.append((item, candidate))
+
+    if not wanted:
+        return True
+
+    states = slsk.wait_for(client, {c["filename"] for _item, c in wanted},
+                           arg_float("-slsk-wait", 300.0), verbose=verbose())
+
+    os.makedirs(dst, exist_ok=True)
+    downloads_dir = slsk_downloads_dir()
+    for item, candidate in wanted:
+        state = states.get(candidate["filename"], "")
+        if not slsk.succeeded(state):
+            # a pending transfer stays queued in slskd, as with a release
+            print(f"    [fail] {item}: {state}")
+            continue
+        src = slsk.find_download(downloads_dir, candidate["filename"],
+                                 candidate["size"])
+        if not src:
+            print(f"    [fail] {item}: not found under {downloads_dir}")
+            continue
+        out_stem = os.path.join(dst, sanitize_filename(candidate["title"]))
+        path, _transcoded, error = place_file(src, out_stem, quality)
+        if error:
+            print(f"    [fail] {item}: {error}")
+            continue
+        print(f"    [done] {path}")
+
+    return True
+
+
 def rip_tracks_soulseek(ctx):
     """
     Rip whatever is still missing from soulseek, through slskd.
@@ -5048,6 +5145,13 @@ def rip_collection(discogs, token):
         collection_items = True
         when = "oldest" if order == "asc" else "newest"
         print(f"folder '{folder.name}' ({folder.count} releases), {when} added first")
+
+
+    if "-list" in sys.argv:
+        file = sys.argv[sys.argv.index("-list") + 1]
+        min_bitrate = arg_int("-slsk-min-bitrate", 0) or 0
+        rip_tracks_list(file, root, min_bitrate)
+        return
 
     processed = 0
     skipped = 0

@@ -53,12 +53,9 @@ def parse_link(release_html: str, code: str):
         end = release_html.find('"', start)
         if end != -1:
             return release_html[start:end]
-    # also try relative URL format
-    marker2 = f'/decks/workfloor/lists/findTrack.php?code={code}'
-    if marker2 in release_html:
-        return f"https://www.decks.de{marker2}"
-    # fallback: construct from code
-    return f"https://www.decks.de/track/{code}"
+    # fallback: findTrack.php resolves any code to its release page
+    # (/track/{code} without the artist-title slug is a 404)
+    return f"https://www.decks.de/decks/workfloor/lists/findTrack.php?code={code}"
 
 
 # parse artist from LArtist div
@@ -435,3 +432,45 @@ def scrape_page(url, store, store_dict, view, section, counter, session_scraped_
 
     dig.scrape_yield()
     return counter
+
+
+def backfill_missing():
+    store = "decks"
+    releases_dict = dig.load_registry(store)
+
+    # the old parse_link fallback built https://www.decks.de/track/{code}, which
+    # is a 404 without the artist-title slug. rewrite those to the findTrack.php
+    # lookup. the code is the last path segment so no pages need fetching, which
+    # means -limit is ignored and the whole backlog goes in one run.
+    broken_prefix = "https://www.decks.de/track/"
+
+    def needs_backfill(v):
+        link = v.get("link") or ""
+        return link.startswith(broken_prefix) and "/" not in link[len(broken_prefix):]
+
+    updated = dict()
+    for key, release in releases_dict.items():
+        if not needs_backfill(release):
+            continue
+        code = release["link"][len(broken_prefix):]
+        release["link"] = f"https://www.decks.de/decks/workfloor/lists/findTrack.php?code={code}"
+
+        issues = dig.validate_release(key, release)
+        if issues:
+            print(f"  skipping malformed entry {key}: {issues}", flush=True)
+            continue
+        updated[key] = release
+        if "-verbose" in sys.argv:
+            print(f"backfilling: {key} -> {release['link']}", flush=True)
+
+    print(f"found {len(updated)} entries to backfill", flush=True)
+
+    if updated:
+        dig.write_registry(store, releases_dict)
+        print(f"wrote {len(updated)} updated entries to registry", flush=True)
+        if "-local-only" not in sys.argv:
+            dig.setup_firebase_auth()
+            dig.patch_releases(updated)
+            print(f"patched {len(updated)} entries to Firebase", flush=True)
+    else:
+        print("nothing to backfill", flush=True)

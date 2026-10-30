@@ -1,6 +1,6 @@
 # Privacy Policy
 
-Last updated: 17 July 2026
+Last updated: 30 October 2026
 
 diig ("we", "us") is an app and website for discovering new vinyl releases across independent record stores. This policy explains what data we hold about you and why.
 
@@ -12,21 +12,16 @@ When you create an account we store:
 - A **username**, if you choose to set one.
 - Your **likes** — the releases you mark as liked, with timestamps.
 - Your **preferences** — such as which stores, sections and views you use, and how you order them.
-- If you subscribe to a paid tier, your **subscription status** (whether a subscription is active). We do not receive or store your payment details.
 
 We do not collect your location, contacts, photos, or any data from other apps.
 
 ## How we use it
 
-Your data is used only to run the service: signing you in, syncing your likes and preferences between devices, and unlocking paid features. We do not sell your data, share it with advertisers, or use it for profiling.
+Your data is used only to run the service: signing you in, and syncing your likes and preferences between devices. We do not sell your data, share it with advertisers, or use it for profiling.
 
 ## Where it is stored
 
 Account data is stored with Google Firebase (Realtime Database and Authentication) in the `europe-west1` (Belgium) region. Google acts as our data processor; their privacy documentation is available at [https://firebase.google.com/support/privacy](https://firebase.google.com/support/privacy).
-
-## Payments
-
-Subscriptions are purchased through Apple's App Store and managed with RevenueCat. Payment is handled entirely by Apple — we never see your card details. RevenueCat processes an anonymised app user id and purchase receipts to validate your subscription; see [https://www.revenuecat.com/privacy](https://www.revenuecat.com/privacy).
 
 ## Third-party content
 
@@ -38,7 +33,7 @@ We use no third-party analytics, no advertising SDKs, and no tracking cookies.
 
 ## Data retention and deletion
 
-Your data is kept while your account exists. You can permanently delete your account and all associated data at any time — in the app from **Settings → Delete account**, or on the web at [diig.app/delete-account](https://diig.app/delete-account). Deletion takes effect immediately and cannot be undone. To request a copy of your data, email **CONTACT_EMAIL_HERE**.
+Your data is kept while your account exists. You can permanently delete your account and all associated data at any time — in the app from **Settings → Delete account**, or on the web at [diig.app/delete-account](https://diig.app/delete-account). Deletion takes effect immediately and cannot be undone. To request a copy of your data, email **privacy@diig.app**.
 
 ## Children
 
@@ -50,4 +45,4 @@ If this policy changes materially we will note the new date above and, where app
 
 ## Contact
 
-Questions about this policy: **CONTACT_EMAIL_HERE**
+Questions about this policy: **privacy@diig.app**

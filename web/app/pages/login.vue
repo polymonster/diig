@@ -174,7 +174,7 @@ const handleRegister = async () => {
           <input v-model="regEmail" type="email" placeholder="email" autocomplete="email" required class="field">
           <textarea
             v-model="regMessage"
-            placeholder="tell us about yourself, or paste an invite code"
+            placeholder="message"
             class="field textarea"
             rows="4"
           />

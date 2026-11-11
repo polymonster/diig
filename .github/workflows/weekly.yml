@@ -26,7 +26,7 @@ jobs:
     - name: install_deps
       run: |
         python3 -m pip install --upgrade pip
-        python3 -m pip install --upgrade google-auth requests anthropic pydantic python3-discogs-client
+        python3 -m pip install --upgrade google-auth requests python3-discogs-client
     - name: pull_reg
       run: |
         cd scrape/diig-registry
@@ -39,8 +39,6 @@ jobs:
         cd scrape
         python3 ra.py
     - name: weekly
-      env:
-        ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
       run: |
         cd scrape
         python3 weekly.py -key '${{secrets.SERVICE_ACCOUNT}}'

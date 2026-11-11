@@ -7,29 +7,26 @@ import re
 import datetime
 import subprocess
 import urllib.parse
-import concurrent.futures
-import anthropic
-from pydantic import BaseModel
 
 # weekly curated page. scores this week's new releases against the taste
 # profile (taste.py), ranks what is charting across stores for the hype shelf,
-# shortlists london gigs (ra.py), then has claude pick and write up the page.
+# shortlists london gigs (ra.py), then picks a varied page and writes it up from
+# the scoring facts. no llm calls.
 # output goes to diig-registry/weekly/{week}.json and rtdb /weekly
 #   python3 weekly.py [-key '<service account json>'] [-days 7] [-dry-run] [-local-only]
-#   -dry-run:    no llm call and no writes, prints the shortlists
+#   -dry-run:    no writes, prints the shortlists and the page
 #   -local-only: no firebase reads or writes (no likes, no rtdb patch)
 
 DB = "https://diig-19d4c-default-rtdb.europe-west1.firebasedatabase.app"
 REG_DIR = "diig-registry"
-MODEL = "claude-sonnet-5-5"
 USER = "polymonster"
 HYPE_COUNT = 32
 PICK_SHORTLIST = 60
 GIG_SHORTLIST = 40
+# gigs from the page's monday up to this many days on
+GIG_DAYS = 14
 # page counts, chosen to fill whole rows at 2, 3 and 4 columns
 PICK_COUNT = 12
-# the llm shortlists more than the page shows, so picks with a review found can be preferred
-PICK_CANDIDATES = PICK_COUNT * 2
 # picks are split evenly between artists already collected and artists new to the collection
 PICK_GROUPS = ("known", "discovery")
 GIG_COUNT = 8
@@ -262,7 +259,11 @@ def score_pick(release, store, taste, adj_artists, adj_labels, top_styles, likes
     if charts:
         score += 2 * len(charts)
         why.append("charting " + ", ".join(f"{v} #{p}" for _, v, p in charts))
-        facts += [f"#{p} on the {s} {v.replace('_', ' ')}" for s, v, p in charts]
+        # a release can sit in several sections of the same chart, quote its best spot
+        best = {}
+        for s, v, p in charts:
+            best[(s, v)] = min(p, best.get((s, v), p))
+        facts += [f"#{p} on the {s} {v.replace('_', ' ')}" for (s, v), p in best.items()]
     if (release.get("store_tags") or {}).get("has_sold_out"):
         score += 2
         why.append("has sold out before")
@@ -324,204 +325,111 @@ def build_gig_shortlist(events, taste, adj_artists):
     return [ev for _, ev in scored[:GIG_SHORTLIST]]
 
 
-# ── llm ─────────────────────────────────────────────────────────────────────────
+# ── selection and text ──────────────────────────────────────────────────────────
+# no llm: the page is chosen and written from the scores and facts above
 
-class Pick(BaseModel):
-    release_id: str
-
-
-class Gig(BaseModel):
-    event_id: str
-    blurb: str
+def primary_style(c):
+    return c["_styles"][0] if c.get("_styles") else ""
 
 
-class Weekly(BaseModel):
-    headline: str
-    intro: str
-    picks: list[Pick]
-    gigs: list[Gig]
+# take `count` from `items` in order, first under the strict rules, then relaxing
+# them one at a time so the page still fills. each rule is (key_fn, max_per_key)
+def take_diverse(items, count, rules):
+    chosen = []
+    for n in range(len(rules), -1, -1):
+        active = rules[:n]
+        for item in items:
+            if len(chosen) >= count:
+                return chosen
+            if any(item is c for c in chosen):
+                continue
+            if all(sum(1 for c in chosen if key(c) and key(c) == key(item)) < cap for key, cap in active):
+                chosen.append(item)
+    return chosen
 
 
-SYSTEM = """You curate the weekly page for diig, a record digging app that \
-aggregates new vinyl from independent shops (Juno, Redeye, Phonica, Yoyaku, Hard Wax, \
-Decks, Vinyl Underground). The page is shared by everyone who uses diig.
-
-You are given a shortlist of records that arrived in the shops this week and a shortlist \
-of upcoming London gigs. Each record is in one of two groups: "known" (an artist the \
-curator already follows) or "discovery" (an artist new to them, found through related \
-labels, styles or charts).
-
-Choose exactly {picks} picks in order of preference: {half} from "known" and {half} from \
-"discovery". Keep variety across labels, shops and styles. Not all of them will make the \
-page, so the earlier picks in each group are the ones you most want shown. Choose exactly \
-{gigs} gigs, spread across the dates, favouring lineups with the featured artists.
-
-Picks get no blurb from you, their write-ups come from published reviews found separately.
-
-Never mention the curator, a collection, likes by the curator, purchases or why a record \
-was chosen.
-
-Gig blurbs are two or three sentences in a dry, knowledgeable voice with no hype words: \
-the date, venue and who is playing, with a line of context on the headliners. The \
-headline is a few words and the intro is two sentences at most, about the week as a \
-whole. Use the exact release_id and event_id values from the input.""".format(picks=PICK_CANDIDATES, half=PICK_CANDIDATES // len(PICK_GROUPS), gigs=GIG_COUNT)
+PICK_RULES = [
+    (lambda c: tastes.norm_name(c.get("label", "")), 1),
+    (primary_style, 2),
+]
 
 
-def llm_input(taste, picks, gigs, week):
-    top_styles = sorted(taste["styles"].items(), key=lambda x: -x[1])[:12]
-    return json.dumps({
-        "week": week,
-        "styles": [s for s, _ in top_styles],
-        "releases": [{
-            "release_id": c["id"],
-            "artist": c.get("artist", ""),
-            "title": c.get("title", ""),
-            "label": c.get("label", ""),
-            "cat": c.get("cat", ""),
-            "shops": [s["store"] for s in c["stores"]],
-            "tracks": (c.get("track_names") or [])[:6],
-            "styles": c["_styles"],
-            "group": c["_group"],
-            "facts": c["_facts"],
-        } for c in picks],
-        "gigs": [{
-            "event_id": g["id"],
-            "title": g["title"],
-            "date": g["date"],
-            "venue": g["venue"],
-            "lineup": g["lineup"][:12],
-            "featured_artists": g["_in_collection"] + g["_adjacent"],
-            "attending": g["attending"],
-        } for g in gigs],
-    }, ensure_ascii=False)
+# each group takes its half in score order, kept varied across labels and styles.
+# a group short of candidates is filled from the other
+def select_picks(cards):
+    quota = PICK_COUNT // len(PICK_GROUPS)
+    chosen = []
+    for name in PICK_GROUPS:
+        chosen += take_diverse([c for c in cards if c["_group"] == name], quota, PICK_RULES)
+    rest = [c for c in cards if not any(c is x for x in chosen)]
+    chosen += take_diverse(rest, PICK_COUNT - len(chosen), PICK_RULES)
+    return chosen
 
 
-def curate(taste, picks, gigs, week):
-    client = dig.anthropic_client()
-    response = client.messages.parse(
-        model=MODEL,
-        max_tokens=16000,
-        system=SYSTEM,
-        messages=[{"role": "user", "content": llm_input(taste, picks, gigs, week)}],
-        output_format=Weekly,
-    )
-    if response.stop_reason == "refusal":
-        raise RuntimeError(f"curation refused: {response.stop_details}")
-    if response.stop_reason == "max_tokens":
-        raise RuntimeError("curation hit max_tokens")
-    print(f"llm usage: {response.usage.input_tokens} in, {response.usage.output_tokens} out")
-    return response.parsed_output
+def pick_blurb(c):
+    parts = []
+    if c.get("_styles"):
+        parts.append(" · ".join(c["_styles"][:3]))
+    n = len(c.get("track_names") or [])
+    if n:
+        parts.append(f"{n} track{'s' if n != 1 else ''}")
+    facts = c.get("_facts") or []
+    if facts:
+        parts.append(", ".join(facts))
+    if len(c.get("stores") or []) > 1:
+        parts.append(f"in {len(c['stores'])} shops")
+    if any(s.get("preorder") for s in c.get("stores") or []):
+        parts.append("pre-order")
+    return ". ".join(p[:1].upper() + p[1:] for p in parts) + "." if parts else ""
 
 
-REVIEW_SYSTEM = """You find published reviews of vinyl records for diig, a record digging \
-app. Search the web for a review of the one record you are given: an editorial write-up \
-of that specific release from a magazine, blog, radio show or a shop's own review (for \
-example Resident Advisor, Boomkat, Bleep, Pitchfork, The Quietus, Crack, Mixmag, \
-XLR8R, Inverted Audio, Ransom Note). Label press releases, tracklists, store listings \
-and pages about the artist in general do not count, nor do reviews of a different \
-release by the same artist.
-
-If you find one, reply with two or three sentences, about 40 to 60 words, describing the \
-record using what the review says. Write about the music directly, as a record shop \
-write-up would: "Four whirring, syncopated grooves from the Bristol producer, with \
-'Wreck II' a 140BPM electro workout." The source is credited separately, so never name \
-the publication or reviewer, and don't frame it as reporting: no "they say", "the review \
-calls", "they hear", "they single out", "they add". Lead with the most vivid detail, not \
-a summary. Keep it plain and specific: sounds, tempos, tracks, references. No hype or \
-filler words (journey, masterclass, sonic, tapestry, delivers, showcases, perfect for), \
-no rounding off with a verdict, no "overall". A short quoted phrase is fine if it's the \
-best way to say it. Only use what the review says, do not add your own description or \
-background. Then a last line "SOURCE: <url>" with the exact url of the review page as \
-it appeared in the search results. Reply with nothing but those sentences and the source line.
-
-If no review of this release turns up, reply with exactly NONE."""
-
-REVIEW_SEARCHES = 4
-REVIEW_WORKERS = 4
+# gigs in the page's window, best scored first, at most two a night and one per venue
+GIG_RULES = [
+    (lambda g: g["venue"], 1),
+    (lambda g: g["date"], 2),
+]
 
 
-def review_query(c):
-    parts = [f"{c.get('artist', '')} - {c.get('title', '')}"]
-    if c.get("label"):
-        parts.append(f"label: {c['label']}")
-    if c.get("cat"):
-        parts.append(f"catalogue: {c['cat']}")
-    if c.get("track_names"):
-        parts.append("tracks: " + ", ".join(c["track_names"][:6]))
-    return "\n".join(parts)
+def select_gigs(gigs):
+    return sorted(take_diverse(gigs, GIG_COUNT, GIG_RULES), key=lambda g: g["date"])
 
 
-# search the web for a review of one pick. the blurb is only kept when its source
-# url is one the searches actually returned, so every blurb links to a real page
-def find_review(client, c, blocked):
-    messages = [{"role": "user", "content": review_query(c)}]
-    # the basic search, the dynamic filtering version spends its searches fumbling
-    # results in code and comes back with NONE for records that do have reviews
-    tools = [{
-        "type": "web_search_20250305", "name": "web_search",
-        "max_uses": REVIEW_SEARCHES, "blocked_domains": blocked,
-    }]
-    seen = {}
-    for _ in range(3):
-        response = client.messages.create(
-            model=MODEL, max_tokens=4000, system=REVIEW_SYSTEM, messages=messages, tools=tools,
-        )
-        # every page the searches returned. an error result has an object, not a list
-        for b in response.content:
-            if b.type == "web_search_tool_result" and isinstance(b.content, list):
-                seen.update({r.url.rstrip("/"): r for r in b.content})
-        if response.stop_reason != "pause_turn":
-            break
-        # long searches pause the turn, send it back to carry on
-        messages.append({"role": "assistant", "content": response.content})
-    if response.stop_reason != "end_turn":
-        print(f"warning: no review for {c['id']}, stopped with {response.stop_reason}")
-        return "", None
-    # the answer is the text after the last search, earlier text is working notes
-    tail = []
-    for b in response.content:
-        tail = tail + [b.text] if b.type == "text" else []
-    text = "".join(tail).strip()
-    if text.endswith("NONE"):
-        return "", None
-    blurb, _, url = text.rpartition("SOURCE:")
-    result = seen.get(url.strip().rstrip("/"))
-    if not blurb.strip() or not result:
-        print(f"warning: dropping review for {c['id']}, source not in search results: {url.strip()[:100]}")
-        return "", None
-    host = urllib.parse.urlparse(result.url).hostname or ""
-    return blurb.strip(), {"url": result.url, "title": result.title, "site": host.removeprefix("www.")}
+def gig_blurb(g):
+    lineup = g.get("lineup") or []
+    parts = []
+    if lineup:
+        parts.append(", ".join(lineup[:4]) + (f" and {len(lineup) - 4} more" if len(lineup) > 4 else ""))
+    genres = [x for x in (g.get("genres") or []) if isinstance(x, str)]
+    if genres:
+        parts.append(" · ".join(genres[:3]))
+    if g.get("attending"):
+        parts.append(f"{g['attending']} going")
+    return ". ".join(parts) + "." if parts else ""
 
 
-# domains of the stores diig aggregates, so a review is from somewhere else
-def store_domains(regs):
-    domains = set()
-    for reg in regs.values():
-        link = next((r["link"] for r in reg.values() if r.get("link")), None)
-        host = urllib.parse.urlparse(link).hostname if link else None
-        if host:
-            domains.add(host.removeprefix("www."))
-    return sorted(domains)
+def headline(picks, week):
+    counts = {}
+    for c in picks:
+        for s in c.get("_styles", [])[:2]:
+            counts[s] = counts.get(s, 0) + 1
+    top = [s for s, _ in sorted(counts.items(), key=lambda x: -x[1])[:2]]
+    return " and ".join(top) if top else f"Week {week.split('-W')[-1]}"
 
 
-def add_reviews(picks, regs):
-    client = dig.anthropic_client()
-    blocked = store_domains(regs)
+def intro(n_new, n_shops, hype, gigs):
+    out = [f"{n_new} new records across {n_shops} shops this week."]
+    if hype:
+        h = hype[0]
+        n = len(h.get("stores") or [])
+        out.append(f"{h.get('artist', '')} - {h.get('title', '')} tops the charts" + (f" in {n} shops." if n > 1 else "."))
+    if gigs:
+        out.append(f"{len(gigs)} London gigs from {format_day(gigs[0]['date'])} to {format_day(gigs[-1]['date'])}.")
+    return " ".join(out)
 
-    def review(c):
-        try:
-            return find_review(client, c, blocked)
-        except anthropic.APIError as e:
-            print(f"warning: review search failed for {c['id']}: {e}")
-            return "", None
 
-    with concurrent.futures.ThreadPoolExecutor(REVIEW_WORKERS) as pool:
-        results = list(pool.map(review, picks))
-    for c, (blurb, source) in zip(picks, results):
-        c["blurb"] = blurb
-        if source:
-            c["source"] = source
-    print(f"found reviews for {sum(1 for b, _ in results if b)} of {len(picks)} picks")
+def format_day(date):
+    d = datetime.date.fromisoformat(date)
+    return f"{d.strftime('%a')} {d.day} {d.strftime('%b')}"
 
 
 # ── output ──────────────────────────────────────────────────────────────────────
@@ -530,72 +438,20 @@ def strip_private(d):
     return {k: v for k, v in d.items() if not k.startswith("_")}
 
 
-def assemble(curated, picks, gigs, hype, week):
-    picks_by_id = {c["id"]: c for c in picks}
-    gigs_by_id = {g["id"]: g for g in gigs}
-    out_gigs = []
-    chosen = []
-    for p in curated.picks:
-        c = picks_by_id.pop(p.release_id, None)
-        if c:
-            chosen.append(c)
-        else:
-            print(f"warning: dropping unknown release id from llm: {p.release_id}")
-    # hold each group to its half of the candidates in the llm's order, top up a
-    # short group from its shortlist, then let over quota picks fill any space left
-    quota = PICK_CANDIDATES // len(PICK_GROUPS)
-    within, over = [], []
-    for c in chosen:
-        n = sum(1 for x in within if x["_group"] == c["_group"])
-        (within if n < quota else over).append(c)
-    for name in PICK_GROUPS:
-        short = quota - sum(1 for x in within if x["_group"] == name)
-        for c in [c for c in picks_by_id.values() if c["_group"] == name][:max(short, 0)]:
-            print(f"warning: topping up {name} picks with {c['id']}")
-            within.append(c)
-            picks_by_id.pop(c["id"])
-    # these are candidates, add_reviews and select_picks cut them down to the page
-    out_picks = within + over
-    for g in curated.gigs:
-        ev = gigs_by_id.pop(g.event_id, None)
-        if ev:
-            out_gigs.append(dict(strip_private(ev), blurb=g.blurb))
-        else:
-            print(f"warning: dropping unknown event id from llm: {g.event_id}")
-    out_picks, out_gigs = out_picks[:PICK_CANDIDATES], out_gigs[:GIG_COUNT]
-    # top up from the shortlists (already in score order) if the llm came back
-    # short, so the page always fills whole rows. top up gigs go without a blurb
-    for c in list(picks_by_id.values())[:PICK_CANDIDATES - len(out_picks)]:
-        print(f"warning: topping up picks with {c['id']}")
-        out_picks.append(c)
-    for ev in list(gigs_by_id.values())[:GIG_COUNT - len(out_gigs)]:
-        print(f"warning: topping up gigs with {ev['id']}")
-        out_gigs.append(dict(strip_private(ev), blurb=""))
+def assemble(picks, gigs, hype, week, n_new, n_shops):
+    chosen = select_picks(picks)
+    chosen_gigs = select_gigs(gigs)
+    out_picks = [dict(strip_private(c), blurb=pick_blurb(c)) for c in chosen]
+    out_gigs = [dict(strip_private(g), blurb=gig_blurb(g)) for g in chosen_gigs]
     return {
         "week": week,
         "generated": datetime.datetime.now(datetime.timezone.utc).isoformat(),
-        "model": MODEL,
-        "headline": curated.headline,
-        "intro": curated.intro,
+        "headline": headline(chosen, week),
+        "intro": intro(n_new, n_shops, hype, chosen_gigs),
         "picks": out_picks,
-        "gigs": sorted(out_gigs, key=lambda g: g["date"]),
+        "gigs": out_gigs,
         "hype": hype,
     }
-
-
-# cut the candidates down to the page, each group taking its half with reviewed
-# picks first, in the llm's order. a group short of candidates is filled from the rest
-def select_picks(candidates):
-    quota = PICK_COUNT // len(PICK_GROUPS)
-    chosen = set()
-    for name in PICK_GROUPS:
-        group = [c for c in candidates if c["_group"] == name]
-        ranked = [c for c in group if c.get("blurb")] + [c for c in group if not c.get("blurb")]
-        chosen |= {c["id"] for c in ranked[:quota]}
-    rest = [c for c in candidates if c["id"] not in chosen]
-    rest = [c for c in rest if c.get("blurb")] + [c for c in rest if not c.get("blurb")]
-    chosen |= {c["id"] for c in rest[:PICK_COUNT - len(chosen)]}
-    return [strip_private(c) for c in candidates if c["id"] in chosen]
 
 
 def ensure_read_rule(session):
@@ -646,6 +502,10 @@ if __name__ == "__main__":
     adj_artists, _ = adjacency(regs, taste)
     ra_file = f"{REG_DIR}/ra/london.json"
     events = json.loads(open(ra_file, "r").read())["events"] if os.path.exists(ra_file) else []
+    # only gigs in the page's window, falling back to anything upcoming on a thin fortnight
+    monday = datetime.date.fromisocalendar(iso.year, iso.week, 1)
+    window = [e for e in events if monday.isoformat() <= e["date"] < (monday + datetime.timedelta(days=GIG_DAYS)).isoformat()]
+    events = window if len(window) >= GIG_COUNT else [e for e in events if e["date"] >= monday.isoformat()]
     gigs = build_gig_shortlist(events, taste, adj_artists)
 
     if dry_run:
@@ -655,18 +515,24 @@ if __name__ == "__main__":
             for w in c["_why"]:
                 print(f"         {w}")
             for f in c["_facts"]:
-                print(f"         llm fact: {f}")
+                print(f"         fact: {f}")
         print("\n── hype ──")
         for c in hype:
             print(f"  {c['artist']} - {c['title']}  art:{c['store']}  shops:{', '.join(s['store'] for s in c['stores'])}")
         print("\n── gig shortlist ──")
         for g in gigs:
             print(f"  {g['date']} {g['title']} @ {g['venue']}  {g['_in_collection']} {g['_adjacent'][:3]} ({g['attending']})")
+
+    n_shops = sum(1 for reg in regs.values() if new_keys & reg.keys())
+    page = assemble(picks, gigs, hype, week, len(new_keys), n_shops)
+    if dry_run:
+        print(f"\n── page ──\n{page['headline']}\n{page['intro']}")
+        for c in page["picks"]:
+            print(f"  {c['artist']} - {c['title']}: {c['blurb']}")
+        for g in page["gigs"]:
+            print(f"  {g['date']} {g['venue']}: {g['blurb']}")
         sys.exit(0)
 
-    page = assemble(curate(taste, picks, gigs, week), picks, gigs, hype, week)
-    add_reviews(page["picks"], regs)
-    page["picks"] = select_picks(page["picks"])
     os.makedirs(f"{REG_DIR}/weekly", exist_ok=True)
     open(f"{REG_DIR}/weekly/{week}.json", "w+").write(json.dumps(page, indent=4, ensure_ascii=False))
     print(f"wrote {REG_DIR}/weekly/{week}.json: {len(page['picks'])} picks, {len(page['hype'])} hype, {len(page['gigs'])} gigs")

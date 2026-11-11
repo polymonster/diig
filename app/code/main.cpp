@@ -49,7 +49,7 @@ Str  discogs_get_token();
 Str  discogs_build_search_url();
 Str  discogs_filter_summary();
 bool discogs_has_filters();
-bool discogs_year_range(s32& lo, s32& hi);
+std::string discogs_year_param();
 
 namespace
 {
@@ -1262,11 +1262,6 @@ void* releases_view_loader(void* userdata)
             return nullptr;
         }
 
-        // a year range (e.g. 1990-2000) has no discogs api equivalent, so filter
-        // the returned results by year client-side
-        s32 range_lo = 0, range_hi = 0;
-        bool range_active = discogs_year_range(range_lo, range_hi);
-
         u32 pos = 0;
         std::set<std::string> master_dedup;
         for(auto& r : search["results"]) {
@@ -1313,14 +1308,6 @@ void* releases_view_loader(void* userdata)
                     year = std::to_string(r["year"].get<s64>());
                 }
             }
-            // drop releases outside a requested year range
-            if(range_active) {
-                s32 yr = year.empty() ? -1 : atoi(year.c_str());
-                if(yr < range_lo || yr > range_hi) {
-                    continue;
-                }
-            }
-
             if(!year.empty()) {
                 cat = cat.empty() ? year : cat + " - " + year;
             }
@@ -4834,9 +4821,10 @@ std::vector<std::string> discogs_get_list(const c8* key)
     return get_user_setting(key, std::vector<std::string>{});
 }
 
-// parses the discogs_year setting as a range like "1990-2000" (whitespace
-// tolerant). returns false for a single year or empty/garbage
-bool discogs_year_range(s32& lo, s32& hi)
+// the discogs_year setting as the api's year param, which takes a single year
+// ("1994") or a range ("1990-1999"). a decade like "1990s" becomes its range.
+// whitespace tolerant, empty for anything else
+std::string discogs_year_param()
 {
     std::string raw = get_user_setting("discogs_year", std::string(""));
 
@@ -4847,14 +4835,37 @@ bool discogs_year_range(s32& lo, s32& hi)
         }
     }
 
-    s32 a = 0, b = 0;
-    if(sscanf(s.c_str(), "%d-%d", &a, &b) == 2) {
-        lo = std::min(a, b);
-        hi = std::max(a, b);
+    auto digits = [&](size_t from, size_t count) {
+        if(s.length() < from + count) {
+            return false;
+        }
+        for(size_t i = from; i < from + count; ++i) {
+            if(s[i] < '0' || s[i] > '9') {
+                return false;
+            }
+        }
         return true;
+    };
+
+    // 1994
+    if(s.length() == 4 && digits(0, 4)) {
+        return s;
     }
 
-    return false;
+    // 1990s
+    if(s.length() == 5 && digits(0, 4) && s[3] == '0' && (s[4] == 's' || s[4] == 'S')) {
+        s32 d = atoi(s.substr(0, 4).c_str());
+        return std::to_string(d) + "-" + std::to_string(d + 9);
+    }
+
+    // 1990-2000, either order
+    if(s.length() == 9 && digits(0, 4) && s[4] == '-' && digits(5, 4)) {
+        s32 a = atoi(s.substr(0, 4).c_str());
+        s32 b = atoi(s.substr(5, 4).c_str());
+        return std::to_string(std::min(a, b)) + "-" + std::to_string(std::max(a, b));
+    }
+
+    return "";
 }
 
 bool discogs_has_filters()
@@ -4885,19 +4896,7 @@ Str discogs_build_search_url()
 
     append_param("q", get_user_setting("discogs_q", std::string("")));
 
-    // a single exact year is an api param; a range is filtered client-side in
-    // the loader since the api has no year-range param
-    s32 lo = 0, hi = 0;
-    if(!discogs_year_range(lo, hi)) {
-        std::string year = get_user_setting("discogs_year", std::string(""));
-        bool digits = !year.empty();
-        for(char c : year) {
-            if(c < '0' || c > '9') { digits = false; break; }
-        }
-        if(digits) {
-            append_param("year", year);
-        }
-    }
+    append_param("year", discogs_year_param());
 
     // repeated genre/style params narrow results (discogs ANDs them)
     for(auto& g : discogs_get_list("discogs_genres")) {
@@ -6081,7 +6080,7 @@ void discogs_filter_menu()
 
     bool any_active = false;
     discogs_filter_text_input("Search", "##discogs_q", "artist, label, release...", q_buf, any_active);
-    discogs_filter_text_input("Year", "##discogs_year", "1994 or 1990-2000", year_buf, any_active);
+    discogs_filter_text_input("Year", "##discogs_year", "1994, 1990s or 1990-2000", year_buf, any_active);
     discogs_chip_input("Genre", "##discogs_genre", "+ add genre", genre_buf,
                        k_discogs_genres, PEN_ARRAY_SIZE(k_discogs_genres), s_genres, any_active);
     discogs_chip_input("Style", "##discogs_style", "+ add style", style_buf,

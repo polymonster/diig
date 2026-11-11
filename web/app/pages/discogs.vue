@@ -38,13 +38,17 @@ function saveFilters() {
 const artistFilter = ref('')
 const labelFilter  = ref('')
 
-// a single exact year is sent to the api; a range like 1990-2000 has no api
-// equivalent so it filters the loaded results
-function parseYearRange(raw: string): [number, number] | null {
-  const m = raw.trim().match(/^(\d{4})\s*-\s*(\d{4})$/)
-  if (!m) return null
+// the api's year param takes a single year (1994) or a range (1990-1999).
+// a decade like 1990s becomes its range; anything else is not sent
+function yearParam(raw: string): string {
+  const s = raw.replace(/\s+/g, '')
+  if (/^\d{4}$/.test(s)) return s
+  const dec = s.match(/^(\d{3})0s$/)
+  if (dec) return `${dec[1]}0-${dec[1]}9`
+  const m = s.match(/^(\d{4})-(\d{4})$/)
+  if (!m) return ''
   const a = +m[1]!, b = +m[2]!
-  return a <= b ? [a, b] : [b, a]
+  return a <= b ? `${a}-${b}` : `${b}-${a}`
 }
 
 // ── Genre / style chips ──────────────────────────────────────────────────────
@@ -117,9 +121,8 @@ function refresh() {
 function searchParams(): URLSearchParams {
   const p = new URLSearchParams({ per_page: '50', page: String(page.value) })
   if (query.value.trim()) p.set('q', query.value.trim())
-  // an exact year goes to the api, a range is applied in displayResults
-  const yr = yearFilter.value.trim()
-  if (/^\d{4}$/.test(yr)) p.set('year', yr)
+  const yr = yearParam(yearFilter.value)
+  if (yr) p.set('year', yr)
   // repeated genre / style params narrow the results (discogs ANDs them)
   for (const g of genres.value) p.append('genre', g)
   for (const s of styles.value) p.append('style', s)
@@ -180,8 +183,6 @@ watch(sortMode, refresh)
 
 const displayResults = computed(() => {
   let r = results.value
-  const yr = parseYearRange(yearFilter.value)
-  if (yr) r = r.filter(i => { const y = parseInt(i.year ?? ''); return y >= yr[0] && y <= yr[1] })
   if (artistFilter.value) r = r.filter(i => parseTitle(i.title).artist === artistFilter.value)
   if (labelFilter.value)  r = r.filter(i => (details.value[i.id]?.labels ?? []).some(l => l.name === labelFilter.value))
   return r
@@ -206,12 +207,12 @@ function stopDetails() {
   detailsQueue = []
 }
 
-// give an item back to the queue to retry after a cooldown
-function requeue(item: DiscogsResult, msg: string, secs?: number) {
+// give an item back to the queue to retry after a cooldown. no banner: the
+// tile keeps showing its loading dots until the retry lands
+function requeue(item: DiscogsResult, secs?: number) {
   const { [item.id]: _, ...rest } = details.value
   details.value = rest
   detailsQueue.unshift(item)
-  errorMsg.value = msg
   startCooldown(secs)
 }
 
@@ -226,12 +227,12 @@ async function drainDetails() {
     try {
       const r = await fetch(item.resource_url!, { headers: discogs.headers() })
       if (r.status === 429) {
-        requeue(item, 'Discogs rate limit reached — video loading will resume shortly')
+        requeue(item)
         break
       }
       details.value = { ...details.value, [item.id]: r.ok ? await r.json() : {} }
     } catch {
-      requeue(item, 'Discogs request interrupted — retrying shortly', 5)
+      requeue(item, 5)
       break
     }
     await new Promise(r => setTimeout(r, 1200))
@@ -308,7 +309,7 @@ onUnmounted(() => {
       <input
         v-model="yearFilter"
         type="text"
-        placeholder="year / 1990-2000"
+        placeholder="1994 / 1990s / 1990-2000"
         class="filter-input year"
         @keyup.enter="refresh"
       >

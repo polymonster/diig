@@ -143,36 +143,43 @@ def parse_review(page):
         text = html.unescape(re.sub(r"<[^>]+>", " ", para))
         text = re.sub(r"\s+", " ", text).strip()
         text = re.sub(r"(\w)- (\w)", r"\1-\2", text)
+        # attachment names pasted into the copy, glued to the sentence before:
+        # "systems.youtubetrackhunterTracklist-credits-SYNCRO75.docx" -> "systems."
+        text = re.sub(r"(\w+[.!?])?\S*\.(?:docx?|pdf|rtf|txt|wav|mp3|jpe?g|png)\b",
+                      lambda m: m.group(1) or "", text, flags=re.I)
+        text = re.sub(r"\s+", " ", text).strip()
         if len(text) >= MIN_REVIEW:
             return text
     return ""
 
 
-def fetch_reviews(urls):
+class ReviewFetcher:
     """
-    {url: review} for phonica product pages, through one headless browser to
-    get past sucuri. A page that fails to load is left out.
+    Reviews from phonica product pages, one at a time, through one headless
+    browser to get past sucuri. The browser starts on the first fetch, close()
+    ends it. A page that fails to load gives "".
     """
-    reviews = dict()
-    if not urls:
-        return reviews
-    options = webdriver.ChromeOptions()
-    options.add_argument('--headless')
-    driver = webdriver.Chrome(options)
-    driver.set_page_load_timeout(60)
-    try:
-        for url in urls:
-            try:
-                review = parse_review(execute_page(url, driver))
-            except (WebDriverException, ReadTimeoutError) as e:
-                print(f"warning: phonica review failed for {url}: {type(e).__name__}")
-                continue
-            if review:
-                reviews[url] = review
+    def __init__(self):
+        self.driver = None
+
+    def get(self, url):
+        if not self.driver:
+            options = webdriver.ChromeOptions()
+            options.add_argument('--headless')
+            self.driver = webdriver.Chrome(options)
+            self.driver.set_page_load_timeout(60)
+        else:
             time.sleep(1)
-    finally:
-        driver.quit()
-    return reviews
+        try:
+            return parse_review(execute_page(url, self.driver))
+        except (WebDriverException, ReadTimeoutError) as e:
+            print(f"warning: phonica review failed for {url}: {type(e).__name__}")
+            return ""
+
+    def close(self):
+        if self.driver:
+            self.driver.quit()
+            self.driver = None
 
 
 # scrape an individual page for a view (essentials, new releases)

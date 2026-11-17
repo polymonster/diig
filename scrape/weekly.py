@@ -11,11 +11,12 @@ import urllib.parse
 # weekly curated page. scores this week's new releases against the taste
 # profile (taste.py), ranks what is charting across stores for the hype shelf,
 # shortlists london gigs (ra.py), then picks a varied page and writes it up from
-# the scoring facts. no llm calls. a pick phonica stocks takes the first
-# paragraph of phonica's review as its blurb (needs selenium + chrome).
+# the scoring facts. no llm calls. picks only take records phonica or juno
+# have reviewed, the review's first paragraph is the blurb (phonica needs
+# selenium + chrome).
 # output goes to diig-registry/weekly/{week}.json and rtdb /weekly
 #   python3 weekly.py [-key '<service account json>'] [-days 7] [-dry-run] [-local-only] [-no-reviews]
-#   -no-reviews: facts blurbs only, no product pages fetched
+#   -no-reviews: any record can be a pick, facts blurbs, no product pages fetched
 #   -dry-run:    no writes, prints the shortlists and the page
 #   -local-only: no firebase reads or writes (no likes, no rtdb patch)
 
@@ -335,8 +336,10 @@ def primary_style(c):
 
 
 # take `count` from `items` in order, first under the strict rules, then relaxing
-# them one at a time so the page still fills. each rule is (key_fn, max_per_key)
-def take_diverse(items, count, rules):
+# them one at a time so the page still fills. each rule is (key_fn, max_per_key).
+# accept, if given, is asked last, only of items the rules would take, and must
+# answer the same each time it's asked about an item
+def take_diverse(items, count, rules, accept=None):
     chosen = []
     for n in range(len(rules), -1, -1):
         active = rules[:n]
@@ -346,7 +349,8 @@ def take_diverse(items, count, rules):
             if any(item is c for c in chosen):
                 continue
             if all(sum(1 for c in chosen if key(c) and key(c) == key(item)) < cap for key, cap in active):
-                chosen.append(item)
+                if accept is None or accept(item):
+                    chosen.append(item)
     return chosen
 
 
@@ -357,14 +361,14 @@ PICK_RULES = [
 
 
 # each group takes its half in score order, kept varied across labels and styles.
-# a group short of candidates is filled from the other
-def select_picks(cards):
+# a group short of candidates is filled from the other. accept as take_diverse
+def select_picks(cards, accept=None):
     quota = PICK_COUNT // len(PICK_GROUPS)
     chosen = []
     for name in PICK_GROUPS:
-        chosen += take_diverse([c for c in cards if c["_group"] == name], quota, PICK_RULES)
+        chosen += take_diverse([c for c in cards if c["_group"] == name], quota, PICK_RULES, accept)
     rest = [c for c in cards if not any(c is x for x in chosen)]
-    chosen += take_diverse(rest, PICK_COUNT - len(chosen), PICK_RULES)
+    chosen += take_diverse(rest, PICK_COUNT - len(chosen), PICK_RULES, accept)
     return chosen
 
 
@@ -441,53 +445,84 @@ def strip_private(d):
 
 
 # ── reviews ─────────────────────────────────────────────────────────────────────
-# a pick's blurb is the first paragraph of phonica's review when phonica has the
-# record, falling back to the facts blurb above
+# picks are for reading, so a pick needs a shop's review: the first paragraph of
+# phonica's, else juno's. records without one are passed over for the next in
+# the shortlist; the hype shelf covers them. -no-reviews keeps the facts blurbs
 
-REVIEW_STORE = "phonica"
-
-
-# the phonica link for each card: its own phonica listing if this week's group
-# has one, else the same record anywhere in the phonica registry, matched as
-# group_releases does (discogs id, or artist + title)
-def review_links(cards, regs):
-    index = {}
-    for key, release in regs.get(REVIEW_STORE, {}).items():
-        if release.get("link"):
-            for k in group_keys(release):
-                index.setdefault(k, release["link"])
-    links = {}
-    for c in cards:
-        own = next((s["link"] for s in c.get("stores") or [] if s["store"] == REVIEW_STORE and s.get("link")), None)
-        link = own or next((index[k] for k in group_keys(c) if k in index), None)
-        if link:
-            links[c["id"]] = link
-    return links
+# tried in this order. phonica needs a browser (sucuri), juno is plain requests
+REVIEW_STORES = ("phonica", "juno")
 
 
-def fetch_reviews(cards, regs):
-    links = review_links(cards, regs)
-    print(f"{len(links)}/{len(cards)} picks found on {REVIEW_STORE}")
-    try:
-        import phonica
-        reviews = phonica.fetch_reviews(sorted(set(links.values())))
-    except Exception as e:
-        # no browser on this machine, or the site is down: the facts blurbs stand
-        print(f"warning: skipping {REVIEW_STORE} reviews ({type(e).__name__}: {e})")
-        return {}
-    print(f"{len(reviews)} {REVIEW_STORE} reviews")
-    return {cid: {"text": reviews[url], "url": url} for cid, url in links.items() if url in reviews}
+class Reviewer:
+    def __init__(self, regs):
+        # per store, every group_keys identity to a product link, so a card can
+        # be found in a store's registry even when it isn't new there this week
+        self.index = {}
+        for store in REVIEW_STORES:
+            idx = {}
+            for release in regs.get(store, {}).values():
+                if release.get("link"):
+                    for k in group_keys(release):
+                        idx.setdefault(k, release["link"])
+            self.index[store] = idx
+        self.cache = {}
+        self.fetched = 0
+        self.phonica = None
+        self.disabled = set()
+
+    # the card's own listing in this week's group first, else the registry match
+    def link(self, c, store):
+        own = next((s["link"] for s in c.get("stores") or [] if s["store"] == store and s.get("link")), None)
+        return own or next((self.index[store][k] for k in group_keys(c) if k in self.index[store]), None)
+
+    def fetch(self, store, url):
+        self.fetched += 1
+        if store == "juno":
+            import juno
+            return juno.fetch_review(url)
+        if not self.phonica:
+            import phonica
+            self.phonica = phonica.ReviewFetcher()
+        return self.phonica.get(url)
+
+    # {"text", "url", "site"} or None, looked up once per card
+    def get(self, c):
+        if c["id"] not in self.cache:
+            review = None
+            for store in REVIEW_STORES:
+                url = self.link(c, store)
+                if not url or store in self.disabled:
+                    continue
+                try:
+                    text = self.fetch(store, url)
+                except Exception as e:
+                    # no selenium or browser on this machine: stop asking this store
+                    print(f"warning: skipping {store} reviews ({type(e).__name__}: {e})")
+                    self.disabled.add(store)
+                    continue
+                if text:
+                    review = {"text": text, "url": url, "site": store.capitalize()}
+                    break
+            self.cache[c["id"]] = review
+        return self.cache[c["id"]]
+
+    def __call__(self, c):
+        return self.get(c) is not None
+
+    def close(self):
+        if self.phonica:
+            self.phonica.close()
 
 
-def pick_out(c, reviews):
+def pick_out(c, reviewer):
     out = strip_private(c)
-    review = reviews.get(c["id"])
+    review = reviewer.get(c) if reviewer else None
     if review:
         out["blurb"] = review["text"]
         out["source"] = {
             "url": review["url"],
             "title": f"{c.get('artist', '')} - {c.get('title', '')}",
-            "site": REVIEW_STORE.capitalize(),
+            "site": review["site"],
         }
     else:
         out["blurb"] = pick_blurb(c)
@@ -495,10 +530,18 @@ def pick_out(c, reviews):
 
 
 def assemble(picks, gigs, hype, week, n_new, n_shops, regs=None):
-    chosen = select_picks(picks)
+    reviewer = Reviewer(regs) if regs is not None else None
+    try:
+        chosen = select_picks(picks, reviewer)
+    finally:
+        if reviewer:
+            reviewer.close()
+    if reviewer:
+        print(f"{len(chosen)} reviewed picks, {reviewer.fetched} product pages fetched")
+        if len(chosen) < PICK_COUNT:
+            print(f"warning: only {len(chosen)}/{PICK_COUNT} picks have a review")
     chosen_gigs = select_gigs(gigs)
-    reviews = fetch_reviews(chosen, regs) if regs is not None else {}
-    out_picks = [pick_out(c, reviews) for c in chosen]
+    out_picks = [pick_out(c, reviewer) for c in chosen]
     out_gigs = [dict(strip_private(g), blurb=gig_blurb(g)) for g in chosen_gigs]
     return {
         "week": week,

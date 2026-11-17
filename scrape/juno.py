@@ -120,6 +120,41 @@ def fetch_with_retry(url, max_retries=3, base_delay=2.0):
 
     raise last_error
 
+
+# a paragraph shorter than this is a stray line, not a review
+MIN_REVIEW = 60
+
+
+def parse_review(page):
+    """
+    The first paragraph of juno's review on a product page, as plain text, or
+    "" when there is none. Juno only reviews some records, mostly new ones; the
+    review is <p itemprop="reviewBody">, paragraphs split by <br><br>.
+    """
+    import html
+    import re
+    match = re.search(r'<p itemprop="reviewBody">(.*?)</p>', page, re.S)
+    if not match:
+        return ""
+    for para in re.split(r"<br\s*/?>\s*<br\s*/?>", match.group(1)):
+        text = html.unescape(re.sub(r"<[^>]+>", " ", para))
+        text = re.sub(r"\s+", " ", text).strip()
+        if len(text) >= MIN_REVIEW:
+            return text
+    return ""
+
+
+def fetch_review(url):
+    """The review on a juno product page, "" when there's none or the page fails."""
+    try:
+        page = fetch_with_retry(url).read().decode("utf-8", "replace")
+    except Exception as e:
+        print(f"warning: juno review failed for {url}: {type(e).__name__}")
+        return ""
+    time.sleep(1)
+    return parse_review(page)
+
+
 # parse ide element <div id="item-861163-1" class="dv-item"> to extract the
 # id number without the item- prefix
 def parse_id(id_elem: str):

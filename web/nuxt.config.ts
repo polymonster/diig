@@ -52,6 +52,20 @@ export default defineNuxtConfig({
     public: {
       cfStreamUid:    process.env.NUXT_PUBLIC_CF_STREAM_UID    || '',
       cfCustomerCode: process.env.NUXT_PUBLIC_CF_CUSTOMER_CODE || '',
+      // app beta links, shown after sign up and in the menu. hidden when empty.
+      testflightUrl:  process.env.NUXT_PUBLIC_TESTFLIGHT_URL   || 'https://testflight.apple.com/join/p5gR8gCD',
+      androidUrl:     process.env.NUXT_PUBLIC_ANDROID_URL      || '',
+    },
+  },
+
+  // in production firebase hosting rewrites /api/* to the cloud functions
+  // (firebase.json). nuxt dev has no such rewrites, so proxy to the deployed
+  // functions instead. note this means dev talks to the real prod database.
+  $development: {
+    routeRules: {
+      '/api/signup':      { proxy: 'https://europe-west1-diig-19d4c.cloudfunctions.net/signup' },
+      '/api/register':    { proxy: 'https://europe-west1-diig-19d4c.cloudfunctions.net/register' },
+      '/api/audio-proxy': { proxy: 'https://europe-west1-diig-19d4c.cloudfunctions.net/audio_proxy' },
     },
   },
 

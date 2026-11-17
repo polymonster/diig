@@ -7,6 +7,7 @@ const menuOpen     = useState('menuOpen', () => false)
 const settingsOpen = useState('settingsOpen', () => false)
 const showDebug    = useState('showDebug', () => storageGet('showDebug') === 'true')
 const { displayName } = useProfile()
+const { testflightUrl, androidUrl } = useRuntimeConfig().public
 
 watch(showDebug, val => storageSet('showDebug', String(val)))
 
@@ -21,6 +22,8 @@ function openSettings() {
     <div class="backdrop" @click="menuOpen = false" />
     <div class="menu">
       <div v-if="user" class="username">{{ displayName }}</div>
+      <a v-if="testflightUrl" :href="testflightUrl" target="_blank" rel="noopener" class="item link" @click="menuOpen = false">Get the iOS app</a>
+      <a v-if="androidUrl" :href="androidUrl" target="_blank" rel="noopener" class="item link" @click="menuOpen = false">Get the Android app</a>
       <label class="item toggle">
         <span>Show Debug</span>
         <input v-model="showDebug" type="checkbox">
@@ -71,6 +74,11 @@ function openSettings() {
   color: #333;
 }
 .item:hover { background: #f9f9f9; }
+
+.link {
+  text-decoration: none;
+  border-bottom: 1px solid #f0f0f0;
+}
 
 .toggle {
   display: flex;

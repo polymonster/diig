@@ -627,7 +627,7 @@ def create_invites(count, max_uses, note, expires_days):
     response = authed_session.patch(f"{k_db_url}/invites.json", json.dumps(invites))
     assert(response.status_code == 200)
     for code in invites:
-        print(f"{code[:4]}-{code[4:]}")
+        print(f"{code[:4]}-{code[4:]}  https://diig.app/login?invite={code[:4]}-{code[4:]}")
 
 
 def list_invites():

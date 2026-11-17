@@ -22,7 +22,7 @@ Nothing, for now. The website is not free to run, after passing 1000 users it wi
 
 ## What do I do with my invite code?
 
-If you've been given an invite code, paste it in the message field when registering interest. We'll use it to fast-track your request.
+If you've been given an invite code, go to [sign up](/login?invite) and enter it with your email and a password to create your account. The same account works on the website and in the app.
 
 ## What kind of music is covered?
 

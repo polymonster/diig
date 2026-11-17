@@ -11,9 +11,11 @@ import urllib.parse
 # weekly curated page. scores this week's new releases against the taste
 # profile (taste.py), ranks what is charting across stores for the hype shelf,
 # shortlists london gigs (ra.py), then picks a varied page and writes it up from
-# the scoring facts. no llm calls.
+# the scoring facts. no llm calls. a pick phonica stocks takes the first
+# paragraph of phonica's review as its blurb (needs selenium + chrome).
 # output goes to diig-registry/weekly/{week}.json and rtdb /weekly
-#   python3 weekly.py [-key '<service account json>'] [-days 7] [-dry-run] [-local-only]
+#   python3 weekly.py [-key '<service account json>'] [-days 7] [-dry-run] [-local-only] [-no-reviews]
+#   -no-reviews: facts blurbs only, no product pages fetched
 #   -dry-run:    no writes, prints the shortlists and the page
 #   -local-only: no firebase reads or writes (no likes, no rtdb patch)
 
@@ -438,10 +440,65 @@ def strip_private(d):
     return {k: v for k, v in d.items() if not k.startswith("_")}
 
 
-def assemble(picks, gigs, hype, week, n_new, n_shops):
+# ── reviews ─────────────────────────────────────────────────────────────────────
+# a pick's blurb is the first paragraph of phonica's review when phonica has the
+# record, falling back to the facts blurb above
+
+REVIEW_STORE = "phonica"
+
+
+# the phonica link for each card: its own phonica listing if this week's group
+# has one, else the same record anywhere in the phonica registry, matched as
+# group_releases does (discogs id, or artist + title)
+def review_links(cards, regs):
+    index = {}
+    for key, release in regs.get(REVIEW_STORE, {}).items():
+        if release.get("link"):
+            for k in group_keys(release):
+                index.setdefault(k, release["link"])
+    links = {}
+    for c in cards:
+        own = next((s["link"] for s in c.get("stores") or [] if s["store"] == REVIEW_STORE and s.get("link")), None)
+        link = own or next((index[k] for k in group_keys(c) if k in index), None)
+        if link:
+            links[c["id"]] = link
+    return links
+
+
+def fetch_reviews(cards, regs):
+    links = review_links(cards, regs)
+    print(f"{len(links)}/{len(cards)} picks found on {REVIEW_STORE}")
+    try:
+        import phonica
+        reviews = phonica.fetch_reviews(sorted(set(links.values())))
+    except Exception as e:
+        # no browser on this machine, or the site is down: the facts blurbs stand
+        print(f"warning: skipping {REVIEW_STORE} reviews ({type(e).__name__}: {e})")
+        return {}
+    print(f"{len(reviews)} {REVIEW_STORE} reviews")
+    return {cid: {"text": reviews[url], "url": url} for cid, url in links.items() if url in reviews}
+
+
+def pick_out(c, reviews):
+    out = strip_private(c)
+    review = reviews.get(c["id"])
+    if review:
+        out["blurb"] = review["text"]
+        out["source"] = {
+            "url": review["url"],
+            "title": f"{c.get('artist', '')} - {c.get('title', '')}",
+            "site": REVIEW_STORE.capitalize(),
+        }
+    else:
+        out["blurb"] = pick_blurb(c)
+    return out
+
+
+def assemble(picks, gigs, hype, week, n_new, n_shops, regs=None):
     chosen = select_picks(picks)
     chosen_gigs = select_gigs(gigs)
-    out_picks = [dict(strip_private(c), blurb=pick_blurb(c)) for c in chosen]
+    reviews = fetch_reviews(chosen, regs) if regs is not None else {}
+    out_picks = [pick_out(c, reviews) for c in chosen]
     out_gigs = [dict(strip_private(g), blurb=gig_blurb(g)) for g in chosen_gigs]
     return {
         "week": week,
@@ -524,7 +581,7 @@ if __name__ == "__main__":
             print(f"  {g['date']} {g['title']} @ {g['venue']}  {g['_in_collection']} {g['_adjacent'][:3]} ({g['attending']})")
 
     n_shops = sum(1 for reg in regs.values() if new_keys & reg.keys())
-    page = assemble(picks, gigs, hype, week, len(new_keys), n_shops)
+    page = assemble(picks, gigs, hype, week, len(new_keys), n_shops, None if "-no-reviews" in sys.argv else regs)
     if dry_run:
         print(f"\n── page ──\n{page['headline']}\n{page['intro']}")
         for c in page["picks"]:

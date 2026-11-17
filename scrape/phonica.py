@@ -121,6 +121,60 @@ def get_listing(driver, url):
     return parse_listing(page)
 
 
+# a paragraph shorter than this is a stray line ("Limited to 300 copies"), not a review
+MIN_REVIEW = 60
+
+
+def parse_review(page):
+    """
+    The first paragraph of the shop's review on a product page, as plain text,
+    or "" when there is none.
+
+    The review is the div.single-description beside the tracklist. Its
+    neighbour single-description-disclaimer holds pre-order dates and is not
+    matched. Paragraphs are <p>s, or <br><br> inside one. Phonica's copy keeps
+    hyphens from line wraps ("club- forward"), which are joined back up.
+    """
+    match = re.search(r'<div class="single-description[ "][^>]*>(.*?)</div>', page, re.S)
+    if not match:
+        return ""
+    body = re.sub(r"<br\s*/?>\s*<br\s*/?>", "</p><p>", match.group(1))
+    for para in re.split(r"</p>", body):
+        text = html.unescape(re.sub(r"<[^>]+>", " ", para))
+        text = re.sub(r"\s+", " ", text).strip()
+        text = re.sub(r"(\w)- (\w)", r"\1-\2", text)
+        if len(text) >= MIN_REVIEW:
+            return text
+    return ""
+
+
+def fetch_reviews(urls):
+    """
+    {url: review} for phonica product pages, through one headless browser to
+    get past sucuri. A page that fails to load is left out.
+    """
+    reviews = dict()
+    if not urls:
+        return reviews
+    options = webdriver.ChromeOptions()
+    options.add_argument('--headless')
+    driver = webdriver.Chrome(options)
+    driver.set_page_load_timeout(60)
+    try:
+        for url in urls:
+            try:
+                review = parse_review(execute_page(url, driver))
+            except (WebDriverException, ReadTimeoutError) as e:
+                print(f"warning: phonica review failed for {url}: {type(e).__name__}")
+                continue
+            if review:
+                reviews[url] = review
+            time.sleep(1)
+    finally:
+        driver.quit()
+    return reviews
+
+
 # scrape an individual page for a view (essentials, new releases)
 def scrape_page(url, store, store_dict, view, section, counter, session_scraped_ids):
     # replace category id

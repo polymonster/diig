@@ -8,6 +8,7 @@
       "firebase-debug.*.log"
     ],
     "rewrites": [
+      { "source": "/api/signup", "function": { "functionId": "signup", "region": "europe-west1" } },
       { "source": "/api/register", "function": { "functionId": "register", "region": "europe-west1" } },
       { "source": "/api/audio-proxy", "function": { "functionId": "audio_proxy", "region": "europe-west1" } },
       { "source": "**", "destination": "/index.html" }

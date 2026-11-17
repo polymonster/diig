@@ -28,6 +28,15 @@ export interface Store {
 
 const DEFAULT_VIEW_ORDER = ['new_releases', 'weekly_chart', 'monthly_chart']
 
+// stores listed first, in this order. the first is the default for a new visitor,
+// stores not named here follow alphabetically
+const STORE_ORDER = ['redeye', 'phonica', 'vinylunderground', 'juno']
+
+function storeRank(id: string): number {
+  const i = STORE_ORDER.indexOf(id)
+  return i < 0 ? STORE_ORDER.length : i
+}
+
 function parseStore(id: string, d: any): Store {
   const views = d.views || {}
   const order: string[] = d.view_order || DEFAULT_VIEW_ORDER
@@ -60,7 +69,9 @@ export function useStores() {
   async function loadStores(): Promise<Store[]> {
     const data = await db.get('stores')
     if (data && typeof data === 'object') {
-      stores.value = Object.entries(data).map(([id, d]) => parseStore(id, d))
+      stores.value = Object.entries(data)
+        .map(([id, d]) => parseStore(id, d))
+        .sort((a, b) => storeRank(a.id) - storeRank(b.id) || a.id.localeCompare(b.id))
     }
     return stores.value
   }

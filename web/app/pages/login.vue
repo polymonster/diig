@@ -16,8 +16,10 @@ const route = useRoute()
 const deleted = computed(() => route.query.deleted != null)
 
 // ── Tabs ─────────────────────────────────────────────────────────────────────
-type Tab = 'login' | 'register'
-const tab = ref<Tab>('login')
+// /login?invite=K7QX-M2PA opens the sign up tab with the code filled in
+type Tab = 'login' | 'signup' | 'register'
+const queryInvite = typeof route.query.invite === 'string' ? route.query.invite : ''
+const tab = ref<Tab>('invite' in route.query ? 'signup' : 'login')
 
 // ── Login ─────────────────────────────────────────────────────────────────────
 const email = ref('')
@@ -33,10 +35,17 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const isValidEmail = computed(() => EMAIL_RE.test(email.value))
 const isFormValid = computed(() => isValidEmail.value && password.value.length >= 6)
 
+// after a fresh sign up we stay here to show the welcome / testflight panel
+const signedUp = ref(false)
+
+function continueToApp() {
+  const redirect = route.query.redirect
+  router.push(typeof redirect === 'string' ? redirect : '/')
+}
+
 watch(user, (newUser) => {
-  if (newUser) {
-    const redirect = route.query.redirect
-    router.push(typeof redirect === 'string' ? redirect : '/')
+  if (newUser && !signedUp.value) {
+    continueToApp()
   }
 }, { immediate: true })
 
@@ -96,6 +105,74 @@ const getPasswordResetErrorMessage = (code: string) => ({
   'auth/too-many-requests': 'Too many requests — try again later.',
 } as Record<string, string>)[code] ?? 'Failed to send reset email.'
 
+// ── Sign up (invite only) ─────────────────────────────────────────────────────
+// accounts are created by the signup cloud function (functions/index.js), which
+// claims a use of the invite code. errors come back in identitytoolkit shape.
+const testflightUrl = useRuntimeConfig().public.testflightUrl as string
+
+const suEmail = ref('')
+const suPassword = ref('')
+const suInvite = ref(queryInvite)
+const suLoading = ref(false)
+
+const normalisedInvite = computed(() => suInvite.value.toUpperCase().replace(/[^A-Z0-9]/g, ''))
+const isSignupValid = computed(() =>
+  EMAIL_RE.test(suEmail.value) && suPassword.value.length >= 6 && normalisedInvite.value.length >= 6
+)
+
+const getSignupErrorMessage = (code: string) => ({
+  INVALID_INVITE_CODE: 'That invite code isn\'t valid.',
+  INVITE_CODE_USED: 'That invite code has already been used.',
+  INVITE_CODE_EXPIRED: 'That invite code has expired.',
+  EMAIL_EXISTS: 'An account with that email already exists — try signing in.',
+  INVALID_EMAIL: 'Invalid email address.',
+  MISSING_EMAIL_OR_PASSWORD: 'Enter an email and password.',
+  TOO_MANY_ATTEMPTS_TRY_LATER: 'Too many attempts — try again later.',
+} as Record<string, string>)[code.split(' ')[0] ?? ''] ?? (code.startsWith('WEAK_PASSWORD')
+  ? 'Password should be at least 6 characters.'
+  : 'Something went wrong, please try again.')
+
+const handleSignup = async () => {
+  if (!auth || !isSignupValid.value) return
+  suLoading.value = true
+  error.value = ''
+  try {
+    const res = await fetch('/api/signup', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: suEmail.value, password: suPassword.value, invite: suInvite.value }),
+    })
+    // only trust the function's own {ok: true}. if /api/signup isn't routed to
+    // the function (old hosting deploy, nuxt dev) the spa fallback answers 200
+    // with index.html, which must not be mistaken for a created account.
+    const data = await res.json().catch(() => null) as { ok?: boolean, error?: { message?: string } } | null
+    if (!data) {
+      error.value = 'Sign up is unavailable right now, please try again later.'
+      return
+    }
+    if (!res.ok || data.ok !== true) {
+      error.value = getSignupErrorMessage(data.error?.message ?? '')
+      return
+    }
+    signedUp.value = true
+    await setPersistence(auth, browserLocalPersistence)
+    await signInWithEmailAndPassword(auth, suEmail.value, suPassword.value)
+  } catch {
+    // account was created but sign in failed, send them to the sign in tab
+    if (signedUp.value) {
+      signedUp.value = false
+      email.value = suEmail.value
+      switchTab('login')
+      success.value = 'Account created — please sign in.'
+    } else {
+      error.value = 'Something went wrong, please try again.'
+    }
+  } finally {
+    suPassword.value = ''
+    suLoading.value = false
+  }
+}
+
 // ── Register interest ─────────────────────────────────────────────────────────
 const regEmail = ref('')
 const regMessage = ref('')
@@ -132,8 +209,24 @@ const handleRegister = async () => {
     <div class="card">
       <h1 class="title">diig</h1>
 
+      <!-- ── Welcome, after sign up ── -->
+      <template v-if="signedUp && user">
+        <div class="msg success">You're in — welcome to diig.</div>
+        <p v-if="testflightUrl" class="blurb">
+          On iPhone? Join the iOS beta on TestFlight to get the app.
+        </p>
+        <div class="actions">
+          <a v-if="testflightUrl" :href="testflightUrl" target="_blank" rel="noopener" class="btn">get the iOS beta</a>
+          <button type="button" :class="testflightUrl ? 'ghost' : 'btn'" @click="continueToApp">
+            {{ testflightUrl ? 'continue on the web' : 'continue' }}
+          </button>
+        </div>
+      </template>
+
+      <template v-else>
       <div class="tabs">
         <button :class="['tab', { active: tab === 'login' }]" @click="switchTab('login')">sign in</button>
+        <button :class="['tab', { active: tab === 'signup' }]" @click="switchTab('signup')">sign up</button>
         <button :class="['tab', { active: tab === 'register' }]" @click="switchTab('register')">register interest</button>
       </div>
 
@@ -141,8 +234,23 @@ const handleRegister = async () => {
       <div v-if="error" class="msg error">{{ error }}</div>
       <div v-if="success" class="msg success">{{ success }}</div>
 
+      <!-- ── Sign up ── -->
+      <template v-if="tab === 'signup'">
+        <form @submit.prevent="handleSignup">
+          <input v-model="suInvite" type="text" placeholder="invite code" autocomplete="off" autocapitalize="characters" spellcheck="false" required class="field">
+          <input v-model="suEmail" type="email" placeholder="email" autocomplete="email" required class="field">
+          <input v-model="suPassword" type="password" placeholder="password (6+ characters)" autocomplete="new-password" required class="field">
+          <div class="actions">
+            <button type="submit" :disabled="suLoading || !isSignupValid" class="btn">
+              {{ suLoading ? 'creating account...' : 'sign up' }}
+            </button>
+            <button type="button" class="ghost" @click="switchTab('register')">no invite?</button>
+          </div>
+        </form>
+      </template>
+
       <!-- ── Sign in ── -->
-      <template v-if="tab === 'login'">
+      <template v-else-if="tab === 'login'">
         <form v-if="!showForgotPassword" @submit.prevent="handleEmailLogin">
           <input v-model="email" type="email" placeholder="email" autocomplete="email" required class="field">
           <input v-model="password" type="password" placeholder="password" autocomplete="current-password" required class="field">
@@ -184,6 +292,7 @@ const handleRegister = async () => {
             </button>
           </div>
         </form>
+      </template>
       </template>
 
       <div class="footer">
@@ -229,6 +338,17 @@ const handleRegister = async () => {
 .tab:not(.active):hover { color: #666; }
 
 .textarea { line-height: 1.5; }
+
+.blurb {
+  font-size: 0.85rem;
+  color: #666;
+  margin: 1rem 0;
+}
+
+a.btn {
+  display: inline-block;
+  text-decoration: none;
+}
 
 .footer {
   margin-top: 2rem;

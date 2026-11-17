@@ -21,6 +21,5 @@ watch(user, () => {
     <AppMenu />
     <SettingsPanel />
     <PlayerBar />
-    <DebugOverlay />
   </div>
 </template>
